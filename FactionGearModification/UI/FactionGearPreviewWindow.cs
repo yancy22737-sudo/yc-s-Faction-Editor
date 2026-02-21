@@ -187,10 +187,10 @@ namespace FactionGearCustomizer
         private void DoMultiWindowContents(Rect inRect)
         {
             Text.Font = GameFont.Medium;
-            Widgets.Label(new Rect(inRect.x, inRect.y, inRect.width - 150f, 30f), $"Preview: {factionDef.LabelCap}");
+            Widgets.Label(new Rect(inRect.x, inRect.y, inRect.width - 150f, 30f), LanguageManager.Get("Preview") + ": " + factionDef.LabelCap);
             
             Rect refreshRect = new Rect(inRect.width - 140f, inRect.y, 140f, 30f);
-            if (Widgets.ButtonText(refreshRect, "Reroll"))
+            if (Widgets.ButtonText(refreshRect, LanguageManager.Get("Reroll")))
             {
                 GenerateAllPreviewPawns();
             }
@@ -362,16 +362,16 @@ namespace FactionGearCustomizer
         {
             // Original implementation
             Text.Font = GameFont.Medium;
-            Widgets.Label(new Rect(inRect.x, inRect.y, inRect.width, 30f), $"Preview: {kindDef.LabelCap}");
+            Widgets.Label(new Rect(inRect.x, inRect.y, inRect.width, 30f), LanguageManager.Get("Preview") + ": " + kindDef.LabelCap);
             Text.Font = GameFont.Small;
 
             if (previewPawn == null || errorMessage != null)
             {
-                string errorText = errorMessage ?? "Failed to generate preview pawn. (Faction might not be active)";
+                string errorText = errorMessage ?? LanguageManager.Get("FailedToGeneratePreview");
                 Widgets.Label(new Rect(inRect.x, inRect.y + 40f, inRect.width - 20f, 60f), errorText);
                 
                 Rect retryRect = new Rect(inRect.x + (inRect.width - 120f) / 2f, inRect.y + 100f, 120f, 30f);
-                if (Widgets.ButtonText(retryRect, "Retry"))
+                if (Widgets.ButtonText(retryRect, LanguageManager.Get("Retry")))
                 {
                     GenerateSinglePreviewPawn();
                 }
@@ -390,17 +390,17 @@ namespace FactionGearCustomizer
             }
             else
             {
-                Widgets.Label(pawnRect, "Portrait unavailable");
+                Widgets.Label(pawnRect, LanguageManager.Get("PortraitUnavailable"));
             }
 
             // Rotation Buttons
             Rect rotRect = new Rect(pawnRect.x, pawnRect.yMax + 5f, pawnRect.width, 24f);
-            if (Widgets.ButtonText(rotRect.LeftHalf(), "< Rotate"))
+            if (Widgets.ButtonText(rotRect.LeftHalf(), "< " + LanguageManager.Get("Rotate")))
             {
                 rotation.Rotate(RotationDirection.Counterclockwise);
                 WidgetsUtils.SetPortraitDirty(previewPawn);
             }
-            if (Widgets.ButtonText(rotRect.RightHalf(), "Rotate >"))
+            if (Widgets.ButtonText(rotRect.RightHalf(), LanguageManager.Get("Rotate") + " >"))
             {
                 rotation.Rotate(RotationDirection.Clockwise);
                 WidgetsUtils.SetPortraitDirty(previewPawn);
@@ -408,7 +408,7 @@ namespace FactionGearCustomizer
             
             // Refresh Button
             Rect refreshRect = new Rect(inRect.x + (inRect.width - 120f) / 2f, rotRect.yMax + 10f, 120f, 30f);
-            if (Widgets.ButtonText(refreshRect, "Reroll Pawn"))
+            if (Widgets.ButtonText(refreshRect, LanguageManager.Get("RerollPawn")))
             {
                 GenerateSinglePreviewPawn();
             }
@@ -421,26 +421,26 @@ namespace FactionGearCustomizer
             Listing_Standard list = new Listing_Standard();
             list.Begin(new Rect(0, 0, listRect.width - 16f, 500f));
             
-            WidgetsUtils.Label(list, "<b>Equipped Gear:</b>");
+            WidgetsUtils.Label(list, LanguageManager.Get("EquippedGear"));
             if (previewPawn.equipment != null)
             {
                 foreach (var eq in previewPawn.equipment.AllEquipmentListForReading)
                 {
                     var qualityComp = eq.GetComp<CompQuality>();
-                    string qualityStr = qualityComp != null ? qualityComp.Quality.ToString() : "Normal";
-                    WidgetsUtils.Label(list, $"- {eq.LabelCap} ({qualityStr})");
+                    string qualityStr = qualityComp != null ? LanguageManager.Get("Quality" + qualityComp.Quality.ToString()) : LanguageManager.Get("QualityNormal");
+                    WidgetsUtils.Label(list, "- " + eq.LabelCap + " (" + qualityStr + ")");
                 }
             }
             
             list.Gap();
-            WidgetsUtils.Label(list, "<b>Apparel Worn:</b>");
+            WidgetsUtils.Label(list, LanguageManager.Get("ApparelWorn"));
             if (previewPawn.apparel != null)
             {
                 foreach (var app in previewPawn.apparel.WornApparel)
                 {
                     var qualityComp = app.GetComp<CompQuality>();
-                    string qualityStr = qualityComp != null ? qualityComp.Quality.ToString() : "Normal";
-                    WidgetsUtils.Label(list, $"- {app.LabelCap} ({qualityStr})");
+                    string qualityStr = qualityComp != null ? LanguageManager.Get("Quality" + qualityComp.Quality.ToString()) : LanguageManager.Get("QualityNormal");
+                    WidgetsUtils.Label(list, "- " + app.LabelCap + " (" + qualityStr + ")");
                 }
             }
 

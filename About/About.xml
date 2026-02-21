@@ -6,7 +6,12 @@
   <supportedVersions>
     <li>1.6</li>
   </supportedVersions>
-  <description>自定义派系敌人的武器装备库</description>
+  <description>**厌倦了总是遇到拿着相同破烂武器的海盗？想要让帝国禁卫军真正全副武装？或者给某个部落派系全员装备高科技义体？**
+
+**Faction Gear Customizer** 让这一切成为可能！本 Mod 允许你在游戏内实时深度定制任何派系、任何兵种（PawnKind）的装备、武器甚至健康状态。
+
+> **🌟 核心理念：轻量、现代、易用**
+> 我们致力于提供最流畅的用户体验。拥有现代化的 UI 设计，支持一键导出分享配置，支持按 Mod 来源筛选物品，让复杂的自定义变得简单直观。</description>
   <modDependencies>
 		<li>
 			<packageId>brrainz.harmony</packageId>

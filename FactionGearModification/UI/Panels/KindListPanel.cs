@@ -25,7 +25,7 @@ namespace FactionGearCustomizer.UI.Panels
             // Title "Kind Defs"
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(new Rect(innerRect.x, innerRect.y, 150f, 30f), "Kind Defs");
+            Widgets.Label(new Rect(innerRect.x, innerRect.y, 150f, 30f), LanguageManager.Get("KindDefs"));
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.UpperLeft;
 

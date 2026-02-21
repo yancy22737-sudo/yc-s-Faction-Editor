@@ -105,13 +105,13 @@ namespace FactionGearCustomizer.UI.Panels
             float rowHeight = 26f;
 
             Rect selectRect = new Rect(area.x, contentY, area.width * 0.58f, rowHeight);
-            if (Widgets.ButtonText(selectRect, item.HediffDef?.LabelCap ?? "Select Hediff"))
+            if (Widgets.ButtonText(selectRect, item.HediffDef?.LabelCap ?? LanguageManager.Get("SelectHediff")))
             {
                 ShowHediffSelectionMenu(item);
             }
 
             Rect chanceLabelRect = new Rect(area.x + area.width * 0.60f, contentY, area.width * 0.15f, rowHeight);
-            Widgets.Label(chanceLabelRect, "Chance:");
+            Widgets.Label(chanceLabelRect, LanguageManager.Get("Chance") + ":");
             Rect chanceSliderRect = new Rect(area.x + area.width * 0.75f, contentY + 4f, area.width * 0.25f, rowHeight - 8f);
             float newChance = Widgets.HorizontalSlider(chanceSliderRect, item.chance, 0f, 1f, true, $"{(item.chance * 100):F0}%");
             item.chance = newChance;
@@ -123,7 +123,7 @@ namespace FactionGearCustomizer.UI.Panels
 
             float partsY = contentY + rowHeight + 4f;
             Rect partsRect = new Rect(area.x, partsY, area.width * 0.35f, rowHeight);
-            Widgets.Label(partsRect, "Max Parts:");
+            Widgets.Label(partsRect, LanguageManager.Get("MaxParts") + ":");
             IntRange partsRange = item.maxPartsRange;
             if (partsRange == default(IntRange))
             {
@@ -133,7 +133,7 @@ namespace FactionGearCustomizer.UI.Panels
             WidgetsUtils.IntRange(new Rect(area.x + area.width * 0.28f, partsY, area.width * 0.30f, rowHeight), 12340 + index, ref item.maxPartsRange, 1, 10);
 
             Rect severityLabelRect = new Rect(area.x + area.width * 0.62f, partsY, area.width * 0.15f, rowHeight);
-            Widgets.Label(severityLabelRect, "Severity:");
+            Widgets.Label(severityLabelRect, LanguageManager.Get("Severity") + ":");
             Rect severitySliderRect = new Rect(area.x + area.width * 0.77f, partsY + 4f, area.width * 0.23f, rowHeight - 8f);
             if (item.severityRange == default)
             {
@@ -176,7 +176,7 @@ namespace FactionGearCustomizer.UI.Panels
             else
             {
                 Rect placeholderRect = infoRect.ContractedBy(6f);
-                Widgets.Label(placeholderRect, "Select a Hediff to view details.");
+                Widgets.Label(placeholderRect, LanguageManager.Get("SelectHediffToViewDetails"));
             }
         }
 
@@ -207,7 +207,7 @@ namespace FactionGearCustomizer.UI.Panels
 
             Rect labelRect = removeBtnRect.ContractedBy(3f);
             GUI.color = isMouseOver ? Color.white : new Color(0.9f, 0.7f, 0.7f);
-            Widgets.Label(labelRect, "Remove");
+            Widgets.Label(labelRect, LanguageManager.Get("Remove"));
             GUI.color = originalColor;
         }
 

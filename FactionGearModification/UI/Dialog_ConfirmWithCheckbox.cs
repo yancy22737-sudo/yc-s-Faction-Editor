@@ -65,14 +65,14 @@ namespace FactionGearCustomizer.UI
         {
             Rect titleRect = new Rect(inRect.x, inRect.y, inRect.width, 30f);
             Text.Font = GameFont.Medium;
-            Widgets.Label(titleRect, "Confirm");
+            Widgets.Label(titleRect, LanguageManager.Get("Confirm"));
 
             Rect textRect = new Rect(inRect.x, titleRect.yMax + 10f, inRect.width, inRect.height - 100f);
             Text.Font = GameFont.Small;
             Widgets.Label(textRect, text);
 
             Rect checkboxRect = new Rect(inRect.x, textRect.yMax + 15f, inRect.width, 24f);
-            Widgets.CheckboxLabeled(checkboxRect, "不再提示 (Don't show again)", ref doNotShowAgain);
+            Widgets.CheckboxLabeled(checkboxRect, LanguageManager.Get("DontShowAgain"), ref doNotShowAgain);
 
             float buttonY = inRect.yMax - buttonHeight - 10f;
             float buttonWidth = (inRect.width - 30f) / 2f;

@@ -201,7 +201,7 @@ namespace FactionGearCustomizer
         private static void DrawTopBar(Rect inRect)
         {
             // Pre-calculate version info for layout
-            string versionLabel = "ver: " + ModVersion.Current;
+            string versionLabel = $"{LanguageManager.Get("Version")}: {ModVersion.Current}";
             Vector2 verSize = Text.CalcSize(versionLabel);
             float gap = 24f; // Gap of roughly one character width
 
@@ -230,24 +230,24 @@ namespace FactionGearCustomizer
             WidgetRow buttonRow = new WidgetRow(inRect.x, inRect.y, UIDirection.RightThenDown, inRect.width, 4f);
 
             GUI.color = IsDirty ? Color.green : Color.white;
-            string saveTooltip = "Save changes to current game";
+            string saveTooltip = LanguageManager.Get("SaveChangesToGame");
             if (!string.IsNullOrEmpty(FactionGearCustomizerMod.Settings.currentPresetName))
             {
-                saveTooltip += $"\nAnd update active preset: '{FactionGearCustomizerMod.Settings.currentPresetName}'";
+                saveTooltip += $"\n{LanguageManager.Get("PresetUpdated", FactionGearCustomizerMod.Settings.currentPresetName)}";
             }
 
-            if (buttonRow.ButtonText("Apply & Save", saveTooltip))
+            if (buttonRow.ButtonText(LanguageManager.Get("Apply") + " & " + LanguageManager.Get("Save"), saveTooltip))
             {
                 SaveChanges();
-                Messages.Message("Settings saved successfully!", MessageTypeDefOf.PositiveEvent);
+                Messages.Message(LanguageManager.Get("SettingsSaved"), MessageTypeDefOf.PositiveEvent);
                 if (FactionGearCustomizerMod.Settings.presets.Count == 0)
                 {
                     Find.WindowStack.Add(new PresetManagerWindow());
-                    Messages.Message("Tip: Please create a preset to safely back up your hard work!", MessageTypeDefOf.NeutralEvent);
+                    Messages.Message(LanguageManager.Get("TipCreatePreset"), MessageTypeDefOf.NeutralEvent);
                 }
             }
             GUI.color = Color.cyan;
-            if (buttonRow.ButtonText("Presets", "Manage gear presets"))
+            if (buttonRow.ButtonText(LanguageManager.Get("Presets"), "Manage gear presets"))
             {
                 Find.WindowStack.Add(new PresetManagerWindow());
             }
@@ -258,7 +258,7 @@ namespace FactionGearCustomizer
             if (!string.IsNullOrEmpty(currentPreset))
             {
                 GUI.color = new Color(0.6f, 1f, 0.6f);
-                string fullLabel = $"[Active: {currentPreset}]";
+                string fullLabel = $"[{LanguageManager.Get("Active")}: {currentPreset}]";
                 // Truncate to avoid UI overflow if name is too long
                 Rect labelRect = buttonRow.Label(fullLabel.Truncate(250f));
                 if (Mouse.IsOver(labelRect))
@@ -270,32 +270,32 @@ namespace FactionGearCustomizer
             else
             {
                 GUI.color = Color.gray;
-                buttonRow.Label("[No Preset]");
+                buttonRow.Label(LanguageManager.Get("NoPreset"));
                 GUI.color = Color.white;
             }
 
             bool forceIgnore = FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
-            if (buttonRow.ButtonText($"Force Ignore: {(forceIgnore ? "ON" : "OFF")}", "Force remove conflicting apparel/weapons and ignore budget limits. Pawns will attempt to equip all possible items from the configured list which allows you to ignore constraints and always create god-tier units."))
+            if (buttonRow.ButtonText($"{LanguageManager.Get("ForceIgnore")}: {(forceIgnore ? "ON" : "OFF")}", LanguageManager.Get("ForceIgnoreTooltip")))
             {
                 FactionGearCustomizerMod.Settings.forceIgnoreRestrictions = !FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
                 MarkDirty();
             }
 
-            if (buttonRow.ButtonText("Reset Options ▼"))
+            if (buttonRow.ButtonText($"{LanguageManager.Get("Reset")} {LanguageManager.Get("Options")} ▼"))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>
                 {
-                    new FloatMenuOption("Reset Filters", EditorSession.ResetFilters),
-                    new FloatMenuOption("Reset Current Kind", ResetCurrentKind),
-                    new FloatMenuOption("Load Default Faction", () => {
+                    new FloatMenuOption(LanguageManager.Get("ResetFilters"), EditorSession.ResetFilters),
+                    new FloatMenuOption(LanguageManager.Get("ResetCurrentKind"), ResetCurrentKind),
+                    new FloatMenuOption(LanguageManager.Get("LoadDefaultFaction"), () => {
                         if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName))
                         {
                             FactionGearManager.LoadDefaultPresets(EditorSession.SelectedFactionDefName);
                             MarkDirty();
                         }
                     }),
-                    new FloatMenuOption("Reset Current Faction", ResetCurrentFaction),
-                    new FloatMenuOption("Reset EVERYTHING", () => {
+                    new FloatMenuOption(LanguageManager.Get("ResetCurrentFaction"), ResetCurrentFaction),
+                    new FloatMenuOption(LanguageManager.Get("ResetEVERYTHING"), () => {
                         FactionGearCustomizerMod.Settings.ResetToDefault();
                         MarkDirty();
                     }, MenuOptionPriority.High, null, null, 0f, null, null, true, 0)

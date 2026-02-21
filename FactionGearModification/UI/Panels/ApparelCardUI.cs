@@ -96,7 +96,7 @@ namespace FactionGearCustomizer.UI.Panels
             DrawQualitySelector(qualRect, item);
 
             Rect bioRect = new Rect(area.x + area.width * 0.62f, contentY, area.width * 0.38f, rowHeight);
-            Widgets.CheckboxLabeled(bioRect, "Biocode", ref item.Biocode);
+            Widgets.CheckboxLabeled(bioRect, LanguageManager.Get("Biocode"), ref item.Biocode);
             contentY += rowHeight + gap;
 
             // Row 3: Selection Mode
@@ -108,7 +108,7 @@ namespace FactionGearCustomizer.UI.Panels
             if (item.SelectionMode != ApparelSelectionMode.AlwaysTake)
             {
                 Rect chanceRect = new Rect(area.x, contentY, area.width, rowHeight);
-                item.SelectionChance = Widgets.HorizontalSlider(chanceRect, item.SelectionChance, 0f, 1f, true, $"Chance: {item.SelectionChance:P0}");
+                item.SelectionChance = Widgets.HorizontalSlider(chanceRect, item.SelectionChance, 0f, 1f, true, LanguageManager.Get("Chance") + ": " + item.SelectionChance.ToString("P0"));
                 
                 if (Mouse.IsOver(chanceRect))
                 {
@@ -192,7 +192,7 @@ namespace FactionGearCustomizer.UI.Panels
 
             Rect labelRect = removeBtnRect.ContractedBy(3f);
             GUI.color = isMouseOver ? Color.white : new Color(0.9f, 0.7f, 0.7f);
-            Widgets.Label(labelRect, "Remove");
+            Widgets.Label(labelRect, LanguageManager.Get("Remove"));
             GUI.color = originalColor;
         }
     }

@@ -11,6 +11,7 @@ namespace FactionGearCustomizer
 
         public FactionGearCustomizerMod(ModContentPack content) : base(content)
         {
+            LanguageManager.Initialize(content);
             Settings = GetSettings<FactionGearCustomizerSettings>();
             Log.Message("[FactionGearCustomizer] Loading success!");
             var harmony = new Harmony("yancy.factiongearcustomizer");

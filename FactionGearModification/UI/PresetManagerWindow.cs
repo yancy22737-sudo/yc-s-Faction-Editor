@@ -50,8 +50,8 @@ namespace FactionGearCustomizer
             Rect innerRect = rect.ContractedBy(5f);
             
             // 1. 顶部标题和搜索框
-            Widgets.Label(new Rect(innerRect.x, innerRect.y, innerRect.width, 24f), "Saved Presets");
-            presetSearchText = DrawTextFieldWithPlaceholder(new Rect(innerRect.x, innerRect.y + 24f, innerRect.width, 24f), presetSearchText, "Search presets...");
+            Widgets.Label(new Rect(innerRect.x, innerRect.y, innerRect.width, 24f), LanguageManager.Get("SavedPresets"));
+            presetSearchText = DrawTextFieldWithPlaceholder(new Rect(innerRect.x, innerRect.y + 24f, innerRect.width, 24f), presetSearchText, LanguageManager.Get("SearchPresets") + "...");
             
             // 2. 列表区域动态高度
             float bottomAreaHeight = 95f;
@@ -101,19 +101,19 @@ namespace FactionGearCustomizer
             
             // Import Button
             Rect importRect = new Rect(innerRect.x, bottomY + 5f, innerRect.width, 24f);
-            if (Widgets.ButtonText(importRect, "Import from Clipboard"))
+            if (Widgets.ButtonText(importRect, LanguageManager.Get("ImportFromClipboard")))
             {
                 ImportPreset();
             }
-            TooltipHandler.TipRegion(importRect, "Import a preset from base64 string in your clipboard.");
+            TooltipHandler.TipRegion(importRect, LanguageManager.Get("ImportFromClipboardTooltip"));
             
             Widgets.DrawLineHorizontal(innerRect.x, bottomY + 34f, innerRect.width);
 
             // Create New Section
-            Widgets.Label(new Rect(innerRect.x, bottomY + 40f, innerRect.width, 20f), "Create New:");
-            newPresetName = DrawTextFieldWithPlaceholder(new Rect(innerRect.x, bottomY + 62f, innerRect.width - 65f, 24f), newPresetName, "Name...");
+            Widgets.Label(new Rect(innerRect.x, bottomY + 40f, innerRect.width, 20f), LanguageManager.Get("CreateNew") + ":");
+            newPresetName = DrawTextFieldWithPlaceholder(new Rect(innerRect.x, bottomY + 62f, innerRect.width - 65f, 24f), newPresetName, LanguageManager.Get("Name") + "...");
             
-            if (Widgets.ButtonText(new Rect(innerRect.xMax - 60f, bottomY + 62f, 60f, 24f), "Add"))
+            if (Widgets.ButtonText(new Rect(innerRect.xMax - 60f, bottomY + 62f, 60f, 24f), LanguageManager.Get("Add")))
             {
                 CreateNewPreset();
             }
@@ -125,7 +125,7 @@ namespace FactionGearCustomizer
             if (selectedPreset == null)
             {
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(rect, "Please select a preset from the left list.");
+                Widgets.Label(rect, LanguageManager.Get("SelectPresetFirst"));
                 Text.Anchor = TextAnchor.UpperLeft;
                 return;
             }
@@ -141,12 +141,12 @@ namespace FactionGearCustomizer
             Listing_Standard listing = new Listing_Standard();
             listing.Begin(contentRect);
 
-            Rect labelRect1 = listing.GetRect(Text.CalcHeight("Preset Details:", listing.ColumnWidth));
-            Widgets.Label(labelRect1, "Preset Details:");
+            Rect labelRect1 = listing.GetRect(Text.CalcHeight(LanguageManager.Get("PresetDetails") + ":", listing.ColumnWidth));
+            Widgets.Label(labelRect1, LanguageManager.Get("PresetDetails") + ":");
             
             // Name
             Rect nameRect = listing.GetRect(24f);
-            string newName = DrawTextFieldWithPlaceholder(nameRect, selectedPreset.name, "Preset Name...");
+            string newName = DrawTextFieldWithPlaceholder(nameRect, selectedPreset.name, LanguageManager.Get("PresetName") + "...");
             if (newName != selectedPreset.name)
             {
                 selectedPreset.name = newName;
@@ -155,7 +155,7 @@ namespace FactionGearCustomizer
             
             // Description
             Rect descRect = listing.GetRect(50f);
-            string newDesc = DrawTextFieldWithPlaceholder(descRect, selectedPreset.description, "Description...", true);
+            string newDesc = DrawTextFieldWithPlaceholder(descRect, selectedPreset.description, LanguageManager.Get("Description") + "...", true);
             if (newDesc != selectedPreset.description)
             {
                 selectedPreset.description = newDesc;
@@ -164,36 +164,36 @@ namespace FactionGearCustomizer
             listing.Gap(10f);
             
             // Save/Update Section
-            Rect labelRect2 = listing.GetRect(Text.CalcHeight("<b>Management:</b>", listing.ColumnWidth));
-            Widgets.Label(labelRect2, "<b>Management:</b>");
+            Rect labelRect2 = listing.GetRect(Text.CalcHeight(LanguageManager.Get("Management"), listing.ColumnWidth));
+            Widgets.Label(labelRect2, LanguageManager.Get("Management"));
             
             // Two columns for update buttons
             Rect updateRow = listing.GetRect(30f);
-            if (Widgets.ButtonText(updateRow.LeftHalf().ContractedBy(2f), "Save Name/Desc"))
+            if (Widgets.ButtonText(updateRow.LeftHalf().ContractedBy(2f), LanguageManager.Get("SaveNameDesc")))
             {
                  SavePreset();
-                 Messages.Message("Preset metadata saved.", MessageTypeDefOf.TaskCompletion, false);
+                 Messages.Message(LanguageManager.Get("PresetMetadataSaved"), MessageTypeDefOf.TaskCompletion, false);
             }
             
-            if (Widgets.ButtonText(updateRow.RightHalf().ContractedBy(2f), "Update from Game")) 
+            if (Widgets.ButtonText(updateRow.RightHalf().ContractedBy(2f), LanguageManager.Get("UpdateFromGame"))) 
             {
                 Find.WindowStack.Add(new Dialog_MessageBox(
-                    $"Overwrite preset '{selectedPreset.name}' with current game settings?",
-                    "Yes", delegate { SaveFromCurrentSettings(); Messages.Message("Preset updated from game settings.", MessageTypeDefOf.PositiveEvent); },
-                    "No", null
+                    LanguageManager.Get("OverwritePresetConfirm").Replace("{0}", selectedPreset.name),
+                    LanguageManager.Get("Yes"), delegate { SaveFromCurrentSettings(); Messages.Message(LanguageManager.Get("PresetUpdatedFromGameSettings"), MessageTypeDefOf.PositiveEvent); },
+                    LanguageManager.Get("No"), null
                 ));
             }
-            TooltipHandler.TipRegion(updateRow.RightHalf(), "Overwrite this preset's gear data with your current in-game configuration.");
+            TooltipHandler.TipRegion(updateRow.RightHalf(), LanguageManager.Get("UpdateFromGameTooltip"));
 
             listing.GapLine();
 
             // Mod List
-            listing.Label("Required Mods:");
+            listing.Label(LanguageManager.Get("RequiredMods") + ":");
             DrawModList(listing.GetRect(100f)); 
             listing.Gap(10f);
 
-            Rect labelRect4 = listing.GetRect(Text.CalcHeight("Faction Preview:", listing.ColumnWidth));
-            Widgets.Label(labelRect4, "Faction Preview:");
+            Rect labelRect4 = listing.GetRect(Text.CalcHeight(LanguageManager.Get("FactionPreview") + ":", listing.ColumnWidth));
+            Widgets.Label(labelRect4, LanguageManager.Get("FactionPreview") + ":");
             // 使用剩余空间，但要保留底部按钮空间
             float remainingHeight = contentRect.height - listing.CurHeight;
             if (remainingHeight > 50f)
@@ -207,29 +207,29 @@ namespace FactionGearCustomizer
             Rect bottomRect = new Rect(innerRect.x, innerRect.yMax - 30f, innerRect.width, 30f);
             float btnWidth = (bottomRect.width - 10f) / 3f;
             
-            if (Widgets.ButtonText(new Rect(bottomRect.x, bottomRect.y, btnWidth, 30f), "Load Preset")) ApplyPreset();
-            TooltipHandler.TipRegion(new Rect(bottomRect.x, bottomRect.y, btnWidth, 30f), "Apply this preset to your game.");
+            if (Widgets.ButtonText(new Rect(bottomRect.x, bottomRect.y, btnWidth, 30f), LanguageManager.Get("LoadPreset"))) ApplyPreset();
+            TooltipHandler.TipRegion(new Rect(bottomRect.x, bottomRect.y, btnWidth, 30f), LanguageManager.Get("LoadPresetTooltip"));
             
-            if (Widgets.ButtonText(new Rect(bottomRect.x + btnWidth + 5f, bottomRect.y, btnWidth, 30f), "Export")) ExportPreset();
-            TooltipHandler.TipRegion(new Rect(bottomRect.x + btnWidth + 5f, bottomRect.y, btnWidth, 30f), "Copy preset to clipboard for sharing.");
+            if (Widgets.ButtonText(new Rect(bottomRect.x + btnWidth + 5f, bottomRect.y, btnWidth, 30f), LanguageManager.Get("Export"))) ExportPreset();
+            TooltipHandler.TipRegion(new Rect(bottomRect.x + btnWidth + 5f, bottomRect.y, btnWidth, 30f), LanguageManager.Get("ExportTooltip"));
             
             GUI.color = new Color(1f, 0.5f, 0.5f);
-            if (Widgets.ButtonText(new Rect(bottomRect.x + (btnWidth + 5f) * 2, bottomRect.y, btnWidth, 30f), "Delete")) DeletePreset();
+            if (Widgets.ButtonText(new Rect(bottomRect.x + (btnWidth + 5f) * 2, bottomRect.y, btnWidth, 30f), LanguageManager.Get("Delete"))) DeletePreset();
             GUI.color = Color.white;
         }
 
         private void CreateNewPreset()
         {
             // 如果玩家没填名字，自动生成一个带时间戳的默认名
-            string finalName = string.IsNullOrEmpty(newPresetName) ? "New Preset " + DateTime.Now.ToString("MM-dd HH:mm") : newPresetName;
+            string finalName = string.IsNullOrEmpty(newPresetName) ? LanguageManager.Get("NewPreset") + " " + DateTime.Now.ToString("MM-dd HH:mm") : newPresetName;
             
             var existingPreset = FactionGearCustomizerMod.Settings.presets.FirstOrDefault(p => p.name == finalName);
             if (existingPreset != null)
             {
                 // 如果名称已存在，弹出覆盖确认对话框
                 Find.WindowStack.Add(new Dialog_MessageBox(
-                    $"A preset named '{finalName}' already exists. Do you want to overwrite it?",
-                    "Overwrite", delegate
+                    LanguageManager.Get("PresetAlreadyExists").Replace("{0}", finalName),
+                    LanguageManager.Get("Overwrite"), delegate
                     {
                         // 覆盖现有预设
                         existingPreset.SaveFromCurrentSettings(FactionGearCustomizerMod.Settings.factionGearData);
@@ -238,9 +238,9 @@ namespace FactionGearCustomizer
                         selectedPreset = existingPreset;
                         newPresetName = "";
                         newPresetDescription = "";
-                        Messages.Message($"Preset '{finalName}' overwritten with current settings!", MessageTypeDefOf.PositiveEvent);
+                        Messages.Message(LanguageManager.Get("PresetOverwritten").Replace("{0}", finalName), MessageTypeDefOf.PositiveEvent);
                     },
-                    "Cancel", null, null, true));
+                    LanguageManager.Get("Cancel"), null, null, true));
             }
             else
             {
@@ -449,13 +449,13 @@ namespace FactionGearCustomizer
                 else
                 {
                     Log.Message("[FactionGearCustomizer] Import failed: Invalid preset data!");
-                    Messages.Message("Import failed: Invalid preset data in clipboard!", MessageTypeDefOf.RejectInput, false);
+                    Messages.Message(LanguageManager.Get("ImportFailedInvalidData"), MessageTypeDefOf.RejectInput, false);
                 }
             }
             catch (System.Exception e)
             {
                 Log.Message("[FactionGearCustomizer] Import failed: " + e.Message);
-                Messages.Message("Import failed: " + e.Message, MessageTypeDefOf.RejectInput, false);
+                Messages.Message(LanguageManager.Get("ImportFailed").Replace("{0}", e.Message), MessageTypeDefOf.RejectInput, false);
             }
         }
 
@@ -492,7 +492,7 @@ namespace FactionGearCustomizer
             }
             else
             {
-                Widgets.Label(rect, "No faction data in preset.");
+                Widgets.Label(rect, LanguageManager.Get("NoFactionDataInPreset"));
             }
         }
 
@@ -512,11 +512,11 @@ namespace FactionGearCustomizer
                     GUI.color = isActive ? Color.green : Color.red;
                     
                     Rect labelRect = new Rect(0, y, innerRect.width, 24f);
-                    Widgets.Label(labelRect, mod + (isActive ? "" : " (Missing)"));
+                    Widgets.Label(labelRect, mod + (isActive ? "" : " " + LanguageManager.Get("Missing")));
                     
                     if (!isActive)
                     {
-                        TooltipHandler.TipRegion(labelRect, "This mod is not active in your current game.");
+                        TooltipHandler.TipRegion(labelRect, LanguageManager.Get("ModNotActiveTooltip"));
                     }
                     
                     y += 24f;
@@ -527,7 +527,7 @@ namespace FactionGearCustomizer
             }
             else
             {
-                Widgets.Label(rect, "No required mods.");
+                Widgets.Label(rect, LanguageManager.Get("NoRequiredMods"));
             }
         }
 

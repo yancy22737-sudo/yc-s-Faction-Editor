@@ -34,7 +34,7 @@ namespace FactionGearCustomizer.UI.Panels
             Rect titleRect = new Rect(innerRect.x, innerRect.y, innerRect.width, 24f);
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(titleRect, "Item Library");
+            Widgets.Label(titleRect, LanguageManager.Get("ItemLibrary"));
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.UpperLeft;
             
@@ -50,7 +50,7 @@ namespace FactionGearCustomizer.UI.Panels
 
             if (canAddAll)
             {
-                if (Widgets.ButtonText(addAllButtonRect, "Add All"))
+                if (Widgets.ButtonText(addAllButtonRect, LanguageManager.Get("AddAll")))
                 {
                     if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName) && !string.IsNullOrEmpty(EditorSession.SelectedKindDefName))
                     {
@@ -112,9 +112,9 @@ namespace FactionGearCustomizer.UI.Panels
             else
             {
                  GUI.color = new Color(1f, 1f, 1f, 0.3f);
-                 Widgets.ButtonText(addAllButtonRect, "Add All");
+                 Widgets.ButtonText(addAllButtonRect, LanguageManager.Get("AddAll"));
                  GUI.color = Color.white;
-                 TooltipHandler.TipRegion(addAllButtonRect, "Cannot add items in current Advanced Mode tab.");
+                 TooltipHandler.TipRegion(addAllButtonRect, LanguageManager.Get("CannotAddItemsInCurrentTabTooltip"));
             }
 
             Rect filterRect = new Rect(innerRect.x, innerRect.y + 26f, innerRect.width, 120f);
@@ -163,7 +163,7 @@ namespace FactionGearCustomizer.UI.Panels
             Rect searchInputRect = searchRect.RightPartPixels(searchRect.width - 60f);
             
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(searchLabelRect, "Search:");
+            Widgets.Label(searchLabelRect, LanguageManager.Get("Search") + ":");
             Text.Anchor = TextAnchor.UpperLeft;
             
             string newSearchText = Widgets.TextField(searchInputRect, EditorSession.SearchText);
@@ -173,7 +173,7 @@ namespace FactionGearCustomizer.UI.Panels
                 var color = GUI.color;
                 Text.Anchor = TextAnchor.MiddleLeft;
                 GUI.color = new Color(0.6f, 0.6f, 0.6f, 1f);
-                Widgets.Label(new Rect(searchInputRect.x + 5f, searchInputRect.y, searchInputRect.width - 5f, searchInputRect.height), "Search...");
+                Widgets.Label(new Rect(searchInputRect.x + 5f, searchInputRect.y, searchInputRect.width - 5f, searchInputRect.height), LanguageManager.Get("Search") + "...");
                 GUI.color = color;
                 Text.Anchor = anchor;
             }
@@ -497,7 +497,7 @@ namespace FactionGearCustomizer.UI.Panels
                 Widgets.Label(nameRect, itemName);
                 Text.Font = GameFont.Tiny;
                 GUI.color = Color.gray;
-                Widgets.Label(modRect, $"出自：{thingDef.modContentPack.Name}");
+                Widgets.Label(modRect, LanguageManager.Get("FromMod") + ": " + thingDef.modContentPack.Name);
                 GUI.color = Color.white;
                 Text.Font = GameFont.Small;
             }

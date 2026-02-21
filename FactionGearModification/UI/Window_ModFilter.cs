@@ -34,7 +34,7 @@ namespace FactionGearCustomizer.UI
         public override void DoWindowContents(Rect inRect)
         {
             Text.Font = GameFont.Medium;
-            Widgets.Label(new Rect(0f, 0f, inRect.width, 30f), "Mod Filter");
+            Widgets.Label(new Rect(0f, 0f, inRect.width, 30f), LanguageManager.Get("ModFilter"));
             Text.Font = GameFont.Small;
 
             // Search

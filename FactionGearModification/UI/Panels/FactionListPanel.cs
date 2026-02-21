@@ -28,9 +28,9 @@ namespace FactionGearCustomizer.UI.Panels
             Text.Anchor = TextAnchor.MiddleLeft;
             
             // Title "Factions"
-            Vector2 titleSize = Text.CalcSize("Factions");
+            Vector2 titleSize = Text.CalcSize(LanguageManager.Get("Factions"));
             Rect titleRect = new Rect(innerRect.x, innerRect.y, titleSize.x + 10f, 30f);
-            Widgets.Label(titleRect, "Factions");
+            Widgets.Label(titleRect, LanguageManager.Get("Factions"));
             
             // "Real Name" checkbox
             if (Current.ProgramState == ProgramState.Playing)
@@ -45,14 +45,14 @@ namespace FactionGearCustomizer.UI.Panels
                 }
                 
                 Text.Font = GameFont.Tiny;
-                string labelText = "in-game";
+                string labelText = LanguageManager.Get("InGame");
                 Vector2 labelSize = Text.CalcSize(labelText);
                 Rect labelRect = new Rect(checkboxRect.xMax + 4f, innerRect.y + 8f, labelSize.x + 5f, 20f);
                 GUI.color = Color.gray;
                 Widgets.Label(labelRect, labelText);
                 GUI.color = Color.white;
                 
-                string tip = "Show in-game faction names.\nGrayed out if faction is not present in current game.";
+                string tip = LanguageManager.Get("ShowInGameFactionNamesTooltip");
                 TooltipHandler.TipRegion(checkboxRect, tip);
                 TooltipHandler.TipRegion(labelRect, tip);
                 

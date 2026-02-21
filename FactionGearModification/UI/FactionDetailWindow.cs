@@ -45,7 +45,7 @@ namespace FactionGearCustomizer.UI
             }
 
             Text.Font = GameFont.Medium;
-            Widgets.Label(new Rect(0f, 0f, inRect.width, 35f), "Edit Faction Details: " + factionDef.defName);
+            Widgets.Label(new Rect(0f, 0f, inRect.width, 35f), LanguageManager.Get("EditFactionDetails") + ": " + factionDef.defName);
             Text.Font = GameFont.Small;
 
             Listing_Standard listing = new Listing_Standard();
@@ -53,12 +53,12 @@ namespace FactionGearCustomizer.UI
             listing.Begin(outRect);
 
             // Label
-            listing.Label("Label:");
+            listing.Label(LanguageManager.Get("Label") + ":");
             tempLabel = listing.TextEntry(tempLabel);
             listing.Gap();
 
             // Tech Level
-            listing.Label("Tech Level:");
+            listing.Label(LanguageManager.Get("TechLevel") + ":");
             if (listing.ButtonText(tempTechLevel.ToString()))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
@@ -71,7 +71,7 @@ namespace FactionGearCustomizer.UI
             listing.Gap();
 
             // Description
-            listing.Label("Description:");
+            listing.Label(LanguageManager.Get("Description") + ":");
             Rect descRect = listing.GetRect(200f);
             tempDescription = Widgets.TextArea(descRect, tempDescription);
             listing.Gap();
