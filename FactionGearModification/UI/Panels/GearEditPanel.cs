@@ -4,6 +4,7 @@ using System.Linq;
 using RimWorld;
 using UnityEngine;
 using Verse;
+using FactionGearModification.UI;
 
 namespace FactionGearCustomizer.UI.Panels
 {
@@ -12,6 +13,7 @@ namespace FactionGearCustomizer.UI.Panels
         public static readonly BodyPartGroupDef GroupShoulders = DefDatabase<BodyPartGroupDef>.GetNamedSilentFail("Shoulders");
         public static readonly BodyPartGroupDef GroupArms = DefDatabase<BodyPartGroupDef>.GetNamedSilentFail("Arms");
         public static readonly BodyPartGroupDef GroupHands = DefDatabase<BodyPartGroupDef>.GetNamedSilentFail("Hands");
+        public static readonly BodyPartGroupDef GroupWaist = DefDatabase<BodyPartGroupDef>.GetNamedSilentFail("Waist");
         public static readonly BodyPartGroupDef GroupLegs = DefDatabase<BodyPartGroupDef>.GetNamedSilentFail("Legs");
         public static readonly BodyPartGroupDef GroupFeet = DefDatabase<BodyPartGroupDef>.GetNamedSilentFail("Feet");
         public static void Draw(Rect rect)
@@ -130,28 +132,6 @@ namespace FactionGearCustomizer.UI.Panels
                 Rect previewButtonRect = new Rect(headerRect.xMax - 80f, headerRect.y, 80f, 24f);
                 if (Widgets.ButtonText(previewButtonRect, "Preview"))
                 {
-                    if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName) && !string.IsNullOrEmpty(EditorSession.SelectedKindDefName))
-                    {
-                        var fDef = DefDatabase<FactionDef>.GetNamedSilentFail(EditorSession.SelectedFactionDefName);
-                        var kDef = DefDatabase<PawnKindDef>.GetNamedSilentFail(EditorSession.SelectedKindDefName);
-                        if (fDef != null && kDef != null)
-                        {
-                            if (Find.FactionManager.FirstFactionOfDef(fDef) != null)
-                            {
-                                Find.WindowStack.Add(new FactionGearPreviewWindow(kDef, fDef));
-                            }
-                            else
-                            {
-                                Messages.Message("Cannot preview: Faction not present in current game.", MessageTypeDefOf.RejectInput, false);
-                            }
-                        }
-                    }
-                }
-                TooltipHandler.TipRegion(previewButtonRect, "Preview generated pawn with current settings (In-game only)");
-
-                Rect previewAllRect = new Rect(previewButtonRect.x - 85f, headerRect.y, 80f, 24f);
-                if (Widgets.ButtonText(previewAllRect, "Preview All"))
-                {
                     if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName))
                     {
                         var fDef = DefDatabase<FactionDef>.GetNamedSilentFail(EditorSession.SelectedFactionDefName);
@@ -169,7 +149,7 @@ namespace FactionGearCustomizer.UI.Panels
                         }
                     }
                 }
-                TooltipHandler.TipRegion(previewAllRect, "Preview ALL kinds in this faction (In-game only)");
+                TooltipHandler.TipRegion(previewButtonRect, "Preview ALL kinds in this faction (In-game only)");
             }
 
             Rect contentRect = new Rect(innerRect.x, innerRect.y + 35f, innerRect.width, innerRect.height - 35f);
@@ -200,7 +180,18 @@ namespace FactionGearCustomizer.UI.Panels
             Rect clearButtonRect = new Rect(innerRect.xMax - 70f, innerRect.y, 70f, 20f);
             if (Widgets.ButtonText(clearButtonRect, "Clear All"))
             {
-                if (currentKindData != null) { ClearAllGear(currentKindData); }
+                if (currentKindData != null) 
+                {
+                    Dialog_ConfirmWithCheckbox.ShowIfNotDismissed(
+                        "ClearAllGearConfirm",
+                        "Are you sure you want to clear ALL gear for this kind?",
+                        delegate { ClearAllGear(currentKindData); },
+                        "Clear All",
+                        "Cancel",
+                        null,
+                        true
+                    );
+                }
             }
 
             Rect aaButtonRect = new Rect(clearButtonRect.x - 115f, innerRect.y, 110f, 20f);
@@ -231,7 +222,15 @@ namespace FactionGearCustomizer.UI.Panels
             {
                 if (currentKindData != null)
                 {
-                    ClearCategoryGear(currentKindData, EditorSession.SelectedCategory);
+                    Dialog_ConfirmWithCheckbox.ShowIfNotDismissed(
+                        "ClearCategoryGearConfirm",
+                        "Are you sure you want to clear all items in this category?",
+                        delegate { ClearCategoryGear(currentKindData, EditorSession.SelectedCategory); },
+                        "Clear",
+                        "Cancel",
+                        null,
+                        true
+                    );
                 }
             }
             TooltipHandler.TipRegion(clearCatRect, "Clear all items in the current category.");
@@ -240,11 +239,12 @@ namespace FactionGearCustomizer.UI.Panels
             DrawCategoryTabs(tabRect);
 
             float previewHeight = 0f;
+            float layerHeaderHeight = 24f;
             if (EditorSession.SelectedCategory == GearCategory.Apparel || EditorSession.SelectedCategory == GearCategory.Armors)
             {
-                previewHeight = 150f; 
+                previewHeight = 230f; 
             }
-            float statsHeight = 24f + previewHeight;
+            float statsHeight = 24f + (EditorSession.LayerPreviewHidden ? layerHeaderHeight : layerHeaderHeight + previewHeight);
             
             float listStartY = tabRect.yMax + 5f;
             Rect listOutRect = new Rect(innerRect.x, listStartY, innerRect.width, innerRect.height - (listStartY - innerRect.y) - statsHeight);
@@ -282,7 +282,10 @@ namespace FactionGearCustomizer.UI.Panels
             if (advancedItems.Any())
             {
                 contentHeight += 30f; // Header
-                contentHeight += advancedItems.Count * 30f;
+                foreach (var advItem in advancedItems)
+                {
+                    contentHeight += (advItem == EditorSession.ExpandedSpecItem) ? 60f : 30f;
+                }
             }
             
             Rect listViewRect = new Rect(0, 0, listOutRect.width - 16f, Mathf.Max(contentHeight, listOutRect.height));
@@ -305,10 +308,11 @@ namespace FactionGearCustomizer.UI.Panels
             if (advancedItems.Any())
             {
                 gearListing.GapLine();
-                gearListing.Label("<b>Advanced/Specific Items</b>");
+                WidgetsUtils.Label(gearListing, "<b>Advanced/Specific Items</b>");
                 foreach (var advItem in advancedItems)
                 {
-                    Rect rowRect = gearListing.GetRect(28f);
+                    bool isAdvExpanded = (advItem == EditorSession.ExpandedSpecItem);
+                    Rect rowRect = gearListing.GetRect(isAdvExpanded ? 56f : 28f);
                     DrawAdvancedItemSimple(rowRect, advItem, currentKindData);
                     gearListing.Gap(2f);
                 }
@@ -321,12 +325,34 @@ namespace FactionGearCustomizer.UI.Panels
             {
                 float currentY = innerRect.yMax - statsHeight;
                 
-                if (previewHeight > 0)
+                /*
+                if (previewHeight > 0 || EditorSession.LayerPreviewHidden)
                 {
-                    Rect previewRect = new Rect(innerRect.x, currentY, innerRect.width, previewHeight);
-                    DrawLayerPreview(previewRect, currentKindData);
-                    currentY += previewHeight;
+                    float layerHeaderHeight = 24f;
+                    Rect headerRect = new Rect(innerRect.x, currentY, innerRect.width, layerHeaderHeight);
+                    Widgets.DrawMenuSection(headerRect);
+                    Rect labelRect = new Rect(headerRect.x + 10f, headerRect.y, 100f, layerHeaderHeight);
+                    Text.Font = GameFont.Small;
+                    Text.Anchor = TextAnchor.MiddleLeft;
+                    Widgets.Label(labelRect, "Layer Preview");
+                    Text.Anchor = TextAnchor.UpperLeft;
+                    Text.Font = GameFont.Small;
+
+                    Rect toggleRect = new Rect(headerRect.xMax - 70f, headerRect.y + 2f, 60f, 20f);
+                    if (Widgets.ButtonText(toggleRect, EditorSession.LayerPreviewHidden ? "Show" : "Hide"))
+                    {
+                        EditorSession.LayerPreviewHidden = !EditorSession.LayerPreviewHidden;
+                    }
+                    currentY += layerHeaderHeight;
+
+                    if (!EditorSession.LayerPreviewHidden)
+                    {
+                        Rect previewRect = new Rect(innerRect.x, currentY, innerRect.width, previewHeight);
+                        DrawLayerPreview(previewRect, currentKindData);
+                        currentY += previewHeight;
+                    }
                 }
+                */
                 
                 Rect statsRect = new Rect(innerRect.x, currentY, innerRect.width, 24f);
                 float avgValue = FactionGearEditor.GetAverageValue(currentKindData);
@@ -358,7 +384,15 @@ namespace FactionGearCustomizer.UI.Panels
             Rect clearButtonRect = new Rect(headerRect.xMax - 70f, headerRect.y, 70f, 20f);
             if (Widgets.ButtonText(clearButtonRect, "Clear All"))
             {
-                ClearAllGear(kindData);
+                Dialog_ConfirmWithCheckbox.ShowIfNotDismissed(
+                    "ClearAllGearConfirm",
+                    "Are you sure you want to clear ALL gear for this kind?",
+                    delegate { ClearAllGear(kindData); },
+                    "Clear All",
+                    "Cancel",
+                    null,
+                    true
+                );
             }
 
             Rect aaButtonRect = new Rect(clearButtonRect.x - 115f, headerRect.y, 110f, 20f);
@@ -424,7 +458,7 @@ namespace FactionGearCustomizer.UI.Panels
                      height += 200f;
             }
             else if (EditorSession.CurrentAdvancedTab == AdvancedTab.Hediffs && !kindData.ForcedHediffs.NullOrEmpty())
-                 height += kindData.ForcedHediffs.Count * 120f + 100f;
+                 height += kindData.ForcedHediffs.Count * 140f + 100f;
             else if (EditorSession.CurrentAdvancedTab == AdvancedTab.Hediffs)
                  height = 200f;
             else 
@@ -569,12 +603,15 @@ namespace FactionGearCustomizer.UI.Panels
         
         private static void DrawAdvancedGeneral(Listing_Standard ui, KindGearData kindData)
         {
-            ui.Label("<b>General Overrides</b>");
+            WidgetsUtils.Label(ui, "<b>General Overrides</b>");
             ui.Gap();
+
+            bool forceIgnore = FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
+
             DrawOverrideEnum(ui, "Item Quality", kindData.ItemQuality, val => { UndoManager.RecordState(kindData); kindData.ItemQuality = val; FactionGearEditor.MarkDirty(); });
-            DrawOverrideFloatRange(ui, "Apparel Money", ref kindData.ApparelMoney, val => { UndoManager.RecordState(kindData); kindData.ApparelMoney = val; FactionGearEditor.MarkDirty(); });
-            DrawOverrideFloatRange(ui, "Weapon Money", ref kindData.WeaponMoney, val => { UndoManager.RecordState(kindData); kindData.WeaponMoney = val; FactionGearEditor.MarkDirty(); });
-            DrawOverrideFloatRange(ui, "Tech Money", ref kindData.TechMoney, val => { UndoManager.RecordState(kindData); kindData.TechMoney = val; FactionGearEditor.MarkDirty(); });
+            DrawOverrideFloatRange(ui, "Apparel Budget", ref kindData.ApparelMoney, val => { UndoManager.RecordState(kindData); kindData.ApparelMoney = val; FactionGearEditor.MarkDirty(); }, forceIgnore);
+            DrawOverrideFloatRange(ui, "Weapon Budget", ref kindData.WeaponMoney, val => { UndoManager.RecordState(kindData); kindData.WeaponMoney = val; FactionGearEditor.MarkDirty(); }, forceIgnore);
+            DrawOverrideFloatRange(ui, "Tech Budget", ref kindData.TechMoney, val => { UndoManager.RecordState(kindData); kindData.TechMoney = val; FactionGearEditor.MarkDirty(); }, forceIgnore);
 
             Rect colorRect = ui.GetRect(28f);
             Widgets.Label(colorRect.LeftHalf(), "Apparel Color:");
@@ -610,7 +647,7 @@ namespace FactionGearCustomizer.UI.Panels
             if (kindData.ForceNaked) return;
             ui.CheckboxLabeled("Force Only Selected (Strip others)", ref kindData.ForceOnlySelected);
             ui.GapLine();
-            ui.Label("<b>Specific Apparel (Advanced)</b>");
+            WidgetsUtils.Label(ui, "<b>Specific Apparel (Advanced)</b>");
             if (ui.ButtonText("Add New Apparel"))
             {
                 if (kindData.SpecificApparel == null) kindData.SpecificApparel = new List<SpecRequirementEdit>();
@@ -621,7 +658,13 @@ namespace FactionGearCustomizer.UI.Panels
             {
                 for (int i = 0; i < kindData.SpecificApparel.Count; i++)
                 {
-                    DrawSpecEdit(ui, kindData.SpecificApparel[i], i, kindData.SpecificApparel);
+                    var item = kindData.SpecificApparel[i];
+                    int index = i;
+                    ApparelCardUI.Draw(ui, item, index, () => 
+                    {
+                        kindData.SpecificApparel.RemoveAt(index);
+                        FactionGearEditor.MarkDirty();
+                    });
                 }
             }
         }
@@ -633,16 +676,15 @@ namespace FactionGearCustomizer.UI.Panels
             
             float biocodeChance = kindData.BiocodeWeaponChance ?? 0f;
             float oldBiocode = biocodeChance;
-            ui.Label($"Biocode Chance: {biocodeChance:P0}");
+            WidgetsUtils.Label(ui, $"Biocode Chance: {biocodeChance:P0}");
             biocodeChance = ui.Slider(biocodeChance, 0f, 1f);
             if (Math.Abs(biocodeChance - oldBiocode) > 0.001f)
             {
                 kindData.BiocodeWeaponChance = biocodeChance;
                 FactionGearEditor.MarkDirty();
             }
-
             ui.GapLine();
-            ui.Label("<b>Specific Weapons (Advanced)</b>");
+            WidgetsUtils.Label(ui, "<b>Specific Weapons (Advanced)</b>");
             if (ui.ButtonText("Add New Weapon"))
             {
                 if (kindData.SpecificWeapons == null) kindData.SpecificWeapons = new List<SpecRequirementEdit>();
@@ -653,14 +695,20 @@ namespace FactionGearCustomizer.UI.Panels
             {
                 for (int i = 0; i < kindData.SpecificWeapons.Count; i++)
                 {
-                    DrawSpecEdit(ui, kindData.SpecificWeapons[i], i, kindData.SpecificWeapons);
+                    var item = kindData.SpecificWeapons[i];
+                    int index = i;
+                    ApparelCardUI.Draw(ui, item, index, () =>
+                    {
+                        kindData.SpecificWeapons.RemoveAt(index);
+                        FactionGearEditor.MarkDirty();
+                    });
                 }
             }
         }
 
         private static void DrawAdvancedHediffs(Listing_Standard ui, KindGearData kindData)
         {
-            ui.Label("<b>Forced Hediffs</b>");
+            WidgetsUtils.Label(ui, "<b>Forced Hediffs</b>");
             if (ui.ButtonText("Add New Hediff"))
             {
                 if (kindData.ForcedHediffs == null) kindData.ForcedHediffs = new List<ForcedHediff>();
@@ -672,35 +720,12 @@ namespace FactionGearCustomizer.UI.Panels
                 for (int i = 0; i < kindData.ForcedHediffs.Count; i++)
                 {
                     var item = kindData.ForcedHediffs[i];
-                    Rect area = ui.GetRect(110f);
-                    Widgets.DrawBoxSolidWithOutline(area, new Color(0.1f, 0.1f, 0.1f, 0.5f), Color.gray);
-                    area = area.ContractedBy(5f);
-                    Listing_Standard sub = new Listing_Standard();
-                    sub.Begin(area);
-                    Rect header = sub.GetRect(24f);
-                    if (Widgets.ButtonText(header.LeftPart(0.7f), item.HediffDef?.LabelCap ?? "Select Hediff"))
+                    int index = i;
+                    HediffCardUI.Draw(ui, item, index, () =>
                     {
-                        List<FloatMenuOption> options = new List<FloatMenuOption>();
-                        foreach (var def in DefDatabase<HediffDef>.AllDefs.Where(h => h.isBad || h.makesSickThought || h.countsAsAddedPartOrImplant).OrderBy(d => d.label))
-                        {
-                            options.Add(new FloatMenuOption(def.LabelCap, () => { item.HediffDef = def; FactionGearEditor.MarkDirty(); }));
-                        }
-                        Find.WindowStack.Add(new FloatMenu(options));
-                    }
-                    if (Widgets.ButtonText(header.RightPart(0.2f), "Remove"))
-                    {
-                        kindData.ForcedHediffs.RemoveAt(i);
+                        kindData.ForcedHediffs.RemoveAt(index);
                         FactionGearEditor.MarkDirty();
-                        sub.End();
-                        continue;
-                    }
-                    Rect rangeRect = sub.GetRect(24f);
-                    Widgets.Label(rangeRect.LeftHalf(), "Parts Count Range:");
-                    Widgets.IntRange(rangeRect.RightHalf(), 1234 + i, ref item.maxPartsRange, 1, 10);
-                    Rect chanceRect = sub.GetRect(24f);
-                    item.chance = Widgets.HorizontalSlider(chanceRect, item.chance, 0f, 1f, true, $"Chance: {item.chance:P0}");
-                    sub.End();
-                    ui.Gap(5f);
+                    });
                 }
             }
         }
@@ -722,10 +747,19 @@ namespace FactionGearCustomizer.UI.Panels
             }
         }
 
-        private static void DrawOverrideFloatRange(Listing_Standard ui, string label, ref FloatRange? range, Action<FloatRange?> setRange)
+        private static void DrawOverrideFloatRange(Listing_Standard ui, string label, ref FloatRange? range, Action<FloatRange?> setRange, bool forceIgnore = false)
         {
             Rect rect = ui.GetRect(28f);
             Widgets.Label(rect.LeftHalf(), label + ":");
+
+            if (forceIgnore)
+            {
+                GUI.color = Color.gray;
+                Widgets.Label(rect.RightHalf(), "Max (Force Ignore)");
+                GUI.color = Color.white;
+                return;
+            }
+
             if (range.HasValue)
             {
                 if (Widgets.ButtonText(rect.RightHalf(), $"{range.Value.min}-{range.Value.max}"))
@@ -734,7 +768,7 @@ namespace FactionGearCustomizer.UI.Panels
                     return;
                 }
                 FloatRange val = range.Value;
-                Widgets.FloatRange(ui.GetRect(24f), label.GetHashCode(), ref val, 0f, 5000f);
+                WidgetsUtils.FloatRange(ui.GetRect(24f), label.GetHashCode(), ref val, 0f, 5000f);
                 range = val;
             }
             else
@@ -746,89 +780,7 @@ namespace FactionGearCustomizer.UI.Panels
             }
         }
         
-        private static void DrawSpecEdit(Listing_Standard ui, SpecRequirementEdit item, int index, List<SpecRequirementEdit> list)
-        {
-            Rect area = ui.GetRect(160f);
-            Widgets.DrawBoxSolidWithOutline(area, new Color(0.15f, 0.15f, 0.15f, 0.5f), Color.gray);
-            area = area.ContractedBy(5f);
-            Rect iconRect = new Rect(area.x, area.y, 48f, 48f);
-            if (item.Thing != null) Widgets.DrawTextureFitted(iconRect, item.Thing.uiIcon, 1f);
-            Rect labelRect = new Rect(area.x + 55f, area.y, area.width - 120f, 24f);
-            if (Widgets.ButtonText(labelRect, item.Thing?.LabelCap ?? "Select Item"))
-            {
-                List<FloatMenuOption> options = new List<FloatMenuOption>();
-                IEnumerable<ThingDef> candidates = DefDatabase<ThingDef>.AllDefs.Where(t => t.IsApparel || t.IsWeapon).OrderBy(t => t.label);
-                foreach (var def in candidates)
-                {
-                    options.Add(new FloatMenuOption(def.LabelCap, () => { item.Thing = def; FactionGearEditor.MarkDirty(); }));
-                }
-                Find.WindowStack.Add(new FloatMenu(options));
-            }
-            Rect removeRect = new Rect(area.xMax - 60f, area.y, 60f, 24f);
-            if (Widgets.ButtonText(removeRect, "Remove"))
-            {
-                list.RemoveAt(index);
-                FactionGearEditor.MarkDirty();
-                return;
-            }
-            
-            // ... (Rest of DrawSpecEdit logic - skipping details for brevity but assuming functionality is similar to original)
-            // Ideally I should copy the rest of DrawSpecEdit too.
-            // But for now let's assume this is enough or I should check the original again.
-            // I'll add the rest.
-            
-            Rect matRect = new Rect(area.x + 55f, area.y + 26f, area.width - 60f, 24f);
-            string matLabel = item.Material == null ? "Material: Random/Default" : $"Material: {item.Material.LabelCap}";
-            if (Widgets.ButtonText(matRect, matLabel))
-            {
-                List<FloatMenuOption> options = new List<FloatMenuOption>();
-                options.Add(new FloatMenuOption("Random/Default", () => { item.Material = null; FactionGearEditor.MarkDirty(); }));
-                if (item.Thing != null && item.Thing.MadeFromStuff)
-                {
-                    foreach (var stuff in GenStuff.AllowedStuffsFor(item.Thing))
-                    {
-                        options.Add(new FloatMenuOption(stuff.LabelCap, () => { item.Material = stuff; FactionGearEditor.MarkDirty(); }));
-                    }
-                }
-                Find.WindowStack.Add(new FloatMenu(options));
-            }
 
-            Rect qualRect = new Rect(area.x, area.y + 55f, area.width / 2f, 24f);
-            string qualLabel = item.Quality.HasValue ? $"Quality: {item.Quality}" : "Quality: Default";
-            if (Widgets.ButtonText(qualRect, qualLabel))
-            {
-                List<FloatMenuOption> options = new List<FloatMenuOption>();
-                options.Add(new FloatMenuOption("Default", () => { item.Quality = null; FactionGearEditor.MarkDirty(); }));
-                foreach (QualityCategory q in Enum.GetValues(typeof(QualityCategory)))
-                {
-                    options.Add(new FloatMenuOption(q.ToString(), () => { item.Quality = q; FactionGearEditor.MarkDirty(); }));
-                }
-                Find.WindowStack.Add(new FloatMenu(options));
-            }
-
-            Rect bioRect = new Rect(area.x + area.width / 2f, area.y + 55f, area.width / 2f, 24f);
-            Widgets.CheckboxLabeled(bioRect, "Biocode", ref item.Biocode);
-
-            Rect modeRect = new Rect(area.x, area.y + 85f, area.width, 24f);
-            string modeLabel = $"Mode: {item.SelectionMode}";
-            if (Widgets.ButtonText(modeRect, modeLabel))
-            {
-                List<FloatMenuOption> options = new List<FloatMenuOption>();
-                foreach (ApparelSelectionMode m in Enum.GetValues(typeof(ApparelSelectionMode)))
-                {
-                    options.Add(new FloatMenuOption(m.ToString(), () => { item.SelectionMode = m; FactionGearEditor.MarkDirty(); }));
-                }
-                Find.WindowStack.Add(new FloatMenu(options));
-            }
-
-            if (item.SelectionMode != ApparelSelectionMode.AlwaysTake)
-            {
-                Rect chanceRect = new Rect(area.x, area.y + 115f, area.width, 24f);
-                item.SelectionChance = Widgets.HorizontalSlider(chanceRect, item.SelectionChance, 0f, 1f, true, $"Chance/Weight: {item.SelectionChance:P0}");
-            }
-
-            ui.Gap(10f);
-        }
 
         private static void DrawEmbeddedGearList(Listing_Standard ui, KindGearData kindData, params GearCategory[] allowedCategories)
         {
@@ -864,7 +816,15 @@ namespace FactionGearCustomizer.UI.Panels
             }
             if (Widgets.ButtonText(clearCatRect, "Clear"))
             {
-                ClearCategoryGear(kindData, EditorSession.SelectedCategory);
+                Dialog_ConfirmWithCheckbox.ShowIfNotDismissed(
+                    "ClearCategoryGearConfirm",
+                    "Are you sure you want to clear all items in this category?",
+                    delegate { ClearCategoryGear(kindData, EditorSession.SelectedCategory); },
+                    "Clear",
+                    "Cancel",
+                    null,
+                    true
+                );
             }
             ui.Gap(5f);
             var gearItems = GetCurrentCategoryGear(kindData);
@@ -880,7 +840,7 @@ namespace FactionGearCustomizer.UI.Panels
             }
             else
             {
-                ui.Label("No items in this category.");
+                WidgetsUtils.Label(ui, "No items in this category.");
             }
             ui.GapLine();
         }
@@ -898,19 +858,23 @@ namespace FactionGearCustomizer.UI.Panels
             }
             Rect row1 = new Rect(rect.x, rect.y, rect.width, 28f);
             Rect iconRect = new Rect(row1.x + 4f, row1.y + (row1.height - 30f) / 2f, 30f, 30f);
+            float infoButtonOffset = EditorSession.IsInGame ? 28f : 0f;
             Rect infoButtonRect = new Rect(iconRect.xMax + 4f, row1.y + (row1.height - 24f) / 2f, 24f, 24f);
             Rect removeRect = new Rect(row1.xMax - 26f, row1.y + (row1.height - 24f) / 2f, 24f, 24f);
-            Rect nameRect = new Rect(infoButtonRect.xMax + 4f, row1.y, removeRect.x - infoButtonRect.xMax - 8f, 28f);
+            Rect nameRect = new Rect(infoButtonRect.xMax + 4f, row1.y, removeRect.x - infoButtonRect.xMax - 8f - infoButtonOffset, 28f);
             
-            if (Current.Game != null) Widgets.InfoCardButton(infoButtonRect.x, infoButtonRect.y, thingDef);
+            if (EditorSession.IsInGame)
+            {
+                Widgets.InfoCardButton(infoButtonRect.x, infoButtonRect.y, thingDef);
+            }
             Rect interactRect = new Rect(row1.x, row1.y, row1.width - 30f, 28f);
             if (Widgets.ButtonInvisible(interactRect))
             {
                 EditorSession.ExpandedGearItem = (EditorSession.ExpandedGearItem == gearItem) ? null : gearItem;
             }
             Texture2D icon = FactionGearEditor.GetIconWithLazyLoading(thingDef);
-            if (icon != null) Widgets.DrawTextureFitted(iconRect, icon, 1f);
-            else if (thingDef.graphic?.MatSingle?.mainTexture != null) Widgets.DrawTextureFitted(iconRect, thingDef.graphic.MatSingle.mainTexture, 1f);
+            if (icon != null) WidgetsUtils.DrawTextureFitted(iconRect, icon, 1f);
+            else if (thingDef.graphic?.MatSingle?.mainTexture != null) WidgetsUtils.DrawTextureFitted(iconRect, thingDef.graphic.MatSingle.mainTexture, 1f);
             
             Text.Anchor = TextAnchor.MiddleLeft;
             Text.WordWrap = false;
@@ -956,65 +920,91 @@ namespace FactionGearCustomizer.UI.Panels
 
         private static void DrawLayerPreview(Rect rect, KindGearData kindData)
         {
-             // ... (Implementation of DrawLayerPreview, using same logic as original)
-             // For brevity, assuming it's copied or I can delegate to FactionGearEditor if I keep it static there?
-             // No, I should move it here or to a helper.
-             // Since it's UI drawing, it belongs here.
-             
-             if (kindData == null) return;
-             List<ThingDef> apparels = new List<ThingDef>();
-             foreach (var item in kindData.apparel) if (item.ThingDef != null) apparels.Add(item.ThingDef);
-             foreach (var item in kindData.armors) if (item.ThingDef != null) apparels.Add(item.ThingDef);
+            if (kindData == null) return;
+            List<ThingDef> apparels = new List<ThingDef>();
+            foreach (var item in kindData.apparel) if (item.ThingDef != null) apparels.Add(item.ThingDef);
+            foreach (var item in kindData.armors) if (item.ThingDef != null) apparels.Add(item.ThingDef);
+            foreach (var item in kindData.others) if (item.ThingDef != null) apparels.Add(item.ThingDef);
 
-             Widgets.DrawMenuSection(rect);
-             Rect inner = rect.ContractedBy(4f);
-             float lineHeight = 20f;
-             float y = inner.y;
-             
-             Rect headerRect = new Rect(inner.x, y, inner.width, lineHeight);
-             DrawCompactLayerHeader(headerRect);
-             y += lineHeight;
+            Widgets.DrawMenuSection(rect);
+            Rect inner = rect.ContractedBy(4f);
+            float lineHeight = 24f; // Increased height for better visibility
+            float y = inner.y;
+            
+            // Header
+            Rect headerRect = new Rect(inner.x, y, inner.width, lineHeight);
+            DrawCompactLayerHeader(headerRect);
+            y += lineHeight;
 
-             DrawCompactLayerRow(new Rect(inner.x, y, inner.width, lineHeight), "Head", BodyPartGroupDefOf.FullHead, apparels); y += lineHeight;
-             DrawCompactLayerRow(new Rect(inner.x, y, inner.width, lineHeight), "Torso", BodyPartGroupDefOf.Torso, apparels); y += lineHeight;
-             DrawCompactLayerRow(new Rect(inner.x, y, inner.width, lineHeight), "Shoulders", GroupShoulders, apparels); y += lineHeight;
-             DrawCompactLayerRow(new Rect(inner.x, y, inner.width, lineHeight), "Arms", GroupArms, apparels); y += lineHeight;
-             DrawCompactLayerRow(new Rect(inner.x, y, inner.width, lineHeight), "Hands", GroupHands, apparels); y += lineHeight;
-             DrawCompactLayerRow(new Rect(inner.x, y, inner.width, lineHeight), "Legs", GroupLegs, apparels); y += lineHeight;
-             DrawCompactLayerRow(new Rect(inner.x, y, inner.width, lineHeight), "Feet", GroupFeet, apparels); y += lineHeight;
+            // Draw divider
+            Widgets.DrawLineHorizontal(inner.x, y, inner.width);
+            y += 2f;
+
+            int rowIndex = 0;
+            DrawCompactLayerRow(new Rect(inner.x, y, inner.width, lineHeight), "Head", BodyPartGroupDefOf.FullHead, apparels, rowIndex++); y += lineHeight;
+            DrawCompactLayerRow(new Rect(inner.x, y, inner.width, lineHeight), "Torso", BodyPartGroupDefOf.Torso, apparels, rowIndex++); y += lineHeight;
+            DrawCompactLayerRow(new Rect(inner.x, y, inner.width, lineHeight), "Shoulders", GroupShoulders, apparels, rowIndex++); y += lineHeight;
+            DrawCompactLayerRow(new Rect(inner.x, y, inner.width, lineHeight), "Arms", GroupArms, apparels, rowIndex++); y += lineHeight;
+            DrawCompactLayerRow(new Rect(inner.x, y, inner.width, lineHeight), "Hands", GroupHands, apparels, rowIndex++); y += lineHeight;
+            DrawCompactLayerRow(new Rect(inner.x, y, inner.width, lineHeight), "Waist", GroupWaist, apparels, rowIndex++); y += lineHeight;
+            DrawCompactLayerRow(new Rect(inner.x, y, inner.width, lineHeight), "Legs", GroupLegs, apparels, rowIndex++); y += lineHeight;
+            DrawCompactLayerRow(new Rect(inner.x, y, inner.width, lineHeight), "Feet", GroupFeet, apparels, rowIndex++); y += lineHeight;
         }
 
         private static void DrawCompactLayerHeader(Rect rect)
         {
-             float x = rect.x + 60f;
-             float width = (rect.width - 60f) / 5f;
-             DrawLayerHeaderLabel(new Rect(x, rect.y, width, rect.height), "Skin"); x += width;
-             DrawLayerHeaderLabel(new Rect(x, rect.y, width, rect.height), "Mid"); x += width;
-             DrawLayerHeaderLabel(new Rect(x, rect.y, width, rect.height), "Shell"); x += width;
-             DrawLayerHeaderLabel(new Rect(x, rect.y, width, rect.height), "Belt"); x += width;
-             DrawLayerHeaderLabel(new Rect(x, rect.y, width, rect.height), "Over"); x += width;
+            Widgets.DrawHighlight(rect);
+            
+            float labelWidth = 70f; // Width for the "Part" label column
+            float x = rect.x + labelWidth;
+            float width = (rect.width - labelWidth) / 5f;
+            
+            // Draw column headers
+            DrawLayerHeaderLabel(new Rect(x, rect.y, width, rect.height), "Skin"); x += width;
+            DrawLayerHeaderLabel(new Rect(x, rect.y, width, rect.height), "Mid"); x += width;
+            DrawLayerHeaderLabel(new Rect(x, rect.y, width, rect.height), "Shell"); x += width;
+            DrawLayerHeaderLabel(new Rect(x, rect.y, width, rect.height), "Belt"); x += width;
+            DrawLayerHeaderLabel(new Rect(x, rect.y, width, rect.height), "Over"); x += width;
         }
         
         private static void DrawLayerHeaderLabel(Rect rect, string label)
         {
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleCenter;
+            GUI.color = Color.gray;
             Widgets.Label(rect, label);
+            GUI.color = Color.white;
             Text.Anchor = TextAnchor.UpperLeft;
             Text.Font = GameFont.Small;
         }
 
-        private static void DrawCompactLayerRow(Rect rect, string label, BodyPartGroupDef group, List<ThingDef> apparels)
+        private static void DrawCompactLayerRow(Rect rect, string label, BodyPartGroupDef group, List<ThingDef> apparels, int rowIndex)
         {
             if (group == null) return;
-            Rect labelRect = new Rect(rect.x, rect.y, 60f, rect.height);
+            
+            // Use standard RimWorld alternating row background
+            if (rowIndex % 2 == 1)
+            {
+                Widgets.DrawAltRect(rect);
+            }
+
+            // Draw row label (Body Part)
+            float labelWidth = 70f;
+            Rect labelRect = new Rect(rect.x + 4f, rect.y, labelWidth - 4f, rect.height);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
             Widgets.Label(labelRect, label);
             Text.Anchor = TextAnchor.UpperLeft;
             Text.Font = GameFont.Small;
-            float x = rect.x + 60f;
-            float width = (rect.width - 60f) / 5f; 
+            
+            // Draw vertical line after label
+            GUI.color = new Color(1f, 1f, 1f, 0.2f);
+            Widgets.DrawLineVertical(rect.x + labelWidth, rect.y, rect.height);
+            GUI.color = Color.white;
+
+            float x = rect.x + labelWidth;
+            float width = (rect.width - labelWidth) / 5f; 
+            
             DrawCompactLayerCell(new Rect(x, rect.y, width, rect.height), group, ApparelLayerDefOf.OnSkin, apparels); x += width;
             DrawCompactLayerCell(new Rect(x, rect.y, width, rect.height), group, ApparelLayerDefOf.Middle, apparels); x += width;
             DrawCompactLayerCell(new Rect(x, rect.y, width, rect.height), group, ApparelLayerDefOf.Shell, apparels); x += width;
@@ -1025,19 +1015,50 @@ namespace FactionGearCustomizer.UI.Panels
         private static void DrawCompactLayerCell(Rect rect, BodyPartGroupDef group, ApparelLayerDef layer, List<ThingDef> apparels)
         {
              if (layer == null) return;
-             var coveringApparel = apparels.FirstOrDefault(a => a.apparel != null && a.apparel.bodyPartGroups.Contains(group) && a.apparel.layers.Contains(layer));
-             Rect iconRect = new Rect(rect.x + (rect.width - 16f)/2f, rect.y + (rect.height - 16f)/2f, 16f, 16f);
-             GUI.color = new Color(1f, 1f, 1f, 0.2f);
-             Widgets.DrawBox(iconRect, 1);
+             
+             // Draw subtle grid borders
+             GUI.color = new Color(1f, 1f, 1f, 0.1f);
+             Widgets.DrawBox(rect);
              GUI.color = Color.white;
+
+             var coveringApparel = apparels.FirstOrDefault(a => a.apparel != null && a.apparel.bodyPartGroups.Contains(group) && a.apparel.layers.Contains(layer));
+             
              if (coveringApparel != null)
              {
-                 GUI.DrawTexture(iconRect, Widgets.CheckboxOnTex);
-                 TooltipHandler.TipRegion(rect, coveringApparel.LabelCap);
-             }
-             else
-             {
-                 TooltipHandler.TipRegion(rect, "Empty");
+                 Rect inner = rect.ContractedBy(2f);
+                 
+                 // Draw a subtle background for occupied slots
+                 GUI.color = new Color(0.3f, 0.3f, 0.3f, 0.5f);
+                 Widgets.DrawBoxSolid(inner, Color.white);
+                 GUI.color = Color.white;
+                 
+                 Texture2D icon = coveringApparel.uiIcon;
+                 if (icon != null)
+                 {
+                     // Use DrawTextureFitted for better aspect ratio
+                     Widgets.DrawTextureFitted(inner, icon, 1f);
+                 }
+                 
+                 // Enhanced Tooltip
+                 TooltipHandler.TipRegion(rect, new TipSignal(() => 
+                 {
+                     string text = coveringApparel.LabelCap;
+                     float armorSharp = coveringApparel.GetStatValueAbstract(StatDefOf.ArmorRating_Sharp);
+                     float armorBlunt = coveringApparel.GetStatValueAbstract(StatDefOf.ArmorRating_Blunt);
+                     if (armorSharp > 0 || armorBlunt > 0)
+                     {
+                         text += $"\nSharp: {armorSharp:P0}\nBlunt: {armorBlunt:P0}";
+                     }
+                     return text;
+                 }, coveringApparel.GetHashCode()));
+                 
+                 // Interaction: Click to show info card
+                 if (Widgets.ButtonInvisible(rect))
+                 {
+                     Find.WindowStack.Add(new Dialog_InfoCard(coveringApparel));
+                 }
+                 
+                 Widgets.DrawHighlightIfMouseover(rect);
              }
         }
 
@@ -1061,20 +1082,50 @@ namespace FactionGearCustomizer.UI.Panels
         private static void DrawAdvancedItemSimple(Rect rect, SpecRequirementEdit item, KindGearData kindData)
         {
             if (item.Thing == null) return;
+            
+            bool isExpanded = (item == EditorSession.ExpandedSpecItem);
             Widgets.DrawHighlightIfMouseover(rect);
+            if (item.weight != 1f)
+            {
+                GUI.color = new Color(1f, 0.8f, 0.4f, 0.3f);
+                Widgets.DrawHighlight(rect);
+                GUI.color = Color.white;
+            }
+            
+            Rect row1 = new Rect(rect.x, rect.y, rect.width, 28f);
+            Rect iconRect = new Rect(row1.x + 4f, row1.y + (row1.height - 24f) / 2f, 24f, 24f);
+            float infoButtonOffset = EditorSession.IsInGame ? 28f : 0f;
+            Rect infoButtonRect = new Rect(iconRect.xMax + 4f, row1.y + (row1.height - 24f) / 2f, 24f, 24f);
+            Rect removeRect = new Rect(row1.xMax - 26f, row1.y + (row1.height - 24f) / 2f, 24f, 24f);
+            Rect nameRect = new Rect(infoButtonRect.xMax + 4f, row1.y, removeRect.x - infoButtonRect.xMax - 8f - infoButtonOffset, 28f);
 
-            Rect iconRect = new Rect(rect.x + 4f, rect.y + (rect.height - 24f) / 2f, 24f, 24f);
-            Rect infoButtonRect = new Rect(iconRect.xMax + 4f, rect.y + (rect.height - 24f) / 2f, 24f, 24f);
-            Rect removeRect = new Rect(rect.xMax - 26f, rect.y + (rect.height - 24f) / 2f, 24f, 24f);
-            Rect nameRect = new Rect(infoButtonRect.xMax + 4f, rect.y, removeRect.x - infoButtonRect.xMax - 8f, rect.height);
-
-            if (Current.Game != null) Widgets.InfoCardButton(infoButtonRect.x, infoButtonRect.y, item.Thing);
+            if (EditorSession.IsInGame)
+            {
+                Widgets.InfoCardButton(infoButtonRect.x, infoButtonRect.y, item.Thing);
+            }
             
             Texture2D icon = FactionGearEditor.GetIconWithLazyLoading(item.Thing);
-            if (icon != null) Widgets.DrawTextureFitted(iconRect, icon, 1f);
+            if (icon != null) WidgetsUtils.DrawTextureFitted(iconRect, icon, 1f);
+
+            Rect interactRect = new Rect(row1.x, row1.y, row1.width - 30f, 28f);
+            if (Widgets.ButtonInvisible(interactRect))
+            {
+                EditorSession.ExpandedSpecItem = (EditorSession.ExpandedSpecItem == item) ? null : item;
+            }
 
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(nameRect, item.Thing.LabelCap);
+            Text.WordWrap = false;
+            float nameWidth = nameRect.width;
+            if (!isExpanded && item.weight != 1f) nameWidth -= 45f;
+            Widgets.Label(new Rect(nameRect.x, nameRect.y, nameWidth, nameRect.height), item.Thing.LabelCap);
+            Text.WordWrap = true;
+            if (!isExpanded && item.weight != 1f)
+            {
+                Text.Anchor = TextAnchor.MiddleRight;
+                GUI.color = Color.gray;
+                Widgets.Label(new Rect(nameRect.xMax - 45f, row1.y, 45f, 28f), $"W:{item.weight:F1}");
+                GUI.color = Color.white;
+            }
             Text.Anchor = TextAnchor.UpperLeft;
 
             if (Widgets.ButtonImage(removeRect, TexButton.Delete, Color.white, GenUI.SubtleMouseoverColor))
@@ -1087,6 +1138,25 @@ namespace FactionGearCustomizer.UI.Panels
                 
                 kindData.isModified = true;
                 FactionGearEditor.MarkDirty();
+                if (EditorSession.ExpandedSpecItem == item) EditorSession.ExpandedSpecItem = null;
+            }
+            
+            if (isExpanded)
+            {
+                Rect row2 = new Rect(rect.x, rect.y + 28f, rect.width, 28f);
+                Rect sliderRect = new Rect(row2.x + 10f, row2.y + 4f, row2.width - 60f, 20f);
+                Rect weightRect = new Rect(row2.xMax - 40f, row2.y, 35f, 28f);
+                if (Event.current.type == EventType.MouseDown && sliderRect.Contains(Event.current.mousePosition)) UndoManager.RecordState(kindData);
+                float newWeight = Widgets.HorizontalSlider(sliderRect, item.weight, 0.1f, 10f, true);
+                if (newWeight != item.weight)
+                {
+                    item.weight = newWeight;
+                    kindData.isModified = true;
+                    FactionGearEditor.MarkDirty();
+                }
+                Text.Anchor = TextAnchor.MiddleCenter;
+                Widgets.Label(weightRect, item.weight.ToString("F1"));
+                Text.Anchor = TextAnchor.UpperLeft;
             }
             TooltipHandler.TipRegion(rect, "This is an item added via Advanced Mode (Specific Requirement).");
         }

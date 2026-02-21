@@ -4,6 +4,7 @@ using System.Linq;
 using RimWorld;
 using UnityEngine;
 using Verse;
+using FactionGearModification.UI;
 
 namespace FactionGearCustomizer.UI.Panels
 {
@@ -44,7 +45,7 @@ namespace FactionGearCustomizer.UI.Panels
                 }
                 
                 Text.Font = GameFont.Tiny;
-                string labelText = "Real Name";
+                string labelText = "in-game";
                 Vector2 labelSize = Text.CalcSize(labelText);
                 Rect labelRect = new Rect(checkboxRect.xMax + 4f, innerRect.y + 8f, labelSize.x + 5f, 20f);
                 GUI.color = Color.gray;
@@ -110,6 +111,7 @@ namespace FactionGearCustomizer.UI.Panels
             Widgets.BeginScrollView(factionListOutRect, ref EditorSession.FactionListScrollPos, factionListViewRect);
             
             float y = 0;
+            float infoButtonOffset = EditorSession.IsInGame ? 24f : 0f;
             foreach (var data in cachedFactionList)
             {
                 float maxRowWidth = factionListViewRect.width - 62f;
@@ -119,16 +121,18 @@ namespace FactionGearCustomizer.UI.Panels
                 Rect rowRect = new Rect(0, y, factionListViewRect.width, rowHeight);
 
                 // Handle Selection
+                // Exclude InfoCard button area (24px on the right) to avoid click conflict
+                Rect selectionRect = new Rect(rowRect.x, rowRect.y, rowRect.width - infoButtonOffset, rowRect.height);
                 if (EditorSession.SelectedFactionDefName == data.def.defName)
                 {
                     Widgets.DrawHighlightSelected(rowRect);
                 }
-                else if (Mouse.IsOver(rowRect))
+                else if (Mouse.IsOver(selectionRect))
                 {
                     Widgets.DrawHighlight(rowRect);
                 }
 
-                if (Widgets.ButtonInvisible(rowRect))
+                if (Widgets.ButtonInvisible(selectionRect))
                 {
                     if (EditorSession.SelectedFactionDefName != data.def.defName)
                     {
@@ -154,13 +158,14 @@ namespace FactionGearCustomizer.UI.Panels
             Rect iconRect = new Rect(rowRect.x + 4f, rowRect.y + (rowHeight - 24f) / 2f, 24f, 24f);
             if (data.def.FactionIcon != null)
             {
-                Widgets.DrawTextureFitted(iconRect, data.def.FactionIcon, 1f);
+                WidgetsUtils.DrawTextureFitted(iconRect, data.def.FactionIcon, 1f);
             }
 
-            // Info Button
-            Rect infoButtonRect = new Rect(rowRect.xMax - 24f, rowRect.y + (rowHeight - 24f) / 2f, 24f, 24f);
-            if (Current.Game != null)
+            // Info Button (only show in game)
+            float infoButtonOffset = EditorSession.IsInGame ? 24f : 0f;
+            if (EditorSession.IsInGame)
             {
+                Rect infoButtonRect = new Rect(rowRect.xMax - 24f, rowRect.y + (rowHeight - 24f) / 2f, 24f, 24f);
                 Widgets.InfoCardButton(infoButtonRect.x, infoButtonRect.y, data.def);
             }
 
@@ -169,7 +174,7 @@ namespace FactionGearCustomizer.UI.Panels
             if (data.worldFaction != null && !data.worldFaction.IsPlayer)
             {
                 goodwillWidth = 40f;
-                Rect goodwillRect = new Rect(infoButtonRect.x - goodwillWidth - 4f, rowRect.y, goodwillWidth, rowHeight);
+                Rect goodwillRect = new Rect(rowRect.xMax - infoButtonOffset - goodwillWidth - 4f, rowRect.y, goodwillWidth, rowHeight);
                 
                 float goodwill = data.worldFaction.PlayerGoodwill;
                 var relationKind = data.worldFaction.PlayerRelationKind;
@@ -187,7 +192,7 @@ namespace FactionGearCustomizer.UI.Panels
 
             // Name
             float nameX = iconRect.xMax + 6f;
-            float nameWidth = rowRect.width - nameX - 24f - 4f;
+            float nameWidth = rowRect.width - nameX - infoButtonOffset - 4f;
             if (data.worldFaction != null && !data.worldFaction.IsPlayer) nameWidth -= (goodwillWidth + 4f);
             
             Rect nameRect = new Rect(nameX, rowRect.y, nameWidth, rowHeight);

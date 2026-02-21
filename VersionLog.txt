@@ -1,0 +1,49 @@
+v1.1.0
+- Add: 新增高级编辑器模式，支持Simple/Advanced模式切换
+- Add: Advanced模式提供精确的装备控制（指定物品、材质、品质等）
+- Add: 新增多标签页界面：武器、护甲、物品、Hediff、基因等
+- Add: 新增撤销/重做功能，通过UndoManager实现修改历史记录
+- Add: 新增颜色选择器（Window_ColorPicker），支持自定义颜色配置
+- Add: 新增基因支持，ForcedHediff类支持强制健康状态配置
+- Update: 扩展编辑器界面，提升用户体验
+- Update: 改进预设导入导出功能
+- Fix: 修复装备应用逻辑，GearApplier重构确保自定义装备正确生效
+v1.0.29
+- Update: Layer Preview 默认隐藏，优化了布局并新增“腰部”行，更直观展示腰带装备。
+- Update: Layer Preview 现在会检查 others 列表（如腰带），不再遗漏。
+- Fix: 增强 SpecRequirementEdit 加载逻辑，防止因 ThingDef 缺失（如卸载 Mod 后）导致红字报错。
+- Fix: 增强 ForcedHediff 加载逻辑，防止因 HediffDef 缺失导致红字报错。
+- Fix: 增强 KindGearData 中 ApparelRequired/TechRequired 加载逻辑，防止因 Def 缺失导致加载失败。
+v1.0.28
+- Fix: 修复 GenerateSimpleItem 中因 ThingDef 或 KindGearData 为空导致的 NullReferenceException。
+- Fix: 修复在 Pawn 未生成到地图时尝试丢弃装备导致的错误。
+- Fix: 为需要 Stuff 的物品增加防御性检查，防止 Stuff 为空导致的生成失败。
+v1.0.27
+- Fix: 修复 System.MissingMethodException: Method not found: UnityEngine.Rect Verse.Listing_Standard.Label(string,single,string) 导致 PresetManagerWindow 界面崩溃的问题
+- Update: 将 PresetManagerWindow 中的 Listing_Standard.Label 调用改为 Widgets.Label，增强跨版本兼容性
+v1.0.26
+- Fix: 修复 HediffDef 加载失败导致游戏崩溃的问题（添加 ExposeData 异常处理）
+v1.0.22
+- Update: 优化 Hediff 卡片 UI 布局，增加卡片高度和详细信息展示区
+- Add: HediffCardUI 新增 Severity（严重程度）范围控制
+- Fix: 修复 PresetManagerWindow 中 WidgetsUtils 引用缺失问题
+- Fix: 修复 WidgetsUtils 中 PortraitsCache 类型查找兼容性问题
+v1.0.7
+- Fix: 修复 FactionGearPreviewWindow (预览卡片) 无法正常工作的问题 (PortraitsCache/DrawBox 兼容性修复)。
+- Update: WidgetsUtils 增加 PortraitsCache.Get/SetDirty 和 DrawWindowBackground 兼容封装。
+v1.0.6
+- Fix: 修复 PresetManagerWindow (预设界面) 在旧版本 RimWorld 中的崩溃问题 (Widgets.DrawBox/DrawMenuSection 签名不匹配)。
+- Update: WidgetsUtils 增加 DrawBox 和 DrawMenuSection 兼容封装。
+v1.0.5
+- Fix: 修复 GearEditPanel.cs 中遗漏的 Widgets.FloatRange 调用导致的崩溃。
+- Update: 增加 WidgetsUtils.IntRange 封装，预防 HediffCardUI 中的潜在兼容性问题。
+v1.0.4
+- Fix: 修复 System.MissingMethodException: Method not found: void Verse.Widgets.FloatRange。
+- Update: 增强 WidgetsUtils.FloatRange 兼容性，增加异常捕获和后备 UI (双滑块)，确保在反射失败时不崩溃。
+- Update: WidgetsUtils 增加 FloatRange 智能封装，自动适配不同版本的参数签名
+v1.0.3
+- Fix: 修复 System.MissingMethodException: Method not found: UnityEngine.Rect Verse.Listing_Standard.Label
+- Update: WidgetsUtils 增加 Label 方法封装，解决 Listing_Standard.Label 在不同版本间的签名差异
+v1.0.2
+- Fix: 修复 System.MissingMethodException: Method not found: void Verse.Widgets.DrawTextureFitted
+- Add: 新增 WidgetsUtils 工具类，封装 UI 绘制方法以提高兼容性

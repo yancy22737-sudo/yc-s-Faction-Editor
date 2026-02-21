@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <MainButtonDef>
+    <defName>FactionGear_MainButton</defName>
+    <label>FactionGear</label>
+    <description>Open Faction Gear Editor.</description>
+    <tabWindowClass>FactionGearCustomizer.UI.FactionGearMainTabWindow</tabWindowClass>
+    <order>99</order>
+    <defaultLabel>FactionGear</defaultLabel>
+    <workerClass>FactionGearCustomizer.MainButtonWorker_FactionGear</workerClass>
+  </MainButtonDef>
+</Defs>

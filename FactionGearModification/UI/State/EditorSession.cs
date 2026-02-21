@@ -15,6 +15,7 @@ namespace FactionGearCustomizer
         public static HashSet<string> SelectedModSources = new HashSet<string>();
         public static TechLevel? SelectedTechLevel = null;
         public static GearItem ExpandedGearItem = null;
+        public static SpecRequirementEdit ExpandedSpecItem = null;
 
         // UI State (Scroll Positions)
         public static Vector2 FactionListScrollPos = Vector2.zero;
@@ -22,6 +23,9 @@ namespace FactionGearCustomizer
         public static Vector2 GearListScrollPos = Vector2.zero;
         public static Vector2 LibraryScrollPos = Vector2.zero;
         public static Vector2 AdvancedScrollPos = Vector2.zero;
+
+        // Game State Detection
+        public static bool IsInGame => Current.ProgramState == ProgramState.Playing;
 
         // Filter State
         public static string SearchText = "";
@@ -48,6 +52,9 @@ namespace FactionGearCustomizer
         
         // Settings State
         public static bool UseInGameNames = false;
+        
+        // Layer Preview State
+        public static bool LayerPreviewHidden = true;
         
         // Clipboard
         public static KindGearData CopiedKindGearData = null;

@@ -200,39 +200,32 @@ namespace FactionGearCustomizer
 
         private static void DrawTopBar(Rect inRect)
         {
-            // Log Button
-            Rect logRect = new Rect(inRect.xMax - 80f, inRect.y, 80f, 24f);
-            if (Widgets.ButtonText(logRect, "Log"))
+            // Pre-calculate version info for layout
+            string versionLabel = "ver: " + ModVersion.Current;
+            Vector2 verSize = Text.CalcSize(versionLabel);
+            float gap = 24f; // Gap of roughly one character width
+
+            // GitHub Link
+            string githubLink = "GitHub";
+            Vector2 githubSize = Text.CalcSize(githubLink);
+            Rect githubRect = new Rect(inRect.xMax - (githubSize.x + 10f + gap + verSize.x + 10f), inRect.y, githubSize.x + 10f, 24f);
+            GUI.color = Color.cyan;
+            if (Widgets.ButtonText(githubRect, githubLink, true, false, true))
             {
-                List<FloatMenuOption> options = new List<FloatMenuOption>();
-                options.Add(new FloatMenuOption("Open Log Window", () => 
-                {
-                    try
-                    {
-                        Type logWindowType = GenTypes.GetTypeInAnyAssembly("Verse.EditWindow_Log");
-                        if (logWindowType != null && typeof(Window).IsAssignableFrom(logWindowType))
-                        {
-                            Window logWindow = (Window)Activator.CreateInstance(logWindowType);
-                            Find.WindowStack.Add(logWindow);
-                        }
-                    }
-                    catch (Exception ex) { Log.Error("[FactionGearCustomizer] Failed to open log window: " + ex); }
-                }));
-                options.Add(new FloatMenuOption("Dump Current Data", () => 
-                {
-                    if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName) && !string.IsNullOrEmpty(EditorSession.SelectedKindDefName))
-                    {
-                        var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
-                        var kindData = factionData.GetOrCreateKindData(EditorSession.SelectedKindDefName);
-                        System.Text.StringBuilder sb = new System.Text.StringBuilder();
-                        sb.AppendLine($"[FactionGearCustomizer] Dump for {EditorSession.SelectedKindDefName}");
-                        sb.AppendLine($"IsModified: {kindData.isModified}");
-                        Log.Message(sb.ToString());
-                        Messages.Message("Data dumped to debug log.", MessageTypeDefOf.TaskCompletion, false);
-                    }
-                }));
-                Find.WindowStack.Add(new FloatMenu(options));
+                Application.OpenURL("https://github.com/yancy22737-sudo/FactionGearCustomizer");
             }
+            GUI.color = Color.white;
+
+            // Version Label
+            Rect verRect = new Rect(githubRect.xMax + gap, inRect.y, verSize.x + 10f, 24f);
+            
+            string changelog = ModVersion.GetChangelog();
+            if (Mouse.IsOver(verRect))
+            {
+                Widgets.DrawHighlight(verRect);
+                TooltipHandler.TipRegion(verRect, changelog);
+            }
+            Widgets.Label(verRect, versionLabel);
 
             WidgetRow buttonRow = new WidgetRow(inRect.x, inRect.y, UIDirection.RightThenDown, inRect.width, 4f);
 
@@ -265,7 +258,13 @@ namespace FactionGearCustomizer
             if (!string.IsNullOrEmpty(currentPreset))
             {
                 GUI.color = new Color(0.6f, 1f, 0.6f);
-                buttonRow.Label($"[Active: {currentPreset}]");
+                string fullLabel = $"[Active: {currentPreset}]";
+                // Truncate to avoid UI overflow if name is too long
+                Rect labelRect = buttonRow.Label(fullLabel.Truncate(250f));
+                if (Mouse.IsOver(labelRect))
+                {
+                    TooltipHandler.TipRegion(labelRect, fullLabel);
+                }
                 GUI.color = Color.white;
             }
             else
@@ -558,6 +557,25 @@ namespace FactionGearCustomizer
                     MarkDirty();
                 }
             }
+        }
+
+        public static void InitializeWorkingSettings(bool force = false)
+        {
+            if (force)
+            {
+                // Reset state to ensure clean slate if forced
+                IsDirty = false;
+                backupSettings = null;
+            }
+        }
+
+        public static void Cleanup()
+        {
+            // Clear caches to free memory
+            iconCache.Clear();
+            EditorSession.CachedAllWeapons = null;
+            EditorSession.CachedFilteredItems = null;
+            EditorSession.CachedModSources = null;
         }
 
         private static void ResetCurrentFaction()

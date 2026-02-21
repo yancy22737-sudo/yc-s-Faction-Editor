@@ -77,8 +77,47 @@ namespace FactionGearCustomizer
             Scribe_Collections.Look(ref ApparelTags, "apparelTags");
             Scribe_Collections.Look(ref ApparelDisallowedTags, "apparelDisallowedTags");
             
-            Scribe_Collections.Look(ref ApparelRequired, "apparelRequired", LookMode.Def);
-            Scribe_Collections.Look(ref TechRequired, "techRequired", LookMode.Def);
+            // Robust loading for ApparelRequired
+            if (Scribe.mode == LoadSaveMode.Saving)
+            {
+                List<string> list = ApparelRequired?.Select(t => t.defName).ToList();
+                Scribe_Collections.Look(ref list, "apparelRequired", LookMode.Value);
+            }
+            else if (Scribe.mode == LoadSaveMode.LoadingVars)
+            {
+                List<string> list = null;
+                Scribe_Collections.Look(ref list, "apparelRequired", LookMode.Value);
+                if (list != null)
+                {
+                    ApparelRequired = new List<ThingDef>();
+                    foreach (string defName in list)
+                    {
+                        ThingDef def = DefDatabase<ThingDef>.GetNamedSilentFail(defName);
+                        if (def != null) ApparelRequired.Add(def);
+                    }
+                }
+            }
+
+            // Robust loading for TechRequired
+            if (Scribe.mode == LoadSaveMode.Saving)
+            {
+                List<string> list = TechRequired?.Select(t => t.defName).ToList();
+                Scribe_Collections.Look(ref list, "techRequired", LookMode.Value);
+            }
+            else if (Scribe.mode == LoadSaveMode.LoadingVars)
+            {
+                List<string> list = null;
+                Scribe_Collections.Look(ref list, "techRequired", LookMode.Value);
+                if (list != null)
+                {
+                    TechRequired = new List<ThingDef>();
+                    foreach (string defName in list)
+                    {
+                        ThingDef def = DefDatabase<ThingDef>.GetNamedSilentFail(defName);
+                        if (def != null) TechRequired.Add(def);
+                    }
+                }
+            }
 
             Scribe_Collections.Look(ref SpecificApparel, "specificApparel", LookMode.Deep);
             Scribe_Collections.Look(ref SpecificWeapons, "specificWeapons", LookMode.Deep);

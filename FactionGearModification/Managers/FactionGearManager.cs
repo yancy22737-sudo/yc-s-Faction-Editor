@@ -27,12 +27,13 @@ namespace FactionGearCustomizer
             {
                 if (cacheInitialized) return;
                 
-                // 一次性初始化所有缓存，避免重复遍历DefDatabase
+                // 远程武器：IsRangedWeapon 或 有range>0的Verb
                 cachedAllWeapons = DefDatabase<ThingDef>.AllDefs
-                    .Where(t => t.IsRangedWeapon).ToList();
+                    .Where(t => t.IsWeapon && (t.IsRangedWeapon || (t.Verbs != null && t.Verbs.Any(v => v.range > 0)))).ToList();
                 
+                // 近战武器：IsMeleeWeapon 或 没有range>0的Verb 但有tools
                 cachedAllMeleeWeapons = DefDatabase<ThingDef>.AllDefs
-                    .Where(t => t.IsMeleeWeapon).ToList();
+                    .Where(t => t.IsWeapon && (t.IsMeleeWeapon || (t.tools != null && t.tools.Any() && !(t.Verbs != null && t.Verbs.Any(v => v.range > 0))))).ToList();
                 
                 cachedAllHelmets = DefDatabase<ThingDef>.AllDefs
                     .Where(t => t.IsApparel && t.apparel != null && t.apparel.layers != null && 
@@ -41,7 +42,7 @@ namespace FactionGearCustomizer
                 cachedAllArmors = DefDatabase<ThingDef>.AllDefs
                     .Where(t => t.IsApparel && t.apparel != null && t.apparel.layers != null && 
                            (t.apparel.layers.Contains(ApparelLayerDefOf.Shell) || 
-                            t.GetStatValueAbstract(StatDefOf.ArmorRating_Sharp) > 0.4f)).ToList();
+                            t.GetStatValueAbstract(StatDefOf.ArmorRating_Sharp) >= 0.4f)).ToList();
                 
                 cachedAllApparel = DefDatabase<ThingDef>.AllDefs
                     .Where(t => t.IsApparel && t.apparel != null && t.apparel.layers != null && 

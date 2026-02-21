@@ -4,6 +4,7 @@ using System.Linq;
 using RimWorld;
 using UnityEngine;
 using Verse;
+using FactionGearModification.UI;
 
 namespace FactionGearCustomizer.UI.Panels
 {
@@ -282,34 +283,16 @@ namespace FactionGearCustomizer.UI.Panels
         
         private static void OpenModFilterMenu()
         {
-            List<FloatMenuOption> options = new List<FloatMenuOption>();
-            
-            // "All" option
-            options.Add(new FloatMenuOption("All (Clear Selection)", () => { 
-                EditorSession.SelectedModSources.Clear(); 
-                FactionGearEditor.CalculateBounds(); 
-            }));
+            if (EditorSession.CachedModSources == null) 
+                EditorSession.CachedModSources = FactionGearEditor.GetUniqueModSources();
 
-            // Individual mod options
-            foreach (var src in EditorSession.CachedModSources)
-            {
-                bool isSelected = EditorSession.SelectedModSources.Contains(src);
-                string label = isSelected ? $"[X] {src}" : $"[  ] {src}";
-                
-                options.Add(new FloatMenuOption(label, () => {
-                    if (isSelected)
-                        EditorSession.SelectedModSources.Remove(src);
-                    else
-                        EditorSession.SelectedModSources.Add(src);
-                        
+            Find.WindowStack.Add(new Window_ModFilter(
+                EditorSession.CachedModSources, 
+                EditorSession.SelectedModSources, 
+                () => {
                     FactionGearEditor.CalculateBounds();
-                    
-                    // Re-open menu to allow continuous selection
-                    OpenModFilterMenu();
-                }));
-            }
-            
-            Find.WindowStack.Add(new FloatMenu(options));
+                }
+            ));
         }
 
         private static void DrawRangeFilter(Listing_Standard listing, ref FloatRange range, float min, float max, string label, ToStringStyle style)
@@ -320,8 +303,8 @@ namespace FactionGearCustomizer.UI.Panels
             Widgets.Label(labelRect, label);
             
             Text.Font = GameFont.Tiny;
-            string minText = range.min.ToString(style == ToStringStyle.Money ? "F0" : "F1");
-            string maxText = range.max.ToString(style == ToStringStyle.Money ? "F0" : "F1");
+            string minText = min.ToString(style == ToStringStyle.Money ? "F0" : "F1");
+            string maxText = max.ToString(style == ToStringStyle.Money ? "F0" : "F1");
             if (style == ToStringStyle.Money) { minText = "$" + minText; maxText = "$" + maxText; }
             
             float minWidth = Text.CalcSize(minText).x + 2f;
@@ -336,7 +319,7 @@ namespace FactionGearCustomizer.UI.Panels
             Text.Font = GameFont.Small;
 
             Rect sliderRect = new Rect(labelRect.xMax + minWidth + 2f, rect.y, rect.width - 45f - minWidth - maxWidth - 4f, rect.height);
-            Widgets.FloatRange(sliderRect, label.GetHashCode(), ref range, min, max, null, style);
+            WidgetsUtils.FloatRange(sliderRect, label.GetHashCode(), ref range, min, max, null, style);
         }
 
         private static List<ThingDef> GetFilteredAndSortedItems()
@@ -488,13 +471,17 @@ namespace FactionGearCustomizer.UI.Panels
             }
 
             Rect iconRect = new Rect(rect.x, rect.y + (rect.height - 48f) / 2f, 48f, 48f);
+            float infoButtonOffset = EditorSession.IsInGame ? 32f : 0f;
             Rect infoButtonRect = new Rect(iconRect.xMax + 8f, rect.y + (rect.height - 24f) / 2f, 24f, 24f);
-            Rect labelRect = new Rect(infoButtonRect.xMax + 8f, rect.y, rect.width - 148f, rect.height);
+            Rect labelRect = new Rect(infoButtonRect.xMax + 8f, rect.y, rect.width - 148f - infoButtonOffset, rect.height);
 
             Texture2D icon = FactionGearEditor.GetIconWithLazyLoading(thingDef);
-            if (icon != null) Widgets.DrawTextureFitted(iconRect, icon, 1f);
+            if (icon != null) WidgetsUtils.DrawTextureFitted(iconRect, icon, 1f);
 
-            if (Current.Game != null) Widgets.InfoCardButton(infoButtonRect.x, infoButtonRect.y, thingDef);
+            if (EditorSession.IsInGame)
+            {
+                Widgets.InfoCardButton(infoButtonRect.x, infoButtonRect.y, thingDef);
+            }
 
             Text.WordWrap = false;
             string itemName = thingDef.LabelCap;

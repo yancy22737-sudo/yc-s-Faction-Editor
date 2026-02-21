@@ -4,6 +4,7 @@ using System.Linq;
 using RimWorld;
 using UnityEngine;
 using Verse;
+using FactionGearModification.UI;
 
 namespace FactionGearCustomizer.UI.Panels
 {
@@ -32,28 +33,6 @@ namespace FactionGearCustomizer.UI.Panels
             float listStartY = innerRect.y + 35f;
             float kindListHeight = innerRect.height - 35f;
 
-            // Draw current preset label at the bottom
-            string currentPreset = FactionGearCustomizerMod.Settings.currentPresetName;
-            if (!string.IsNullOrEmpty(currentPreset))
-            {
-                float labelHeight = 24f;
-                kindListHeight -= labelHeight;
-                
-                Rect presetRect = new Rect(innerRect.x, innerRect.y + kindListHeight + 35f, innerRect.width, labelHeight);
-                // Adjust Y to be at the bottom of the allocated space
-                presetRect.y = innerRect.yMax - labelHeight;
-
-                Text.Font = GameFont.Tiny;
-                Text.Anchor = TextAnchor.MiddleLeft;
-                GUI.color = Color.cyan;
-                Widgets.Label(presetRect, $"Preset: {currentPreset}");
-                GUI.color = Color.white;
-                Text.Font = GameFont.Small;
-                Text.Anchor = TextAnchor.UpperLeft;
-                
-                TooltipHandler.TipRegion(presetRect, "Currently active preset. Clicking 'Save' will overwrite this preset.");
-            }
-            
             Rect kindListOutRect = new Rect(innerRect.x, listStartY, innerRect.width, kindListHeight);
 
             // Get Kinds to draw
@@ -106,7 +85,9 @@ namespace FactionGearCustomizer.UI.Panels
             }
 
             // Selection Click
-            if (Widgets.ButtonInvisible(rowRect))
+            // Exclude Copy/Paste buttons area (48px on the right) to avoid click conflict
+            Rect selectionRect = new Rect(rowRect.x, rowRect.y, rowRect.width - 48f, rowRect.height);
+            if (Widgets.ButtonInvisible(selectionRect))
             {
                 if (EditorSession.SelectedKindDefName != kindDef.defName)
                 {
@@ -141,7 +122,7 @@ namespace FactionGearCustomizer.UI.Panels
                 
                 // Modification Icon
                 Texture2D modTex = TexCache.ApplyTex ?? Widgets.CheckboxOnTex; // Use fallback
-                Widgets.DrawTextureFitted(new Rect(labelRect.x, labelRect.y + 8f, 16f, 16f), modTex, 1f);
+                WidgetsUtils.DrawTextureFitted(new Rect(labelRect.x, labelRect.y + 8f, 16f, 16f), modTex, 1f);
                 
                 GUI.color = Color.white;
             }

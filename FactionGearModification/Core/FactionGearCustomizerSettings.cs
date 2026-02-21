@@ -21,12 +21,21 @@ namespace FactionGearCustomizer
         // [New] Current active preset name
         public string currentPresetName = null;
 
+        // [New] Show in main tab toggle
+        public bool ShowInMainTab = true;
+
+        // [New] Dismissed dialogs
+        private HashSet<string> dismissedDialogs = new HashSet<string>();
+
         public override void ExposeData()
         {
             base.ExposeData();
             Scribe_Values.Look(ref version, "version", 2);
             Scribe_Values.Look(ref forceIgnoreRestrictions, "forceIgnoreRestrictions", false);
             Scribe_Values.Look(ref currentPresetName, "currentPresetName");
+            Scribe_Values.Look(ref ShowInMainTab, "ShowInMainTab", true);
+            Scribe_Collections.Look(ref dismissedDialogs, "dismissedDialogs", LookMode.Value);
+            if (dismissedDialogs == null) dismissedDialogs = new HashSet<string>();
             
             // 处理不同版本的数据结构
             if (version == 1)
@@ -121,6 +130,7 @@ namespace FactionGearCustomizer
             copy.version = this.version;
             copy.forceIgnoreRestrictions = this.forceIgnoreRestrictions;
             copy.currentPresetName = this.currentPresetName;
+            copy.ShowInMainTab = this.ShowInMainTab;
             foreach (var faction in this.factionGearData)
             {
                 copy.factionGearData.Add(faction.DeepCopy());
@@ -139,6 +149,7 @@ namespace FactionGearCustomizer
             this.version = source.version;
             this.forceIgnoreRestrictions = source.forceIgnoreRestrictions;
             this.currentPresetName = source.currentPresetName;
+            this.ShowInMainTab = source.ShowInMainTab;
             this.factionGearData.Clear();
             foreach (var faction in source.factionGearData)
             {
@@ -151,6 +162,20 @@ namespace FactionGearCustomizer
             }
             // Clear dictionary to force re-initialization
             this.factionGearDataDict = null;
+        }
+
+        public bool IsDialogDismissed(string id)
+        {
+            return dismissedDialogs.Contains(id);
+        }
+
+        public void DismissDialog(string id)
+        {
+            if (!dismissedDialogs.Contains(id))
+            {
+                dismissedDialogs.Add(id);
+                Write();
+            }
         }
     }
 }

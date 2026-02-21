@@ -80,9 +80,12 @@ namespace FactionGearCustomizer
                 
                 foreach (var equipment in equipmentToDestroy)
                 {
-                    if (!pawn.equipment.TryDropEquipment(equipment, out _, pawn.Position, true))
+                    if (pawn.Spawned && pawn.Position.IsValid)
                     {
-                        equipment.Destroy();
+                        if (!pawn.equipment.TryDropEquipment(equipment, out _, pawn.Position, true))
+                        {
+                            equipment.Destroy();
+                        }
                     }
                     else
                     {
@@ -137,8 +140,24 @@ namespace FactionGearCustomizer
                             }
                         }
 
-                        var weapon = GenerateSimpleItem(weaponItem.ThingDef, kindData, true);
-                        if (weapon is ThingWithComps wc) pawn.equipment?.AddEquipment(wc);
+                        var weapon = GenerateSimpleItem(pawn, weaponItem.ThingDef, kindData, true);
+                        if (weapon is ThingWithComps wc)
+                        {
+                            if (wc.def.equipmentType == EquipmentType.Primary && pawn.equipment.Primary != null)
+                            {
+                                ThingWithComps primary = pawn.equipment.Primary;
+                                if (pawn.Spawned && pawn.equipment.TryDropEquipment(primary, out var dropped, pawn.Position, false))
+                                {
+                                    dropped.Destroy();
+                                }
+                                else
+                                {
+                                    pawn.equipment.Remove(primary);
+                                    primary.Destroy();
+                                }
+                            }
+                            pawn.equipment.AddEquipment(wc);
+                        }
                     }
                 }
 
@@ -147,8 +166,24 @@ namespace FactionGearCustomizer
                     var meleeItem = GetRandomGearItem(kindData.meleeWeapons);
                     if (meleeItem?.ThingDef != null)
                     {
-                         var weapon = GenerateSimpleItem(meleeItem.ThingDef, kindData, true);
-                         if (weapon is ThingWithComps wc) pawn.equipment?.AddEquipment(wc);
+                         var weapon = GenerateSimpleItem(pawn, meleeItem.ThingDef, kindData, true);
+                        if (weapon is ThingWithComps wc)
+                        {
+                            if (wc.def.equipmentType == EquipmentType.Primary && pawn.equipment.Primary != null)
+                            {
+                                ThingWithComps primary = pawn.equipment.Primary;
+                                if (pawn.Spawned && pawn.equipment.TryDropEquipment(primary, out var dropped, pawn.Position, false))
+                                {
+                                    dropped.Destroy();
+                                }
+                                else
+                                {
+                                    pawn.equipment.Remove(primary);
+                                    primary.Destroy();
+                                }
+                            }
+                            pawn.equipment.AddEquipment(wc);
+                        }
                     }
                 }
             }
@@ -202,7 +237,10 @@ namespace FactionGearCustomizer
                     {
                         var item = new SpecRequirementEdit() { Thing = def, SelectionMode = ApparelSelectionMode.AlwaysTake };
                         var created = GenerateItem(pawn, item, kindData);
-                        if (created is Apparel app) pawn.apparel.Wear(app, true);
+                        if (created is Apparel app && ApparelUtility.HasPartsToWear(pawn, app.def))
+                        {
+                            pawn.apparel.Wear(app, true);
+                        }
                     }
                 }
 
@@ -213,7 +251,10 @@ namespace FactionGearCustomizer
                     {
                          if (item.Thing == null) continue;
                          var created = GenerateItem(pawn, item, kindData);
-                         if (created is Apparel app) pawn.apparel.Wear(app, true);
+                         if (created is Apparel app && ApparelUtility.HasPartsToWear(pawn, app.def))
+                         {
+                             pawn.apparel.Wear(app, true);
+                         }
                     }
                 }
             }
@@ -226,8 +267,11 @@ namespace FactionGearCustomizer
                     var item = GetRandomGearItem(gearList);
                     if (item?.ThingDef != null)
                     {
-                        var created = GenerateSimpleItem(item.ThingDef, kindData, false);
-                        if (created is Apparel app) pawn.apparel.Wear(app, true);
+                        var created = GenerateSimpleItem(pawn, item.ThingDef, kindData, false);
+                        if (created is Apparel app && ApparelUtility.HasPartsToWear(pawn, app.def))
+                        {
+                            pawn.apparel.Wear(app, true);
+                        }
                     }
                 }
 
@@ -238,9 +282,25 @@ namespace FactionGearCustomizer
         }
 
         // Helper for Simple Mode items
-        private static Thing GenerateSimpleItem(ThingDef def, KindGearData kindData, bool isWeapon)
+        private static Thing GenerateSimpleItem(Pawn pawn, ThingDef def, KindGearData kindData, bool isWeapon)
         {
+            if (def == null)
+            {
+                Log.Error("[FactionGearCustomizer] GenerateSimpleItem called with null def.");
+                return null;
+            }
+            if (kindData == null)
+            {
+                Log.Error("[FactionGearCustomizer] GenerateSimpleItem called with null kindData.");
+                return null;
+            }
+
             ThingDef stuff = def.MadeFromStuff ? GenStuff.RandomStuffFor(def) : null;
+            if (def.MadeFromStuff && stuff == null)
+            {
+                Log.Warning($"[FactionGearCustomizer] Could not find stuff for {def.defName}. Skipping generation.");
+                return null;
+            }
             var thing = ThingMaker.MakeThing(def, stuff);
 
             // Quality
@@ -266,9 +326,7 @@ namespace FactionGearCustomizer
                 var code = thing.TryGetComp<CompBiocodable>();
                 if (code != null && code.Biocodable && Rand.Chance(kindData.BiocodeWeaponChance.Value))
                 {
-                    code.CodeFor(null); // Biocode for "someone", usually needs a pawn but null often works for world gen or we set it later? 
-                    // Actually CodeFor(Pawn p) sets codedPawnLabel. If p is null it might error or set nothing.
-                    // TotalControl calls CodeFor(pawn).
+                    code.CodeFor(pawn);
                 }
             }
 
@@ -359,10 +417,22 @@ namespace FactionGearCustomizer
         {
             if (pool.NullOrEmpty()) return null;
             
-            // Filter by what pawn can wear/use
             var valid = pool.Where(a => a.Thing != null && (a.Thing.IsApparel ? a.Thing.apparel.PawnCanWear(pawn) : true));
             
-            return valid.RandomElementByWeightWithFallback(i => i.SelectionChance);
+            var validList = valid.ToList();
+            if (validList.NullOrEmpty()) return null;
+            
+            float totalWeight = validList.Sum(i => i.weight * i.SelectionChance);
+            if (totalWeight <= 0f) return validList.RandomElement();
+            
+            float randomValue = Rand.Value * totalWeight;
+            float currentWeight = 0f;
+            foreach (var item in validList)
+            {
+                currentWeight += item.weight * item.SelectionChance;
+                if (randomValue <= currentWeight) return item;
+            }
+            return validList.First();
         }
 
         private static GearItem GetRandomGearItem(List<GearItem> items)

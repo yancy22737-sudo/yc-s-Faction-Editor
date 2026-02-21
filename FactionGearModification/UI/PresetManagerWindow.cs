@@ -4,6 +4,7 @@ using System.Linq;
 using RimWorld;
 using UnityEngine;
 using Verse;
+using FactionGearModification.UI;
 
 namespace FactionGearCustomizer
 {
@@ -45,7 +46,7 @@ namespace FactionGearCustomizer
 
         private void DrawPresetList(Rect rect)
         {
-            Widgets.DrawMenuSection(rect);
+            WidgetsUtils.DrawMenuSection(rect);
             Rect innerRect = rect.ContractedBy(5f);
             
             // 1. 顶部标题和搜索框
@@ -120,7 +121,7 @@ namespace FactionGearCustomizer
 
         private void DrawPresetDetails(Rect rect)
         {
-            Widgets.DrawMenuSection(rect);
+            WidgetsUtils.DrawMenuSection(rect);
             if (selectedPreset == null)
             {
                 Text.Anchor = TextAnchor.MiddleCenter;
@@ -140,7 +141,8 @@ namespace FactionGearCustomizer
             Listing_Standard listing = new Listing_Standard();
             listing.Begin(contentRect);
 
-            listing.Label("Preset Details:");
+            Rect labelRect1 = listing.GetRect(Text.CalcHeight("Preset Details:", listing.ColumnWidth));
+            Widgets.Label(labelRect1, "Preset Details:");
             
             // Name
             Rect nameRect = listing.GetRect(24f);
@@ -162,7 +164,8 @@ namespace FactionGearCustomizer
             listing.Gap(10f);
             
             // Save/Update Section
-            listing.Label("<b>Management:</b>");
+            Rect labelRect2 = listing.GetRect(Text.CalcHeight("<b>Management:</b>", listing.ColumnWidth));
+            Widgets.Label(labelRect2, "<b>Management:</b>");
             
             // Two columns for update buttons
             Rect updateRow = listing.GetRect(30f);
@@ -189,7 +192,8 @@ namespace FactionGearCustomizer
             DrawModList(listing.GetRect(100f)); 
             listing.Gap(10f);
 
-            listing.Label("Faction Preview:");
+            Rect labelRect4 = listing.GetRect(Text.CalcHeight("Faction Preview:", listing.ColumnWidth));
+            Widgets.Label(labelRect4, "Faction Preview:");
             // 使用剩余空间，但要保留底部按钮空间
             float remainingHeight = contentRect.height - listing.CurHeight;
             if (remainingHeight > 50f)
@@ -459,7 +463,7 @@ namespace FactionGearCustomizer
         {
             if (selectedPreset != null && selectedPreset.factionGearData.Any())
             {
-                Widgets.DrawBox(rect);
+                WidgetsUtils.DrawBox(rect);
                 Rect innerRect = rect.ContractedBy(5f);
                 
                 Widgets.BeginScrollView(innerRect, ref factionPreviewScrollPos, new Rect(0, 0, innerRect.width - 16f, selectedPreset.factionGearData.Count * 40f));
@@ -496,7 +500,7 @@ namespace FactionGearCustomizer
         {
             if (selectedPreset != null && selectedPreset.requiredMods.Any())
             {
-                Widgets.DrawBox(rect);
+                WidgetsUtils.DrawBox(rect);
                 Rect innerRect = rect.ContractedBy(5f);
                 
                 Widgets.BeginScrollView(innerRect, ref modListScrollPos, new Rect(0, 0, innerRect.width - 16f, selectedPreset.requiredMods.Count * 24f));
