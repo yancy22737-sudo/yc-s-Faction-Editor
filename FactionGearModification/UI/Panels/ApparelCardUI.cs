@@ -56,7 +56,7 @@ namespace FactionGearCustomizer.UI.Panels
 
             // Title / Item Selector
             Rect titleRect = new Rect(iconRect.xMax + 8f, headerRect.y, headerRect.width - 90f, headerRect.height);
-            string titleText = item.Thing?.LabelCap ?? "Select Item";
+            string titleText = item.Thing?.LabelCap ?? LanguageManager.Get("SelectItem");
             
             if (Widgets.ButtonText(titleRect, titleText, false, true, true, TextAnchor.MiddleLeft))
             {
@@ -119,11 +119,11 @@ namespace FactionGearCustomizer.UI.Panels
 
         private static void DrawMaterialSelector(Rect rect, SpecRequirementEdit item)
         {
-            string label = item.Material == null ? "Material: Random/Default" : $"Material: {item.Material.LabelCap}";
+            string label = item.Material == null ? LanguageManager.Get("RandomDefault") : LanguageManager.Get("MaterialSelect", item.Material.LabelCap);
             if (Widgets.ButtonText(rect, label))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
-                options.Add(new FloatMenuOption("Random/Default", () => { item.Material = null; FactionGearEditor.MarkDirty(); }));
+                options.Add(new FloatMenuOption(LanguageManager.Get("RandomDefault"), () => { item.Material = null; FactionGearEditor.MarkDirty(); }));
                 
                 if (item.Thing != null && item.Thing.MadeFromStuff)
                 {
@@ -136,16 +136,31 @@ namespace FactionGearCustomizer.UI.Panels
             }
         }
 
+        private static string GetQualityLabel(QualityCategory q)
+        {
+            switch (q)
+            {
+                case QualityCategory.Awful: return LanguageManager.Get("QualityAwful");
+                case QualityCategory.Poor: return LanguageManager.Get("QualityPoor");
+                case QualityCategory.Normal: return LanguageManager.Get("QualityNormal");
+                case QualityCategory.Good: return LanguageManager.Get("QualityGood");
+                case QualityCategory.Excellent: return LanguageManager.Get("QualityExcellent");
+                case QualityCategory.Masterwork: return LanguageManager.Get("QualityMasterwork");
+                case QualityCategory.Legendary: return LanguageManager.Get("QualityLegendary");
+                default: return q.ToString();
+            }
+        }
+
         private static void DrawQualitySelector(Rect rect, SpecRequirementEdit item)
         {
-            string label = item.Quality.HasValue ? $"Quality: {item.Quality}" : "Quality: Default";
+            string label = item.Quality.HasValue ? LanguageManager.Get("QualitySelect", GetQualityLabel(item.Quality.Value)) : LanguageManager.Get("QualitySelect", LanguageManager.Get("Default"));
             if (Widgets.ButtonText(rect, label))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
-                options.Add(new FloatMenuOption("Default", () => { item.Quality = null; FactionGearEditor.MarkDirty(); }));
+                options.Add(new FloatMenuOption(LanguageManager.Get("Default"), () => { item.Quality = null; FactionGearEditor.MarkDirty(); }));
                 foreach (QualityCategory q in Enum.GetValues(typeof(QualityCategory)))
                 {
-                    options.Add(new FloatMenuOption(q.ToString(), () => { item.Quality = q; FactionGearEditor.MarkDirty(); }));
+                    options.Add(new FloatMenuOption(GetQualityLabel(q), () => { item.Quality = q; FactionGearEditor.MarkDirty(); }));
                 }
                 Find.WindowStack.Add(new FloatMenu(options));
             }
@@ -153,7 +168,7 @@ namespace FactionGearCustomizer.UI.Panels
 
         private static void DrawModeSelector(Rect rect, SpecRequirementEdit item)
         {
-            string label = $"Mode: {item.SelectionMode}";
+            string label = LanguageManager.Get("SelectionMode", item.SelectionMode.ToString());
             if (Widgets.ButtonText(rect, label))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();

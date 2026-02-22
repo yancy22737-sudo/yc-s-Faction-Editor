@@ -16,7 +16,7 @@ namespace FactionGearCustomizer
         
         public static string GetChangelog()
         {
-            return "Version: " + Current + "\n\nChanges:\n- UI optimizations\n- Layout improvements";
+            return $"{LanguageManager.Get("Version")}: {Current}\n\n{LanguageManager.Get("Changelog")}:\n- UI optimizations\n- Layout improvements";
         }
     }
 }

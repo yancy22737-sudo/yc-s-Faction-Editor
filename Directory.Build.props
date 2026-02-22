@@ -1,0 +1,13 @@
+<Project>
+  <Import Project="Local.props" Condition="Exists('Local.props')" />
+
+  <PropertyGroup>
+    <!-- Default RimWorld Path (can be overridden in Local.props) -->
+    <RimWorldPath Condition="'$(RimWorldPath)' == ''">C:\Program Files (x86)\Steam\steamapps\common\RimWorld</RimWorldPath>
+    
+    <!-- Default Workshop Path (can be overridden in Local.props) -->
+    <WorkshopPath Condition="'$(WorkshopPath)' == ''">C:\Program Files (x86)\Steam\steamapps\workshop\content\294100</WorkshopPath>
+    
+    <RimWorldManagedPath>$(RimWorldPath)\RimWorldWin64_Data\Managed</RimWorldManagedPath>
+  </PropertyGroup>
+</Project>

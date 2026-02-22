@@ -247,7 +247,7 @@ namespace FactionGearCustomizer
                 }
             }
             GUI.color = Color.cyan;
-            if (buttonRow.ButtonText(LanguageManager.Get("Presets"), "Manage gear presets"))
+            if (buttonRow.ButtonText(LanguageManager.Get("Presets"), LanguageManager.Get("ManagePresetsTooltip")))
             {
                 Find.WindowStack.Add(new PresetManagerWindow());
             }
@@ -467,24 +467,24 @@ namespace FactionGearCustomizer
             sb.AppendLine($"<b>{item.LabelCap}</b>");
             sb.AppendLine($"<color=gray>{item.description}</color>");
             sb.AppendLine();
-            sb.AppendLine($"Base Market Value: {item.BaseMarketValue:F0}");
-            sb.AppendLine($"Mass: {item.BaseMass:F2} kg");
+            sb.AppendLine($"{LanguageManager.Get("BaseMarketValue")}: {item.BaseMarketValue:F0}");
+            sb.AppendLine($"{LanguageManager.Get("Weight")}: {item.BaseMass:F2} kg");
             
             if (item.IsWeapon)
             {
                 float damage = FactionGearManager.GetWeaponDamage(item);
                 float range = FactionGearManager.GetWeaponRange(item);
                 float dps = FactionGearManager.CalculateWeaponDPS(item);
-                sb.AppendLine($"Damage: {damage}");
-                sb.AppendLine($"Range: {range}");
-                sb.AppendLine($"DPS: {dps:F1}");
+                sb.AppendLine($"{LanguageManager.Get("Damage")}: {damage}");
+                sb.AppendLine($"{LanguageManager.Get("Range")}: {range}");
+                sb.AppendLine($"{LanguageManager.Get("DPS")}: {dps:F1}");
             }
             else if (item.IsApparel)
             {
                 float sharp = FactionGearManager.GetArmorRatingSharp(item);
                 float blunt = FactionGearManager.GetArmorRatingBlunt(item);
-                sb.AppendLine($"Armor (Sharp): {sharp:P0}");
-                sb.AppendLine($"Armor (Blunt): {blunt:P0}");
+                sb.AppendLine($"{LanguageManager.Get("ArmorSharp")}: {sharp:P0}");
+                sb.AppendLine($"{LanguageManager.Get("ArmorBlunt")}: {blunt:P0}");
             }
             return sb.ToString();
         }

@@ -26,18 +26,18 @@ namespace FactionGearCustomizer
             {
                 // Unsaved changes detected - ask user for confirmation
                 Find.WindowStack.Add(new Dialog_MessageBox(
-                    "You have unsaved changes. Do you want to save them?",
-                    "Save",
+                    LanguageManager.Get("UnsavedChangesMessage"),
+                    LanguageManager.Get("Save"),
                     () => {
                         FactionGearEditor.SaveChanges();
-                        Messages.Message("Settings saved.", MessageTypeDefOf.TaskCompletion, false);
+                        Messages.Message(LanguageManager.Get("SettingsSaved"), MessageTypeDefOf.TaskCompletion, false);
                     },
-                    "Discard",
+                    LanguageManager.Get("Discard"),
                     () => {
                         FactionGearEditor.DiscardChanges();
-                        Messages.Message("Changes discarded.", MessageTypeDefOf.TaskCompletion, false);
+                        Messages.Message(LanguageManager.Get("SettingsDiscarded"), MessageTypeDefOf.TaskCompletion, false);
                     },
-                    "Unsaved Changes",
+                    LanguageManager.Get("UnsavedChanges"),
                     false,
                     null,
                     null

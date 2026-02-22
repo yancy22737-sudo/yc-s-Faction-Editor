@@ -159,12 +159,7 @@ namespace FactionGearCustomizer.UI.Panels
 
             // Search
             Rect searchRect = listing.GetRect(24f);
-            Rect searchLabelRect = searchRect.LeftPartPixels(60f);
-            Rect searchInputRect = searchRect.RightPartPixels(searchRect.width - 60f);
-            
-            Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(searchLabelRect, LanguageManager.Get("Search") + ":");
-            Text.Anchor = TextAnchor.UpperLeft;
+            Rect searchInputRect = searchRect;
             
             string newSearchText = Widgets.TextField(searchInputRect, EditorSession.SearchText);
             if (string.IsNullOrEmpty(newSearchText))
@@ -190,7 +185,7 @@ namespace FactionGearCustomizer.UI.Panels
                 {
                     EditorSession.SearchText = "";
                 }
-                TooltipHandler.TipRegion(clearButtonRect, "Clear search");
+                TooltipHandler.TipRegion(clearButtonRect, LanguageManager.Get("ClearSearch"));
             }
 
             listing.Gap(4f);
@@ -206,33 +201,34 @@ namespace FactionGearCustomizer.UI.Panels
             string modButtonText;
             if (EditorSession.SelectedModSources.Count == 0)
             {
-                modButtonText = "Mod: All";
+                modButtonText = LanguageManager.Get("ModAll");
             }
             else if (EditorSession.SelectedModSources.Count == 1)
             {
                 string s = EditorSession.SelectedModSources.First();
-                modButtonText = "Mod: " + (s.Length > 10 ? s.Substring(0, 8) + "..." : s);
+                modButtonText = s.Length > 10 ? s.Substring(0, 8) + "..." : s;
             }
             else
             {
-                modButtonText = $"Mod: {EditorSession.SelectedModSources.Count} Selected";
+                modButtonText = LanguageManager.Get("ModCountSelected", EditorSession.SelectedModSources.Count);
             }
 
             if (Widgets.ButtonText(modSourceRect, modButtonText))
             {
                 OpenModFilterMenu();
             }
-            TooltipHandler.TipRegion(modSourceRect, "Filter by Mod (Multi-select)");
+            TooltipHandler.TipRegion(modSourceRect, LanguageManager.Get("FilterByModTooltip"));
 
             // Tech Level
-            string techButtonText = !EditorSession.SelectedTechLevel.HasValue ? "Tech: All" : EditorSession.SelectedTechLevel.Value.ToString();
+            string techButtonText = !EditorSession.SelectedTechLevel.HasValue ? LanguageManager.Get("TechAll") : ((string)("TechLevel_" + EditorSession.SelectedTechLevel.Value).Translate());
             if (Widgets.ButtonText(techLevelRect, techButtonText))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
-                options.Add(new FloatMenuOption("All", () => { EditorSession.SelectedTechLevel = null; FactionGearEditor.CalculateBounds(); }));
+                options.Add(new FloatMenuOption(LanguageManager.Get("All"), () => { EditorSession.SelectedTechLevel = null; FactionGearEditor.CalculateBounds(); }));
                 foreach (TechLevel level in Enum.GetValues(typeof(TechLevel)))
                 {
-                    options.Add(new FloatMenuOption(level.ToString(), () => { EditorSession.SelectedTechLevel = level; FactionGearEditor.CalculateBounds(); }));
+                    if (level == TechLevel.Undefined) continue;
+                    options.Add(new FloatMenuOption(((string)("TechLevel_" + level).Translate()), () => { EditorSession.SelectedTechLevel = level; FactionGearEditor.CalculateBounds(); }));
                 }
                 Find.WindowStack.Add(new FloatMenu(options));
             }
@@ -251,12 +247,14 @@ namespace FactionGearCustomizer.UI.Panels
 
             if (!dynamicSortOptions.Contains(EditorSession.SortField)) EditorSession.SortField = dynamicSortOptions[0];
 
-            if (Widgets.ButtonText(sortFieldRect, $"Sort by: {EditorSession.SortField}"))
+            string sortFieldLabel = LanguageManager.Get("SortField_" + EditorSession.SortField, EditorSession.SortField);
+            if (Widgets.ButtonText(sortFieldRect, LanguageManager.Get("SortBy", sortFieldLabel)))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
                 foreach (string option in dynamicSortOptions)
                 {
-                    options.Add(new FloatMenuOption(option, () => EditorSession.SortField = option));
+                    string label = LanguageManager.Get("SortField_" + option, option);
+                    options.Add(new FloatMenuOption(label, () => EditorSession.SortField = option));
                 }
                 Find.WindowStack.Add(new FloatMenu(options));
             }
@@ -265,17 +263,17 @@ namespace FactionGearCustomizer.UI.Panels
             {
                 EditorSession.SortAscending = !EditorSession.SortAscending;
             }
-            TooltipHandler.TipRegion(sortOrderRect, EditorSession.SortAscending ? "Ascending" : "Descending");
+            TooltipHandler.TipRegion(sortOrderRect, EditorSession.SortAscending ? LanguageManager.Get("SortAscending") : LanguageManager.Get("SortDescending"));
 
             listing.Gap(4f);
 
             // Range Filters
-            DrawRangeFilter(listing, ref EditorSession.MarketValueFilter, EditorSession.MinMarketValue, EditorSession.MaxMarketValue, "Value", ToStringStyle.Money);
+            DrawRangeFilter(listing, ref EditorSession.MarketValueFilter, EditorSession.MinMarketValue, EditorSession.MaxMarketValue, LanguageManager.Get("Value"), ToStringStyle.Money);
 
             if (EditorSession.SelectedCategory == GearCategory.Weapons || EditorSession.SelectedCategory == GearCategory.MeleeWeapons)
             {
-                DrawRangeFilter(listing, ref EditorSession.RangeFilter, 0f, EditorSession.MaxRange, "Range", ToStringStyle.FloatOne);
-                DrawRangeFilter(listing, ref EditorSession.DamageFilter, 0f, EditorSession.MaxDamage, "Damage", ToStringStyle.FloatOne);
+                DrawRangeFilter(listing, ref EditorSession.RangeFilter, 0f, EditorSession.MaxRange, LanguageManager.Get("Range"), ToStringStyle.FloatOne);
+                DrawRangeFilter(listing, ref EditorSession.DamageFilter, 0f, EditorSession.MaxDamage, LanguageManager.Get("Damage"), ToStringStyle.FloatOne);
             }
 
             listing.End();

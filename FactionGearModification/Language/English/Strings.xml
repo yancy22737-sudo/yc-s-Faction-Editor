@@ -202,4 +202,42 @@ Recommended: ON for total control.</ForceOnlySelectedTooltip>
   <Overwrite>Overwrite</Overwrite>
   <CannotAddItemsInCurrentTabTooltip>Cannot add items in current Advanced Mode tab.</CannotAddItemsInCurrentTabTooltip>
   <NewPreset>New Preset</NewPreset>
+  <ClearSearch>Clear search</ClearSearch>
+  <ModAll>Mod: All</ModAll>
+  <ModCountSelected>Mod: {0} Selected</ModCountSelected>
+  <FilterByModTooltip>Filter by Mod (Multi-select)</FilterByModTooltip>
+  <TechAll>Tech: All</TechAll>
+  <SortBy>Sort by: {0}</SortBy>
+  <SortAscending>Ascending</SortAscending>
+  <SortDescending>Descending</SortDescending>
+  <SortField_Name>Name</SortField_Name>
+  <SortField_MarketValue>Market Value</SortField_MarketValue>
+  <SortField_TechLevel>Tech Level</SortField_TechLevel>
+  <SortField_ModSource>Mod Source</SortField_ModSource>
+  <SortField_Accuracy>Accuracy</SortField_Accuracy>
+  <SortField_DPS>DPS</SortField_DPS>
+  <SortField_Armor_Sharp>Sharp Armor</SortField_Armor_Sharp>
+  <SortField_Armor_Blunt>Blunt Armor</SortField_Armor_Blunt>
+  <BaseMarketValue>Base Value</BaseMarketValue>
+  <DPS>DPS</DPS>
+  <ArmorSharp>Sharp Armor</ArmorSharp>
+  <ArmorBlunt>Blunt Armor</ArmorBlunt>
+  <Value>Value</Value>
+  <Range>Range</Range>
+  <Damage>Damage</Damage>
+  <Material>Material</Material>
+  <MaterialSelect>Material: {0}</MaterialSelect>
+  <QualitySelect>Quality: {0}</QualitySelect>
+  <SelectionMode>Mode: {0}</SelectionMode>
+  <SelectionMode_AlwaysTake>Always Take</SelectionMode_AlwaysTake>
+  <SelectionMode_RandomChance>Random Chance</SelectionMode_RandomChance>
+  <SelectionMode_FromPool1>Pool 1</SelectionMode_FromPool1>
+  <SelectionMode_FromPool2>Pool 2</SelectionMode_FromPool2>
+  <SelectionMode_FromPool3>Pool 3</SelectionMode_FromPool3>
+  <SelectionMode_FromPool4>Pool 4</SelectionMode_FromPool4>
+  <Remove>Remove</Remove>
+  <Search>Search</Search>
+  <Active>(Active)</Active>
+  <ManagePresetsTooltip>Manage gear presets</ManagePresetsTooltip>
+  <Changelog>Changes</Changelog>
 </LanguageData>

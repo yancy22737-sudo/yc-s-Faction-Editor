@@ -245,10 +245,9 @@ namespace FactionGearCustomizer
                     foreach (var def in kindData.ApparelRequired)
                     {
                         var item = new SpecRequirementEdit() { Thing = def, SelectionMode = ApparelSelectionMode.AlwaysTake };
-                        var created = GenerateItem(pawn, item, kindData);
+                        var created = GenerateItem(pawn, item, kindData, forceIgnore ? -1f : (budget - currentSpent));
                         if (created is Apparel app && ApparelUtility.HasPartsToWear(pawn, app.def))
                         {
-                            // Check Budget
                             if (!forceIgnore && (currentSpent + app.MarketValue > budget))
                             {
                                 created.Destroy();
@@ -275,7 +274,7 @@ namespace FactionGearCustomizer
                     foreach (var item in GetWhatToGive(kindData.SpecificApparel, pawn))
                     {
                          if (item.Thing == null) continue;
-                         var created = GenerateItem(pawn, item, kindData);
+                         var created = GenerateItem(pawn, item, kindData, forceIgnore ? -1f : (budget - currentSpent));
                          if (created is Apparel app && ApparelUtility.HasPartsToWear(pawn, app.def))
                          {
                              // Check Budget
@@ -343,7 +342,7 @@ namespace FactionGearCustomizer
 
                             if (item.ThingDef != null)
                             {
-                                var created = GenerateSimpleItem(pawn, item.ThingDef, kindData, false);
+                                var created = GenerateSimpleItem(pawn, item.ThingDef, kindData, false, forceIgnore ? -1f : (budget - currentSpent));
                                 if (created is Apparel app)
                                 {
                                     // Check Budget (unless ignored)
@@ -383,7 +382,7 @@ namespace FactionGearCustomizer
                         var item = GetRandomGearItem(gearList);
                         if (item?.ThingDef != null)
                         {
-                            var created = GenerateSimpleItem(pawn, item.ThingDef, kindData, false);
+                            var created = GenerateSimpleItem(pawn, item.ThingDef, kindData, false, forceIgnore ? -1f : (budget - currentSpent));
                             if (created is Apparel app) 
                             {
                                 // Check Budget (unless ignored)
@@ -425,8 +424,30 @@ namespace FactionGearCustomizer
             }
         }
 
+        private static float GetEstimatedMarketValue(ThingDef def, ThingDef stuff, QualityCategory quality)
+        {
+            float baseValue = def.GetStatValueAbstract(StatDefOf.MarketValue, stuff);
+            float qualityFactor = GetQualityPriceMultiplier(quality);
+            return baseValue * qualityFactor;
+        }
+
+        private static float GetQualityPriceMultiplier(QualityCategory quality)
+        {
+            switch (quality)
+            {
+                case QualityCategory.Awful: return 0.2f;
+                case QualityCategory.Poor: return 0.5f;
+                case QualityCategory.Normal: return 1.0f;
+                case QualityCategory.Good: return 1.4f;
+                case QualityCategory.Excellent: return 1.8f;
+                case QualityCategory.Masterwork: return 2.5f;
+                case QualityCategory.Legendary: return 4.0f;
+                default: return 1.0f;
+            }
+        }
+
         // Helper for Simple Mode items
-        private static Thing GenerateSimpleItem(Pawn pawn, ThingDef def, KindGearData kindData, bool isWeapon)
+        private static Thing GenerateSimpleItem(Pawn pawn, ThingDef def, KindGearData kindData, bool isWeapon, float maxPrice = -1f)
         {
             if (def == null)
             {
@@ -445,16 +466,38 @@ namespace FactionGearCustomizer
                 Log.Warning($"[FactionGearCustomizer] Could not find stuff for {def.defName}. Skipping generation.");
                 return null;
             }
+
+            // Quality Logic (Pre-calculation)
+            QualityCategory q = QualityCategory.Normal;
+            if (isWeapon && kindData.ForcedWeaponQuality.HasValue) q = kindData.ForcedWeaponQuality.Value;
+            else if (kindData.ItemQuality.HasValue) q = kindData.ItemQuality.Value;
+
+            // Budget Check
+            if (maxPrice >= 0f)
+            {
+                // Only check quality multiplier if the item actually has quality, otherwise it's just base * stuff
+                // But GetEstimatedMarketValue applies quality multiplier anyway.
+                // If the item doesn't have CompQuality, it shouldn't have quality. 
+                // However, checking CompQuality requires instantiation or checking def.HasComp(typeof(CompQuality)).
+                
+                // If def doesn't have quality comp, we should treat quality multiplier as 1.
+                if (!def.HasComp(typeof(CompQuality)))
+                {
+                    // If no quality, force Normal (1.0x) for calculation
+                    if (GetEstimatedMarketValue(def, stuff, QualityCategory.Normal) > maxPrice) return null;
+                }
+                else
+                {
+                    if (GetEstimatedMarketValue(def, stuff, q) > maxPrice) return null;
+                }
+            }
+
             var thing = ThingMaker.MakeThing(def, stuff);
 
             // Quality
             CompQuality compQuality = thing.TryGetComp<CompQuality>();
             if (compQuality != null)
             {
-                QualityCategory q = QualityCategory.Normal;
-                if (isWeapon && kindData.ForcedWeaponQuality.HasValue) q = kindData.ForcedWeaponQuality.Value;
-                else if (kindData.ItemQuality.HasValue) q = kindData.ItemQuality.Value;
-                
                 compQuality.SetQuality(q, ArtGenerationContext.Outsider);
             }
             
@@ -464,8 +507,8 @@ namespace FactionGearCustomizer
                 thing.SetColor(kindData.ApparelColor.Value);
             }
             
-            // Biocode
-            if (isWeapon && kindData.BiocodeWeaponChance.HasValue)
+            // Biocode (Royalty DLC)
+            if (ModsConfig.RoyaltyActive && isWeapon && kindData.BiocodeWeaponChance.HasValue)
             {
                 var code = thing.TryGetComp<CompBiocodable>();
                 if (code != null && code.Biocodable && Rand.Chance(kindData.BiocodeWeaponChance.Value))
@@ -478,7 +521,7 @@ namespace FactionGearCustomizer
         }
 
         // Helper for Advanced Mode items
-        private static Thing GenerateItem(Pawn pawn, SpecRequirementEdit spec, KindGearData kindData)
+        private static Thing GenerateItem(Pawn pawn, SpecRequirementEdit spec, KindGearData kindData, float maxPrice = -1f)
         {
             ThingDef stuff = spec.Material;
             if (stuff == null && spec.Thing.MadeFromStuff)
@@ -486,10 +529,27 @@ namespace FactionGearCustomizer
                  stuff = GenStuff.RandomStuffFor(spec.Thing);
             }
 
+            // Quality Logic (Pre-calculation)
+            QualityCategory q = spec.Quality ?? kindData.ItemQuality ?? QualityCategory.Normal;
+            if (spec.Thing.IsWeapon && kindData.ForcedWeaponQuality.HasValue) q = kindData.ForcedWeaponQuality.Value;
+
+            // Budget Check
+            if (maxPrice >= 0f)
+            {
+                 if (!spec.Thing.HasComp(typeof(CompQuality)))
+                 {
+                     if (GetEstimatedMarketValue(spec.Thing, stuff, QualityCategory.Normal) > maxPrice) return null;
+                 }
+                 else
+                 {
+                     if (GetEstimatedMarketValue(spec.Thing, stuff, q) > maxPrice) return null;
+                 }
+            }
+
             Thing thing = ThingMaker.MakeThing(spec.Thing, stuff);
             if (thing == null) return null;
 
-            if (spec.Style != null)
+            if (ModsConfig.IdeologyActive && spec.Style != null)
             {
                 thing.SetStyleDef(spec.Style);
             }
@@ -497,9 +557,6 @@ namespace FactionGearCustomizer
             CompQuality compQuality = thing.TryGetComp<CompQuality>();
             if (compQuality != null)
             {
-                QualityCategory q = spec.Quality ?? kindData.ItemQuality ?? QualityCategory.Normal;
-                if (thing.def.IsWeapon && kindData.ForcedWeaponQuality.HasValue) q = kindData.ForcedWeaponQuality.Value;
-                
                 compQuality.SetQuality(q, ArtGenerationContext.Outsider);
             }
 
@@ -509,20 +566,24 @@ namespace FactionGearCustomizer
                 thing.SetColor(color, false);
             }
 
-            CompBiocodable code = thing.TryGetComp<CompBiocodable>();
-            if (code != null && code.Biocodable)
+            // Biocode (Royalty DLC)
+            if (ModsConfig.RoyaltyActive)
             {
-                if (code.Biocoded) code.UnCode();
-                
-                bool shouldBiocode = spec.Biocode;
-                if (!shouldBiocode && thing.def.IsWeapon && kindData.BiocodeWeaponChance.HasValue)
+                CompBiocodable code = thing.TryGetComp<CompBiocodable>();
+                if (code != null && code.Biocodable)
                 {
-                    shouldBiocode = Rand.Chance(kindData.BiocodeWeaponChance.Value);
-                }
+                    if (code.Biocoded) code.UnCode();
+                    
+                    bool shouldBiocode = spec.Biocode;
+                    if (!shouldBiocode && thing.def.IsWeapon && kindData.BiocodeWeaponChance.HasValue)
+                    {
+                        shouldBiocode = Rand.Chance(kindData.BiocodeWeaponChance.Value);
+                    }
 
-                if (shouldBiocode)
-                {
-                    code.CodeFor(pawn);
+                    if (shouldBiocode)
+                    {
+                        code.CodeFor(pawn);
+                    }
                 }
             }
 

@@ -59,12 +59,13 @@ namespace FactionGearCustomizer.UI
 
             // Tech Level
             listing.Label(LanguageManager.Get("TechLevel") + ":");
-            if (listing.ButtonText(tempTechLevel.ToString()))
+            string techLabel = ((string)("TechLevel." + tempTechLevel).Translate());
+            if (listing.ButtonText(techLabel))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
                 foreach (TechLevel level in Enum.GetValues(typeof(TechLevel)))
                 {
-                    options.Add(new FloatMenuOption(level.ToString(), () => tempTechLevel = level));
+                    options.Add(new FloatMenuOption((string)("TechLevel." + level).Translate(), () => tempTechLevel = level));
                 }
                 Find.WindowStack.Add(new FloatMenu(options));
             }

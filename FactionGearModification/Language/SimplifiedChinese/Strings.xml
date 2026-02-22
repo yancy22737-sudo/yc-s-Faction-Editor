@@ -202,4 +202,43 @@
   <Overwrite>覆盖</Overwrite>
   <CannotAddItemsInCurrentTabTooltip>无法在当前高级模式标签页中添加物品。</CannotAddItemsInCurrentTabTooltip>
   <NewPreset>新预设</NewPreset>
+  <ClearSearch>清除搜索</ClearSearch>
+  <ModAll>Mod: 全部</ModAll>
+  <ModCountSelected>Mod: 已选 {0} 个</ModCountSelected>
+  <FilterByModTooltip>按 Mod 筛选（多选）</FilterByModTooltip>
+  <TechAll>科技: 全部</TechAll>
+  <SortBy>排序: {0}</SortBy>
+  <SortAscending>升序</SortAscending>
+  <SortDescending>降序</SortDescending>
+  <SortField_Name>名称</SortField_Name>
+  <SortField_MarketValue>市场价值</SortField_MarketValue>
+  <SortField_TechLevel>科技等级</SortField_TechLevel>
+  <SortField_ModSource>来源模组</SortField_ModSource>
+  <SortField_Accuracy>精度</SortField_Accuracy>
+  <SortField_DPS>DPS</SortField_DPS>
+  <SortField_Armor_Sharp>锋利护甲</SortField_Armor_Sharp>
+  <SortField_Armor_Blunt>钝击护甲</SortField_Armor_Blunt>
+  <BaseMarketValue>基础价值</BaseMarketValue>
+  <Weight>重量</Weight>
+  <Damage>伤害</Damage>
+  <Range>射程</Range>
+  <DPS>DPS</DPS>
+  <ArmorSharp>锋利护甲</ArmorSharp>
+  <ArmorBlunt>钝击护甲</ArmorBlunt>
+  <Value>价值</Value>
+  <Material>材质</Material>
+  <MaterialSelect>材质: {0}</MaterialSelect>
+  <QualitySelect>品质: {0}</QualitySelect>
+  <SelectionMode>模式: {0}</SelectionMode>
+  <SelectionMode_AlwaysTake>必带</SelectionMode_AlwaysTake>
+  <SelectionMode_RandomChance>随机概率</SelectionMode_RandomChance>
+  <SelectionMode_FromPool1>池1</SelectionMode_FromPool1>
+  <SelectionMode_FromPool2>池2</SelectionMode_FromPool2>
+  <SelectionMode_FromPool3>池3</SelectionMode_FromPool3>
+  <SelectionMode_FromPool4>池4</SelectionMode_FromPool4>
+  <Remove>删除</Remove>
+  <Search>搜索</Search>
+  <Active>（当前使用）</Active>
+  <ManagePresetsTooltip>管理装备预设</ManagePresetsTooltip>
+  <Changelog>更新内容</Changelog>
 </LanguageData>

@@ -80,7 +80,7 @@ namespace FactionGearCustomizer
                 bool isActive = preset.name == FactionGearCustomizerMod.Settings.currentPresetName;
                 if (isActive)
                 {
-                    displayName += " (Active)";
+                    displayName += " " + LanguageManager.Get("Active");
                     GUI.color = Color.green;
                 }
                 

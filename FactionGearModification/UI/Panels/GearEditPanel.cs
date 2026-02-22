@@ -595,7 +595,7 @@ namespace FactionGearCustomizer.UI.Panels
 
             ui.Gap();
 
-            DrawOverrideEnum(ui, LanguageManager.Get("ItemQuality"), kindData.ItemQuality, val => { UndoManager.RecordState(kindData); kindData.ItemQuality = val; FactionGearEditor.MarkDirty(); });
+            DrawOverrideEnum(ui, LanguageManager.Get("ItemQuality"), kindData.ItemQuality, val => { UndoManager.RecordState(kindData); kindData.ItemQuality = val; FactionGearEditor.MarkDirty(); }, q => LanguageManager.Get("Quality" + q));
             DrawOverrideFloatRange(ui, LanguageManager.Get("ApparelBudget"), ref kindData.ApparelMoney, val => { UndoManager.RecordState(kindData); kindData.ApparelMoney = val; FactionGearEditor.MarkDirty(); }, forceIgnore);
             DrawOverrideFloatRange(ui, LanguageManager.Get("WeaponBudget"), ref kindData.WeaponMoney, val => { UndoManager.RecordState(kindData); kindData.WeaponMoney = val; FactionGearEditor.MarkDirty(); }, forceIgnore);
             DrawOverrideFloatRange(ui, LanguageManager.Get("TechBudget"), ref kindData.TechMoney, val => { UndoManager.RecordState(kindData); kindData.TechMoney = val; FactionGearEditor.MarkDirty(); }, forceIgnore);
@@ -659,7 +659,7 @@ namespace FactionGearCustomizer.UI.Panels
         private static void DrawAdvancedWeapons(Listing_Standard ui, KindGearData kindData)
         {
             DrawEmbeddedGearList(ui, kindData, GearCategory.Weapons, GearCategory.MeleeWeapons);
-            DrawOverrideEnum(ui, LanguageManager.Get("ForcedWeaponQuality"), kindData.ForcedWeaponQuality, val => { kindData.ForcedWeaponQuality = val; FactionGearEditor.MarkDirty(); });
+            DrawOverrideEnum(ui, LanguageManager.Get("ForcedWeaponQuality"), kindData.ForcedWeaponQuality, val => { kindData.ForcedWeaponQuality = val; FactionGearEditor.MarkDirty(); }, q => LanguageManager.Get("Quality" + q));
             
             float biocodeChance = kindData.BiocodeWeaponChance ?? 0f;
             float oldBiocode = biocodeChance;
@@ -717,18 +717,21 @@ namespace FactionGearCustomizer.UI.Panels
             }
         }
 
-        private static void DrawOverrideEnum<T>(Listing_Standard ui, string label, T? currentValue, Action<T?> setValue) where T : struct
+        private static void DrawOverrideEnum<T>(Listing_Standard ui, string label, T? currentValue, Action<T?> setValue, Func<T, string> labelFormatter = null) where T : struct
         {
             Rect rect = ui.GetRect(28f);
             Widgets.Label(rect.LeftHalf(), label + ":");
-            string btnLabel = currentValue.HasValue ? currentValue.Value.ToString() : LanguageManager.Get("Default");
+            
+            string GetLabel(T val) => labelFormatter != null ? labelFormatter(val) : val.ToString();
+            
+            string btnLabel = currentValue.HasValue ? GetLabel(currentValue.Value) : LanguageManager.Get("Default");
             if (Widgets.ButtonText(rect.RightHalf(), btnLabel))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
                 options.Add(new FloatMenuOption(LanguageManager.Get("Default"), () => setValue(null)));
                 foreach (T val in Enum.GetValues(typeof(T)))
                 {
-                    options.Add(new FloatMenuOption(val.ToString(), () => setValue(val)));
+                    options.Add(new FloatMenuOption(GetLabel(val), () => setValue(val)));
                 }
                 Find.WindowStack.Add(new FloatMenu(options));
             }
@@ -784,10 +787,10 @@ namespace FactionGearCustomizer.UI.Panels
             {
                 var cat = allowedCategories[i];
                 string label = cat.ToString();
-                if (cat == GearCategory.Weapons) label = "Ranged";
-                else if (cat == GearCategory.MeleeWeapons) label = "Melee";
-                else if (cat == GearCategory.Armors) label = "Armors";
-                else if (cat == GearCategory.Apparel) label = "Clothes";
+                if (cat == GearCategory.Weapons) label = LanguageManager.Get("Ranged");
+                else if (cat == GearCategory.MeleeWeapons) label = LanguageManager.Get("Melee");
+                else if (cat == GearCategory.Armors) label = LanguageManager.Get("Armors");
+                else if (cat == GearCategory.Apparel) label = LanguageManager.Get("Clothes");
                 
                 Rect catRect = new Rect(tabRect.x + tabWidth * i, tabRect.y, tabWidth, tabRect.height);
                 bool isSelected = EditorSession.SelectedCategory == cat;
