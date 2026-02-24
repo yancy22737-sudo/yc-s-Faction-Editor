@@ -57,6 +57,8 @@ namespace FactionGearCustomizer
 
         public override string SettingsCategory()
         {
+            // 此标题会由 RimWorld 自动绘制在 Mod 设置窗口顶部
+            // 请勿在 UI 代码中重复绘制，否则会导致标题重叠
             return LanguageManager.Get("FactionGearCustomizer");
         }
     }

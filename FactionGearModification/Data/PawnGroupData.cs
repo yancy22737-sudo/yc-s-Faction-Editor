@@ -125,7 +125,11 @@ namespace FactionGearCustomizer
                 maker.kindDef = DefDatabase<PawnGroupKindDef>.GetNamedSilentFail(kindDefName);
             }
             
-            if (maker.kindDef == null) return null;
+            if (maker.kindDef == null)
+            {
+                Log.Warning($"[FactionGearCustomizer] PawnGroupMakerData.ToPawnGroupMaker: kindDef is null for kindDefName: {kindDefName}");
+                return null;
+            }
 
             maker.commonality = commonality;
             maker.maxTotalPoints = maxTotalPoints;

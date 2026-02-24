@@ -406,7 +406,9 @@ namespace FactionGearCustomizer
                                 if (fillTabMethod != null)
                                 {
                                     ITab_Pawn_Gear tab = new ITab_Pawn_Gear();
-                                    fillTabMethod.Invoke(tab, new object[] { });
+                                    // FillTab需要一个Rect参数来定义绘制区域
+                                    Rect tabRect = new Rect(0f, 0f, windowRect.width, windowRect.height);
+                                    fillTabMethod.Invoke(tab, new object[] { tabRect });
                                 }
                                 
                                 list.Clear();

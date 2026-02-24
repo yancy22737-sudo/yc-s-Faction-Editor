@@ -48,20 +48,21 @@ namespace FactionGearCustomizer
                 var allApparel = allDefs.Where(t => t.IsApparel).ToList();
                 var processedApparel = new HashSet<ThingDef>();
 
-                // 1. 头盔 (Helmets): IsHelmet
-                cachedAllHelmets = allApparel.Where(t => IsHelmet(t)).ToList();
-                foreach (var t in cachedAllHelmets) processedApparel.Add(t);
-                
-                // 2. 护甲 (Armors): IsArmor (且未处理)
+                // 1. 护甲 (Armors): IsArmor
                 cachedAllArmors = allApparel.Where(t => !processedApparel.Contains(t) && IsArmor(t)).ToList();
                 foreach (var t in cachedAllArmors) processedApparel.Add(t);
                 
-                // 3. 普通服�?(Apparel): IsStandardApparel (且未处理)
-                cachedAllApparel = allApparel.Where(t => !processedApparel.Contains(t) && IsStandardApparel(t)).ToList();
+                // 2. 普通服装 (Apparel): IsStandardApparel + 头盔 (因为高级模式可以选头盔，简单模式也应该能看到)
+                // 头盔原本在 cachedAllHelmets，但简单模式的 Item Library 看不到
+                // 所以将头盔合并到 Apparel 分类中
+                cachedAllApparel = allApparel.Where(t => !processedApparel.Contains(t) && (IsStandardApparel(t) || IsHelmet(t))).ToList();
                 foreach (var t in cachedAllApparel) processedApparel.Add(t);
 
-                // 4. 其他/配件 (Others): 剩下的所�?Apparel
+                // 3. 其他/配件 (Others): 剩下的所有 Apparel
                 cachedAllOthers = allApparel.Where(t => !processedApparel.Contains(t)).ToList();
+                
+                // 保留 cachedAllHelmets 以备后用（如果有特殊需求）
+                cachedAllHelmets = allApparel.Where(t => IsHelmet(t)).ToList();
                 
                 cacheInitialized = true;
             }

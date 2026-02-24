@@ -691,10 +691,10 @@ namespace FactionGearCustomizer.UI.Panels
 
             ui.Gap();
 
-            DrawOverrideEnum(ui, LanguageManager.Get("ItemQuality"), kindData.ItemQuality, val => { UndoManager.RecordState(kindData); kindData.ItemQuality = val; FactionGearEditor.MarkDirty(); }, q => LanguageManager.Get("Quality" + q));
-            DrawOverrideFloatRange(ui, LanguageManager.Get("ApparelBudget"), ref kindData.ApparelMoney, val => { UndoManager.RecordState(kindData); kindData.ApparelMoney = val; FactionGearEditor.MarkDirty(); }, forceIgnore);
-            DrawOverrideFloatRange(ui, LanguageManager.Get("WeaponBudget"), ref kindData.WeaponMoney, val => { UndoManager.RecordState(kindData); kindData.WeaponMoney = val; FactionGearEditor.MarkDirty(); }, forceIgnore);
-            DrawTechLevelLimit(ui, kindData);
+            DrawOverrideEnumWithTooltip(ui, LanguageManager.Get("ItemQuality"), kindData.ItemQuality, val => { UndoManager.RecordState(kindData); kindData.ItemQuality = val; FactionGearEditor.MarkDirty(); }, q => LanguageManager.Get("Quality" + q), LanguageManager.Get("ItemQualityTooltip"));
+            DrawOverrideFloatRangeWithTooltip(ui, LanguageManager.Get("ApparelBudget"), ref kindData.ApparelMoney, val => { UndoManager.RecordState(kindData); kindData.ApparelMoney = val; FactionGearEditor.MarkDirty(); }, forceIgnore, LanguageManager.Get("ApparelBudgetTooltip"));
+            DrawOverrideFloatRangeWithTooltip(ui, LanguageManager.Get("WeaponBudget"), ref kindData.WeaponMoney, val => { UndoManager.RecordState(kindData); kindData.WeaponMoney = val; FactionGearEditor.MarkDirty(); }, forceIgnore, LanguageManager.Get("WeaponBudgetTooltip"));
+            DrawTechLevelLimitWithTooltip(ui, kindData, LanguageManager.Get("TechLevelLimitTooltip"));
 
             Rect colorRect = ui.GetRect(28f);
             Widgets.Label(colorRect.LeftHalf(), LanguageManager.Get("NameColor"));
@@ -873,6 +873,27 @@ namespace FactionGearCustomizer.UI.Panels
             }
         }
 
+        private static void DrawOverrideEnumWithTooltip<T>(Listing_Standard ui, string label, T? currentValue, Action<T?> setValue, Func<T, string> labelFormatter, string tooltip) where T : struct
+        {
+            Rect rect = ui.GetRect(28f);
+            Widgets.Label(rect.LeftHalf(), label + ":");
+            TooltipHandler.TipRegion(rect, tooltip);
+
+            string GetLabel(T val) => labelFormatter != null ? labelFormatter(val) : val.ToString();
+
+            string btnLabel = currentValue.HasValue ? GetLabel(currentValue.Value) : LanguageManager.Get("Default");
+            if (Widgets.ButtonText(rect.RightHalf(), btnLabel))
+            {
+                List<FloatMenuOption> options = new List<FloatMenuOption>();
+                options.Add(new FloatMenuOption(LanguageManager.Get("Default"), () => setValue(null)));
+                foreach (T val in Enum.GetValues(typeof(T)))
+                {
+                    options.Add(new FloatMenuOption(GetLabel(val), () => setValue(val)));
+                }
+                Find.WindowStack.Add(new FloatMenu(options));
+            }
+        }
+
         private static void DrawTechLevelLimit(Listing_Standard ui, KindGearData kindData)
         {
             Rect rect = ui.GetRect(28f);
@@ -936,10 +957,115 @@ namespace FactionGearCustomizer.UI.Panels
             }
         }
 
+        private static void DrawTechLevelLimitWithTooltip(Listing_Standard ui, KindGearData kindData, string tooltip)
+        {
+            Rect rect = ui.GetRect(28f);
+            Widgets.Label(rect.LeftHalf(), LanguageManager.Get("TechLevelLimit") + ":");
+            TooltipHandler.TipRegion(rect, tooltip);
+
+            // 使用反射获取 defaultFactionType 字段
+            if (defaultFactionTypeField == null)
+            {
+                defaultFactionTypeField = typeof(PawnKindDef).GetField("defaultFactionType", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            }
+
+            PawnKindDef kindDef = DefDatabase<PawnKindDef>.GetNamedSilentFail(kindData.kindDefName);
+            FactionDef factionDef = null;
+            if (defaultFactionTypeField != null && kindDef != null)
+            {
+                factionDef = defaultFactionTypeField.GetValue(kindDef) as FactionDef;
+            }
+            TechLevel defaultTechLevel = factionDef?.techLevel ?? TechLevel.Undefined;
+
+            string btnLabel;
+            if (kindData.TechLevelLimit.HasValue)
+            {
+                btnLabel = ("TechLevel_" + kindData.TechLevelLimit.Value).Translate().ToString();
+            }
+            else if (defaultTechLevel != TechLevel.Undefined)
+            {
+                btnLabel = LanguageManager.Get("Default") + " (" + ("TechLevel_" + defaultTechLevel).Translate() + ")";
+            }
+            else
+            {
+                btnLabel = LanguageManager.Get("Default");
+            }
+
+            if (Widgets.ButtonText(rect.RightHalf(), btnLabel))
+            {
+                List<FloatMenuOption> options = new List<FloatMenuOption>();
+                string defaultLabel = LanguageManager.Get("Default");
+                if (defaultTechLevel != TechLevel.Undefined)
+                {
+                    defaultLabel += " (" + ("TechLevel_" + defaultTechLevel).Translate() + ")";
+                }
+                options.Add(new FloatMenuOption(defaultLabel, () =>
+                {
+                    UndoManager.RecordState(kindData);
+                    kindData.TechLevelLimit = null;
+                    FactionGearEditor.MarkDirty();
+                }));
+                foreach (TechLevel level in Enum.GetValues(typeof(TechLevel)))
+                {
+                    if (level == TechLevel.Undefined) continue;
+                    TechLevel captured = level;
+                    string label = ("TechLevel_" + captured).Translate();
+                    options.Add(new FloatMenuOption(label, () =>
+                    {
+                        UndoManager.RecordState(kindData);
+                        kindData.TechLevelLimit = captured;
+                        FactionGearEditor.MarkDirty();
+                    }));
+                }
+                Find.WindowStack.Add(new FloatMenu(options));
+            }
+        }
+
         private static void DrawOverrideFloatRange(Listing_Standard ui, string label, ref FloatRange? range, Action<FloatRange?> setRange, bool forceIgnore = false)
         {
             Rect rect = ui.GetRect(28f);
             Widgets.Label(rect.LeftHalf(), label + ":");
+
+            if (forceIgnore)
+            {
+                GUI.color = Color.gray;
+                Widgets.Label(rect.RightHalf(), LanguageManager.Get("MaxForceIgnore"));
+                GUI.color = Color.white;
+                return;
+            }
+
+            if (range.HasValue)
+            {
+                if (Widgets.ButtonText(rect.RightHalf(), $"{range.Value.min}-{range.Value.max}"))
+                {
+                    setRange(null);
+                    return;
+                }
+                FloatRange val = range.Value;
+                FloatRange oldVal = val;
+                WidgetsUtils.FloatRange(ui.GetRect(24f), label.GetHashCode(), ref val, 0f, 5000f);
+                if (val != oldVal)
+                {
+                    setRange(val);
+                    range = val;
+                }
+            }
+            else
+            {
+                if (Widgets.ButtonText(rect.RightHalf(), LanguageManager.Get("Default")))
+                {
+                    var newRange = new FloatRange(0, 1000);
+                    setRange(newRange);
+                    range = newRange;
+                }
+            }
+        }
+
+        private static void DrawOverrideFloatRangeWithTooltip(Listing_Standard ui, string label, ref FloatRange? range, Action<FloatRange?> setRange, bool forceIgnore, string tooltip)
+        {
+            Rect rect = ui.GetRect(28f);
+            Widgets.Label(rect.LeftHalf(), label + ":");
+            TooltipHandler.TipRegion(rect, tooltip);
 
             if (forceIgnore)
             {

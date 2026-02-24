@@ -180,8 +180,10 @@ namespace FactionGearCustomizer.Managers
             }
 
             // Apply Pawn Group Makers
-            if (data.groupMakers != null)
+            if (data.groupMakers != null && data.groupMakers.Count > 0)
             {
+                Log.Message($"[FactionGearCustomizer] Applying groupMakers for {faction.defName}, count: {data.groupMakers.Count}");
+                
                 if (faction.pawnGroupMakers == null) faction.pawnGroupMakers = new List<PawnGroupMaker>();
                 else faction.pawnGroupMakers.Clear();
 
@@ -191,8 +193,19 @@ namespace FactionGearCustomizer.Managers
                     if (maker != null)
                     {
                         faction.pawnGroupMakers.Add(maker);
+                        Log.Message($"[FactionGearCustomizer] Added pawnGroupMaker: {gData.kindDefName}");
+                    }
+                    else
+                    {
+                        Log.Warning($"[FactionGearCustomizer] Failed to create PawnGroupMaker for kindDefName: {gData?.kindDefName}");
                     }
                 }
+                
+                Log.Message($"[FactionGearCustomizer] Applied {faction.pawnGroupMakers.Count} pawnGroupMakers to faction {faction.defName}");
+            }
+            else
+            {
+                Log.Message($"[FactionGearCustomizer] groupMakers is null or empty for faction {faction.defName}, skipping pawnGroupMakers modification");
             }
 
             // Apply Player Relation Override

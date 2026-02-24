@@ -13,7 +13,7 @@ namespace FactionGearCustomizer.UI
         public override void PreOpen()
         {
             base.PreOpen();
-            this.optionalTitle = ""; // Force clear title to prevent RimWorld from drawing it
+            this.optionalTitle = null; // 设置为null完全禁用RimWorld的标题绘制
             this.doWindowBackground = true;
             FactionGearEditor.InitializeWorkingSettings(true);
         }

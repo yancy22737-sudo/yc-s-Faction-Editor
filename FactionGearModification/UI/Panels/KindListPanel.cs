@@ -30,10 +30,13 @@ namespace FactionGearCustomizer.UI.Panels
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.UpperLeft;
 
-            // Add PawnKind Button
+            // Add PawnKind Button - 设置成和派系添加按钮一样大小位置
             bool inGame = Current.Game != null;
             bool hasSelectedFaction = !string.IsNullOrEmpty(EditorSession.SelectedFactionDefName);
-            Rect addBtnRect = new Rect(innerRect.xMax - 100f, innerRect.y + 3f, 95f, 24f);
+            string addLabel = LanguageManager.Get("AddPawnKind");
+            Vector2 addSize = Text.CalcSize(addLabel);
+            float btnWidth = Mathf.Max(addSize.x + 10f, 40f);
+            Rect addBtnRect = new Rect(innerRect.xMax - btnWidth, innerRect.y + 3f, btnWidth, 24f);
 
             if (!inGame || !hasSelectedFaction)
             {
@@ -266,15 +269,23 @@ namespace FactionGearCustomizer.UI.Panels
             var existingKinds = GetKindsToDraw();
             var existingKindNames = new HashSet<string>(existingKinds.Select(k => k.defName));
 
-            // 打开兵种选择器，排除已有的兵种
+            // 打开兵种选择器，排除已有的兵种和非人类单位
             Find.WindowStack.Add(new Dialog_PawnKindPicker((selectedKinds) => {
                 if (selectedKinds != null && selectedKinds.Count > 0)
                 {
                     var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
                     int addedCount = 0;
+                    int skippedCount = 0;
 
                     foreach (var kind in selectedKinds)
                     {
+                        // 禁止添加非人类单位
+                        if (kind.RaceProps == null || !kind.RaceProps.Humanlike)
+                        {
+                            skippedCount++;
+                            continue;
+                        }
+                        
                         if (!existingKindNames.Contains(kind.defName))
                         {
                             // 为该兵种创建设置数据
@@ -291,6 +302,11 @@ namespace FactionGearCustomizer.UI.Panels
                         FactionGearEditor.ClearFactionKindsCache();
                         FactionGearEditor.MarkDirty();
                         Messages.Message(LanguageManager.Get("AddedPawnKinds", addedCount), MessageTypeDefOf.PositiveEvent, false);
+                    }
+                    
+                    if (skippedCount > 0)
+                    {
+                        Messages.Message(LanguageManager.Get("SkippedNonHumanKinds", skippedCount), MessageTypeDefOf.RejectInput, false);
                     }
                 }
             }, factionDef, existingKindNames));

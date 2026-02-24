@@ -4,6 +4,7 @@ using System.Linq;
 using RimWorld;
 using UnityEngine;
 using Verse;
+using FactionGearCustomizer.Core;
 using FactionGearCustomizer.Managers;
 using FactionGearCustomizer.UI.Panels;
 using FactionGearCustomizer.UI.Dialogs;
@@ -238,8 +239,8 @@ namespace FactionGearCustomizer.UI
             // Player Relation Settings
             if (inGame) height += 80f;
 
-            // Delete Faction Section (Danger Zone)
-            if (inGame) height += 70f;
+            // Delete Faction Section (Danger Zone) - 减少留白
+            if (inGame) height += 45f;
             
             return height;
         }
@@ -774,6 +775,23 @@ namespace FactionGearCustomizer.UI
                     factionData.groupMakers.Add(g.DeepCopy());
                 }
                 factionData.isModified = true;
+                
+                // Also update save-level data if it exists
+                var gameComponent = FactionGearGameComponent.Instance;
+                if (gameComponent?.savedFactionGearData != null)
+                {
+                    var saveFactionData = gameComponent.savedFactionGearData.FirstOrDefault(f => f.factionDefName == factionData.factionDefName);
+                    if (saveFactionData != null)
+                    {
+                        saveFactionData.groupMakers = new List<PawnGroupMakerData>();
+                        foreach (var g in bufferGroups)
+                        {
+                            saveFactionData.groupMakers.Add(g.DeepCopy());
+                        }
+                        saveFactionData.isModified = true;
+                    }
+                }
+                
                 // Re-apply entire faction changes to ensure groups are updated
                 FactionDefManager.ApplyFactionChanges(factionDef, factionData);
             }

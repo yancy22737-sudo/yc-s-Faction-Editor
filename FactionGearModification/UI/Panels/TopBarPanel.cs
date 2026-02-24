@@ -30,6 +30,8 @@ namespace FactionGearCustomizer.UI.Panels
             float gap = 10f;
             
             // --- Logo & Title ---
+            // 注意：标题 "yc的派系编辑器" 由 RimWorld 的 Mod 设置系统通过 SettingsCategory() 自动绘制
+            // 禁止在此手动绘制标题，否则会导致标题重叠显示
             Rect logoRect = new Rect(inRect.x, inRect.y + (inRect.height - iconSize) / 2f, iconSize, iconSize);
             if (logo != null)
             {
@@ -38,19 +40,6 @@ namespace FactionGearCustomizer.UI.Panels
                 Widgets.DrawTextureFitted(logoRect, logo, 1f);
                 GUI.color = oldColor;
             }
-
-            // Title
-            // Removed title to avoid duplication with window title
-            /*
-            string title = LanguageManager.Get("FactionGearCustomizer");
-            Text.Font = GameFont.Medium;
-            Text.Anchor = TextAnchor.MiddleLeft;
-            Vector2 titleSize = Text.CalcSize(title);
-            Rect titleRect = new Rect(logoRect.xMax + gap, inRect.y, titleSize.x, inRect.height);
-            Widgets.Label(titleRect, title);
-            Text.Anchor = TextAnchor.UpperLeft;
-            Text.Font = GameFont.Small;
-            */
 
             // --- Right Side Actions ---
             // Combined:
@@ -186,23 +175,7 @@ namespace FactionGearCustomizer.UI.Panels
             TooltipHandler.TipRegion(resetRect, LanguageManager.Get("ResetMenuTooltip"));
             currentX = resetRect.x - gap;
 
-            // 2. Force Ignore
-            bool forceIgnore = FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
-            // Simplified label: "Force: ON"
-            string forceLabel = $"{LanguageManager.Get("ForceIgnore")}: {(forceIgnore ? "ON" : "OFF")}";
-            // If text is too long, we can shorten it in translation or logic here, but let's keep it for now as it's critical info.
-            // Maybe just "Force: ON"?
-            // Let's try to detect if we are running out of space.
-            
-            float forceWidth = Text.CalcSize(forceLabel).x + 12f;
-            Rect forceRect = new Rect(currentX - forceWidth, buttonY, forceWidth, buttonHeight);
-            if (Widgets.ButtonText(forceRect, forceLabel))
-            {
-                FactionGearCustomizerMod.Settings.forceIgnoreRestrictions = !FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
-                FactionGearEditor.MarkDirty();
-            }
-            TooltipHandler.TipRegion(forceRect, LanguageManager.Get("ForceIgnoreTooltip"));
-            currentX = forceRect.x - gap;
+
 
             // 2.5 Options
             string optionsLabel = LanguageManager.Get("Options");
@@ -212,6 +185,15 @@ namespace FactionGearCustomizer.UI.Panels
             if (Widgets.ButtonText(optionsRect, optionsLabel))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
+                
+                // Force Ignore Restrictions
+                bool forceIgnore = FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
+                string forceIgnoreLabel = $"{(forceIgnore ? "✔ " : "")}{LanguageManager.Get("ForceIgnore")}";
+                options.Add(new FloatMenuOption(forceIgnoreLabel, () => {
+                    FactionGearCustomizerMod.Settings.forceIgnoreRestrictions = !FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
+                    FactionGearCustomizerMod.Settings.Write();
+                    FactionGearEditor.MarkDirty();
+                }));
                 
                 // Show Hidden Factions
                 string showHiddenLabel = $"{(FactionGearCustomizerMod.Settings.ShowHiddenFactions ? "✔ " : "")}{LanguageManager.Get("ShowHiddenFactions")}";

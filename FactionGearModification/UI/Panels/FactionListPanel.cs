@@ -86,7 +86,7 @@ namespace FactionGearCustomizer.UI.Panels
             Rect titleRect = new Rect(innerRect.x, innerRect.y, titleSize.x + 10f, 30f);
             Widgets.Label(titleRect, LanguageManager.Get("Factions"));
             
-            // "Real Name" checkbox - Position relative to button to avoid overlap
+            // "Real Name" checkbox - Position relative to button to avoid overlap (removed text label)
             if (Current.ProgramState == ProgramState.Playing)
             {
                 Rect checkboxRect = new Rect(titleRect.xMax, innerRect.y + 3f, 24f, 24f);
@@ -98,19 +98,8 @@ namespace FactionGearCustomizer.UI.Panels
                     MarkDirty();
                 }
                 
-                Text.Font = GameFont.Tiny;
-                string labelText = LanguageManager.Get("InGame");
-                Vector2 labelSize = Text.CalcSize(labelText);
-                Rect labelRect = new Rect(checkboxRect.xMax + 4f, innerRect.y + 8f, labelSize.x + 5f, 20f);
-                GUI.color = Color.gray;
-                Widgets.Label(labelRect, labelText);
-                GUI.color = Color.white;
-                
                 string tip = LanguageManager.Get("ShowInGameFactionNamesTooltip");
                 TooltipHandler.TipRegion(checkboxRect, tip);
-                TooltipHandler.TipRegion(labelRect, tip);
-                
-                Text.Font = GameFont.Medium;
             }
             
             Text.Font = GameFont.Small;
@@ -165,7 +154,6 @@ namespace FactionGearCustomizer.UI.Panels
             Widgets.BeginScrollView(factionListOutRect, ref EditorSession.FactionListScrollPos, factionListViewRect);
             
             float y = 0;
-            float infoButtonOffset = EditorSession.IsInGame ? 24f : 0f;
             foreach (var data in cachedFactionList)
             {
                 float maxRowWidth = factionListViewRect.width - 62f;
@@ -175,8 +163,7 @@ namespace FactionGearCustomizer.UI.Panels
                 Rect rowRect = new Rect(0, y, factionListViewRect.width, rowHeight);
 
                 // Handle Selection
-                // Exclude InfoCard button area (24px on the right) to avoid click conflict
-                Rect selectionRect = new Rect(rowRect.x, rowRect.y, rowRect.width - infoButtonOffset, rowRect.height);
+                Rect selectionRect = new Rect(rowRect.x, rowRect.y, rowRect.width, rowRect.height);
                 
                 bool isSelected = false;
                 if (EditorSession.SelectedFactionInstance != null)
@@ -238,74 +225,76 @@ namespace FactionGearCustomizer.UI.Panels
                 GUI.color = Color.white;
             }
 
-            // Info Button (only show in game)
-            float infoButtonOffset = EditorSession.IsInGame ? 24f : 0f;
-            if (EditorSession.IsInGame)
-            {
-                Rect infoButtonRect = new Rect(rowRect.xMax - 24f, rowRect.y + (rowHeight - 24f) / 2f, 24f, 24f);
-                Widgets.InfoCardButton(infoButtonRect.x, infoButtonRect.y, data.def);
-                TooltipHandler.TipRegion(infoButtonRect, LanguageManager.Get("FactionInfoCardTooltip"));
-            }
+            // Info Button removed - using vanilla tooltip instead
 
-            // Goodwill
-            float goodwillWidth = 0f;
+            // 根据好感度决定派系名称颜色
+            Color nameColor = data.color;
             if (data.worldFaction != null && !data.worldFaction.IsPlayer)
             {
-                goodwillWidth = 40f;
-                Rect goodwillRect = new Rect(rowRect.xMax - infoButtonOffset - goodwillWidth - 4f, rowRect.y, goodwillWidth, rowHeight);
-                
-                // 安全获取派系关系，避免null关系导致错误日志
-                float goodwill = 0f;
-                FactionRelationKind relationKind = FactionRelationKind.Neutral;
-                bool relationValid = false;
-                
+                // 安全获取派系关系
                 try
                 {
-                    // 先检查与玩家派系的关系是否存在，避免触发RimWorld的null关系错误日志
                     Faction playerFaction = Find.FactionManager?.OfPlayer;
-                    if (playerFaction != null)
+                    // 检查玩家派系是否存在
+                    if (playerFaction != null && playerFaction != data.worldFaction)
                     {
                         FactionRelation relation = data.worldFaction.RelationWith(playerFaction, false);
                         if (relation != null)
                         {
-                            goodwill = data.worldFaction.PlayerGoodwill;
-                            relationKind = data.worldFaction.PlayerRelationKind;
-                            relationValid = true;
+                            FactionRelationKind relationKind = data.worldFaction.PlayerRelationKind;
+                            // 根据好感度决定颜色
+                            switch (relationKind)
+                            {
+                                case FactionRelationKind.Ally:
+                                    nameColor = Color.green;
+                                    break;
+                                case FactionRelationKind.Hostile:
+                                    nameColor = Color.red;
+                                    break;
+                                case FactionRelationKind.Neutral:
+                                    nameColor = Color.cyan;
+                                    break;
+                            }
                         }
                     }
                 }
                 catch
                 {
-                    relationValid = false;
-                }
-                
-                if (relationValid)
-                {
-                    Color goodwillColor = relationKind == FactionRelationKind.Ally ? Color.green : 
-                                          (relationKind == FactionRelationKind.Hostile ? Color.red : Color.cyan);
-                    
-                    Text.Anchor = TextAnchor.MiddleRight;
-                    GUI.color = goodwillColor;
-                    Widgets.Label(goodwillRect, goodwill.ToString("F0"));
-                    GUI.color = Color.white;
-                    Text.Anchor = TextAnchor.UpperLeft;
-                    
-                    TooltipHandler.TipRegion(goodwillRect, $"{relationKind}: {goodwill:F0}");
+                    // 保持默认颜色
                 }
             }
 
             // Name
             float nameX = iconRect.xMax + 6f;
-            float nameWidth = rowRect.width - nameX - infoButtonOffset - 4f;
-            if (data.worldFaction != null && !data.worldFaction.IsPlayer) nameWidth -= (goodwillWidth + 4f);
+            float nameWidth = rowRect.width - nameX - 4f;
             
             Rect nameRect = new Rect(nameX, rowRect.y, nameWidth, rowHeight);
             
             Text.Anchor = TextAnchor.MiddleLeft;
-            GUI.color = data.color;
+            GUI.color = nameColor;
             Widgets.Label(nameRect, data.displayName);
             GUI.color = Color.white;
             Text.Anchor = TextAnchor.UpperLeft;
+            
+            // 添加原版悬浮提示
+            if (data.worldFaction != null)
+            {
+                try
+                {
+                    Faction faction = data.worldFaction;
+                    string tooltip = faction.Name + "\n" + faction.def.LabelCap;
+                    TooltipHandler.TipRegion(nameRect, tooltip);
+                }
+                catch
+                {
+                    // 如果出现异常，使用备用提示
+                    TooltipHandler.TipRegion(nameRect, data.def.LabelCap);
+                }
+            }
+            else
+            {
+                TooltipHandler.TipRegion(nameRect, data.def.LabelCap);
+            }
         }
 
         private static void BuildFactionList()
@@ -354,7 +343,7 @@ namespace FactionGearCustomizer.UI.Panels
         {
             entry = default;
             
-            // Filter logic
+            // Filter logic - 默认隐藏非人类派系
             bool isHidden = !def.humanlikeFaction || def.hidden;
             if (!FactionGearCustomizerMod.Settings.ShowHiddenFactions && isHidden) return false;
             

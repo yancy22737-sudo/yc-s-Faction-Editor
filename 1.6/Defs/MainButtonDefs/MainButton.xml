@@ -2,8 +2,8 @@
 <Defs>
   <MainButtonDef>
     <defName>FactionGear_MainButton</defName>
-    <label>FactionGearCustomizer</label>
-    <description>Open Faction Gear Editor.</description>
+    <label>Faction Editor</label>
+    <description>Open yc’s Faction Editor.</description>  
     <tabWindowClass>FactionGearCustomizer.UI.FactionGearMainTabWindow</tabWindowClass>
     <order>99</order>
     <iconPath>UI/Buttons/MainButtons/FactionGearEdit</iconPath>

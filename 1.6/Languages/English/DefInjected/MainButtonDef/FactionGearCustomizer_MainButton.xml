@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
-  <FactionGear_MainButton.label>Faction Gear</FactionGear_MainButton.label>
-  <FactionGear_MainButton.description>Open the Faction Gear Editor.</FactionGear_MainButton.description>
+  <FactionGear_MainButton.label>Faction Editor</FactionGear_MainButton.label>
+  <FactionGear_MainButton.description>Open yc’s Faction Editor.</FactionGear_MainButton.description>
 </LanguageData>

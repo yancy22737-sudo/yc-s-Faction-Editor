@@ -168,29 +168,13 @@ namespace FactionGearCustomizer.UI
             }
 
             // 3. Sort Descending
-            Rect descRect = new Rect(colWidth * 2, toggleY, colWidth, rowHeight);
+            Rect descRect = new Rect(colWidth * 2, toggleY, colWidth * 2, rowHeight);
             bool newDesc = sortDescending;
             Widgets.CheckboxLabeled(descRect, LanguageManager.Get("SortDescending"), ref newDesc);
             if (newDesc != sortDescending)
             {
                 sortDescending = newDesc;
                 UpdateList();
-            }
-
-            // 4. Category Filter
-            Rect catRect = new Rect(colWidth * 3, toggleY, colWidth, rowHeight);
-            if (Widgets.ButtonText(catRect, GetCategoryLabel(categoryFilter)))
-            {
-                List<FloatMenuOption> options = new List<FloatMenuOption>();
-                foreach (PawnKindCategory cat in Enum.GetValues(typeof(PawnKindCategory)))
-                {
-                    options.Add(new FloatMenuOption(GetCategoryLabel(cat), () =>
-                    {
-                        categoryFilter = cat;
-                        UpdateList();
-                    }));
-                }
-                Find.WindowStack.Add(new FloatMenu(options));
             }
 
             // Row 2: Mod Filter

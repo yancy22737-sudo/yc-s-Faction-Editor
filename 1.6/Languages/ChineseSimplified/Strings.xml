@@ -351,7 +351,7 @@
   <Selected>已选</Selected>
   <BatchApplyConfirm>确定要将配置应用到选中的 {0} 个兵种吗？</BatchApplyConfirm>
   <BatchApplied>成功应用配置到 {0} 个兵种。</BatchApplied>
-  <NewFaction>New</NewFaction>
+  <NewFaction>添加</NewFaction>
   <NewFactionTooltip>创建新派系。仅在游戏中可用。</NewFactionTooltip>
   <CreateFaction>创建派系</CreateFaction>
   <CreateFactionTooltip>通过克隆现有派系来创建新派系。</CreateFactionTooltip>
@@ -383,7 +383,8 @@
   <EditGroup>编辑群组</EditGroup>
   <MaxTotalPoints>最大总点数</MaxTotalPoints>
   <AddPawn>添加单位</AddPawn>
-  <AddKindDef>添加兵种</AddKindDef>
+  <AddKindDef>添加</AddKindDef>
+  <AddPawnKind>添加</AddPawnKind>
   <Traders>商队成员</Traders>
   <Carriers>搬运单位</Carriers>
   <Guards>护卫单位</Guards>
@@ -506,7 +507,7 @@
   <NameColor>名称颜色</NameColor>
   <NameColorTooltip>派系成员名称的显示颜色。</NameColorTooltip>
   <RimTalkLinkage>RimTalk联动</RimTalkLinkage>
-  <RimTalkUnderDev>显示开发中</RimTalkUnderDev>
+  <RimTalkUnderDev>开发中</RimTalkUnderDev>
   <NameCannotBeEmpty>名称不能为空</NameCannotBeEmpty>
   <NameTooShort>名称太短</NameTooShort>
   <NameTooLong>名称太长（最多100个字符）</NameTooLong>
@@ -1165,4 +1166,12 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
 
 • QQ交流群（玩家交流与技术讨论）
 群号：984338429</Wiki_Notes_Content>
+
+  <!-- 缺失键补全 -->
+  <ItemQualityTooltip>覆盖此兵种所有装备的品质。</ItemQualityTooltip>
+  <ApparelBudgetTooltip>设置服装生成的市场价值预算范围。</ApparelBudgetTooltip>
+  <WeaponBudgetTooltip>设置武器生成的市场价值预算范围。</WeaponBudgetTooltip>
+  <TechLevelLimitTooltip>限制装备为指定科技等级或以下。</TechLevelLimitTooltip>
+  <SkippedNonHumanKinds>已跳过 {0} 个非人类兵种。</SkippedNonHumanKinds>
+  <AddedPawnKinds>已添加 {0} 个兵种。</AddedPawnKinds>
 </LanguageData>
