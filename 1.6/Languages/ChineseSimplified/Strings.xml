@@ -1,0 +1,1168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <FactionGearCustomizer>yc的派系编辑器</FactionGearCustomizer>
+  <Factions>派系</Factions>
+  <ItemLibrary>物品库</ItemLibrary>
+  <Advanced>高级</Advanced>
+  <Simple>简单</Simple>
+  <Preview>预览</Preview>
+  <PawnGroupPreviewTitle>群组生成预览</PawnGroupPreviewTitle>
+  <Seed>种子</Seed>
+  <DrawsPerList>抽样次数</DrawsPerList>
+  <RebuildPreview>重新生成</RebuildPreview>
+  <GeneratePortraits>生成Pawn肖像</GeneratePortraits>
+  <ClearAll>清除全部</ClearAll>
+  <Clear>清除</Clear>
+  <ApplyOthers>应用到其他</ApplyOthers>
+  <Yes>是</Yes>
+  <Cancel>取消</Cancel>
+  <Save>保存</Save>
+  <SaveAs>另存为</SaveAs>
+  <Load>加载</Load>
+  <Delete>删除</Delete>
+  <Export>导出</Export>
+  <Import>导入</Import>
+  <Apply>应用</Apply>
+  <Reset>重置</Reset>
+  <Close>关闭</Close>
+  <Confirm>确认</Confirm>
+  <AddNewApparel>添加新服装</AddNewApparel>
+  <AddNewWeapon>添加新武器</AddNewWeapon>
+  <AddNewHediff>添加新状态</AddNewHediff>
+  <PickColor>选择颜色</PickColor>
+  <SetColor>设置颜色</SetColor>
+  <SelectItem>选择物品</SelectItem>
+  <SelectHediff>选择状态</SelectHediff>
+  <Show>显示</Show>
+  <Hide>隐藏</Hide>
+  <All>全部</All>
+  <None>清除</None>
+  <Invert>反选</Invert>
+  <Default>默认</Default>
+  <RandomDefault>随机材质</RandomDefault>
+  <SelectedGear>已选装备</SelectedGear>
+  <AdvancedSettings>高级设置</AdvancedSettings>
+  <LayerPreview>层级预览</LayerPreview>
+  <GeneralOverrides>常规覆盖</GeneralOverrides>
+  <SpecificApparelAdvanced>指定服装（高级）</SpecificApparelAdvanced>
+  <SpecificWeaponsAdvanced>指定武器（高级）</SpecificWeaponsAdvanced>
+  <ForcedHediffs>强制状态</ForcedHediffs>
+  <HediffPickerTitle>添加状态</HediffPickerTitle>
+  <InventoryItems>物品清单</InventoryItems>
+  <AddNewItem>添加新物品</AddNewItem>
+  <QuickAdd>快速添加</QuickAdd>
+  <InventoryItemPickerTitle>添加物品</InventoryItemPickerTitle>
+  <ApparelPickerTitle>添加服装</ApparelPickerTitle>
+  <WeaponPickerTitle>添加武器</WeaponPickerTitle>
+  <DefaultCountRange>默认数量</DefaultCountRange>
+  <DefaultSelectionMode>默认模式：{0}</DefaultSelectionMode>
+  <DefaultChance>默认概率</DefaultChance>
+  <SkipExistingItems>跳过已存在</SkipExistingItems>
+  <AlreadyAdded>已存在</AlreadyAdded>
+  <AddSelected>添加选中</AddSelected>
+  <InventoryItemsAddedMessage>已添加 {0} 个物品，跳过 {1} 个重复。</InventoryItemsAddedMessage>
+  <ApparelItemsAddedMessage>已添加 {0} 件服装，跳过 {1} 个重复。</ApparelItemsAddedMessage>
+  <WeaponItemsAddedMessage>已添加 {0} 把武器，跳过 {1} 个重复。</WeaponItemsAddedMessage>
+  <HediffsAddedMessage>已添加 {0} 个状态，跳过 {1} 个重复。</HediffsAddedMessage>
+  <SelectionModeAlwaysTake>必定</SelectionModeAlwaysTake>
+  <SelectionModeRandomChance>概率</SelectionModeRandomChance>
+  <SelectionModeFromPool>池 {0}</SelectionModeFromPool>
+  <Items>物品</Items>
+  <Count>数量</Count>
+  <AdvancedSpecificItems>高级/指定物品</AdvancedSpecificItems>
+  <EditFactionDetails>编辑派系详情</EditFactionDetails>
+  <ModFilter>Mod筛选器</ModFilter>
+  <CategoryFilter>类别筛选</CategoryFilter>
+  <CategoryAll>类别：全部</CategoryAll>
+  <CategoryCountSelected>类别：已选 {0}</CategoryCountSelected>
+  <ApparelColor>服装颜色：</ApparelColor>
+  <ItemQuality>物品品质</ItemQuality>
+  <ApparelBudget>服装预算</ApparelBudget>
+  <WeaponBudget>武器预算</WeaponBudget>
+  <TechLevelLimit>科技限制</TechLevelLimit>
+  <ForcedWeaponQuality>强制武器品质</ForcedWeaponQuality>
+  <BiocodeChance>生物编码概率</BiocodeChance>
+  <Biocode>生物编码</Biocode>
+  <ForceNaked>强制裸装</ForceNaked>
+  <ForceOnlySelected>仅从装备池选择</ForceOnlySelected>
+  <MinMax>最小值（强制忽略）</MinMax>
+  <MaxForceIgnore>最大值（强制忽略）</MaxForceIgnore>
+  <Ranged>远程</Ranged>
+  <Melee>近战</Melee>
+  <Armors>护甲</Armors>
+  <Clothes>衣物</Clothes>
+  <Others>其他</Others>
+  <General>常规</General>
+  <Apparel>服装</Apparel>
+  <Weapons>武器</Weapons>
+  <Hediffs>状态</Hediffs>
+  <Head>头部</Head>
+  <Torso>躯干</Torso>
+  <Shoulders>肩部</Shoulders>
+  <Arms>手臂</Arms>
+  <Hands>手部</Hands>
+  <Waist>腰部</Waist>
+  <Legs>腿部</Legs>
+  <Feet>脚部</Feet>
+  <Skin>皮肤层</Skin>
+  <Mid>中层</Mid>
+  <SettingsSaved>设置保存成功！</SettingsSaved>
+  <SettingsDiscarded>设置更改已放弃。</SettingsDiscarded>
+  <PresetUpdated>预设 "{0}" 已更新。</PresetUpdated>
+  <PresetSaved>设置保存成功。</PresetSaved>
+  <TipCreatePreset>提示：请创建一个预设来安全备份您的努力！</TipCreatePreset>
+  <CannotPreviewFactionNotPresent>无法预览：当前游戏中不存在该派系。</CannotPreviewFactionNotPresent>
+  <AppliedToAllKinds>已将当前装备应用到该派系的所有兵种！</AppliedToAllKinds>
+  <CopiedKindGear>已复制兵种装备！</CopiedKindGear>
+  <PastedGearTo>已粘贴装备到 {0}</PastedGearTo>
+  <CopiedGearFrom>已从 {0} 复制装备</CopiedGearFrom>
+  <ClearAllGearConfirm>清除所有装备</ClearAllGearConfirm>
+  <ClearAllGearConfirmMessage>确定要清除该兵种的所有装备吗？</ClearAllGearConfirmMessage>
+  <ClearCategoryGearConfirm>清除分类</ClearCategoryGearConfirm>
+  <ClearCategoryGearConfirmMessage>确定要清除此分类中的所有物品吗？</ClearCategoryGearConfirmMessage>
+  <ApplyToAllKindsConfirm>确定要用当前装备配置覆盖该派系的所有兵种吗？</ApplyToAllKindsConfirm>
+  <NoItemsInThisCategory>此分类中没有物品。</NoItemsInThisCategory>
+  <SelectAKindDefFirst>请先选择一个兵种。</SelectAKindDefFirst>
+  <PresetManager>预设管理器</PresetManager>
+  <PresetMetadataSaved>预设元数据已保存。</PresetMetadataSaved>
+  <PresetUpdatedFromGameSettings>预设已从游戏设置更新。</PresetUpdatedFromGameSettings>
+  <PresetOverwritten>预设 "{0}" 已用当前设置覆盖！</PresetOverwritten>
+  <NewPresetCreated>新预设已创建并用当前设置保存！</NewPresetCreated>
+  <PresetApplied>预设已成功应用到当前游戏！</PresetApplied>
+  <ApplyPresetFailed>应用预设失败，请查看日志详情。</ApplyPresetFailed>
+  <PresetDeleted>预设已删除。</PresetDeleted>
+  <PresetExportedToClipboard>预设 "{0}" 已导出到剪贴板！</PresetExportedToClipboard>
+  <ImportFailedInvalidData>导入失败：剪贴板中的预设数据无效！</ImportFailedInvalidData>
+  <ImportFailed>导入失败：{0}</ImportFailed>
+  <ClipboardIsEmpty>剪贴板为空！</ClipboardIsEmpty>
+  <ExportFailed>导出失败！</ExportFailed>
+  <PresetImportedFromClipboard>预设 "{0}" 已从剪贴板导入！</PresetImportedFromClipboard>
+  <FactionDetailsUpdated>派系详情已更新（仅内存中）</FactionDetailsUpdated>
+  <TechLevel>科技等级</TechLevel>
+  <QualityAwful>极差</QualityAwful>
+  <QualityPoor>较差</QualityPoor>
+  <QualityNormal>普通</QualityNormal>
+  <QualityGood>良好</QualityGood>
+  <QualityExcellent>优秀</QualityExcellent>
+  <QualityMasterwork>大师</QualityMasterwork>
+  <QualityLegendary>传奇</QualityLegendary>
+  <SelectionModeIfPossible>如果可能</SelectionModeIfPossible>
+  <SelectionModeBest>最佳</SelectionModeBest>
+  <SelectionModeRandom>随机</SelectionModeRandom>
+  <ResetFilters>重置筛选</ResetFilters>
+  <ResetCurrentKind>重置当前兵种</ResetCurrentKind>
+  <LoadDefaultFaction>加载默认派系</LoadDefaultFaction>
+  <ResetCurrentFaction>重置当前派系</ResetCurrentFaction>
+  <ResetEVERYTHING>重置所有</ResetEVERYTHING>
+  <UndoTooltip>撤销 (Ctrl+Z)</UndoTooltip>
+  <RedoTooltip>重做 (Ctrl+Y)</RedoTooltip>
+  <PreviewAllKindsTooltip>预览此派系的所有兵种</PreviewAllKindsTooltip>
+  <PreviewInGameOnlyTooltip>仅游戏中可用</PreviewInGameOnlyTooltip>
+  <ApplyToOthersTooltip>将当前装备应用到该派系的所有其他兵种</ApplyToOthersTooltip>
+  <ClearCategoryTooltip>清除当前分类中的所有物品。</ClearCategoryTooltip>
+  <ForceNakedTooltip>如果启用，应用装备时会移除该兵种的所有衣物，使其保持裸体。
+
+请确保你已满18岁了。</ForceNakedTooltip>
+  <ForceOnlySelectedTooltip>如果启用，所有现有/原版装备将在应用自定义装备前被剥离。这确保角色只穿戴您在此指定的物品，防止原版/自定义装备混穿。
+
+推荐：开启以获得完全控制。</ForceOnlySelectedTooltip>
+  <WeightMechanicsTooltip>权重机制：在边缘世界中，装备权重作为选择权重，而非100%被选择。高权重的装备将优先被选择穿戴。</WeightMechanicsTooltip>
+  <ColorPicker>颜色选择器</ColorPicker>
+  <ColorPickerApply>应用</ColorPickerApply>
+  <UnsavedChanges>未保存的更改</UnsavedChanges>
+  <UnsavedChangesMessage>您有未保存的更改。是否要保存？</UnsavedChangesMessage>
+  <Discard>放弃</Discard>
+  <Version>版本</Version>
+  <VersionLog>版本日志</VersionLog>
+  <GiveMeALike>给我点个赞吧！</GiveMeALike>
+  <AvgValue>平均价值</AvgValue>
+  <AvgWeight>平均权重</AvgWeight>
+  <Weight>权重</Weight>
+  <Missing>缺失</Missing>
+  <MissingParts>缺失部位</MissingParts>
+  <NoPreset>【无预设】</NoPreset>
+  <NoPresetWarning>当前无生效预设</NoPresetWarning>
+  <NoPresetDescription>您需要创建或加载一个预设才能开始配置派系装备。预设用于保存您的配置。</NoPresetDescription>
+  <CreatePreset>创建预设</CreatePreset>
+  <PresetEqualsConfigTip>提示：预设 = 配置，创建预设后即可开始修改</PresetEqualsConfigTip>
+  <ClearAllConfigs>清除所有配置</ClearAllConfigs>
+  <ClearAllConfigsTooltip>清除所有已保存的配置数据，恢复到初始状态</ClearAllConfigsTooltip>
+  <ClearAllConfigsConfirm>确定要清除所有配置吗？</ClearAllConfigsConfirm>
+  <ClearAllConfigsConfirmMessage>此操作将删除所有已保存的派系装备配置，且无法撤销。</ClearAllConfigsConfirmMessage>
+  <ActivePreset>【当前: {0}】</ActivePreset>
+  <AddedItemsToGearList>已添加 {0} 个物品到装备列表</AddedItemsToGearList>
+  <SaveChangesToGame>保存更改到当前游戏</SaveChangesToGame>
+  <SaveImmediateEffectTooltip>所有改动立即生效，无需重启游戏。</SaveImmediateEffectTooltip>
+  <Presets>预设</Presets>
+  <Options>选项</Options>
+  <AdvancedOptionsTooltip>高级选项</AdvancedOptionsTooltip>
+  <ShowHiddenFactions>显示隐藏/非人类派系</ShowHiddenFactions>
+  <ShowInMainTab>显示底部主按钮</ShowInMainTab>
+  <ForceIgnore>强制忽略</ForceIgnore>
+  <ForceIgnoreTooltip>强制移除冲突的服装/武器并忽略预算限制。单位将尝试装备配置列表中的所有可能物品，允许您忽略限制并始终创建神级单位。</ForceIgnoreTooltip>
+  <AdvancedItemTooltip>这是通过高级模式（特定需求）添加的物品。</AdvancedItemTooltip>
+  <Shell>外层</Shell>
+  <Belt>腰带</Belt>
+  <Over>外套</Over>
+  <Reroll>重掷</Reroll>
+  <Retry>重试</Retry>
+  <PortraitUnavailable>肖像不可用</PortraitUnavailable>
+  <Rotate>旋转</Rotate>
+  <RerollPawn>重新生成角色</RerollPawn>
+  <EquippedGear><b>已装备武器：</b></EquippedGear>
+  <ApparelWorn><b>已穿戴服装：</b></ApparelWorn>
+  <FailedToGeneratePreview>生成预览失败。（派系可能未激活）</FailedToGeneratePreview>
+  <SavedPresets>已保存预设</SavedPresets>
+  <SearchPresets>搜索预设</SearchPresets>
+  <CreateNew>创建新预设</CreateNew>
+  <Name>名称</Name>
+  <Add>添加</Add>
+  <AddAll>添加全部</AddAll>
+  <SelectPresetFirst>请先从左侧列表选择一个预设。</SelectPresetFirst>
+  <PresetDetails>预设详情</PresetDetails>
+  <PresetName>预设名称</PresetName>
+  <Description>描述</Description>
+  <Management><b>管理：</b></Management>
+  <SaveNameDesc>保存名称/描述</SaveNameDesc>
+  <UpdateFromGame>从游戏更新</UpdateFromGame>
+  <PresetUpdatedFromGameSettings>预设已从游戏设置更新。</PresetUpdatedFromGameSettings>
+  <OverwritePresetConfirm>确定要使用当前设置覆盖预设 "{0}" 吗？</OverwritePresetConfirm>
+  <UpdateFromGameTooltip>用当前游戏内配置覆盖此预设的装备数据。</UpdateFromGameTooltip>
+  <RequiredMods>所需Mod</RequiredMods>
+  <FactionPreview>派系预览</FactionPreview>
+  <NoFactionDataInPreset>预设中没有派系数据。</NoFactionDataInPreset>
+  <NoRequiredMods>没有所需Mod。</NoRequiredMods>
+  <ModNotActiveTooltip>此Mod在当前游戏中未启用。</ModNotActiveTooltip>
+  <Chance>概率</Chance>
+  <MaxParts>最大部位数</MaxParts>
+  <Severity>严重程度</Severity>
+  <SelectHediffToViewDetails>选择一个状态以查看详情。</SelectHediffToViewDetails>
+  <FromMod>来自</FromMod>
+  <KindDefs>兵种类别</KindDefs>
+  <DontShowAgain>不再显示此提示</DontShowAgain>
+  <Label>标签</Label>
+  <InGame>游戏中</InGame>
+  <ShowInGameFactionNamesTooltip>显示游戏中派系名称。如果派系不在当前游戏中则显示为灰色。</ShowInGameFactionNamesTooltip>
+  <LoadPreset>加载预设</LoadPreset>
+  <LoadPresetTooltip>将此预设应用到您的游戏。</LoadPresetTooltip>
+  <LoadPresetConfirmTitle>加载预设</LoadPresetConfirmTitle>
+  <LoadPresetConfirmMessage>是否在应用预设前清除当前自定义装备？
+
+是：覆盖全部（推荐）
+否：与当前设置合并</LoadPresetConfirmMessage>
+  <LoadPresetOverwrite>是（覆盖）</LoadPresetOverwrite>
+  <LoadPresetMerge>否（合并）</LoadPresetMerge>
+  <MissingModsWarningTitle>警告：缺少所需Mod</MissingModsWarningTitle>
+  <MissingModsWarningMessage>此预设所需的以下Mod缺失或未启用：
+
+- {0}
+
+应用此预设可能导致物品缺失或错误。是否继续？</MissingModsWarningMessage>
+  <MissingModsWarningRiskIt>是（冒险继续）</MissingModsWarningRiskIt>
+  <MissingModsWarningCancel>否（取消）</MissingModsWarningCancel>
+  <DeletePresetConfirm>确定要永久删除预设 "{0}" 吗？</DeletePresetConfirm>
+  <ExportTooltip>复制预设到剪贴板以分享。</ExportTooltip>
+  <DeletePresetTooltip>删除该预设（仅删除预设记录，不会自动回滚已保存到游戏的改动）。</DeletePresetTooltip>
+  <SavePresetMetadataTooltip>仅保存当前预设的名称/描述（不更新装备内容）。</SavePresetMetadataTooltip>
+  <CreatePresetTooltip>创建新预设，并将当前设置保存为初始内容。</CreatePresetTooltip>
+  <ImportFromClipboard>从剪贴板导入</ImportFromClipboard>
+  <ImportFromClipboardTooltip>从剪贴板中的base64字符串导入预设。</ImportFromClipboardTooltip>
+  <PresetAlreadyExists>名为 "{0}" 的预设已存在。是否覆盖？</PresetAlreadyExists>
+  <Overwrite>覆盖</Overwrite>
+  <CannotAddItemsInCurrentTabTooltip>无法在当前高级模式标签页中添加物品。</CannotAddItemsInCurrentTabTooltip>
+  <NewPreset>新预设</NewPreset>
+  <ClearSearch>清除搜索</ClearSearch>
+  <ModAll>Mod: 全部</ModAll>
+  <ModCountSelected>Mod: 已选 {0} 个</ModCountSelected>
+  <FilterByModTooltip>按 Mod 筛选（多选）</FilterByModTooltip>
+  <AmmoAll>口径: 全部</AmmoAll>
+  <AmmoFilter>口径筛选</AmmoFilter>
+  <FilterByAmmoTooltip>按弹药口径筛选（多选）</FilterByAmmoTooltip>
+  <AmmoCountSelected>口径: 已选 {0} 个</AmmoCountSelected>
+  <TechAll>科技: 全部</TechAll>
+  <FilterByTechLevelTooltip>按科技等级筛选。科技等级取自物品/武器的 TechLevel，用于区分原始/中世纪/工业/尖端等阶段。</FilterByTechLevelTooltip>
+  <SortBy>排序: {0}</SortBy>
+  <SortAscending>升序</SortAscending>
+  <SortDescending>降序</SortDescending>
+  <SortFieldTooltip>点击选择排序字段。不同分类可用字段不同。</SortFieldTooltip>
+  <SortField_Name>名称</SortField_Name>
+  <SortField_MarketValue>市场价值</SortField_MarketValue>
+  <SortField_TechLevel>科技等级</SortField_TechLevel>
+  <SortField_ModSource>来源模组</SortField_ModSource>
+  <SortField_Accuracy>精度</SortField_Accuracy>
+  <SortField_DPS>DPS</SortField_DPS>
+  <SortField_Armor_Sharp>利器护甲</SortField_Armor_Sharp>
+  <SortField_Armor_Blunt>钝器护甲</SortField_Armor_Blunt>
+  <BaseMarketValue>市场价值</BaseMarketValue>
+  <Weight>重量</Weight>
+  <Damage>伤害</Damage>
+  <Range>射程</Range>
+  <DPS>DPS</DPS>
+  <ArmorSharp>锋利护甲</ArmorSharp>
+  <ArmorBlunt>钝击护甲</ArmorBlunt>
+  <Value>价值</Value>
+  <RangeFilterTooltip>拖动滑条以筛选{0}的范围（最小~最大）。范围上限取自当前候选列表。</RangeFilterTooltip>
+  <Material>材质</Material>
+  <MaterialSelect>材质: {0}</MaterialSelect>
+  <QualitySelect>品质: {0}</QualitySelect>
+  <SelectionMode>模式: {0}</SelectionMode>
+  <SelectionMode_AlwaysTake>必带</SelectionMode_AlwaysTake>
+  <SelectionMode_RandomChance>随机概率</SelectionMode_RandomChance>
+  <SelectionMode_FromPool1>物品池1</SelectionMode_FromPool1>
+  <SelectionMode_FromPool2>物品池2</SelectionMode_FromPool2>
+  <SelectionMode_FromPool3>物品池3</SelectionMode_FromPool3>
+  <SelectionMode_FromPool4>物品池4</SelectionMode_FromPool4>
+  <Remove>删除</Remove>
+  <Search>搜索</Search>
+  <Active>（当前使用）</Active>
+  <ManagePresetsTooltip>管理装备预设</ManagePresetsTooltip>
+  <GithubLinkTooltip>打开项目主页（反馈问题/查看更新）。</GithubLinkTooltip>
+  <VersionLogTooltip>查看版本日志与更新内容。</VersionLogTooltip>
+  <ResetMenuTooltip>打开重置菜单：可重置筛选、当前兵种、当前派系或全部设置。</ResetMenuTooltip>
+  <Changelog>更新内容</Changelog>
+  <FactionEdit>派系编辑</FactionEdit>
+  <FactionEditTooltip>修改派系名称、图标、颜色等静态数据。</FactionEditTooltip>
+  <Settings>设置</Settings>
+  <PawnKinds>兵种列表</PawnKinds>
+  <FactionName>派系名称</FactionName>
+  <FactionDescription>派系描述</FactionDescription>
+  <FactionIconPath>图标路径</FactionIconPath>
+  <FactionColor>派系颜色</FactionColor>
+  <PawnKindLabel>兵种标签</PawnKindLabel>
+  <OriginalValue>原始值</OriginalValue>
+  <CurrentValue>当前值</CurrentValue>
+  <ApplyChanges>应用更改</ApplyChanges>
+  <ResetChanges>重置更改</ResetChanges>
+  <Browse>浏览</Browse>
+  <IconPathPlaceholder>输入纹理路径 (例如: World/WorldObjects/Expanding/Town)</IconPathPlaceholder>
+  <OnlyAvailableInGame>仅在游戏中可用。</OnlyAvailableInGame>
+  <AdvancedModeTooltip>高级模式：提供更细粒度的编辑项（例如指定物品/特殊需求）。简单模式仅编辑基础装备池。</AdvancedModeTooltip>
+  <ClearAllGearTooltip>清空当前兵种的全部自定义装备配置。此操作会弹出确认框，并可通过撤销恢复。</ClearAllGearTooltip>
+  <FactionInfoCardTooltip>查看该派系的 Def 信息卡。</FactionInfoCardTooltip>
+  <DefName>DefName</DefName>
+  <XenotypeChances>异种人概率 (Biotech)</XenotypeChances>
+  <AddXenotype>添加异种人</AddXenotype>
+  <AllXenotypesAdded>已添加所有异种人。</AllXenotypesAdded>
+  <BatchApply>批量应用</BatchApply>
+  <BatchApplyTooltip>打开批量应用窗口，将当前配置应用到选定的兵种。</BatchApplyTooltip>
+  <BatchApplyTitle>批量应用配置</BatchApplyTitle>
+  <SelectAll>全选</SelectAll>
+  <SelectNone>全不选</SelectNone>
+  <Selected>已选</Selected>
+  <BatchApplyConfirm>确定要将配置应用到选中的 {0} 个兵种吗？</BatchApplyConfirm>
+  <BatchApplied>成功应用配置到 {0} 个兵种。</BatchApplied>
+  <NewFaction>New</NewFaction>
+  <NewFactionTooltip>创建新派系。仅在游戏中可用。</NewFactionTooltip>
+  <CreateFaction>创建派系</CreateFaction>
+  <CreateFactionTooltip>通过克隆现有派系来创建新派系。</CreateFactionTooltip>
+  <SelectTemplateFaction>选择模板派系</SelectTemplateFaction>
+  <SelectTemplateFactionTooltip>选择用作模板的派系。新派系将继承其兵种定义和据点生成设置。</SelectTemplateFactionTooltip>
+  <NewFactionDefName>新派系 DefName</NewFactionDefName>
+  <NewFactionLabel>新派系名称</NewFactionLabel>
+  <CloneFactionSuccess>成功创建新派系：{0}</CloneFactionSuccess>
+  <FactionDefNameRequired>DefName 是必需的且必须唯一。</FactionDefNameRequired>
+  <FactionDefNameExists>已存在具有此 DefName 的派系。</FactionDefNameExists>
+  <PawnGroups>派系群组</PawnGroups>
+  <GeneralSettings>常规设置</GeneralSettings>
+  <SortByPower>按战力排序</SortByPower>
+  <PawnKind>兵种</PawnKind>
+  <Race>种族</Race>
+  <Power>战力</Power>
+  <Points>点数</Points>
+  <Unknown>未知</Unknown>
+  <Category_All>所有</Category_All>
+  <Category_Humanlike>人类</Category_Humanlike>
+  <Category_Animal>动物</Category_Animal>
+  <Category_Mechanoid>机械族</Category_Mechanoid>
+  <Category_Other>其他</Category_Other>
+  <AddGroup>添加群组</AddGroup>
+  <Group>群组</Group>
+  <GroupName>群组名称</GroupName>
+  <GroupDefaultName>{0} #{1}</GroupDefaultName>
+  <Commonality>生成权重</Commonality>
+  <EditGroup>编辑群组</EditGroup>
+  <MaxTotalPoints>最大总点数</MaxTotalPoints>
+  <AddPawn>添加单位</AddPawn>
+  <AddKindDef>添加兵种</AddKindDef>
+  <Traders>商队成员</Traders>
+  <Carriers>搬运单位</Carriers>
+  <Guards>护卫单位</Guards>
+  <GroupOptions>常规成员</GroupOptions>
+  <Weight>权重</Weight>
+  <Edit>编辑</Edit>
+  <Delete>删除</Delete>
+  <ConfirmDeleteGroup>确定要删除此群组吗？</ConfirmDeleteGroup>
+  <DeleteGroup>删除群组</DeleteGroup>
+  <WorldOperations>世界操作</WorldOperations>
+  <InstanceCount>实例数量</InstanceCount>
+  <Create>创建</Create>
+  <SelectFactionToCreate>选择一个派系模板以创建新实例。</SelectFactionToCreate>
+  <CreateNewInstance>创建新实例</CreateNewInstance>
+  <ConfirmCreateNewInstance>确定要创建一个新的派系实例吗？注意：过多的派系实例可能会影响游戏性能。建议同一类型的派系实例数量不要超过 10 个。</ConfirmCreateNewInstance>
+  <NewInstancePreview>新实例名称：{0}</NewInstancePreview>
+  <TooManyInstances>该类型的派系实例数量已过多（超过20个）。无法创建更多。</TooManyInstances>
+  <SpawnRandomSettlement>生成随机据点</SpawnRandomSettlement>
+  <SelectSettlementLocation>选择据点位置</SelectSettlementLocation>
+  <FactionInstanceCreated>派系实例 '{0}' 已创建！</FactionInstanceCreated>
+  <SettlementCreated>据点 '{0}' 已创建！</SettlementCreated>
+  <NoValidTileFound>未找到有效的据点位置。</NoValidTileFound>
+  <InvalidTile>所选位置无效。</InvalidTile>
+  <FilterByFaction>仅显示派系兵种</FilterByFaction>
+  <SpawnSettlements>生成据点</SpawnSettlements>
+  <TargetFaction>目标派系</TargetFaction>
+  <RandomGeneration>随机生成</RandomGeneration>
+  <SettlementCount>数量</SettlementCount>
+  <MinDistanceToPlayer>距离玩家最小距离</MinDistanceToPlayer>
+  <GenerateRandomly>随机生成</GenerateRandomly>
+  <ManualSelection>手动选择</ManualSelection>
+  <ManualSelectionDesc>在世界地图上通过点击选择位置。</ManualSelectionDesc>
+  <SettlementPermanentWarning>警告，新增据点不可删除！此次添加仅在本窗口开启时点击世界地图可用。</SettlementPermanentWarning>
+  <SelectOnWorldMap>在地图上选择</SelectOnWorldMap>
+  <SettlementsCreated>已生成 {0} 个据点！</SettlementsCreated>
+  <EnterSpawningModeMessage>已进入生成模式。右键点击世界地图以生成 {0} 的据点。</EnterSpawningModeMessage>
+  <SpawningModeExited>已退出生成模式。</SpawningModeExited>
+  <ExitSpawningMode>退出生成模式</ExitSpawningMode>
+  <SpawnSettlementFor>生成 {0} 据点</SpawnSettlementFor>
+  <CreateAndSpawn>创建并生成 {0} 据点</CreateAndSpawn>
+  <CannotSpawnHere>此处无法生成据点</CannotSpawnHere>
+  <EnableSpawningMode>启用地图生成模式</EnableSpawningMode>
+  <SelectFactionInstanceTitle>选择实例：{0}</SelectFactionInstanceTitle>
+  <NoFactionInstancesFound>未找到实例，请先创建一个。</NoFactionInstancesFound>
+  <SelectInstanceToContinue>请先选择一个实例。</SelectInstanceToContinue>
+  <PawnGroupGuideTitle>派系群组机制指南</PawnGroupGuideTitle>
+  <PawnGroupGuideContent>1. 群组类型 (Kind Def)：
+- Combat: 战斗群组，用于袭击。
+- Trader: 贸易群组，必须包含商人(Traders)。
+- Settlement: 定居点守军。
+- Peaceful: 和平访客。
+
+2. 权重 (Commonality)：
+决定该群组被选中的相对概率。
+
+3. 点数 (Points)：
+限制该群组的最大战斗力点数。通常设为极高值由叙事者控制。
+
+4. 兵种配置：
+- Options: 通用战斗人员。
+- Traders: 商人核心（仅用于 Trader 群组）。
+- Carriers: 驮兽/搬运工。
+- Guards: 护卫（保护商人）。
+
+警告：
+- 删除所有 Combat 群组会导致派系无法发动袭击。
+- Trader 群组若无 Traders 配置会导致商队生成失败。</PawnGroupGuideContent>
+  <ConfirmCreateSettlement>派系已建立，是否立即选址建立基地？
+  
+  （缺少定居点将无法在游戏中显示新派系）</ConfirmCreateSettlement>
+  <PawnGroupKind_Combat>战斗</PawnGroupKind_Combat>
+  <PawnGroupKind_Trader>商队</PawnGroupKind_Trader>
+  <PawnGroupKind_Settlement>定居点</PawnGroupKind_Settlement>
+  <PawnGroupKind_Peaceful>和平</PawnGroupKind_Peaceful>
+  <PawnGroupKind_FactionBase>基地</PawnGroupKind_FactionBase>
+  <PawnGroupKind_Settlement_Remote>远程定居点</PawnGroupKind_Settlement_Remote>
+  <PawnGroupKind_WorkSite>工作点</PawnGroupKind_WorkSite>
+  <PawnGroupKind_Refugee>难民</PawnGroupKind_Refugee>
+  <PawnGroupKind_Beggar>乞丐</PawnGroupKind_Beggar>
+  <PawnGroupKind_Pilgrims>朝圣者</PawnGroupKind_Pilgrims>
+  <PawnGroupKind_Hunters>猎人</PawnGroupKind_Hunters>
+  <PawnGroupKind_Loggers>伐木工</PawnGroupKind_Loggers>
+  <PawnGroupKind_Miners>矿工</PawnGroupKind_Miners>
+  <PawnGroupKind_Farmers>农夫</PawnGroupKind_Farmers>
+  <PawnGroupKind_Kidnappers>绑架者</PawnGroupKind_Kidnappers>
+  <PawnGroupKind_Villagers>村民</PawnGroupKind_Villagers>
+  <PawnGroupKind_Junkyard>废料场</PawnGroupKind_Junkyard>
+  <CannotSettleHere>此处无法定居</CannotSettleHere>
+  <ImportIconTitle>导入图标</ImportIconTitle>
+  <ImagePathPrompt>图片路径 (PNG/JPG)</ImagePathPrompt>
+  <LoadImage>加载图片</LoadImage>
+  <NoImageLoaded>未加载图片。请输入有效的绝对路径。</NoImageLoaded>
+  <Scale>缩放</Scale>
+  <SaveIcon>保存图标</SaveIcon>
+  <IconSaved>图标保存成功！</IconSaved>
+  <IconSaveError>保存图标时出错。</IconSaveError>
+  <FileNotFound>未找到文件：{0}</FileNotFound>
+  <PreviewFailed_FactionNotFound>无法预览：当前游戏中未找到该派系。</PreviewFailed_FactionNotFound>
+  <PreviewFailed_GenFailed>生成失败</PreviewFailed_GenFailed>
+  <PreviewFailed_NoPawn>无角色</PreviewFailed_NoPawn>
+  <HediffType_Debuff>减益</HediffType_Debuff>
+  <HediffType_Illness>疾病</HediffType_Illness>
+  <HediffType_Implant>植入物</HediffType_Implant>
+  <HediffType_Missing>缺失部位</HediffType_Missing>
+  <HediffType_Other>其他</HediffType_Other>
+  <HediffLethal>致命</HediffLethal>
+  <NoDescription>无描述可用。</NoDescription>
+  <TypePrefix>类型</TypePrefix>
+  <ClickToSpawn>点击地图以生成据点 ({0})</ClickToSpawn>
+  <AddedItemsMessage>已添加 {0} 个物品到装备列表</AddedItemsMessage>
+  <VisualPreview>视觉预览</VisualPreview>
+  <PreviewError_NoData>无数据</PreviewError_NoData>
+  <PreviewError_DefMissing>定义缺失</PreviewError_DefMissing>
+  <PreviewError_FactionMissing>派系缺失</PreviewError_FactionMissing>
+  <PreviewError_Error>错误</PreviewError_Error>
+  <ImportedCopySuffix>(已导入 {0})</ImportedCopySuffix>
+  <NoPawn>无角色</NoPawn>
+  <CopiedKindGearMessage>已复制兵种装备！</CopiedKindGearMessage>
+  <UnknownFaction>未知派系</UnknownFaction>
+  <NameColor>名称颜色</NameColor>
+  <NameColorTooltip>派系成员名称的显示颜色。</NameColorTooltip>
+  <RimTalkLinkage>RimTalk联动</RimTalkLinkage>
+  <RimTalkUnderDev>显示开发中</RimTalkUnderDev>
+  <NameCannotBeEmpty>名称不能为空</NameCannotBeEmpty>
+  <NameTooShort>名称太短</NameTooShort>
+  <NameTooLong>名称太长（最多100个字符）</NameTooLong>
+  <NameCannotBeOnlySpecialChars>名称不能仅包含特殊字符</NameCannotBeOnlySpecialChars>
+  <Refresh>刷新</Refresh>
+  <CachesRefreshed>缓存已刷新</CachesRefreshed>
+  <RefreshTooltip>刷新所有UI缓存，包括派系列表、兵种列表和图标缓存。</RefreshTooltip>
+  <AlreadyExists>已存在</AlreadyExists>
+  <FactionAlreadyExistsTooltip>该派系已在游戏中存在。每个派系模板只能创建一个实例。如需修改现有派系，请使用"派系编辑"功能。</FactionAlreadyExistsTooltip>
+  <Changelog_FixWikiLang>修复Wiki语言设置不生效问题</Changelog_FixWikiLang>
+  <Changelog_AddWikiUI>Wiki UI美化：添加标题栏、分段着色显示、优化排版布局</Changelog_AddWikiUI>
+
+  <!-- 删除派系 -->
+  <DeleteFactionTitle>删除派系</DeleteFactionTitle>
+  <DeleteFactionWarning>警告：此操作不可逆！</DeleteFactionWarning>
+  <TargetFaction>目标派系</TargetFaction>
+  <SettlementsToRemove>将被移除的据点</SettlementsToRemove>
+  <PawnsToRemove>将被移除的角色</PawnsToRemove>
+  <OtherEffects>其他影响</OtherEffects>
+  <FactionRelationsRemoved>派系关系将被清除</FactionRelationsRemoved>
+  <ActiveQuestsAffected>相关任务可能受到影响</ActiveQuestsAffected>
+  <DeleteFaction>删除派系</DeleteFaction>
+  <DangerZone>危险区域</DangerZone>
+  <NoFactionInstanceToDelete>无派系实例可删除</NoFactionInstanceToDelete>
+  <FactionDeleted>派系 '{0}' 已删除。</FactionDeleted>
+  <FactionDeleteFailed>删除派系失败，请查看日志。</FactionDeleteFailed>
+  <SelectFactionInstanceToDelete>选择要删除的 {0} 实例</SelectFactionInstanceToDelete>
+  <SelectInstance>请选择实例</SelectInstance>
+  <Next>下一步</Next>
+  <Settlements>据点</Settlements>
+  <UnknownLocation>未知位置</UnknownLocation>
+  <PlayerRelationSettings>玩家关系设置</PlayerRelationSettings>
+  <RelationAlly>结盟</RelationAlly>
+  <RelationNeutral>中立</RelationNeutral>
+  <RelationHostile>敌对</RelationHostile>
+  <RelationCurrent>当前：{0}</RelationCurrent>
+  <RelationDefault>使用游戏默认关系</RelationDefault>
+
+  <!-- 首次进入存档提示 -->
+  <FGC_FirstTimePrompt_Title>选择派系装备预设</FGC_FirstTimePrompt_Title>
+  <FGC_FirstTimePrompt_Description>检测到您有已保存的派系装备预设。您想要在当前存档中使用哪个预设？\n\n您也可以稍后在Mod设置中更改。</FGC_FirstTimePrompt_Description>
+  <FGC_FirstTimePrompt_VanillaOption>使用原版设置（不推荐修改）</FGC_FirstTimePrompt_VanillaOption>
+  <FGC_FirstTimePrompt_UseVanilla>使用原版</FGC_FirstTimePrompt_UseVanilla>
+  <FGC_FirstTimePrompt_ApplyPreset>应用预设</FGC_FirstTimePrompt_ApplyPreset>
+  <FGC_FirstTimePrompt_DecideLater>稍后决定</FGC_FirstTimePrompt_DecideLater>
+  <FGC_FirstTimePrompt_DontAskAgain>不再询问</FGC_FirstTimePrompt_DontAskAgain>
+  <FGC_Preset_NoDescription>无描述</FGC_Preset_NoDescription>
+  <FGC_Factions_Label>个派系</FGC_Factions_Label>
+  <FGC_Message_PresetApplied>已应用预设"{0}"到当前存档。</FGC_Message_PresetApplied>
+  <FGC_Message_UsingVanilla>当前存档使用原版派系设置。</FGC_Message_UsingVanilla>
+  <NoPresetEditingDisabledTooltip>请先创建或加载预设才能进行编辑</NoPresetEditingDisabledTooltip>
+  <NoPresetCannotSave>请先创建或加载预设才能保存</NoPresetCannotSave>
+
+  <!-- Wiki -->
+  <WikiTooltip>打开Wiki帮助文档</WikiTooltip>
+  <WikiMascotTip>滑头小浣熊 - 点击在Steam创意工坊查看</WikiMascotTip>
+  <WikiTab_Principles>核心原理</WikiTab_Principles>
+  <WikiTab_Terminology>术语表</WikiTab_Terminology>
+  <WikiTab_Workflow>工作流程</WikiTab_Workflow>
+  <WikiTab_Notes>注意事项</WikiTab_Notes>
+  <Wiki_Principles_Content>[核心原理]
+
+本Mod通过Harmony库的Postfix补丁拦截PawnGenerator.GeneratePawn方法，在游戏生成角色完毕后立即介入，自定义装备配置。
+
+[技术实现]
+
+• 拦截时机：Harmony的Postfix补丁在原版GeneratePawn方法执行完成后立即触发
+• 覆盖逻辑：模组会根据配置清理原版生成的装备，并应用自定义配置
+• 生效范围：仅对新生成的Pawn生效（如新刷新的袭击、商队、援军、定居点守军）
+• 数据持久化：所有配置保存在存档的游戏组件中，切换存档不互通
+
+[装备池系统]
+
+每个兵种都有一组装备标签（gearTags），游戏根据这些标签从物品库中选择装备。装备标签决定了哪些物品可以被该兵种使用。
+
+• 简单模式：通过调整不同类别（武器/护甲/衣物）的权重来影响随机概率
+• 高级模式：直接指定具体物品，绕过随机池
+• 权重工作原理：RimWorld的权重是"选择权重"而非"必定选中"，权重越高的物品被选中的概率越大，但并非100%
+
+[预算限制]
+
+每个兵种都有预设的服装预算（ApparelMoney）和武器预算（WeaponMoney），系统会根据预算决定是否生成某件装备。
+
+• 默认行为：超出预算的装备会被跳过
+• ForceIgnore选项：忽略预算限制，强制穿戴所有配置（可能产出"神装"角色）
+• 建议：普通游戏建议保留预算限制，高难度或创意模式可开启ForceIgnore
+
+[身体部位冲突]
+
+RimWorld的服装系统基于身体部位覆盖，同一部位只能穿戴一件服装。
+
+• 检测机制：使用ApparelUtility.HasPartsToWear检查身体部位是否被占用
+• 典型冲突：两件防弹背心无法同时穿戴
+• 解决方式：启用ForceIgnore会尝试强制覆盖冲突装备
+
+[高级模式详解]
+
+高级模式提供精细化控制能力：
+
+1. 指定物品（Specific Items）
+   放弃随机池，直接指定具体装备。系统会严格按配置生成，不受随机性影响。
+
+2. 材质强制（Material）
+   强制装备使用特定材质，如：钢制、玻璃钢、魔鬼素等。忽略材质则使用游戏默认。
+
+3. 品质强制（Quality）
+   设定装备品质范围，从极差到传奇。品质直接影响装备属性和售价。
+
+4. 颜色定制（Color）
+   通过颜色选择器自定义服装颜色，打造统一的派系视觉风格。颜色会影响纺织品的实际显示。
+
+5. 样式覆盖（Style）
+   支持Ideology DLC的样式覆盖，可指定特定宗教/意识形态的服装样式。
+
+6. 生成模式（Selection Mode）
+   • AlwaysTake（必定携带）：该装备必定出现在角色身上
+   • RandomChance（概率携带）：按设定概率随机决定是否携带
+   • FromPool（物品池）：从指定的物品池中随机选择一件
+
+7. 强制状态（Hediff）
+   为生成的单位强制添加健康状态，如：仿生肢体、植入物、成瘾品、疾病等。
+
+8. 物品池系统（Pool）
+   将物品分组到4个不同的池中，每个池可独立设置权重。生成时系统会从各池中按权重随机抽取。</Wiki_Principles_Content>
+  <Wiki_Terminology_Content>[核心概念]
+
+PawnKind（兵种）
+定义：兵种定义，描述一种角色类型（如海盗枪手、部落战士）。
+通俗解释：你可以把它理解为"职业"或"模板"，每个PawnKind决定了角色的基础属性、装备倾向、技能等级等。
+
+Faction（派系）
+定义：派系，由多个兵种组成的阵营。
+通俗解释：游戏中的各种势力，如海盗、部落、帝国、玩家殖民地等。每个派系有自己的外交关系、科技等级和兵种组成。
+
+[装备相关术语]
+
+Gear Tag（装备标签）
+定义：装备标签，用于标记物品可被哪些兵种使用。
+通俗解释：就像商品的分类标签，比如"军用"、"部落"、"贵族"等。兵种通过标签来决定可以使用哪些装备。
+
+ApparelMoney（服装预算）
+定义：兵种生成时可花费在服装上的最大银两数。
+通俗解释：角色的"购物预算"，超出预算的装备不会被购买/生成。
+
+WeaponMoney（武器预算）
+定义：兵种生成时可花费在武器上的最大银两数。
+通俗解释：同上，但专门针对武器。
+
+[生成模式术语]
+
+Selection Mode（选择模式）
+定义：决定装备如何被选中的规则。
+
+• AlwaysTake（必定携带）
+  定义：该装备必定出现在角色身上。
+  通俗解释：100%生成，没有随机性。
+
+• RandomChance（概率携带）
+  定义：按设定概率随机决定是否携带。
+  通俗解释：掷骰子决定是否带，比如50%概率就是抛硬币。
+
+• FromPool（从物品池选择）
+  定义：从指定的物品池（Pool 1-4）中随机选择一件。
+  通俗解释：从预设的"抽奖池"里抽一件。
+
+[高级设置术语]
+
+Force Ignore（强制忽略）
+定义：强制忽略预算限制和身体部位冲突。
+通俗解释：无视一切规则，强行穿上所有配置的装备。可能产生"神装"但也可能导致异常。
+
+Force Naked（强制裸体）
+定义：生成时剥离所有衣物。
+通俗解释：让角色光着身子生成，然后只穿你指定的装备。
+
+Force Only Selected（仅从装备池选择）
+定义：所有原版/现有装备在应用自定义装备前被剥离。
+通俗解释：先脱光，再穿你指定的，防止原版装备混搭。
+
+Biocode（生物编码）
+定义：生物编码武器，绑定到特定角色。
+通俗解释：武器上有个"DNA锁"，只有特定角色能用，其他人拿起来会心情崩溃。
+
+[物品属性术语]
+
+Material（材质）
+定义：装备的制作材质。
+常见材质：布料、皮革、钢铁、玻璃钢、铀、魔鬼素、黄金等。
+影响：材质决定装备的防护值、耐久度、重量和外观。
+
+Quality（品质）
+定义：装备的品质等级。
+等级范围：极差 → 较差 → 普通 → 良好 → 优秀 → 大师 → 传奇
+影响：品质直接影响装备属性和市场价值。传奇品质的装备属性可能是极差的2-3倍。
+
+Stuff（材质物品）
+定义：可用于制作装备的材料物品。
+通俗解释：做衣服用的布、做盔甲用的金属板等。
+
+[健康状态术语]
+
+Hediff（健康状态）
+定义：角色身上的任何健康相关状态。
+分类：
+• 植入物：仿生肢体、器官替换
+• 成瘾品：成瘾、耐受
+• 疾病：感染、瘟疫、癌症
+• 伤口：割伤、烧伤、淤青
+• 其他：怀孕、年龄相关退化等
+
+Severity（严重程度）
+定义：Hediff的强度等级。
+影响：如疾病的严重程度决定症状轻重，成瘾品的严重程度决定效果强弱。
+
+[派系群组术语]
+
+PawnGroupKind（群组类型）
+定义：决定该群组在游戏中的用途。
+
+• Combat（战斗）：用于袭击、围攻等战斗场景
+• Trader（商队）：用于商队生成，必须包含商人
+• Settlement（定居点）：用于派系据点的守军
+• Peaceful（和平）：用于和平访客、旅行者
+
+Commonality（生成权重）
+定义：该群组被选中的相对概率。
+通俗解释：权重越高，这个群组越容易出现。
+
+Points（点数）
+定义：限制该群组的最大战斗力点数。
+通俗解释：控制群组强度，点数越高可以生成越强力的角色。
+
+[其他术语]
+
+DefName（定义名称）
+定义：游戏内部使用的唯一标识符。
+通俗解释：就像身份证号，每个Def都是唯一的字符串，如"Pirate"、"TribalWarrior"。
+
+TechLevel（科技等级）
+定义：物品或派系的科技水平。
+等级：原始 → 中世纪 → 工业 → 太空 → 超凡
+影响：决定哪些装备可以被使用，高科技装备不会出现在低科技派系。
+
+Xenotype（异种人）
+定义：Biotech DLC引入的基因改造人类亚种。
+例子：血族、猪人、鼹鼠人等。每个异种人有独特的基因特征。</Wiki_Terminology_Content>
+  <Wiki_Workflow_Content>[快速入门]
+
+本章节将引导您从零开始使用本Mod，涵盖从创建预设到导出分享的完整流程。
+
+[第一步：创建预设]
+
+预设是保存配置的基础容器。所有装备配置都必须保存在某个预设中。
+
+操作步骤：
+1. 打开Mod设置（游戏主菜单 → 选项 → Mod设置 → Faction Gear Customizer）
+2. 点击"预设管理器"按钮
+3. 点击"创建新预设"
+4. 输入预设名称（如"我的自定义配置"）
+5. 可选：添加描述以便日后识别
+
+提示：建议首次使用时创建一个"备份预设"，保存原版设置以便恢复。
+
+[第二步：选择派系]
+
+左侧列表显示所有可用的派系。
+
+• 派系分类：人类派系、动物派系、机械族派系、其他
+• 颜色标识：灰色表示该派系在当前游戏中不存在
+• 搜索功能：使用搜索框快速定位派系
+
+操作：点击派系名称展开，查看该派系下的所有兵种。
+
+[第三步：选择兵种]
+
+兵种列表显示选定派系下的所有PawnKind。
+
+• 图标：显示该兵种的默认外观
+• 名称：兵种的显示名称
+• DefName：内部标识符
+
+操作：点击兵种名称进入编辑界面。
+
+[第四步：配置装备 - 简单模式]
+
+简单模式适合快速调整，通过权重系统影响随机概率。
+
+界面说明：
+• 武器：远程武器、近战武器
+• 护甲：头盔、防弹背心等防护装备
+• 衣物：衬衫、裤子、外套等
+• 其他：配件、腰带等
+
+操作方法：
+1. 点击"添加"按钮打开物品选择器
+2. 勾选希望该兵种使用的物品
+3. 调整滑块设置权重（0-100）
+4. 权重越高，该物品被选中的概率越大
+
+预算设置：
+• 拖动预算滑块调整总预算
+• 预算过低可能导致部分装备无法生成
+• 建议根据派系科技等级合理设置
+
+[第五步：配置装备 - 高级模式]
+
+高级模式提供精细化控制，适合有特定需求的玩家。
+
+切换方式：点击顶部的"简单/高级"按钮
+
+高级模式功能：
+
+1. 指定具体物品
+   • 点击"添加武器"或"添加服装"
+   • 在弹出的选择器中搜索并选择具体物品
+   • 可添加多个物品形成列表
+
+2. 设置物品属性
+   点击物品右侧的"编辑"图标：
+   • 材质：强制使用特定材质（留空则随机）
+   • 品质：设置品质范围（如良好-优秀）
+   • 颜色：使用颜色选择器自定义颜色
+   • 生成模式：AlwaysTake/RandomChance/FromPool
+
+3. 配置物品池
+   • Pool 1-4：四个独立的物品池
+   • 每个池可包含多个物品
+   • 设置池的权重影响抽取概率
+
+4. 添加Hediff（健康状态）
+   • 点击"添加强制状态"
+   • 选择要添加的Hediff（如仿生腿、成瘾品）
+   • 设置严重程度（Severity）
+   • 设置概率（Chance）
+
+5. 高级选项
+   • ForceNaked：强制裸体生成
+   • ForceOnlySelected：仅使用指定装备
+   • ForceIgnore：忽略预算和冲突限制
+
+[第六步：实时预览]
+
+预览功能让您在保存前查看修改效果。
+
+操作：
+1. 点击"预览"按钮打开预览窗口
+2. 窗口显示生成的角色外观和装备列表
+3. 点击"重新生成"可刷新预览
+4. 调整种子值可查看不同随机结果
+
+注意：预览仅在游戏中可用，主菜单预览功能受限。
+
+[第七步：批量操作]
+
+批量应用功能可将当前配置快速应用到多个兵种。
+
+操作：
+1. 点击"批量应用"按钮
+2. 在弹出的窗口中选择目标兵种
+3. 可选择"全选"或单独勾选
+4. 点击确认应用
+
+应用场景：
+• 统一整个派系的制服风格
+• 快速配置相似兵种
+
+[第八步：保存更改]
+
+所有修改必须保存才能生效。
+
+操作：
+1. 点击"保存更改到当前游戏"按钮
+2. 更改立即生效，无需重启
+3. 保存后新生成的角色将使用新配置
+
+重要提示：
+• 修改仅对新生成的角色生效
+• 已存在的角色不会受到影响
+• 保存前建议预览确认效果
+
+[第九步：预设管理]
+
+预设可导出分享或导入使用。
+
+导出预设：
+1. 在预设管理器中选择要分享的预设
+2. 点击"导出"按钮
+3. 预设数据已复制到剪贴板
+4. 将字符串发送给朋友或发布到社区
+
+导入预设：
+1. 点击"从剪贴板导入"
+2. 粘贴预设字符串
+3. 确认导入
+
+注意事项：
+• 导入的预设可能依赖特定Mod
+• 缺少Mod时部分物品会显示为缺失
+• 建议导入后检查兼容性
+
+[第十步：派系群组编辑（进阶）]
+
+派系群组决定该派系在游戏中如何生成各种单位组合。
+
+访问方式：
+1. 选择派系后点击"派系群组"标签
+2. 查看该派系的所有群组配置
+
+群组类型：
+• Combat：战斗群组，用于袭击
+• Trader：商队群组，必须包含商人
+• Settlement：定居点守军
+• Peaceful：和平访客
+
+编辑要点：
+• Commonality：权重越高越容易出现
+• Points：控制群组强度
+• Options：通用战斗人员
+• Traders/Carriers/Guards：特定角色
+
+警告：
+• 删除所有Combat群组会导致无法生成袭击
+• Trader群组缺少商人会导致商队生成失败
+
+[完整工作流程示例]
+
+场景：让帝国派系的所有士兵统一穿着红色动力装甲
+
+1. 创建预设"帝国红色军团"
+2. 选择"帝国"派系
+3. 选择"帝国士兵"兵种
+4. 切换到高级模式
+5. 添加动力装甲，设置颜色为红色
+6. 添加动力头盔，设置颜色为红色
+7. 设置生成模式为AlwaysTake
+8. 点击批量应用，选择所有帝国战斗兵种
+9. 预览确认效果
+10. 保存更改
+11. 导出预设分享给朋友</Wiki_Workflow_Content>
+  <Wiki_Notes_Content>[重要须知]
+
+本章节涵盖使用本Mod时必须了解的重要信息，包括生效机制、兼容性、常见问题及解决方案。
+
+[修改生效机制]
+
+何时生效：
+• 修改保存后立即生效，无需重启游戏
+• 仅对新生成的角色生效（新刷新的袭击、商队、定居点守军等）
+• 已存在于地图上的角色不会受到影响
+• 正在进行的任务中已生成的单位也不会改变
+
+何时不生效：
+• 已存在的角色和动物
+• 玩家殖民地的初始角色（除非重新生成）
+• 某些特殊事件生成的单位（取决于事件实现方式）
+
+如何验证生效：
+• 使用预览功能查看生成结果
+• 等待新的袭击/商队生成并观察装备
+• 使用开发者模式强制生成测试
+
+[预设管理须知]
+
+预设的作用：
+• 预设是配置的容器，所有修改都保存在当前激活的预设中
+• 切换预设会加载不同的配置集
+• 预设之间互不影响
+
+重要提醒：
+• 删除预设不会回滚已保存到游戏的更改
+• 已应用的配置会持续生效，即使删除预设
+• 如需恢复原版，必须手动重置或加载"原版"预设
+• 建议定期导出预设备份
+
+存档独立性：
+• 每个存档独立保存配置
+• 切换存档时配置不会自动同步
+• 首次进入存档时会提示选择预设
+
+[常见问题与解决方案]
+
+问题1：装备没有按预期生成
+可能原因：
+• 预算限制：装备价值超过兵种预算
+• 部位冲突：身体部位已被其他装备占用
+• 科技限制：装备科技等级高于派系
+• 种族限制：某些种族无法穿戴特定装备
+
+解决方案：
+• 开启ForceIgnore选项
+• 检查并调整预算设置
+• 确认装备与兵种科技等级匹配
+• 检查种族的服装兼容性
+
+问题2：某些物品无法选择
+可能原因：
+• 物品被其他Mod禁用
+• 物品需要特定DLC（如Ideology、Biotech）
+• 物品科技等级过高
+• 物品是任务/事件专属
+
+解决方案：
+• 检查Mod加载顺序
+• 确认已安装所需DLC
+• 使用搜索功能确认物品存在
+
+问题3：游戏卡顿或崩溃
+可能原因：
+• 配置了大量物品导致生成计算复杂
+• 与其他Mod的装备修改冲突
+• 循环引用或无效配置
+
+解决方案：
+• 减少单个兵种的装备数量
+• 检查Mod兼容性
+• 重置配置逐步排查
+
+问题4：颜色/样式不生效
+可能原因：
+• 某些物品不支持染色（如特定材质）
+• Ideology样式需要对应DLC
+• 样式与物品不兼容
+
+解决方案：
+• 确认物品支持染色
+• 检查DLC安装状态
+• 尝试其他样式选项
+
+[高级选项警告]
+
+ForceIgnore（强制忽略）：
+• 会完全忽略预算限制
+• 会尝试强制覆盖身体部位冲突
+• 可能导致"神装"角色，破坏游戏平衡
+• 建议仅在创意模式或测试时使用
+
+ForceNaked（强制裸体）：
+• 会剥离所有原版衣物
+• 如果后续配置不完整，角色可能真的裸体
+• 确保已配置足够的替代装备
+
+ForceOnlySelected（仅从装备池选择）：
+• 会移除所有原版装备
+• 如果自定义列表为空，角色将没有任何装备
+• 推荐开启以获得完全控制
+
+[兼容性说明]
+
+完全兼容：
+• Combat Extended (CE)：弹药系统正常运作
+• Humanoid Alien Races：外星种族装备正常
+• Vanilla Expanded系列：所有VE装备可用
+• Ideology DLC：样式系统完全支持
+• Biotech DLC：基因和异种人系统支持
+
+已知限制：
+• 某些彻底修改装备系统的Mod可能冲突
+• 动态生成装备的Mod可能产生意外结果
+• 修改PawnKindDef的其他Mod可能互相覆盖
+
+建议的Mod加载顺序：
+1. Harmony
+2. Core
+3. 其他大型Mod（如CE）
+4. Faction Gear Customizer
+5. 小型补丁Mod
+
+[性能优化建议]
+
+避免性能问题的配置：
+• 单个兵种的装备列表不要过长（建议&lt;50件）
+• 避免同时配置大量兵种的复杂规则
+• 合理使用物品池而非单独指定每件物品
+• 定期清理不再使用的预设
+
+大型Mod包用户：
+• 首次加载可能需要较长时间构建缓存
+• 物品选择器打开可能有短暂延迟
+• 预览大量兵种时可能卡顿
+
+[备份与恢复]
+
+推荐备份策略：
+1. 首次使用前导出"原版配置"预设
+2. 每次重大修改前导出当前预设
+3. 定期备份整个存档
+4. 分享预设前测试兼容性
+
+恢复方法：
+• 加载备份预设
+• 重置特定派系/兵种
+• 完全重置所有配置
+
+[多人游戏与分享]
+
+分享预设：
+• 导出的预设字符串包含所有配置
+• 接收方需要相同的Mod环境
+• 建议附带Mod列表一起分享
+
+多人游戏：
+• 主机配置决定生成规则
+• 客户端无需安装本Mod（仅主机需要）
+• 确保所有玩家使用相同的配置版本
+
+[开发者与调试]
+
+开发者模式功能：
+• 强制生成特定兵种进行测试
+• 查看详细的生成日志
+• 实时修改配置并观察效果
+
+调试技巧：
+• 使用预览功能快速验证
+• 逐步增加复杂度排查问题
+• 查看游戏日志获取错误信息
+
+[最佳实践]
+
+新手建议：
+1. 从简单模式开始，熟悉权重系统
+2. 先修改单一兵种，观察效果
+3. 创建备份预设后再进行大规模修改
+4. 经常预览验证配置
+
+进阶技巧：
+1. 使用物品池创建随机但有主题的配置
+2. 结合Hediff创造独特兵种（如全员生化改造）
+3. 利用批量应用快速统一派系风格
+4. 为不同游戏阶段创建不同预设
+
+创意玩法：
+• 全员动力装甲的"钢铁军团"
+• 统一服装颜色的"制服派系"
+• 全员携带特定武器的"特种部队"
+• 全员生化改造的"未来战士"
+
+[技术支持]
+
+遇到问题时的排查步骤：
+1. 确认Mod版本为最新
+2. 检查是否缺少前置Mod
+3. 尝试重置配置看问题是否消失
+4. 查看游戏日志中的错误信息
+5. 在Steam创意工坊或GitHub提交问题报告
+
+[获取帮助的渠道]
+
+点击以下链接获取帮助或反馈问题：
+
+• Steam创意工坊页面
+https://steamcommunity.com/sharedfiles/filedetails/?id=3670833973
+
+• GitHub项目仓库
+https://github.com/yancy22737-sudo/FactionGearCustomizer
+
+• QQ交流群（玩家交流与技术讨论）
+群号：984338429</Wiki_Notes_Content>
+</LanguageData>

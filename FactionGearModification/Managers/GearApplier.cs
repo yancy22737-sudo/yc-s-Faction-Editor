@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FactionGearCustomizer.Core;
+using FactionGearCustomizer.Compat;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -9,22 +11,131 @@ namespace FactionGearCustomizer
 {
     public static class GearApplier
     {
+        // Added for Preview functionality
+        public static FactionGearPreset PreviewPreset = null;
+
         public static void ApplyCustomGear(Pawn pawn, Faction faction)
         {
-            if (pawn == null || faction == null) return;
-
-            var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(faction.def.defName);
-            var kindDefName = pawn.kindDef?.defName;
-
-            if (!string.IsNullOrEmpty(kindDefName))
+            try
             {
-                var kindData = factionData.GetKindData(kindDefName);
-                if (kindData != null)
+                if (pawn == null || faction == null) return;
+
+                FactionGearData factionData = null;
+                if (PreviewPreset != null)
                 {
-                    ApplyWeapons(pawn, kindData);
-                    ApplyApparel(pawn, kindData);
-                    ApplyHediffs(pawn, kindData);
-                    Log.Message($"[FactionGearCustomizer] Successfully applied custom gear to pawn {pawn.Name.ToStringFull} ({pawn.kindDef.defName}) of faction {faction.Name}");
+                    // 预览模式：使用预览预设
+                    factionData = PreviewPreset.factionGearData?.FirstOrDefault(f => f.factionDefName == faction.def?.defName);
+                }
+                else
+                {
+                    // 正常模式：优先使用存档设置，否则使用全局设置
+                    var gameComponent = FactionGearGameComponent.Instance;
+                    var saveData = gameComponent?.GetActiveFactionGearData();
+
+                    if (saveData != null)
+                    {
+                        // 使用存档中的设置
+                        factionData = saveData.FirstOrDefault(f => f.factionDefName == faction.def?.defName);
+                    }
+                    else
+                    {
+                        // 使用全局设置（兼容旧存档或主菜单）
+                        factionData = FactionGearCustomizerMod.Settings?.GetOrCreateFactionData(faction.def?.defName);
+                    }
+                }
+
+                if (factionData == null) return;
+
+                var kindDefName = pawn.kindDef?.defName;
+
+                if (!string.IsNullOrEmpty(kindDefName))
+                {
+                    var kindData = factionData.GetKindData(kindDefName);
+                    if (kindData != null)
+                    {
+                        ApplyWeapons(pawn, kindData);
+                        ApplyApparel(pawn, kindData);
+                        ApplyInventory(pawn, kindData);
+                        ApplyHediffs(pawn, kindData);
+                        // Log.Message($"[FactionGearCustomizer] Successfully applied custom gear to pawn {pawn.Name.ToStringFull} ({pawn.kindDef.defName}) of faction {faction.Name}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Warning($"[FactionGearCustomizer] Error in ApplyCustomGear for pawn {pawn?.Name?.ToStringFull ?? "Unknown"}: {ex}");
+            }
+        }
+
+        /// <summary>
+        /// 检查服装是否适合pawn穿戴（包括身体部位和年龄限制）
+        /// </summary>
+        private static bool CanWearApparel(Pawn pawn, ThingDef apparelDef)
+        {
+            if (pawn == null || apparelDef == null || !apparelDef.IsApparel)
+                return false;
+
+            // 检查身体部位
+            if (!ApparelUtility.HasPartsToWear(pawn, apparelDef))
+                return false;
+
+            // 检查年龄限制（儿童/成人服装限制）
+            if (!apparelDef.apparel.PawnCanWear(pawn))
+                return false;
+
+            return true;
+        }
+
+        private static void ApplyInventory(Pawn pawn, KindGearData kindData)
+        {
+            if (kindData.InventoryItems.NullOrEmpty()) return;
+
+            foreach (var item in GetWhatToGive(kindData.InventoryItems, pawn))
+            {
+                if (item.Thing == null) continue;
+
+                int count = item.CountRange.RandomInRange;
+                if (count <= 0) count = 1;
+
+                // Handle non-stackable items (loop to create multiple)
+                if (item.Thing.stackLimit == 1)
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        var created = GenerateItem(pawn, item, kindData);
+                        if (created != null && created.holdingOwner == null)
+                        {
+                            pawn.inventory.innerContainer.TryAdd(created, true);
+                        }
+                    }
+                }
+                else
+                {
+                    // Handle stackable items (create one with stackCount)
+                    // Note: If count > stackLimit, we create one big stack and let TryAdd handle splitting?
+                    // TryAdd usually handles splitting if target container allows.
+                    // But to be safe and cleaner, we generate one item, set stackCount, and add.
+                    
+                    var created = GenerateItem(pawn, item, kindData);
+                    if (created != null && created.holdingOwner == null)
+                    {
+                        created.stackCount = count;
+                        // TryAdd will reduce created.stackCount as it adds.
+                        // We loop until created is empty or we can't add more.
+                        while (created.stackCount > 0)
+                        {
+                            int originalCount = created.stackCount;
+                            if (!pawn.inventory.innerContainer.TryAdd(created, true))
+                            {
+                                // Failed to add (full?), break to avoid infinite loop
+                                if (created.stackCount == originalCount)
+                                {
+                                    created.Destroy();
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -68,16 +179,19 @@ namespace FactionGearCustomizer
             // Global Force Ignore check
             bool forceIgnore = FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
 
+            // Get effective tech level limit
+            TechLevel? techLevelLimit = GetEffectiveTechLevelLimit(kindData, pawn);
+
             // Clear existing weapons if configured or if we are forcing new ones
             if (pawn.equipment != null)
             {
                 // Check if we should clear everything
                 bool clearAll = kindData.ForceNaked || kindData.ForceOnlySelected;
-                
+
                 var equipmentToDestroy = pawn.equipment.AllEquipmentListForReading
                     .Where(eq => clearAll || eq.def.destroyOnDrop)
                     .ToList();
-                
+
                 foreach (var equipment in equipmentToDestroy)
                 {
                     if (pawn.Spawned && pawn.Position.IsValid)
@@ -100,6 +214,13 @@ namespace FactionGearCustomizer
                 foreach (var item in GetWhatToGive(kindData.SpecificWeapons, pawn))
                 {
                     if (item.Thing == null) continue;
+
+                    // Tech level check
+                    if (!forceIgnore && !IsTechLevelAllowed(item.Thing, techLevelLimit))
+                    {
+                        continue;
+                    }
+
                     var created = GenerateItem(pawn, item, kindData);
                     if (created is ThingWithComps weapon && pawn.equipment != null)
                     {
@@ -108,6 +229,12 @@ namespace FactionGearCustomizer
                              pawn.equipment.Remove(pawn.equipment.Primary);
                         }
                         pawn.equipment.AddEquipment(weapon);
+                        
+                        // CE 兼容性：为需要弹药的武器生成弹药
+                        if (CECompat.WeaponNeedsAmmo(weapon))
+                        {
+                            CECompat.GenerateAndAddAmmoForWeapon(pawn, weapon);
+                        }
                     }
                     else if (created != null)
                     {
@@ -121,68 +248,96 @@ namespace FactionGearCustomizer
                 // ... Existing simple logic ...
                 if (kindData.weapons.Any())
                 {
-                    var weaponItem = GetRandomGearItem(kindData.weapons);
-                    if (weaponItem?.ThingDef != null)
-                    {
-                        // Handle conflicting apparel
-                        if (forceIgnore && pawn.apparel != null)
-                        {
-                            var conflictingApparel = pawn.apparel.WornApparel
-                                .Where(a => {
-                                    var comp = a.GetComp<CompShield>();
-                                    return comp != null && weaponItem.ThingDef.IsRangedWeapon;
-                                })
-                                .ToList();
-                            foreach (var apparel in conflictingApparel)
-                            {
-                                pawn.apparel.Remove(apparel);
-                                apparel.Destroy();
-                            }
-                        }
+                    // Filter by tech level
+                    var validWeapons = forceIgnore
+                        ? kindData.weapons
+                        : kindData.weapons.Where(w => IsTechLevelAllowed(w.ThingDef, techLevelLimit)).ToList();
 
-                        var weapon = GenerateSimpleItem(pawn, weaponItem.ThingDef, kindData, true);
-                        if (weapon is ThingWithComps wc)
+                    if (validWeapons.Any())
+                    {
+                        var weaponItem = GetRandomGearItem(validWeapons);
+                        if (weaponItem?.ThingDef != null)
                         {
-                            if (wc.def.equipmentType == EquipmentType.Primary && pawn.equipment.Primary != null)
+                            // Handle conflicting apparel
+                            if (forceIgnore && pawn.apparel != null)
                             {
-                                ThingWithComps primary = pawn.equipment.Primary;
-                                if (pawn.Spawned && pawn.equipment.TryDropEquipment(primary, out var dropped, pawn.Position, false))
+                                var conflictingApparel = pawn.apparel.WornApparel
+                                    .Where(a => {
+                                        var comp = a.GetComp<CompShield>();
+                                        return comp != null && weaponItem.ThingDef.IsRangedWeapon;
+                                    })
+                                    .ToList();
+                                foreach (var apparel in conflictingApparel)
                                 {
-                                    dropped.Destroy();
-                                }
-                                else
-                                {
-                                    pawn.equipment.Remove(primary);
-                                    primary.Destroy();
+                                    pawn.apparel.Remove(apparel);
+                                    apparel.Destroy();
                                 }
                             }
-                            pawn.equipment.AddEquipment(wc);
+
+                            var weapon = GenerateSimpleItem(pawn, weaponItem.ThingDef, kindData, true);
+                            if (weapon is ThingWithComps wc)
+                            {
+                                if (wc.def.equipmentType == EquipmentType.Primary && pawn.equipment.Primary != null)
+                                {
+                                    ThingWithComps primary = pawn.equipment.Primary;
+                                    if (pawn.Spawned && pawn.equipment.TryDropEquipment(primary, out var dropped, pawn.Position, false))
+                                    {
+                                        dropped.Destroy();
+                                    }
+                                    else
+                                    {
+                                        pawn.equipment.Remove(primary);
+                                        primary.Destroy();
+                                    }
+                                }
+                                pawn.equipment.AddEquipment(wc);
+                                
+                                // CE 兼容性：为需要弹药的武器生成弹药
+                                if (CECompat.WeaponNeedsAmmo(wc))
+                                {
+                                    CECompat.GenerateAndAddAmmoForWeapon(pawn, wc);
+                                }
+                            }
                         }
                     }
                 }
 
                 if (kindData.meleeWeapons.Any())
                 {
-                    var meleeItem = GetRandomGearItem(kindData.meleeWeapons);
-                    if (meleeItem?.ThingDef != null)
+                    // Filter by tech level
+                    var validMelee = forceIgnore
+                        ? kindData.meleeWeapons
+                        : kindData.meleeWeapons.Where(w => IsTechLevelAllowed(w.ThingDef, techLevelLimit)).ToList();
+
+                    if (validMelee.Any())
                     {
-                         var weapon = GenerateSimpleItem(pawn, meleeItem.ThingDef, kindData, true);
-                        if (weapon is ThingWithComps wc)
+                        var meleeItem = GetRandomGearItem(validMelee);
+                        if (meleeItem?.ThingDef != null)
                         {
-                            if (wc.def.equipmentType == EquipmentType.Primary && pawn.equipment.Primary != null)
+                             var weapon = GenerateSimpleItem(pawn, meleeItem.ThingDef, kindData, true);
+                            if (weapon is ThingWithComps wc)
                             {
-                                ThingWithComps primary = pawn.equipment.Primary;
-                                if (pawn.Spawned && pawn.equipment.TryDropEquipment(primary, out var dropped, pawn.Position, false))
+                                if (wc.def.equipmentType == EquipmentType.Primary && pawn.equipment.Primary != null)
                                 {
-                                    dropped.Destroy();
+                                    ThingWithComps primary = pawn.equipment.Primary;
+                                    if (pawn.Spawned && pawn.equipment.TryDropEquipment(primary, out var dropped, pawn.Position, false))
+                                    {
+                                        dropped.Destroy();
+                                    }
+                                    else
+                                    {
+                                        pawn.equipment.Remove(primary);
+                                        primary.Destroy();
+                                    }
                                 }
-                                else
+                                pawn.equipment.AddEquipment(wc);
+                                
+                                // CE 兼容性：为需要弹药的武器生成弹药（某些近战武器可能需要）
+                                if (CECompat.WeaponNeedsAmmo(wc))
                                 {
-                                    pawn.equipment.Remove(primary);
-                                    primary.Destroy();
+                                    CECompat.GenerateAndAddAmmoForWeapon(pawn, wc);
                                 }
                             }
-                            pawn.equipment.AddEquipment(wc);
                         }
                     }
                 }
@@ -200,11 +355,15 @@ namespace FactionGearCustomizer
             // Check if we have ANY data to apply. If not, don't strip (unless forced).
             bool hasAdvancedData = !kindData.SpecificApparel.NullOrEmpty() || !kindData.ApparelRequired.NullOrEmpty();
             bool hasSimpleData = !kindData.armors.NullOrEmpty() || !kindData.apparel.NullOrEmpty() || !kindData.others.NullOrEmpty();
-            
+
             if (!hasAdvancedData && !hasSimpleData && !kindData.ForceOnlySelected)
             {
                 return;
             }
+
+            // Get effective tech level limit
+            TechLevel? techLevelLimit = GetEffectiveTechLevelLimit(kindData, pawn);
+            bool forceIgnore = FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
 
             // Strip logic
             if (kindData.ForceOnlySelected)
@@ -231,8 +390,7 @@ namespace FactionGearCustomizer
             if (hasAdvancedData)
             {
                 // Budget Logic (Advanced Mode)
-                bool forceIgnore = FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
-                float budget = kindData.ApparelMoney?.RandomInRange ?? pawn.kindDef.apparelMoney.RandomInRange;
+                float budget = kindData.ApparelMoney?.RandomInRange ?? pawn.kindDef?.apparelMoney.RandomInRange ?? 0f;
                 float currentSpent = 0f;
                 if (pawn.apparel != null)
                 {
@@ -244,12 +402,19 @@ namespace FactionGearCustomizer
                 {
                     foreach (var def in kindData.ApparelRequired)
                     {
+                        // Tech level check
+                        if (!forceIgnore && !IsTechLevelAllowed(def, techLevelLimit))
+                        {
+                            continue;
+                        }
+
                         var item = new SpecRequirementEdit() { Thing = def, SelectionMode = ApparelSelectionMode.AlwaysTake };
                         var created = GenerateItem(pawn, item, kindData, forceIgnore ? -1f : (budget - currentSpent));
-                        if (created is Apparel app && ApparelUtility.HasPartsToWear(pawn, app.def))
+                        if (created is Apparel app && CanWearApparel(pawn, app.def))
                         {
                             if (!forceIgnore && (currentSpent + app.MarketValue > budget))
                             {
+                                // Log.Warning($"[FactionGearCustomizer] Budget exceeded for {pawn}: Budget={budget}, Current={currentSpent}, Item={app.LabelCap} ({app.MarketValue}). Skipping.");
                                 created.Destroy();
                                 continue;
                             }
@@ -274,12 +439,20 @@ namespace FactionGearCustomizer
                     foreach (var item in GetWhatToGive(kindData.SpecificApparel, pawn))
                     {
                          if (item.Thing == null) continue;
+
+                         // Tech level check
+                         if (!forceIgnore && !IsTechLevelAllowed(item.Thing, techLevelLimit))
+                         {
+                             continue;
+                         }
+
                          var created = GenerateItem(pawn, item, kindData, forceIgnore ? -1f : (budget - currentSpent));
-                         if (created is Apparel app && ApparelUtility.HasPartsToWear(pawn, app.def))
+                         if (created is Apparel app && CanWearApparel(pawn, app.def))
                          {
                              // Check Budget
                              if (!forceIgnore && (currentSpent + app.MarketValue > budget))
                              {
+                                 // Log.Warning($"[FactionGearCustomizer] Budget exceeded for {pawn}: Budget={budget}, Current={currentSpent}, Item={app.LabelCap} ({app.MarketValue}). Skipping.");
                                  created.Destroy();
                                  continue;
                              }
@@ -307,10 +480,9 @@ namespace FactionGearCustomizer
                 // Previously this was only enabled for ForceIgnore, but it should be the default behavior
                 // as users expect "what they list is what they get" (limited by slots/conflicts).
                 bool tryEquipMultiple = true;
-                bool forceIgnore = FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
 
                 // Budget Logic
-                float budget = kindData.ApparelMoney?.RandomInRange ?? pawn.kindDef.apparelMoney.RandomInRange;
+                float budget = kindData.ApparelMoney?.RandomInRange ?? pawn.kindDef?.apparelMoney.RandomInRange ?? 0f;
                 float currentSpent = 0f;
                 if (pawn.apparel != null)
                 {
@@ -324,9 +496,16 @@ namespace FactionGearCustomizer
                 {
                     if (gearList.NullOrEmpty()) return;
 
+                    // Filter by tech level
+                    var validList = forceIgnore
+                        ? gearList
+                        : gearList.Where(g => IsTechLevelAllowed(g.ThingDef, techLevelLimit)).ToList();
+
+                    if (validList.NullOrEmpty()) return;
+
                     if (tryEquipMultiple)
                     {
-                        var workingList = gearList.ToList();
+                        var workingList = validList.ToList();
                         // Max attempts to prevent any infinite loops, though list size is natural limit
                         int maxAttempts = workingList.Count * 2;
                         int attempts = 0;
@@ -336,7 +515,7 @@ namespace FactionGearCustomizer
                             attempts++;
                             var item = GetRandomGearItem(workingList);
                             if (item == null) break;
-                            
+
                             // Remove from working list so we don't pick it again
                             workingList.Remove(item);
 
@@ -348,11 +527,12 @@ namespace FactionGearCustomizer
                                     // Check Budget (unless ignored)
                                     if (!forceIgnore && (currentSpent + app.MarketValue > budget))
                                     {
+                                        // Log.Warning($"[FactionGearCustomizer] Budget exceeded for {pawn}: Budget={budget}, Current={currentSpent}, Item={app.LabelCap} ({app.MarketValue}). Skipping.");
                                         created.Destroy();
                                         continue;
                                     }
 
-                                    if (ApparelUtility.HasPartsToWear(pawn, app.def))
+                                    if (CanWearApparel(pawn, app.def))
                                     {
                                         try
                                         {
@@ -379,20 +559,21 @@ namespace FactionGearCustomizer
                     }
                     else
                     {
-                        var item = GetRandomGearItem(gearList);
+                        var item = GetRandomGearItem(validList);
                         if (item?.ThingDef != null)
                         {
                             var created = GenerateSimpleItem(pawn, item.ThingDef, kindData, false, forceIgnore ? -1f : (budget - currentSpent));
-                            if (created is Apparel app) 
+                            if (created is Apparel app)
                             {
                                 // Check Budget (unless ignored)
                                 if (!forceIgnore && (currentSpent + app.MarketValue > budget))
                                 {
+                                    // Log.Warning($"[FactionGearCustomizer] Budget exceeded for {pawn}: Budget={budget}, Current={currentSpent}, Item={app.LabelCap} ({app.MarketValue}). Skipping.");
                                     created.Destroy();
                                     return;
                                 }
 
-                                if (ApparelUtility.HasPartsToWear(pawn, app.def))
+                                if (CanWearApparel(pawn, app.def))
                                 {
                                     try
                                     {
@@ -653,6 +834,51 @@ namespace FactionGearCustomizer
                 if (randomValue <= currentWeight) return item;
             }
             return items.First();
+        }
+
+        /// <summary>
+        /// 检查物品的科技等级是否符合限制
+        /// </summary>
+        private static bool IsTechLevelAllowed(ThingDef def, TechLevel? limit)
+        {
+            if (!limit.HasValue) return true;
+            if (def == null) return true;
+
+            // 获取物品的科技等级，如果没有设置则使用默认值
+            TechLevel itemTechLevel = def.techLevel;
+
+            // 如果物品没有设置科技等级，允许通过
+            if (itemTechLevel == TechLevel.Undefined) return true;
+
+            // 只允许科技等级小于等于限制等级的物品
+            return itemTechLevel <= limit.Value;
+        }
+
+        /// <summary>
+        /// 获取生效的科技等级限制（考虑派系默认值）
+        /// </summary>
+        private static TechLevel? GetEffectiveTechLevelLimit(KindGearData kindData, Pawn pawn)
+        {
+            // 如果设置了明确的限制，使用设置的值
+            if (kindData.TechLevelLimit.HasValue)
+                return kindData.TechLevelLimit.Value;
+
+            // 否则使用派系的默认科技等级
+            FactionDef factionDef = pawn.Faction?.def;
+            if (factionDef != null && factionDef.techLevel != TechLevel.Undefined)
+                return factionDef.techLevel;
+
+            // 如果没有派系，尝试从兵种定义获取
+            // 使用反射获取 defaultFactionType 字段（RimWorld 1.6 中可能是非公开的）
+            var defaultFactionTypeField = typeof(PawnKindDef).GetField("defaultFactionType", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            if (defaultFactionTypeField != null && pawn.kindDef != null)
+            {
+                var kindFactionDef = defaultFactionTypeField.GetValue(pawn.kindDef) as FactionDef;
+                if (kindFactionDef != null && kindFactionDef.techLevel != TechLevel.Undefined)
+                    return kindFactionDef.techLevel;
+            }
+
+            return null;
         }
     }
 }

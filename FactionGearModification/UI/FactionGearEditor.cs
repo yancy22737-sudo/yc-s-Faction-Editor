@@ -5,24 +5,22 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 using FactionGearCustomizer.UI.Panels;
+using FactionGearCustomizer.Compat;
+using FactionGearCustomizer.Managers;
+using FactionGearCustomizer.UI;
 
 namespace FactionGearCustomizer
 {
     public static class FactionGearEditor
     {
         // ================== Caching & State ==================
-        
+
         // Icon Cache
         private static Dictionary<string, Texture2D> iconCache = new Dictionary<string, Texture2D>();
         private static int maxCacheSize = 500;
-        
-        // Data Caching (Delegated to FactionGearManager mostly, but some local caching for UI performance)
-        private static DateTime weaponsCacheTime = DateTime.MinValue;
-        private static DateTime meleeCacheTime = DateTime.MinValue;
-        private static DateTime armorsCacheTime = DateTime.MinValue;
-        private static DateTime apparelCacheTime = DateTime.MinValue;
-        private static DateTime othersCacheTime = DateTime.MinValue;
-        private static readonly TimeSpan cacheExpiry = TimeSpan.FromMinutes(5);
+
+        // Faction Kinds Cache
+        private static Dictionary<string, List<PawnKindDef>> factionKindsCache = new Dictionary<string, List<PawnKindDef>>();
 
         // Dirty State
         public static bool IsDirty = false;
@@ -30,9 +28,21 @@ namespace FactionGearCustomizer
 
         // ================== Public Methods ==================
 
+        public static void ClearFactionKindsCache()
+        {
+            factionKindsCache.Clear();
+        }
+
         public static List<PawnKindDef> GetFactionKinds(FactionDef factionDef)
         {
             if (factionDef == null) return new List<PawnKindDef>();
+
+            // 使用缓存避免重复计算
+            string cacheKey = factionDef.defName;
+            if (factionKindsCache.TryGetValue(cacheKey, out var cachedList))
+            {
+                return cachedList;
+            }
 
             var list = new List<PawnKindDef>();
             if (factionDef.pawnGroupMakers != null)
@@ -40,6 +50,7 @@ namespace FactionGearCustomizer
                 var seenKinds = new HashSet<string>();
                 foreach (var pgm in factionDef.pawnGroupMakers)
                 {
+                    // 从 options 读取
                     if (pgm.options != null)
                     {
                         foreach (var opt in pgm.options)
@@ -51,9 +62,52 @@ namespace FactionGearCustomizer
                             }
                         }
                     }
+                    
+                    // 从 traders 读取
+                    if (pgm.traders != null)
+                    {
+                        foreach (var opt in pgm.traders)
+                        {
+                            if (opt.kind != null && !seenKinds.Contains(opt.kind.defName))
+                            {
+                                list.Add(opt.kind);
+                                seenKinds.Add(opt.kind.defName);
+                            }
+                        }
+                    }
+                    
+                    // 从 carriers 读取
+                    if (pgm.carriers != null)
+                    {
+                        foreach (var opt in pgm.carriers)
+                        {
+                            if (opt.kind != null && !seenKinds.Contains(opt.kind.defName))
+                            {
+                                list.Add(opt.kind);
+                                seenKinds.Add(opt.kind.defName);
+                            }
+                        }
+                    }
+                    
+                    // 从 guards 读取
+                    if (pgm.guards != null)
+                    {
+                        foreach (var opt in pgm.guards)
+                        {
+                            if (opt.kind != null && !seenKinds.Contains(opt.kind.defName))
+                            {
+                                list.Add(opt.kind);
+                                seenKinds.Add(opt.kind.defName);
+                            }
+                        }
+                    }
                 }
             }
             list.Sort((a, b) => (a.label ?? a.defName).CompareTo(b.label ?? b.defName));
+            
+            // 存储到缓存
+            factionKindsCache[cacheKey] = list;
+            
             return list;
         }
 
@@ -79,7 +133,17 @@ namespace FactionGearCustomizer
         {
             EditorSession.KindListScrollPos = Vector2.zero;
             EditorSession.GearListScrollPos = Vector2.zero;
-            // Additional logic when a faction is selected can be added here
+            
+            // Lazy load default data for the selected faction if not present
+            if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName))
+            {
+                var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
+                // Check if data seems empty (no kinds loaded), if so, load defaults
+                if (factionData.kindGearData.NullOrEmpty())
+                {
+                    FactionGearManager.LoadDefaultPresets(EditorSession.SelectedFactionDefName);
+                }
+            }
         }
 
         public static void DiscardChanges()
@@ -109,7 +173,7 @@ namespace FactionGearCustomizer
                 if (preset != null)
                 {
                     preset.SaveFromCurrentSettings(FactionGearCustomizerMod.Settings.factionGearData);
-                    Messages.Message($"Preset '{preset.name}' updated.", MessageTypeDefOf.TaskCompletion, false);
+                    Messages.Message(LanguageManager.Get("PresetUpdated").Replace("{0}", preset.name), MessageTypeDefOf.PositiveEvent, false);
                 }
             }
 
@@ -129,6 +193,16 @@ namespace FactionGearCustomizer
             }
 
             Text.Font = GameFont.Small;
+
+            // Check if user has an active preset
+            if (!NoPresetPanel.HasActivePreset())
+            {
+                // Draw the normal UI first (so it's visible behind the overlay)
+                DrawEditorContent(inRect);
+                // Then draw the "No Preset" overlay on top
+                NoPresetPanel.Draw(inRect);
+                return;
+            }
 
             // Default Selection Logic
             if (string.IsNullOrEmpty(EditorSession.SelectedFactionDefName) && string.IsNullOrEmpty(EditorSession.SelectedKindDefName))
@@ -156,13 +230,15 @@ namespace FactionGearCustomizer
                 }
             }
 
-            DrawTopBar(inRect);
+            DrawEditorContent(inRect);
+        }
 
+        private static void DrawEditorContent(Rect inRect)
+        {
             // Layout
-            float topRowHeight = 40f;
-            Rect mainRect = new Rect(inRect.x, inRect.y + topRowHeight, inRect.width, inRect.height - topRowHeight);
+            Rect mainRect = inRect;
             float totalWidth = mainRect.width - 20f;
-            
+
             Rect leftPanel = new Rect(mainRect.x, mainRect.y, totalWidth * 0.22f, mainRect.height);
             Rect middlePanel = new Rect(leftPanel.xMax + 10f, mainRect.y, totalWidth * 0.40f, mainRect.height);
             Rect rightPanel = new Rect(middlePanel.xMax + 10f, mainRect.y, totalWidth * 0.38f, mainRect.height);
@@ -175,7 +251,7 @@ namespace FactionGearCustomizer
             Rect leftInner = leftPanel.ContractedBy(5f);
             float factionHeight = leftInner.height * 0.6f;
             Rect factionRect = new Rect(leftInner.x, leftInner.y, leftInner.width, factionHeight);
-            
+
             // Faction List
             // Since FactionListPanel.Draw expects the container rect and draws a MenuSection,
             // we should pass a rect that INCLUDES the border if we want it to look like before?
@@ -186,135 +262,25 @@ namespace FactionGearCustomizer
             // If I want to split it, I should probably change FactionListPanel to NOT draw MenuSection, or draw two MenuSections.
             // Drawing two MenuSections (one for Faction, one for Kind) might look better or different.
             // Let's stick to the component design: Panel draws its own section.
-            
+
             // Adjust rects for separate panels
             Rect leftTopPanelRect = new Rect(leftPanel.x, leftPanel.y, leftPanel.width, leftPanel.height * 0.6f);
             Rect leftBottomPanelRect = new Rect(leftPanel.x, leftTopPanelRect.yMax + 4f, leftPanel.width, leftPanel.height * 0.4f - 4f);
-            
+
             FactionListPanel.Draw(leftTopPanelRect);
             KindListPanel.Draw(leftBottomPanelRect);
-            
+
             GearEditPanel.Draw(middlePanel);
             ItemLibraryPanel.Draw(rightPanel);
         }
 
-        private static void DrawTopBar(Rect inRect)
-        {
-            // Pre-calculate version info for layout
-            string versionLabel = $"{LanguageManager.Get("Version")}: {ModVersion.Current}";
-            Vector2 verSize = Text.CalcSize(versionLabel);
-            float gap = 24f; // Gap of roughly one character width
 
-            // GitHub Link
-            string githubLink = "GitHub";
-            Vector2 githubSize = Text.CalcSize(githubLink);
-            Rect githubRect = new Rect(inRect.xMax - (githubSize.x + 10f + gap + verSize.x + 10f), inRect.y, githubSize.x + 10f, 24f);
-            GUI.color = Color.cyan;
-            if (Widgets.ButtonText(githubRect, githubLink, true, false, true))
-            {
-                Application.OpenURL("https://github.com/yancy22737-sudo/FactionGearCustomizer");
-            }
-            GUI.color = Color.white;
 
-            // Version Label
-            Rect verRect = new Rect(githubRect.xMax + gap, inRect.y, verSize.x + 10f, 24f);
-            
-            string changelog = ModVersion.GetChangelog();
-            if (Mouse.IsOver(verRect))
-            {
-                Widgets.DrawHighlight(verRect);
-                TooltipHandler.TipRegion(verRect, changelog);
-            }
-            Widgets.Label(verRect, versionLabel);
 
-            WidgetRow buttonRow = new WidgetRow(inRect.x, inRect.y, UIDirection.RightThenDown, inRect.width, 4f);
-
-            GUI.color = IsDirty ? Color.green : Color.white;
-            string saveTooltip = LanguageManager.Get("SaveChangesToGame");
-            if (!string.IsNullOrEmpty(FactionGearCustomizerMod.Settings.currentPresetName))
-            {
-                saveTooltip += $"\n{LanguageManager.Get("PresetUpdated", FactionGearCustomizerMod.Settings.currentPresetName)}";
-            }
-
-            if (buttonRow.ButtonText(LanguageManager.Get("Apply") + " & " + LanguageManager.Get("Save"), saveTooltip))
-            {
-                SaveChanges();
-                Messages.Message(LanguageManager.Get("SettingsSaved"), MessageTypeDefOf.PositiveEvent);
-                if (FactionGearCustomizerMod.Settings.presets.Count == 0)
-                {
-                    Find.WindowStack.Add(new PresetManagerWindow());
-                    Messages.Message(LanguageManager.Get("TipCreatePreset"), MessageTypeDefOf.NeutralEvent);
-                }
-            }
-            GUI.color = Color.cyan;
-            if (buttonRow.ButtonText(LanguageManager.Get("Presets"), LanguageManager.Get("ManagePresetsTooltip")))
-            {
-                Find.WindowStack.Add(new PresetManagerWindow());
-            }
-            GUI.color = Color.white;
-
-            buttonRow.Gap(10f);
-            string currentPreset = FactionGearCustomizerMod.Settings.currentPresetName;
-            if (!string.IsNullOrEmpty(currentPreset))
-            {
-                GUI.color = new Color(0.6f, 1f, 0.6f);
-                string fullLabel = $"[{LanguageManager.Get("Active")}: {currentPreset}]";
-                // Truncate to avoid UI overflow if name is too long
-                Rect labelRect = buttonRow.Label(fullLabel.Truncate(250f));
-                if (Mouse.IsOver(labelRect))
-                {
-                    TooltipHandler.TipRegion(labelRect, fullLabel);
-                }
-                GUI.color = Color.white;
-            }
-            else
-            {
-                GUI.color = Color.gray;
-                buttonRow.Label(LanguageManager.Get("NoPreset"));
-                GUI.color = Color.white;
-            }
-
-            bool forceIgnore = FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
-            if (buttonRow.ButtonText($"{LanguageManager.Get("ForceIgnore")}: {(forceIgnore ? "ON" : "OFF")}", LanguageManager.Get("ForceIgnoreTooltip")))
-            {
-                FactionGearCustomizerMod.Settings.forceIgnoreRestrictions = !FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
-                MarkDirty();
-            }
-
-            if (buttonRow.ButtonText($"{LanguageManager.Get("Reset")} {LanguageManager.Get("Options")} ▼"))
-            {
-                List<FloatMenuOption> options = new List<FloatMenuOption>
-                {
-                    new FloatMenuOption(LanguageManager.Get("ResetFilters"), EditorSession.ResetFilters),
-                    new FloatMenuOption(LanguageManager.Get("ResetCurrentKind"), ResetCurrentKind),
-                    new FloatMenuOption(LanguageManager.Get("LoadDefaultFaction"), () => {
-                        if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName))
-                        {
-                            FactionGearManager.LoadDefaultPresets(EditorSession.SelectedFactionDefName);
-                            MarkDirty();
-                        }
-                    }),
-                    new FloatMenuOption(LanguageManager.Get("ResetCurrentFaction"), ResetCurrentFaction),
-                    new FloatMenuOption(LanguageManager.Get("ResetEVERYTHING"), () => {
-                        FactionGearCustomizerMod.Settings.ResetToDefault();
-                        MarkDirty();
-                    }, MenuOptionPriority.High, null, null, 0f, null, null, true, 0)
-                };
-                Find.WindowStack.Add(new FloatMenu(options));
-            }
-        }
 
         // ================== Shared Logic ==================
 
-        public static List<ThingDef> GetCachedAllWeapons()
-        {
-            if (EditorSession.CachedAllWeapons == null || DateTime.Now - weaponsCacheTime > cacheExpiry)
-            {
-                EditorSession.CachedAllWeapons = FactionGearManager.GetAllWeapons();
-                weaponsCacheTime = DateTime.Now;
-            }
-            return EditorSession.CachedAllWeapons;
-        }
+        public static List<ThingDef> GetCachedAllWeapons() => FactionGearManager.GetAllWeapons();
         // ... (Other GetCached methods delegated to FactionGearManager directly or cached in Session)
         // Actually EditorSession doesn't have these caches, I should probably keep them in EditorSession if I want to remove static fields from here.
         // Or just use FactionGearManager directly since it handles caching too?
@@ -360,10 +326,19 @@ namespace FactionGearCustomizer
             {
                 EditorSession.MinMarketValue = 0f;
                 float maxVal = allItems.Max(t => t.BaseMarketValue);
-                EditorSession.MaxMarketValue = Mathf.Ceil(maxVal / 100f) * 100f;
-                if (EditorSession.MaxMarketValue < 100f) EditorSession.MaxMarketValue = 100f;
+                float newMaxMarketValue = Mathf.Ceil(maxVal / 100f) * 100f;
+                if (newMaxMarketValue < 100f) newMaxMarketValue = 100f;
 
-                if (EditorSession.MarketValueFilter.max > EditorSession.MaxMarketValue) EditorSession.MarketValueFilter.max = EditorSession.MaxMarketValue;
+                // Check if current filter is covering the full range (within small tolerance)
+                bool wasFullRange = EditorSession.MarketValueFilter.max >= EditorSession.MaxMarketValue - 0.1f;
+                
+                EditorSession.MaxMarketValue = newMaxMarketValue;
+
+                if (wasFullRange || EditorSession.MarketValueFilter.max > EditorSession.MaxMarketValue) 
+                {
+                    EditorSession.MarketValueFilter.max = EditorSession.MaxMarketValue;
+                }
+
                 if (EditorSession.MarketValueFilter.min > EditorSession.MarketValueFilter.max)
                 {
                     EditorSession.MarketValueFilter.min = EditorSession.MinMarketValue;
@@ -373,8 +348,8 @@ namespace FactionGearCustomizer
             else
             {
                 EditorSession.MinMarketValue = 0f;
-                EditorSession.MaxMarketValue = 10000f;
-                EditorSession.MarketValueFilter = new FloatRange(0f, 10000f);
+                EditorSession.MaxMarketValue = 100000f;
+                EditorSession.MarketValueFilter = new FloatRange(0f, 100000f);
             }
 
             if (EditorSession.SelectedCategory == GearCategory.Weapons || EditorSession.SelectedCategory == GearCategory.MeleeWeapons)
@@ -383,22 +358,32 @@ namespace FactionGearCustomizer
                 {
                     EditorSession.MinRange = 0f;
                     float maxR = allItems.Max(t => FactionGearManager.GetWeaponRange(t));
-                    EditorSession.MaxRange = Mathf.Ceil(maxR / 5f) * 5f;
-                    if (EditorSession.MaxRange < 40f) EditorSession.MaxRange = 40f;
+                    float newMaxRange = Mathf.Ceil(maxR / 5f) * 5f;
+                    if (newMaxRange < 40f) newMaxRange = 40f;
 
-                    EditorSession.MinDamage = 0f;
-                    float maxD = allItems.Max(t => FactionGearManager.GetWeaponDamage(t));
-                    EditorSession.MaxDamage = Mathf.Ceil(maxD / 5f) * 5f;
-                    if (EditorSession.MaxDamage < 50f) EditorSession.MaxDamage = 50f;
+                    bool wasFullRangeR = EditorSession.RangeFilter.max >= EditorSession.MaxRange - 0.1f;
+                    EditorSession.MaxRange = newMaxRange;
 
-                    if (EditorSession.RangeFilter.max > EditorSession.MaxRange) EditorSession.RangeFilter.max = EditorSession.MaxRange;
+                    if (wasFullRangeR || EditorSession.RangeFilter.max > EditorSession.MaxRange) 
+                        EditorSession.RangeFilter.max = EditorSession.MaxRange;
+                    
                     if (EditorSession.RangeFilter.min > EditorSession.RangeFilter.max)
                     {
                         EditorSession.RangeFilter.min = EditorSession.MinRange;
                         EditorSession.RangeFilter.max = EditorSession.MaxRange;
                     }
 
-                    if (EditorSession.DamageFilter.max > EditorSession.MaxDamage) EditorSession.DamageFilter.max = EditorSession.MaxDamage;
+                    EditorSession.MinDamage = 0f;
+                    float maxD = allItems.Max(t => FactionGearManager.GetWeaponDamage(t));
+                    float newMaxDamage = Mathf.Ceil(maxD / 5f) * 5f;
+                    if (newMaxDamage < 50f) newMaxDamage = 50f;
+
+                    bool wasFullRangeD = EditorSession.DamageFilter.max >= EditorSession.MaxDamage - 0.1f;
+                    EditorSession.MaxDamage = newMaxDamage;
+
+                    if (wasFullRangeD || EditorSession.DamageFilter.max > EditorSession.MaxDamage) 
+                        EditorSession.DamageFilter.max = EditorSession.MaxDamage;
+                    
                     if (EditorSession.DamageFilter.min > EditorSession.DamageFilter.max)
                     {
                         EditorSession.DamageFilter.min = EditorSession.MinDamage;
@@ -470,6 +455,15 @@ namespace FactionGearCustomizer
             sb.AppendLine($"{LanguageManager.Get("BaseMarketValue")}: {item.BaseMarketValue:F0}");
             sb.AppendLine($"{LanguageManager.Get("Weight")}: {item.BaseMass:F2} kg");
             
+            if (CECompat.IsCEActive)
+            {
+                float bulk = CECompat.GetBulk(item);
+                if (bulk > 0)
+                {
+                    sb.AppendLine($"Bulk: {bulk:F2}");
+                }
+            }
+            
             if (item.IsWeapon)
             {
                 float damage = FactionGearManager.GetWeaponDamage(item);
@@ -524,7 +518,7 @@ namespace FactionGearCustomizer
                 var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
                 var kindData = factionData.GetOrCreateKindData(EditorSession.SelectedKindDefName);
                 EditorSession.CopiedKindGearData = kindData.DeepCopy();
-                Messages.Message("Copied KindDef gear!", MessageTypeDefOf.TaskCompletion, false);
+                Messages.Message(LanguageManager.Get("CopiedKindGearMessage"), MessageTypeDefOf.NeutralEvent, false);
             }
         }
 
@@ -569,6 +563,38 @@ namespace FactionGearCustomizer
             }
         }
 
+        /// <summary>
+        /// 刷新所有UI缓存，包括派系列表、兵种列表、图标等
+        /// </summary>
+        public static void RefreshAllCaches()
+        {
+            // 清除派系列表缓存
+            FactionListPanel.MarkDirty();
+            
+            // 清除兵种列表缓存
+            KindListPanel.ClearCache();
+            
+            // 清除图标缓存
+            iconCache.Clear();
+            
+            // 清除自定义图标缓存
+            CustomIconManager.ClearCache();
+            
+            // 清除派系描述缓存
+            FactionDefManager.ClearDescriptionCache();
+            
+            // 清除会话缓存
+            EditorSession.CachedAllWeapons = null;
+            EditorSession.CachedFilteredItems = null;
+            EditorSession.CachedModSources = null;
+            
+            // 重新计算边界
+            EditorSession.NeedCalculateBounds = true;
+            CalculateBounds();
+            
+            Log.Message("[FactionGearCustomizer] All caches refreshed.");
+        }
+
         public static void Cleanup()
         {
             // Clear caches to free memory
@@ -578,27 +604,6 @@ namespace FactionGearCustomizer
             EditorSession.CachedModSources = null;
         }
 
-        private static void ResetCurrentFaction()
-        {
-            if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName))
-            {
-                var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
-                factionData.ResetToDefault();
-                MarkDirty();
-                Log.Message($"[FactionGearCustomizer] Reset faction settings to default: {EditorSession.SelectedFactionDefName}");
-            }
-        }
 
-        private static void ResetCurrentKind()
-        {
-            if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName) && !string.IsNullOrEmpty(EditorSession.SelectedKindDefName))
-            {
-                var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
-                var kindData = factionData.GetOrCreateKindData(EditorSession.SelectedKindDefName);
-                kindData.ResetToDefault();
-                FactionGearManager.LoadKindDefGear(DefDatabase<PawnKindDef>.GetNamedSilentFail(EditorSession.SelectedKindDefName), kindData);
-                MarkDirty();
-            }
-        }
     }
 }

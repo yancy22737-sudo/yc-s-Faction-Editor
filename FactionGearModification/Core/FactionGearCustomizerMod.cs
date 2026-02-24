@@ -1,58 +1,63 @@
-using HarmonyLib;
-using RimWorld;
 using UnityEngine;
 using Verse;
+using HarmonyLib;
+using System.Reflection;
+using FactionGearCustomizer.UI;
+using FactionGearCustomizer.UI.Panels;
 
 namespace FactionGearCustomizer
 {
     public class FactionGearCustomizerMod : Mod
     {
-        public static FactionGearCustomizerSettings Settings;
+        public static FactionGearCustomizerSettings Settings { get; private set; }
+        private bool editorInitialized;
+        public static Harmony HarmonyInstance { get; private set; }
 
         public FactionGearCustomizerMod(ModContentPack content) : base(content)
         {
             LanguageManager.Initialize(content);
             Settings = GetSettings<FactionGearCustomizerSettings>();
-            Log.Message("[FactionGearCustomizer] Loading success!");
-            var harmony = new Harmony("yancy.factiongearcustomizer");
-            harmony.PatchAll();
+
+            // Initialize Harmony patches
+            HarmonyInstance = new Harmony("FactionGearCustomizer");
+            PatchAllSafely();
         }
 
-        public override string SettingsCategory() => "Faction Gear Customizer";
-
-        public override void WriteSettings()
+        private void PatchAllSafely()
         {
-            if (FactionGearEditor.IsDirty)
+            try
             {
-                // Unsaved changes detected - ask user for confirmation
-                Find.WindowStack.Add(new Dialog_MessageBox(
-                    LanguageManager.Get("UnsavedChangesMessage"),
-                    LanguageManager.Get("Save"),
-                    () => {
-                        FactionGearEditor.SaveChanges();
-                        Messages.Message(LanguageManager.Get("SettingsSaved"), MessageTypeDefOf.TaskCompletion, false);
-                    },
-                    LanguageManager.Get("Discard"),
-                    () => {
-                        FactionGearEditor.DiscardChanges();
-                        Messages.Message(LanguageManager.Get("SettingsDiscarded"), MessageTypeDefOf.TaskCompletion, false);
-                    },
-                    LanguageManager.Get("UnsavedChanges"),
-                    false,
-                    null,
-                    null
-                ));
+                // Patch Patch_GeneratePawn explicitly (core functionality)
+                var generatePawnPatch = typeof(Patch_GeneratePawn);
+                HarmonyInstance.PatchAll(generatePawnPatch.Assembly);
+                Log.Message("[FactionGearCustomizer] Harmony patches applied successfully.");
             }
-            else
+            catch (System.Exception ex)
             {
-                base.WriteSettings();
+                Log.Error($"[FactionGearCustomizer] Failed to apply Harmony patches: {ex}");
             }
         }
 
         public override void DoSettingsWindowContents(Rect inRect)
         {
-            base.DoSettingsWindowContents(inRect);
-            FactionGearEditor.DrawEditor(inRect);
+            if (!editorInitialized)
+            {
+                FactionGearEditor.InitializeWorkingSettings(true);
+                FactionGearEditor.RefreshAllCaches();
+                editorInitialized = true;
+            }
+
+            float topBarHeight = 40f;
+            Rect topBarRect = new Rect(inRect.x, inRect.y, inRect.width, topBarHeight);
+            TopBarPanel.Draw(topBarRect);
+
+            Rect contentRect = new Rect(inRect.x + 10f, inRect.y + topBarHeight + 10f, inRect.width - 20f, inRect.height - topBarHeight - 20f);
+            FactionGearEditor.DrawEditor(contentRect);
+        }
+
+        public override string SettingsCategory()
+        {
+            return LanguageManager.Get("FactionGearCustomizer");
         }
     }
 }

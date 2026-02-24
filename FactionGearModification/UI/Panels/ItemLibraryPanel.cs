@@ -5,6 +5,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 using FactionGearModification.UI;
+using FactionGearCustomizer.Compat;
 
 namespace FactionGearCustomizer.UI.Panels
 {
@@ -17,6 +18,7 @@ namespace FactionGearCustomizer.UI.Panels
             public string SortField { get; set; }
             public bool SortAscending { get; set; }
             public HashSet<string> ModSources { get; set; }
+            public HashSet<string> AmmoSets { get; set; }
             public TechLevel? TechLevel { get; set; }
             public FloatRange Range { get; set; }
             public FloatRange Damage { get; set; }
@@ -39,16 +41,30 @@ namespace FactionGearCustomizer.UI.Panels
             Text.Anchor = TextAnchor.UpperLeft;
             
             Rect addAllButtonRect = new Rect(innerRect.xMax - 80f, innerRect.y, 75f, 22f);
-            
+
+            // Check if we have an active preset
+            bool hasActivePreset = NoPresetPanel.HasActivePreset();
+
             bool canAddAll = true;
-            if (EditorSession.CurrentMode == EditorMode.Advanced && 
-                EditorSession.CurrentAdvancedTab != AdvancedTab.Apparel && 
+            if (!hasActivePreset)
+            {
+                canAddAll = false;
+            }
+            else if (EditorSession.CurrentMode == EditorMode.Advanced &&
+                EditorSession.CurrentAdvancedTab != AdvancedTab.Apparel &&
                 EditorSession.CurrentAdvancedTab != AdvancedTab.Weapons)
             {
                 canAddAll = false;
             }
 
-            if (canAddAll)
+            if (!hasActivePreset)
+            {
+                GUI.color = Color.gray;
+                Widgets.ButtonText(addAllButtonRect, LanguageManager.Get("AddAll"), true, false, false);
+                GUI.color = Color.white;
+                TooltipHandler.TipRegion(addAllButtonRect, LanguageManager.Get("NoPresetEditingDisabledTooltip"));
+            }
+            else if (canAddAll)
             {
                 if (Widgets.ButtonText(addAllButtonRect, LanguageManager.Get("AddAll")))
                 {
@@ -57,9 +73,9 @@ namespace FactionGearCustomizer.UI.Panels
                         var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
                         var kindData = factionData.GetOrCreateKindData(EditorSession.SelectedKindDefName);
                         var itemsToAdd = GetFilteredAndSortedItems();
-                        
+
                         int addedCount = 0;
-                        
+
                         if (EditorSession.CurrentMode == EditorMode.Advanced)
                         {
                             if (EditorSession.CurrentAdvancedTab == AdvancedTab.Apparel)
@@ -82,6 +98,7 @@ namespace FactionGearCustomizer.UI.Panels
                                     if (!kindData.SpecificWeapons.Any(x => x.Thing == thingDef))
                                     {
                                         kindData.SpecificWeapons.Add(new SpecRequirementEdit() { Thing = thingDef });
+                                        TryAutoAddCEAmmo(kindData, thingDef);
                                         addedCount++;
                                     }
                                 }
@@ -95,16 +112,17 @@ namespace FactionGearCustomizer.UI.Panels
                                 if (!currentCategory.Any(g => g.thingDefName == thingDef.defName))
                                 {
                                     currentCategory.Add(new GearItem(thingDef.defName));
+                                    TryAutoAddCEAmmo(kindData, thingDef);
                                     addedCount++;
                                 }
                             }
                         }
-                        
+
                         if (addedCount > 0)
                         {
                             kindData.isModified = true;
                             FactionGearEditor.MarkDirty();
-                            Messages.Message($"Added {addedCount} items to gear list", MessageTypeDefOf.TaskCompletion, false);
+                            Messages.Message(LanguageManager.Get("AddedItemsToGearList", addedCount), MessageTypeDefOf.PositiveEvent, false);
                         }
                     }
                 }
@@ -144,7 +162,7 @@ namespace FactionGearCustomizer.UI.Panels
                     if (currentY + itemHeight >= viewTop - itemHeight && currentY <= viewBottom + itemHeight)
                     {
                         Rect rowRect = new Rect(0, currentY, listViewRect.width, itemHeight);
-                        DrawItemButton(rowRect, thingDef);
+                        DrawItemButton(rowRect, thingDef, hasActivePreset);
                     }
                     currentY += itemHeight + gapHeight;
                 }
@@ -159,8 +177,12 @@ namespace FactionGearCustomizer.UI.Panels
 
             // Search
             Rect searchRect = listing.GetRect(24f);
-            Rect searchInputRect = searchRect;
-            
+
+            // 为清除按钮预留空间
+            float clearBtnWidth = 24f;
+            Rect searchInputRect = new Rect(searchRect.x, searchRect.y, searchRect.width - clearBtnWidth - 2f, searchRect.height);
+            Rect clearButtonRect = new Rect(searchRect.xMax - clearBtnWidth, searchRect.y + 2f, clearBtnWidth, 20f);
+
             string newSearchText = Widgets.TextField(searchInputRect, EditorSession.SearchText);
             if (string.IsNullOrEmpty(newSearchText))
             {
@@ -168,7 +190,7 @@ namespace FactionGearCustomizer.UI.Panels
                 var color = GUI.color;
                 Text.Anchor = TextAnchor.MiddleLeft;
                 GUI.color = new Color(0.6f, 0.6f, 0.6f, 1f);
-                Widgets.Label(new Rect(searchInputRect.x + 5f, searchInputRect.y, searchInputRect.width - 5f, searchInputRect.height), LanguageManager.Get("Search") + "...");
+                Widgets.Label(new Rect(searchInputRect.x + 5f, searchInputRect.y, searchInputRect.width - 10f, searchInputRect.height), LanguageManager.Get("Search") + "...");
                 GUI.color = color;
                 Text.Anchor = anchor;
             }
@@ -177,14 +199,17 @@ namespace FactionGearCustomizer.UI.Panels
             {
                 EditorSession.SearchText = newSearchText;
             }
-            
+
+            // 绘制清除按钮
             if (!string.IsNullOrEmpty(EditorSession.SearchText))
             {
-                Rect clearButtonRect = new Rect(searchInputRect.xMax - 18f, searchInputRect.y + 2f, 16f, 16f);
-                if (Widgets.ButtonImage(clearButtonRect, Widgets.CheckboxOffTex))
+                GUI.color = new Color(0.7f, 0.7f, 0.7f, 1f);
+                if (Widgets.ButtonText(clearButtonRect, "×", false))
                 {
                     EditorSession.SearchText = "";
+                    GUI.FocusControl(null);
                 }
+                GUI.color = Color.white;
                 TooltipHandler.TipRegion(clearButtonRect, LanguageManager.Get("ClearSearch"));
             }
 
@@ -192,8 +217,21 @@ namespace FactionGearCustomizer.UI.Panels
 
             // Filters
             Rect filterRowRect = listing.GetRect(24f);
-            Rect modSourceRect = new Rect(filterRowRect.x, filterRowRect.y, filterRowRect.width * 0.55f - 2f, filterRowRect.height);
-            Rect techLevelRect = new Rect(filterRowRect.x + filterRowRect.width * 0.55f + 2f, filterRowRect.y, filterRowRect.width * 0.45f - 2f, filterRowRect.height);
+            
+            bool showAmmo = CECompat.IsCEActive && EditorSession.SelectedCategory == GearCategory.Weapons;
+            
+            Rect modSourceRect;
+            Rect techLevelRect;
+            Rect ammoRect = Rect.zero;
+
+            if (showAmmo)
+            {
+                WidgetsUtils.SplitRow3(filterRowRect, 4f, 0.4f, 0.3f, out modSourceRect, out techLevelRect, out ammoRect);
+            }
+            else
+            {
+                WidgetsUtils.SplitRow2(filterRowRect, 4f, 0.55f, out modSourceRect, out techLevelRect);
+            }
 
             // Mod Source
             if (EditorSession.CachedModSources == null) EditorSession.CachedModSources = FactionGearEditor.GetUniqueModSources();
@@ -232,6 +270,31 @@ namespace FactionGearCustomizer.UI.Panels
                 }
                 Find.WindowStack.Add(new FloatMenu(options));
             }
+            TooltipHandler.TipRegion(techLevelRect, LanguageManager.Get("FilterByTechLevelTooltip"));
+
+            if (showAmmo)
+            {
+                string ammoButtonText;
+                if (EditorSession.SelectedAmmoSets.Count == 0)
+                {
+                    ammoButtonText = LanguageManager.Get("AmmoAll");
+                }
+                else if (EditorSession.SelectedAmmoSets.Count == 1)
+                {
+                    string s = EditorSession.SelectedAmmoSets.First();
+                    ammoButtonText = s.Length > 8 ? s.Substring(0, 6) + "..." : s;
+                }
+                else
+                {
+                    ammoButtonText = LanguageManager.Get("AmmoCountSelected", EditorSession.SelectedAmmoSets.Count);
+                }
+
+                if (Widgets.ButtonText(ammoRect, ammoButtonText))
+                {
+                    OpenAmmoFilterMenu();
+                }
+                TooltipHandler.TipRegion(ammoRect, LanguageManager.Get("FilterByAmmoTooltip"));
+            }
 
             listing.Gap(4f);
 
@@ -258,8 +321,9 @@ namespace FactionGearCustomizer.UI.Panels
                 }
                 Find.WindowStack.Add(new FloatMenu(options));
             }
+            TooltipHandler.TipRegion(sortFieldRect, LanguageManager.Get("SortFieldTooltip"));
 
-            if (Widgets.ButtonText(sortOrderRect, EditorSession.SortAscending ? "▲" : "▼"))
+            if (Widgets.ButtonText(sortOrderRect, EditorSession.SortAscending ? "^" : "v"))
             {
                 EditorSession.SortAscending = !EditorSession.SortAscending;
             }
@@ -293,6 +357,24 @@ namespace FactionGearCustomizer.UI.Panels
             ));
         }
 
+        private static void OpenAmmoFilterMenu()
+        {
+            if (EditorSession.CachedAmmoSets == null)
+            {
+                var weapons = FactionGearEditor.GetCachedAllWeapons();
+                EditorSession.CachedAmmoSets = CECompat.GetAllAmmoSetLabels(weapons);
+            }
+
+            Find.WindowStack.Add(new Window_StringFilter(
+                LanguageManager.Get("AmmoFilter"),
+                EditorSession.CachedAmmoSets,
+                EditorSession.SelectedAmmoSets,
+                () => {
+                    FactionGearEditor.CalculateBounds();
+                }
+            ));
+        }
+
         private static void DrawRangeFilter(Listing_Standard listing, ref FloatRange range, float min, float max, string label, ToStringStyle style)
         {
             Rect rect = listing.GetRect(28f);
@@ -318,6 +400,7 @@ namespace FactionGearCustomizer.UI.Panels
 
             Rect sliderRect = new Rect(labelRect.xMax + minWidth + 2f, rect.y, rect.width - 45f - minWidth - maxWidth - 4f, rect.height);
             WidgetsUtils.FloatRange(sliderRect, label.GetHashCode(), ref range, min, max, null, style);
+            TooltipHandler.TipRegion(sliderRect, LanguageManager.Get("RangeFilterTooltip", label));
         }
 
         private static List<ThingDef> GetFilteredAndSortedItems()
@@ -334,6 +417,7 @@ namespace FactionGearCustomizer.UI.Panels
                 SortField = EditorSession.SortField,
                 SortAscending = EditorSession.SortAscending,
                 ModSources = new HashSet<string>(EditorSession.SelectedModSources),
+                AmmoSets = new HashSet<string>(EditorSession.SelectedAmmoSets),
                 TechLevel = EditorSession.SelectedTechLevel,
                 Range = EditorSession.RangeFilter,
                 Damage = EditorSession.DamageFilter,
@@ -348,6 +432,7 @@ namespace FactionGearCustomizer.UI.Panels
                     key.SortField == cacheKey.SortField &&
                     key.SortAscending == cacheKey.SortAscending &&
                     key.ModSources.SetEquals(cacheKey.ModSources) &&
+                    key.AmmoSets.SetEquals(cacheKey.AmmoSets) &&
                     key.TechLevel == cacheKey.TechLevel &&
                     Mathf.Approximately(key.Range.min, cacheKey.Range.min) &&
                     Mathf.Approximately(key.Range.max, cacheKey.Range.max) &&
@@ -379,6 +464,14 @@ namespace FactionGearCustomizer.UI.Panels
             if (EditorSession.SelectedModSources.Count > 0)
             {
                 items = items.Where(t => EditorSession.SelectedModSources.Contains(FactionGearManager.GetModSource(t))).ToList();
+            }
+
+            if (CECompat.IsCEActive && EditorSession.SelectedAmmoSets.Count > 0)
+            {
+                items = items.Where(t => {
+                    string label = CECompat.GetAmmoSetLabel(t);
+                    return label != null && EditorSession.SelectedAmmoSets.Contains(label);
+                }).ToList();
             }
 
             if (EditorSession.SelectedTechLevel.HasValue)
@@ -459,7 +552,7 @@ namespace FactionGearCustomizer.UI.Panels
             catch { return 0f; }
         }
 
-        private static void DrawItemButton(Rect rect, ThingDef thingDef)
+        private static void DrawItemButton(Rect rect, ThingDef thingDef, bool hasActivePreset)
         {
             KindGearData kindData = null;
             if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName) && !string.IsNullOrEmpty(EditorSession.SelectedKindDefName))
@@ -553,6 +646,7 @@ namespace FactionGearCustomizer.UI.Panels
                             else if (EditorSession.CurrentAdvancedTab == AdvancedTab.Weapons && thingDef.IsWeapon && kindData.SpecificWeapons != null)
                             {
                                 kindData.SpecificWeapons.RemoveAll(x => x.Thing == thingDef);
+                                TryRemoveCEAmmoForWeapon(kindData, thingDef);
                                 kindData.isModified = true;
                                 FactionGearEditor.MarkDirty();
                             }
@@ -574,7 +668,7 @@ namespace FactionGearCustomizer.UI.Panels
             }
             else
             {
-                bool canAdd = true;
+                bool canAdd = NoPresetPanel.HasActivePreset(); // Only allow add if has active preset
                 if (EditorSession.CurrentMode == EditorMode.Advanced)
                 {
                      if (EditorSession.CurrentAdvancedTab == AdvancedTab.Apparel && !thingDef.IsApparel) canAdd = false;
@@ -602,6 +696,7 @@ namespace FactionGearCustomizer.UI.Panels
                                 {
                                     if (kindData.SpecificWeapons == null) kindData.SpecificWeapons = new List<SpecRequirementEdit>();
                                     kindData.SpecificWeapons.Add(new SpecRequirementEdit() { Thing = thingDef });
+                                    TryAutoAddCEAmmo(kindData, thingDef);
                                     kindData.isModified = true;
                                     FactionGearEditor.MarkDirty();
                                 }
@@ -610,6 +705,7 @@ namespace FactionGearCustomizer.UI.Panels
                             {
                                 var currentCategory = FactionGearEditor.GetCurrentCategoryGear(kindData, EditorSession.SelectedCategory);
                                 currentCategory.Add(new GearItem(thingDef.defName));
+                                TryAutoAddCEAmmo(kindData, thingDef);
                                 kindData.isModified = true;
                                 FactionGearEditor.MarkDirty();
                             }
@@ -624,6 +720,38 @@ namespace FactionGearCustomizer.UI.Panels
                 }
             }
             TooltipHandler.TipRegion(rect, new TipSignal(() => FactionGearEditor.GetDetailedItemTooltip(thingDef, kindData), thingDef.GetHashCode()));
+        }
+
+        private static void TryAutoAddCEAmmo(KindGearData kindData, ThingDef weaponDef)
+        {
+            if (kindData == null) return;
+            if (!CECompat.IsCEActive) return;
+            if (weaponDef == null || !weaponDef.IsRangedWeapon) return;
+
+            var ammoDef = CECompat.GetDefaultAmmoFor(weaponDef);
+            if (ammoDef == null) return;
+
+            if (kindData.InventoryItems == null) kindData.InventoryItems = new List<SpecRequirementEdit>();
+            if (kindData.InventoryItems.Any(x => x?.Thing == ammoDef)) return;
+            kindData.InventoryItems.Add(new SpecRequirementEdit()
+            {
+                Thing = ammoDef,
+                CountRange = new IntRange(60, 120),
+                SelectionMode = ApparelSelectionMode.AlwaysTake
+            });
+        }
+
+        private static void TryRemoveCEAmmoForWeapon(KindGearData kindData, ThingDef weaponDef)
+        {
+            if (kindData == null) return;
+            if (!CECompat.IsCEActive) return;
+            if (weaponDef == null || !weaponDef.IsRangedWeapon) return;
+            if (kindData.InventoryItems.NullOrEmpty()) return;
+
+            var ammoDef = CECompat.GetDefaultAmmoFor(weaponDef);
+            if (ammoDef == null) return;
+
+            kindData.InventoryItems.RemoveAll(x => x?.Thing == ammoDef);
         }
     }
 }

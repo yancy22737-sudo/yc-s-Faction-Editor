@@ -7,9 +7,14 @@ namespace FactionGearCustomizer.UI
 {
     public class FactionGearMainTabWindow : MainTabWindow
     {
+        public override Vector2 InitialSize => new Vector2(1024f, 768f); // Default size if not fullscreen
+        protected override float Margin => 0f; // Remove default margin so we can draw custom title bar
+
         public override void PreOpen()
         {
             base.PreOpen();
+            this.optionalTitle = ""; // Force clear title to prevent RimWorld from drawing it
+            this.doWindowBackground = true;
             FactionGearEditor.InitializeWorkingSettings(true);
         }
 
@@ -29,9 +34,53 @@ namespace FactionGearCustomizer.UI
             FactionGearEditor.Cleanup();
         }
 
+
+
+        public override void WindowOnGUI()
+        {
+            // Override to remove the standard window title bar and whitespace
+            // Force rect to start from top to eliminate any top whitespace
+            Rect rect = new Rect(0f, 0f, Verse.UI.screenWidth, Verse.UI.screenHeight - 35f);
+            this.windowRect = rect; // Sync windowRect for event handling
+            
+            if (this.doWindowBackground)
+            {
+                Widgets.DrawWindowBackground(rect);
+            }
+            
+            // Handle BeginGroup to clip contents and use local coordinates
+            GUI.BeginGroup(rect);
+            try
+            {
+                Rect localRect = new Rect(0f, 0f, rect.width, rect.height);
+                this.DoWindowContents(localRect);
+            }
+            finally
+            {
+                GUI.EndGroup();
+            }
+            
+            // Ensure we handle window events/focus if necessary (MainTabWindow usually handles this via WindowStack)
+        }
+
         public override void DoWindowContents(Rect inRect)
         {
-            FactionGearEditor.DrawEditor(inRect);
+            float padding = 4f; // Reduced padding
+            float topBarHeight = 36f; // Height for the top bar
+
+            // Draw Top Bar
+            Rect topBarRect = new Rect(inRect.x + padding, inRect.y + padding, inRect.width - padding * 2, topBarHeight);
+            FactionGearCustomizer.UI.Panels.TopBarPanel.Draw(topBarRect);
+
+            // Draw Editor Content
+            Rect contentRect = new Rect(
+                inRect.x + padding, 
+                inRect.y + padding + topBarHeight + 4f, // Add spacing below top bar
+                inRect.width - padding * 2, 
+                inRect.height - padding * 2 - topBarHeight - 4f
+            );
+            
+            FactionGearEditor.DrawEditor(contentRect);
         }
     }
 }

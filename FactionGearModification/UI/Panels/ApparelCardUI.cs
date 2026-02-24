@@ -16,15 +16,36 @@ namespace FactionGearCustomizer.UI.Panels
         private static readonly Color BorderColor = new Color(0.35f, 0.35f, 0.4f);
         private static readonly Color RemoveButtonColor = new Color(0.8f, 0.25f, 0.2f);
 
-        public static void Draw(Listing_Standard ui, SpecRequirementEdit item, int index, Action onRemove)
+        public static float GetCardHeight(SpecRequirementEdit item)
         {
-            float cardHeight = 165f;
+            float height = 36f;
+            float rowHeight = 24f;
+            float gap = 4f;
+
+            if (item.Thing != null && item.Thing.MadeFromStuff)
+                height += rowHeight + gap;
+
+            height += rowHeight + gap;
+
+            height += rowHeight + gap;
+
+            if (item.SelectionMode != ApparelSelectionMode.AlwaysTake)
+                height += rowHeight + gap;
+
+            height += 12f;
+
+            return height;
+        }
+
+        public static void Draw(Listing_Standard ui, SpecRequirementEdit item, int index, Action onRemove, bool isWeaponList)
+        {
+            float cardHeight = GetCardHeight(item);
             Rect area = ui.GetRect(cardHeight);
             
             DrawCardBackground(area);
             area = area.ContractedBy(6f);
 
-            DrawHeader(area, item, onRemove);
+            DrawHeader(area, item, onRemove, isWeaponList);
             DrawContent(area, item, index);
             
             ui.Gap(8f);
@@ -41,7 +62,7 @@ namespace FactionGearCustomizer.UI.Panels
             Widgets.DrawBoxSolid(innerBorder, ContentBgColor);
         }
 
-        private static void DrawHeader(Rect area, SpecRequirementEdit item, Action onRemove)
+        private static void DrawHeader(Rect area, SpecRequirementEdit item, Action onRemove, bool isWeaponList)
         {
             Rect headerRect = new Rect(area.x, area.y + 2f, area.width, 28f);
             Widgets.DrawBoxSolid(headerRect, HeaderBgColor);
@@ -55,29 +76,35 @@ namespace FactionGearCustomizer.UI.Panels
             }
 
             // Title / Item Selector
-            Rect titleRect = new Rect(iconRect.xMax + 8f, headerRect.y, headerRect.width - 90f, headerRect.height);
+            Rect titleRect = new Rect(iconRect.xMax + 8f, headerRect.y, headerRect.width - 60f, headerRect.height);
             string titleText = item.Thing?.LabelCap ?? LanguageManager.Get("SelectItem");
             
             if (Widgets.ButtonText(titleRect, titleText, false, true, true, TextAnchor.MiddleLeft))
             {
-                List<FloatMenuOption> options = new List<FloatMenuOption>();
-                IEnumerable<ThingDef> candidates = DefDatabase<ThingDef>.AllDefs
-                    .Where(t => t.IsApparel || t.IsWeapon)
-                    .OrderBy(t => t.label);
-                
-                foreach (var def in candidates)
+                if (isWeaponList)
                 {
-                    options.Add(new FloatMenuOption(def.LabelCap, () => 
-                    { 
-                        item.Thing = def; 
-                        FactionGearEditor.MarkDirty(); 
+                    Find.WindowStack.Add(new Dialog_WeaponPicker(def =>
+                    {
+                        item.Thing = def;
+                        FactionGearEditor.MarkDirty();
                     }));
                 }
-                Find.WindowStack.Add(new FloatMenu(options));
+                else
+                {
+                    Find.WindowStack.Add(new Dialog_ApparelPicker(def =>
+                    {
+                        item.Thing = def;
+                        FactionGearEditor.MarkDirty();
+                    }));
+                }
             }
 
             // Remove Button
-            DrawRemoveButton(area, onRemove);
+            Rect removeRect = new Rect(headerRect.xMax - 24f, headerRect.y + (headerRect.height - 24f) / 2f, 24f, 24f);
+            if (Widgets.ButtonImage(removeRect, TexButton.Delete, Color.white, GenUI.SubtleMouseoverColor))
+            {
+                onRemove?.Invoke();
+            }
         }
 
         private static void DrawContent(Rect area, SpecRequirementEdit item, int index)
@@ -86,10 +113,13 @@ namespace FactionGearCustomizer.UI.Panels
             float rowHeight = 24f;
             float gap = 4f;
 
-            // Row 1: Material
-            Rect matRect = new Rect(area.x, contentY, area.width, rowHeight);
-            DrawMaterialSelector(matRect, item);
-            contentY += rowHeight + gap;
+            // Row 1: Material (If applicable)
+            if (item.Thing != null && item.Thing.MadeFromStuff)
+            {
+                Rect matRect = new Rect(area.x, contentY, area.width, rowHeight);
+                DrawMaterialSelector(matRect, item);
+                contentY += rowHeight + gap;
+            }
 
             // Row 2: Quality & Biocode
             Rect qualRect = new Rect(area.x, contentY, area.width * 0.6f, rowHeight);
@@ -178,37 +208,6 @@ namespace FactionGearCustomizer.UI.Panels
                 }
                 Find.WindowStack.Add(new FloatMenu(options));
             }
-        }
-
-        private static void DrawRemoveButton(Rect area, Action onRemove)
-        {
-            Rect removeBtnRect = new Rect(area.xMax - 70f, area.y + 2f, 64f, 22f);
-
-            Color originalColor = GUI.color;
-            bool isMouseOver = Mouse.IsOver(removeBtnRect);
-            bool isClicked = Widgets.ButtonInvisible(removeBtnRect);
-
-            if (isClicked)
-            {
-                onRemove?.Invoke();
-            }
-
-            if (isMouseOver)
-            {
-                GUI.color = RemoveButtonColor;
-                Widgets.DrawBoxSolid(removeBtnRect, RemoveButtonColor * 0.3f);
-            }
-            else
-            {
-                Widgets.DrawBoxSolid(removeBtnRect, new Color(0.2f, 0.2f, 0.2f));
-            }
-
-            Widgets.DrawBox(removeBtnRect, 1);
-
-            Rect labelRect = removeBtnRect.ContractedBy(3f);
-            GUI.color = isMouseOver ? Color.white : new Color(0.9f, 0.7f, 0.7f);
-            Widgets.Label(labelRect, LanguageManager.Get("Remove"));
-            GUI.color = originalColor;
         }
     }
 }

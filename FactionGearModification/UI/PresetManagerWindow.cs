@@ -10,7 +10,7 @@ namespace FactionGearCustomizer
 {
     public class PresetManagerWindow : Window
     {
-        // [修复] 环世界原生窗口必须通过重写 InitialSize 来设定弹窗大小
+        // [修复] 环世界原生窗口必须通过重写 InitialSize 来设定弹窗大�?
         public override Vector2 InitialSize => new Vector2(850f, 650f);
 
         private Vector2 presetListScrollPos = Vector2.zero;
@@ -22,9 +22,18 @@ namespace FactionGearCustomizer
         private Vector2 modListScrollPos = Vector2.zero;
         private string presetSearchText = "";
 
+        // Preview fields
+        private Pawn previewPawn;
+        private FactionGearPreset lastPreviewPreset;
+        private Rot4 previewRotation = Rot4.South;
+        private string previewError = null;
+        private FactionGearData selectedPreviewFactionData;
+        private KindGearData selectedPreviewKindData;
+        private Vector2 previewGearScrollPos = Vector2.zero;
+
         public PresetManagerWindow() : base()
         {
-            // 删除错误的 windowRect 设定
+            // 删除错误�?windowRect 设定
             this.doCloseX = true;
             this.closeOnClickedOutside = true;
             this.absorbInputAroundWindow = true;
@@ -53,7 +62,7 @@ namespace FactionGearCustomizer
             Widgets.Label(new Rect(innerRect.x, innerRect.y, innerRect.width, 24f), LanguageManager.Get("SavedPresets"));
             presetSearchText = DrawTextFieldWithPlaceholder(new Rect(innerRect.x, innerRect.y + 24f, innerRect.width, 24f), presetSearchText, LanguageManager.Get("SearchPresets") + "...");
             
-            // 2. 列表区域动态高度
+            // 2. 列表区域动态高�?
             float bottomAreaHeight = 95f;
             Rect listOutRect = new Rect(innerRect.x, innerRect.y + 55f, innerRect.width, innerRect.height - 55f - bottomAreaHeight);
             
@@ -113,10 +122,12 @@ namespace FactionGearCustomizer
             Widgets.Label(new Rect(innerRect.x, bottomY + 40f, innerRect.width, 20f), LanguageManager.Get("CreateNew") + ":");
             newPresetName = DrawTextFieldWithPlaceholder(new Rect(innerRect.x, bottomY + 62f, innerRect.width - 65f, 24f), newPresetName, LanguageManager.Get("Name") + "...");
             
-            if (Widgets.ButtonText(new Rect(innerRect.xMax - 60f, bottomY + 62f, 60f, 24f), LanguageManager.Get("Add")))
+            Rect addPresetRect = new Rect(innerRect.xMax - 60f, bottomY + 62f, 60f, 24f);
+            if (Widgets.ButtonText(addPresetRect, LanguageManager.Get("Add")))
             {
                 CreateNewPreset();
             }
+            TooltipHandler.TipRegion(addPresetRect, LanguageManager.Get("CreatePresetTooltip"));
         }
 
         private void DrawPresetDetails(Rect rect)
@@ -169,21 +180,24 @@ namespace FactionGearCustomizer
             
             // Two columns for update buttons
             Rect updateRow = listing.GetRect(30f);
-            if (Widgets.ButtonText(updateRow.LeftHalf().ContractedBy(2f), LanguageManager.Get("SaveNameDesc")))
+            Rect saveMetaRect = updateRow.LeftHalf().ContractedBy(2f);
+            if (Widgets.ButtonText(saveMetaRect, LanguageManager.Get("SaveNameDesc")))
             {
                  SavePreset();
-                 Messages.Message(LanguageManager.Get("PresetMetadataSaved"), MessageTypeDefOf.TaskCompletion, false);
+                 Notify(LanguageManager.Get("PresetMetadataSaved"));
             }
+            TooltipHandler.TipRegion(saveMetaRect, LanguageManager.Get("SavePresetMetadataTooltip"));
             
-            if (Widgets.ButtonText(updateRow.RightHalf().ContractedBy(2f), LanguageManager.Get("UpdateFromGame"))) 
+            Rect updateFromGameRect = updateRow.RightHalf().ContractedBy(2f);
+            if (Widgets.ButtonText(updateFromGameRect, LanguageManager.Get("UpdateFromGame"))) 
             {
                 Find.WindowStack.Add(new Dialog_MessageBox(
                     LanguageManager.Get("OverwritePresetConfirm").Replace("{0}", selectedPreset.name),
-                    LanguageManager.Get("Yes"), delegate { SaveFromCurrentSettings(); Messages.Message(LanguageManager.Get("PresetUpdatedFromGameSettings"), MessageTypeDefOf.PositiveEvent); },
+                    LanguageManager.Get("Yes"), delegate { SaveFromCurrentSettings(); Notify(LanguageManager.Get("PresetUpdatedFromGameSettings")); },
                     LanguageManager.Get("No"), null
                 ));
             }
-            TooltipHandler.TipRegion(updateRow.RightHalf(), LanguageManager.Get("UpdateFromGameTooltip"));
+            TooltipHandler.TipRegion(updateFromGameRect, LanguageManager.Get("UpdateFromGameTooltip"));
 
             listing.GapLine();
 
@@ -194,7 +208,7 @@ namespace FactionGearCustomizer
 
             Rect labelRect4 = listing.GetRect(Text.CalcHeight(LanguageManager.Get("FactionPreview") + ":", listing.ColumnWidth));
             Widgets.Label(labelRect4, LanguageManager.Get("FactionPreview") + ":");
-            // 使用剩余空间，但要保留底部按钮空间
+            // 使用剩余空间，但要保留底部按钮空�?
             float remainingHeight = contentRect.height - listing.CurHeight;
             if (remainingHeight > 50f)
             {
@@ -214,19 +228,21 @@ namespace FactionGearCustomizer
             TooltipHandler.TipRegion(new Rect(bottomRect.x + btnWidth + 5f, bottomRect.y, btnWidth, 30f), LanguageManager.Get("ExportTooltip"));
             
             GUI.color = new Color(1f, 0.5f, 0.5f);
-            if (Widgets.ButtonText(new Rect(bottomRect.x + (btnWidth + 5f) * 2, bottomRect.y, btnWidth, 30f), LanguageManager.Get("Delete"))) DeletePreset();
+            Rect deletePresetRect = new Rect(bottomRect.x + (btnWidth + 5f) * 2, bottomRect.y, btnWidth, 30f);
+            if (Widgets.ButtonText(deletePresetRect, LanguageManager.Get("Delete"))) DeletePreset();
             GUI.color = Color.white;
+            TooltipHandler.TipRegion(deletePresetRect, LanguageManager.Get("DeletePresetTooltip"));
         }
 
         private void CreateNewPreset()
         {
-            // 如果玩家没填名字，自动生成一个带时间戳的默认名
+            // 如果玩家没填名字，自动生成一个带时间戳的默认�?
             string finalName = string.IsNullOrEmpty(newPresetName) ? LanguageManager.Get("NewPreset") + " " + DateTime.Now.ToString("MM-dd HH:mm") : newPresetName;
             
             var existingPreset = FactionGearCustomizerMod.Settings.presets.FirstOrDefault(p => p.name == finalName);
             if (existingPreset != null)
             {
-                // 如果名称已存在，弹出覆盖确认对话框
+                // 如果名称已存在，弹出覆盖确认对话�?
                 Find.WindowStack.Add(new Dialog_MessageBox(
                     LanguageManager.Get("PresetAlreadyExists").Replace("{0}", finalName),
                     LanguageManager.Get("Overwrite"), delegate
@@ -238,19 +254,19 @@ namespace FactionGearCustomizer
                         selectedPreset = existingPreset;
                         newPresetName = "";
                         newPresetDescription = "";
-                        Messages.Message(LanguageManager.Get("PresetOverwritten").Replace("{0}", finalName), MessageTypeDefOf.PositiveEvent);
+                        Notify(LanguageManager.Get("PresetOverwritten").Replace("{0}", finalName));
                     },
                     LanguageManager.Get("Cancel"), null, null, true));
             }
             else
             {
-                // 创建新预设
+                // 创建新预设（空预设）
                 var newPreset = new FactionGearPreset();
                 newPreset.name = finalName;
                 newPreset.description = newPresetDescription;
                 
-                // 【关键修复】新建时直接抓取当前游戏内的数据，不再生成空壳
-                newPreset.SaveFromCurrentSettings(FactionGearCustomizerMod.Settings.factionGearData);
+                // 新建空预设，不抓取当前游戏数据
+                // factionGearData 已在构造函数中初始化为空列表
                 
                 FactionGearCustomizerMod.Settings.AddPreset(newPreset);
                 // [New] Set as current preset
@@ -259,7 +275,7 @@ namespace FactionGearCustomizer
                 selectedPreset = newPreset;
                 newPresetName = "";
                 newPresetDescription = "";
-                Messages.Message("New preset created and saved from current settings!", MessageTypeDefOf.PositiveEvent);
+                Notify(LanguageManager.Get("NewPresetCreated"));
             }
         }
 
@@ -276,7 +292,6 @@ namespace FactionGearCustomizer
         {
             if (selectedPreset == null) return;
 
-            // [新增] 检查模组依赖
             List<string> missingMods = new List<string>();
             foreach (var modName in selectedPreset.requiredMods)
             {
@@ -290,10 +305,10 @@ namespace FactionGearCustomizer
             {
                 string missingList = string.Join("\n- ", missingMods);
                 Find.WindowStack.Add(new Dialog_MessageBox(
-                    $"Warning: The following mods required by this preset are missing or not active:\n\n- {missingList}\n\nApplying this preset may result in missing items or errors. Continue?",
-                    "Yes (Risk it)", 
+                    LanguageManager.Get("MissingModsWarningMessage").Replace("{0}", missingList),
+                    LanguageManager.Get("MissingModsWarningRiskIt"), 
                     delegate { ShowApplyConfirmation(); },
-                    "No (Cancel)", 
+                    LanguageManager.Get("MissingModsWarningCancel"), 
                     null, 
                     null, 
                     true
@@ -308,14 +323,13 @@ namespace FactionGearCustomizer
         private void ShowApplyConfirmation()
         {
             Find.WindowStack.Add(new Dialog_MessageBox(
-                "Do you want to CLEAR current custom gear before applying this preset?\n\nYes: Overwrite everything (Recommended)\nNo: Merge preset with current tweaks",
-                "Yes (Overwrite)", delegate
+                LanguageManager.Get("LoadPresetConfirmMessage"),
+                LanguageManager.Get("LoadPresetOverwrite"), delegate
                 {
-                    // 彻底清空当前设置
                     FactionGearCustomizerMod.Settings.ResetToDefault();
                     ExecuteApplyPreset();
                 },
-                "No (Merge)", delegate
+                LanguageManager.Get("LoadPresetMerge"), delegate
                 {
                     ExecuteApplyPreset();
                 },
@@ -325,33 +339,56 @@ namespace FactionGearCustomizer
         private void ExecuteApplyPreset()
         {
             if (selectedPreset == null) return;
-            
-            // 这里放你原来 ApplyPreset 里面的深拷贝代码
-            foreach (var factionData in selectedPreset.factionGearData)
+
+            try
             {
-                var existingFactionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(factionData.factionDefName);
-                foreach (var kindData in factionData.kindGearData)
+                // 【修复】先清空当前数据和字典，确保预设加载后不会残留旧数据
+                FactionGearCustomizerMod.Settings.factionGearData.Clear();
+                // 强制重新初始化字典，确保旧数据完全清除
+                if (FactionGearCustomizerMod.Settings.factionGearDataDict != null)
                 {
-                    // [修复] 必须使用深拷贝 (Deep Copy) 隔离内存！否则修改当前装备会连带摧毁预设数据
-                    KindGearData clonedData = new KindGearData(kindData.kindDefName)
-                    {
-                        isModified = kindData.isModified,
-                        weapons = kindData.weapons.Select(g => new GearItem(g.thingDefName, g.weight)).ToList(),
-                        meleeWeapons = kindData.meleeWeapons.Select(g => new GearItem(g.thingDefName, g.weight)).ToList(),
-                        armors = kindData.armors.Select(g => new GearItem(g.thingDefName, g.weight)).ToList(),
-                        apparel = kindData.apparel.Select(g => new GearItem(g.thingDefName, g.weight)).ToList(),
-                        others = kindData.others.Select(g => new GearItem(g.thingDefName, g.weight)).ToList()
-                    };
-                    existingFactionData.AddOrUpdateKindData(clonedData);
+                    FactionGearCustomizerMod.Settings.factionGearDataDict.Clear();
                 }
+                
+                if (selectedPreset.factionGearData != null)
+                {
+                    foreach (var factionData in selectedPreset.factionGearData)
+                    {
+                        if (factionData == null || string.IsNullOrEmpty(factionData.factionDefName)) continue;
+
+                        // 【修复】使用深拷贝创建新的派系数据，避免引用问题
+                        var clonedFactionData = factionData.DeepCopy();
+                        FactionGearCustomizerMod.Settings.factionGearData.Add(clonedFactionData);
+                        
+                        // 更新字典索引
+                        if (FactionGearCustomizerMod.Settings.factionGearDataDict != null)
+                        {
+                            if (!FactionGearCustomizerMod.Settings.factionGearDataDict.ContainsKey(clonedFactionData.factionDefName))
+                            {
+                                FactionGearCustomizerMod.Settings.factionGearDataDict.Add(clonedFactionData.factionDefName, clonedFactionData);
+                            }
+                            else
+                            {
+                                FactionGearCustomizerMod.Settings.factionGearDataDict[clonedFactionData.factionDefName] = clonedFactionData;
+                            }
+                        }
+                    }
+                }
+
+                FactionGearCustomizerMod.Settings.currentPresetName = selectedPreset.name;
+                
+                // 【修复】刷新UI缓存，确保界面显示新预设的数据
+                FactionGearEditor.RefreshAllCaches();
+
+                FactionGearCustomizerMod.Settings.Write();
+                Notify(LanguageManager.Get("PresetApplied"));
+                this.Close();
             }
-            
-            // [New] Set as current preset
-            FactionGearCustomizerMod.Settings.currentPresetName = selectedPreset.name;
-            
-            FactionGearCustomizerMod.Settings.Write();
-            // [优化] 添加原版右上角浮动提示，让玩家知道点下去了
-            Messages.Message("Preset applied successfully to current game!", MessageTypeDefOf.PositiveEvent);
+            catch (Exception ex)
+            {
+                Log.Error($"[FactionGearCustomizer] Error applying preset: {ex}");
+                Notify(LanguageManager.Get("ApplyPresetFailed"));
+            }
         }
 
         private void DeletePreset()
@@ -359,10 +396,9 @@ namespace FactionGearCustomizer
             if (selectedPreset != null)
             {
                 Find.WindowStack.Add(new Dialog_MessageBox(
-                    $"Are you sure you want to permanently delete preset '{selectedPreset.name}'?",
-                    "Delete", delegate
+                    LanguageManager.Get("DeletePresetConfirm").Replace("{0}", selectedPreset.name),
+                    LanguageManager.Get("Delete"), delegate
                     {
-                        // [New] If deleting current preset, clear currentPresetName
                         if (FactionGearCustomizerMod.Settings.currentPresetName == selectedPreset.name)
                         {
                             FactionGearCustomizerMod.Settings.currentPresetName = null;
@@ -370,9 +406,9 @@ namespace FactionGearCustomizer
 
                         FactionGearCustomizerMod.Settings.RemovePreset(selectedPreset);
                         selectedPreset = null;
-                        Messages.Message("Preset deleted.", MessageTypeDefOf.NeutralEvent);
+                        Notify(LanguageManager.Get("PresetDeleted"));
                     },
-                    "Cancel", null, null, true));
+                    LanguageManager.Get("Cancel"), null, null, true));
             }
         }
 
@@ -398,7 +434,7 @@ namespace FactionGearCustomizer
                         // 复制到剪贴板
                         GUIUtility.systemCopyBuffer = base64Content;
                         Log.Message("[FactionGearCustomizer] Preset exported to clipboard!");
-                        Messages.Message($"Preset '{selectedPreset.name}' exported to clipboard!", MessageTypeDefOf.PositiveEvent);
+                        Notify(LanguageManager.Get("PresetExportedToClipboard").Replace("{0}", selectedPreset.name));
                     }
                     else
                     {
@@ -420,8 +456,8 @@ namespace FactionGearCustomizer
                 string base64Content = GUIUtility.systemCopyBuffer;
                 if (string.IsNullOrEmpty(base64Content))
                 {
-                    Log.Message("[FactionGearCustomizer] Clipboard is empty!");
-                    Messages.Message("Clipboard is empty!", MessageTypeDefOf.RejectInput, false);
+                    Log.Message("[FactionGearCustomizer] " + LanguageManager.Get("ClipboardIsEmpty"));
+                    Notify(LanguageManager.Get("ClipboardIsEmpty"));
                     return;
                 }
                 
@@ -435,64 +471,270 @@ namespace FactionGearCustomizer
                     int count = 1;
                     while (FactionGearCustomizerMod.Settings.presets.Any(p => p.name == finalName))
                     {
-                        finalName = $"{originalName} (Imported {count})";
+                        finalName = $"{originalName} {LanguageManager.Get("ImportedCopySuffix").Replace("{0}", count.ToString())}";
                         count++;
                     }
                     newPreset.name = finalName;
 
-                    // 添加到预设列表
+                    // 添加到预设列�?
                     FactionGearCustomizerMod.Settings.AddPreset(newPreset);
                     selectedPreset = newPreset;
                     Log.Message("[FactionGearCustomizer] Preset imported successfully!");
-                    Messages.Message($"Preset '{newPreset.name}' imported from clipboard!", MessageTypeDefOf.PositiveEvent);
+                    Notify(LanguageManager.Get("PresetImportedFromClipboard").Replace("{0}", newPreset.name));
                 }
                 else
                 {
                     Log.Message("[FactionGearCustomizer] Import failed: Invalid preset data!");
-                    Messages.Message(LanguageManager.Get("ImportFailedInvalidData"), MessageTypeDefOf.RejectInput, false);
+                    Notify(LanguageManager.Get("ImportFailedInvalidData"));
                 }
             }
             catch (System.Exception e)
             {
                 Log.Message("[FactionGearCustomizer] Import failed: " + e.Message);
-                Messages.Message(LanguageManager.Get("ImportFailed").Replace("{0}", e.Message), MessageTypeDefOf.RejectInput, false);
+                Notify(LanguageManager.Get("ImportFailed").Replace("{0}", e.Message));
             }
         }
 
         private void DrawFactionPreview(Rect rect)
         {
-            if (selectedPreset != null && selectedPreset.factionGearData.Any())
+            WidgetsUtils.DrawBox(rect);
+            Rect innerRect = rect.ContractedBy(5f);
+
+            if (selectedPreset == null || !selectedPreset.factionGearData.Any())
             {
-                WidgetsUtils.DrawBox(rect);
-                Rect innerRect = rect.ContractedBy(5f);
+                Text.Anchor = TextAnchor.MiddleCenter;
+                Widgets.Label(innerRect, LanguageManager.Get("NoFactionDataInPreset"));
+                Text.Anchor = TextAnchor.UpperLeft;
+                return;
+            }
+
+            // Split into List (Left) and Preview (Right)
+            float previewWidth = 200f;
+            if (innerRect.width < 350f) previewWidth = 0f; // Too small for preview
+
+            Rect listRect = previewWidth > 0 ? new Rect(innerRect.x, innerRect.y, innerRect.width - previewWidth - 10f, innerRect.height) : innerRect;
+            
+            // Draw List
+            Widgets.BeginScrollView(listRect, ref factionPreviewScrollPos, new Rect(0, 0, listRect.width - 16f, selectedPreset.factionGearData.Sum(f => 25f + f.kindGearData.Count * 20f + 10f)));
+            float y = 0;
+            
+            foreach (var factionData in selectedPreset.factionGearData)
+            {
+                var factionDef = DefDatabase<FactionDef>.GetNamedSilentFail(factionData.factionDefName);
+                string factionName = factionDef != null ? factionDef.LabelCap.ToString() : factionData.factionDefName;
                 
-                Widgets.BeginScrollView(innerRect, ref factionPreviewScrollPos, new Rect(0, 0, innerRect.width - 16f, selectedPreset.factionGearData.Count * 40f));
-                float y = 0;
+                Widgets.Label(new Rect(0, y, listRect.width - 16f, 24f), factionName);
+                y += 25f;
                 
-                foreach (var factionData in selectedPreset.factionGearData)
+                foreach (var kindData in factionData.kindGearData)
                 {
-                    var factionDef = DefDatabase<FactionDef>.GetNamedSilentFail(factionData.factionDefName);
-                    string factionName = factionDef != null ? factionDef.LabelCap.ToString() : factionData.factionDefName;
+                    var kindDef = DefDatabase<PawnKindDef>.GetNamedSilentFail(kindData.kindDefName);
+                    string kindName = kindDef != null ? kindDef.LabelCap.ToString() : kindData.kindDefName;
                     
-                    Widgets.Label(new Rect(0, y, innerRect.width, 24f), factionName);
-                    y += 25f;
+                    Rect kindRect = new Rect(20, y, listRect.width - 36f, 24f);
                     
-                    foreach (var kindData in factionData.kindGearData)
+                    if (selectedPreviewKindData == kindData)
+                        Widgets.DrawHighlightSelected(kindRect);
+                    else if (Mouse.IsOver(kindRect))
+                        Widgets.DrawHighlight(kindRect);
+                    
+                    Widgets.Label(kindRect, "- " + kindName);
+                    
+                    if (Widgets.ButtonInvisible(kindRect))
                     {
-                        var kindDef = DefDatabase<PawnKindDef>.GetNamedSilentFail(kindData.kindDefName);
-                        string kindName = kindDef != null ? kindDef.LabelCap.ToString() : kindData.kindDefName;
-                        
-                        Widgets.Label(new Rect(20, y, innerRect.width - 20f, 24f), "- " + kindName);
-                        y += 20f;
+                        selectedPreviewFactionData = factionData;
+                        selectedPreviewKindData = kindData;
+                        GeneratePreviewPawn();
                     }
-                    y += 10f;
+
+                    y += 20f;
                 }
-                
-                Widgets.EndScrollView();
+                y += 10f;
+            }
+            
+            Widgets.EndScrollView();
+
+            // Draw Preview if space allows
+            if (previewWidth > 0)
+            {
+                Rect previewRect = new Rect(innerRect.xMax - previewWidth, innerRect.y, previewWidth, innerRect.height);
+                DrawPawnPreview(previewRect);
+            }
+        }
+
+        private void DrawPawnPreview(Rect rect)
+        {
+            // Title
+            Text.Anchor = TextAnchor.MiddleCenter;
+            Widgets.Label(new Rect(rect.x, rect.y, rect.width, 24f), LanguageManager.Get("VisualPreview"));
+            Text.Anchor = TextAnchor.UpperLeft;
+            
+            if (selectedPreset != lastPreviewPreset)
+            {
+                selectedPreviewFactionData = null;
+                selectedPreviewKindData = null;
+                GeneratePreviewPawn();
+                lastPreviewPreset = selectedPreset;
+            }
+            
+            float pawnHeight = Mathf.Min(rect.height * 0.6f, 300f);
+            Rect pawnRect = new Rect(rect.x, rect.y + 30f, rect.width, pawnHeight);
+            WidgetsUtils.DrawWindowBackground(pawnRect);
+
+            if (previewPawn != null)
+            {
+                 RenderTexture image = WidgetsUtils.GetPortrait(previewPawn, new Vector2(pawnRect.width, pawnRect.height), previewRotation, Vector3.zero, 1f);
+                 if (image != null) GUI.DrawTexture(pawnRect, image);
+                 
+                 // Rotation
+                 if (Widgets.ButtonText(new Rect(rect.x, pawnRect.yMax - 24f, 40f, 24f), "<"))
+                 {
+                     previewRotation.Rotate(RotationDirection.Counterclockwise);
+                     WidgetsUtils.SetPortraitDirty(previewPawn);
+                 }
+                 if (Widgets.ButtonText(new Rect(rect.xMax - 40f, pawnRect.yMax - 24f, 40f, 24f), ">"))
+                 {
+                     previewRotation.Rotate(RotationDirection.Clockwise);
+                     WidgetsUtils.SetPortraitDirty(previewPawn);
+                 }
             }
             else
             {
-                Widgets.Label(rect, LanguageManager.Get("NoFactionDataInPreset"));
+                Text.Anchor = TextAnchor.MiddleCenter;
+                Widgets.Label(pawnRect, previewError ?? LanguageManager.Get("NoPawn"));
+                Text.Anchor = TextAnchor.UpperLeft;
+            }
+
+            // Reroll Button (Center Bottom of Pawn Area)
+            if (Widgets.ButtonText(new Rect(rect.x + 45f, pawnRect.yMax - 24f, rect.width - 90f, 24f), LanguageManager.Get("Reroll")))
+            {
+                GeneratePreviewPawn();
+            }
+            
+            // Gear List (Below Pawn)
+            float listY = pawnRect.yMax + 5f;
+            float listHeight = rect.height - (listY - rect.y);
+            
+            if (listHeight > 50f && previewPawn != null)
+            {
+                Rect listRect = new Rect(rect.x, listY, rect.width, listHeight);
+                Widgets.DrawMenuSection(listRect);
+                Rect innerList = listRect.ContractedBy(4f);
+                
+                // Calculate content height roughly
+                float contentHeight = 0f;
+                if (previewPawn.equipment != null) contentHeight += 30f + previewPawn.equipment.AllEquipmentListForReading.Count * 25f;
+                if (previewPawn.apparel != null) contentHeight += 30f + previewPawn.apparel.WornApparel.Count * 25f;
+                contentHeight += 20f;
+
+                Widgets.BeginScrollView(innerList, ref previewGearScrollPos, new Rect(0, 0, innerList.width - 16f, contentHeight));
+                Listing_Standard list = new Listing_Standard();
+                list.Begin(new Rect(0, 0, innerList.width - 16f, contentHeight));
+                
+                // Equipment
+                if (previewPawn.equipment != null && previewPawn.equipment.AllEquipmentListForReading.Any())
+                {
+                    list.Label(LanguageManager.Get("EquippedGear"));
+                    foreach (var eq in previewPawn.equipment.AllEquipmentListForReading)
+                    {
+                        var qualityComp = eq.GetComp<CompQuality>();
+                        string qualityStr = qualityComp != null ? (LanguageManager.Get("Quality" + qualityComp.Quality.ToString()) ?? qualityComp.Quality.ToString()) : (LanguageManager.Get("QualityNormal") ?? "Normal");
+                        WidgetsUtils.Label(list, "- " + eq.LabelCap + " (" + qualityStr + ")");
+                    }
+                    list.Gap(5f);
+                }
+
+                // Apparel
+                if (previewPawn.apparel != null && previewPawn.apparel.WornApparel.Any())
+                {
+                    list.Label(LanguageManager.Get("ApparelWorn"));
+                    foreach (var app in previewPawn.apparel.WornApparel)
+                    {
+                         var qualityComp = app.GetComp<CompQuality>();
+                         string qualityStr = qualityComp != null ? (LanguageManager.Get("Quality" + qualityComp.Quality.ToString()) ?? qualityComp.Quality.ToString()) : (LanguageManager.Get("QualityNormal") ?? "Normal");
+                         WidgetsUtils.Label(list, "- " + app.LabelCap + " (" + qualityStr + ")");
+                    }
+                }
+                
+                list.End();
+                Widgets.EndScrollView();
+            }
+        }
+
+        private void GeneratePreviewPawn()
+        {
+            if (previewPawn != null && !previewPawn.Destroyed)
+            {
+                previewPawn.Destroy();
+                previewPawn = null;
+            }
+            previewError = null;
+
+            if (selectedPreset == null || !selectedPreset.factionGearData.Any()) return;
+
+            try
+            {
+                // If nothing selected, pick random
+                if (selectedPreviewFactionData == null || selectedPreviewKindData == null)
+                {
+                    var randomFaction = selectedPreset.factionGearData.RandomElement();
+                    if (randomFaction != null && randomFaction.kindGearData.Any())
+                    {
+                        selectedPreviewFactionData = randomFaction;
+                        selectedPreviewKindData = randomFaction.kindGearData.RandomElement();
+                    }
+                }
+
+                if (selectedPreviewFactionData == null || selectedPreviewKindData == null)
+                {
+                     previewError = LanguageManager.Get("PreviewError_NoData");
+                     return;
+                }
+
+                var factionData = selectedPreviewFactionData;
+                var kindData = selectedPreviewKindData;
+                
+                var factionDef = DefDatabase<FactionDef>.GetNamedSilentFail(factionData.factionDefName);
+                var kindDef = DefDatabase<PawnKindDef>.GetNamedSilentFail(kindData.kindDefName);
+
+                if (factionDef == null || kindDef == null)
+                {
+                    previewError = LanguageManager.Get("PreviewError_DefMissing");
+                    return;
+                }
+
+                Faction faction = Find.FactionManager.FirstFactionOfDef(factionDef);
+                if (faction == null)
+                {
+                    previewError = LanguageManager.Get("PreviewError_FactionMissing");
+                    return;
+                }
+
+                // Inject Preset into GearApplier
+                GearApplier.PreviewPreset = selectedPreset;
+                
+                // 跳过 creepjoiner 类型的 PawnKindDef，因为它们需要特殊的生成逻辑
+                if (kindDef?.race?.defName == "CreepJoiner")
+                {
+                    Log.Warning($"[FactionGearCustomizer] Skipping preview for creepjoiner kindDef: {kindDef.defName}");
+                    previewError = "Creepjoiner preview not supported";
+                    return;
+                }
+
+                PawnGenerationRequest request = new PawnGenerationRequest(
+                    kindDef, faction, PawnGenerationContext.NonPlayer, -1, 
+                    true, false, false, false, true, 1f, false, true, true, false, false);
+                
+                previewPawn = PawnGenerator.GeneratePawn(request);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("[FactionGearCustomizer] Preview generation failed: " + ex.Message);
+                previewError = LanguageManager.Get("PreviewError_Error");
+            }
+            finally
+            {
+                GearApplier.PreviewPreset = null;
             }
         }
 
@@ -554,6 +796,42 @@ namespace FactionGearCustomizer
                 Text.Anchor = anchor;
             }
             return result;
+        }
+
+        private static void Notify(string text)
+        {
+            if (text == null) text = "";
+
+            try
+            {
+                if (Current.ProgramState == ProgramState.Playing)
+                {
+                    Messages.Message(text, MessageTypeDefOf.NeutralEvent, false);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("[FactionGearCustomizer] Notify failed: " + ex);
+            }
+
+            try
+            {
+                Find.WindowStack?.Add(new Dialog_MessageBox(text));
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("[FactionGearCustomizer] Notify fallback failed: " + ex);
+            }
+        }
+        public override void PreClose()
+        {
+            base.PreClose();
+            if (previewPawn != null && !previewPawn.Destroyed)
+            {
+                previewPawn.Destroy();
+                previewPawn = null;
+            }
         }
     }
 }

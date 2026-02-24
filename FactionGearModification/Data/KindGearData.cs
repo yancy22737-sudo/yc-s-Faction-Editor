@@ -6,9 +6,26 @@ using Verse;
 
 namespace FactionGearCustomizer
 {
-    public class KindGearData : IExposable
+    public class KindGearData : IExposable, IUndoable
     {
         public string kindDefName;
+        public string Label; // New field for Kind Label
+
+        // IUndoable implementation
+        public string ContextId => kindDefName;
+
+        public object CreateSnapshot()
+        {
+            return this.DeepCopy();
+        }
+
+        public void RestoreFromSnapshot(object snapshot)
+        {
+            if (snapshot is KindGearData data)
+            {
+                this.CopyFrom(data);
+            }
+        }
         public List<GearItem> weapons = new List<GearItem>();
         public List<GearItem> meleeWeapons = new List<GearItem>();
         public List<GearItem> armors = new List<GearItem>();
@@ -25,7 +42,7 @@ namespace FactionGearCustomizer
         public float? TechHediffChance = null;
         public int? TechHediffsMaxAmount = null;
         public FloatRange? ApparelMoney = null;
-        public FloatRange? TechMoney = null;
+        public TechLevel? TechLevelLimit = null;
         public FloatRange? WeaponMoney = null;
         public Color? ApparelColor = null;
 
@@ -40,6 +57,7 @@ namespace FactionGearCustomizer
 
         public List<SpecRequirementEdit> SpecificApparel = null;
         public List<SpecRequirementEdit> SpecificWeapons = null;
+        public List<SpecRequirementEdit> InventoryItems = null;
         public List<ForcedHediff> ForcedHediffs = null;
 
         public KindGearData() { }
@@ -52,6 +70,7 @@ namespace FactionGearCustomizer
         public void ExposeData()
         {
             Scribe_Values.Look(ref kindDefName, "kindDefName");
+            Scribe_Values.Look(ref Label, "label");
             Scribe_Collections.Look(ref weapons, "weapons", LookMode.Deep);
             Scribe_Collections.Look(ref meleeWeapons, "meleeWeapons", LookMode.Deep);
             Scribe_Collections.Look(ref armors, "armors", LookMode.Deep);
@@ -67,7 +86,7 @@ namespace FactionGearCustomizer
             Scribe_Values.Look(ref TechHediffChance, "techHediffChance");
             Scribe_Values.Look(ref TechHediffsMaxAmount, "techHediffsMaxAmount");
             Scribe_Values.Look(ref ApparelMoney, "apparelMoney");
-            Scribe_Values.Look(ref TechMoney, "techMoney");
+            Scribe_Values.Look(ref TechLevelLimit, "techLevelLimit");
             Scribe_Values.Look(ref WeaponMoney, "weaponMoney");
             Scribe_Values.Look(ref ApparelColor, "apparelColor");
 
@@ -121,6 +140,7 @@ namespace FactionGearCustomizer
 
             Scribe_Collections.Look(ref SpecificApparel, "specificApparel", LookMode.Deep);
             Scribe_Collections.Look(ref SpecificWeapons, "specificWeapons", LookMode.Deep);
+            Scribe_Collections.Look(ref InventoryItems, "inventoryItems", LookMode.Deep);
             Scribe_Collections.Look(ref ForcedHediffs, "forcedHediffs", LookMode.Deep);
 
             if (weapons == null) weapons = new List<GearItem>();
@@ -138,6 +158,7 @@ namespace FactionGearCustomizer
             apparel.Clear();
             others.Clear();
             isModified = false;
+            Label = null;
             
             ForceNaked = false;
             ForceOnlySelected = true; // Default to true
@@ -147,7 +168,7 @@ namespace FactionGearCustomizer
             TechHediffChance = null;
             TechHediffsMaxAmount = null;
             ApparelMoney = null;
-            TechMoney = null;
+            TechLevelLimit = null;
             WeaponMoney = null;
             ApparelColor = null;
             
@@ -161,6 +182,7 @@ namespace FactionGearCustomizer
             TechRequired = null;
             SpecificApparel = null;
             SpecificWeapons = null;
+            InventoryItems = null;
             ForcedHediffs = null;
         }
 
@@ -169,11 +191,12 @@ namespace FactionGearCustomizer
             var copy = new KindGearData(kindDefName)
             {
                 isModified = this.isModified,
-                weapons = this.weapons.Select(g => new GearItem(g.thingDefName, g.weight)).ToList(),
-                meleeWeapons = this.meleeWeapons.Select(g => new GearItem(g.thingDefName, g.weight)).ToList(),
-                armors = this.armors.Select(g => new GearItem(g.thingDefName, g.weight)).ToList(),
-                apparel = this.apparel.Select(g => new GearItem(g.thingDefName, g.weight)).ToList(),
-                others = this.others.Select(g => new GearItem(g.thingDefName, g.weight)).ToList(),
+                Label = this.Label,
+                weapons = this.weapons?.Select(g => g != null ? new GearItem(g.thingDefName, g.weight) : null).Where(g => g != null).ToList() ?? new List<GearItem>(),
+                meleeWeapons = this.meleeWeapons?.Select(g => g != null ? new GearItem(g.thingDefName, g.weight) : null).Where(g => g != null).ToList() ?? new List<GearItem>(),
+                armors = this.armors?.Select(g => g != null ? new GearItem(g.thingDefName, g.weight) : null).Where(g => g != null).ToList() ?? new List<GearItem>(),
+                apparel = this.apparel?.Select(g => g != null ? new GearItem(g.thingDefName, g.weight) : null).Where(g => g != null).ToList() ?? new List<GearItem>(),
+                others = this.others?.Select(g => g != null ? new GearItem(g.thingDefName, g.weight) : null).Where(g => g != null).ToList() ?? new List<GearItem>(),
                 
                 ForceNaked = this.ForceNaked,
                 ForceOnlySelected = this.ForceOnlySelected,
@@ -183,7 +206,7 @@ namespace FactionGearCustomizer
                 TechHediffChance = this.TechHediffChance,
                 TechHediffsMaxAmount = this.TechHediffsMaxAmount,
                 ApparelMoney = this.ApparelMoney,
-                TechMoney = this.TechMoney,
+                TechLevelLimit = this.TechLevelLimit,
                 WeaponMoney = this.WeaponMoney,
                 ApparelColor = this.ApparelColor
             };
@@ -204,11 +227,12 @@ namespace FactionGearCustomizer
             // Actually, for "DeepCopy" used in Copy/Paste, we definitely need new instances.
             // I'll implement manual deep copy for these lists.
             
-            if (this.SpecificApparel != null) 
+            if (this.SpecificApparel != null)
             {
                 copy.SpecificApparel = new List<SpecRequirementEdit>();
                 foreach(var item in this.SpecificApparel)
                 {
+                    if (item == null) continue;
                     var newItem = new SpecRequirementEdit();
                     // Copy fields
                     newItem.Thing = item.Thing;
@@ -228,6 +252,7 @@ namespace FactionGearCustomizer
                 copy.SpecificWeapons = new List<SpecRequirementEdit>();
                 foreach (var item in this.SpecificWeapons)
                 {
+                    if (item == null) continue;
                     var newItem = new SpecRequirementEdit();
                     newItem.Thing = item.Thing;
                     newItem.Material = item.Material;
@@ -237,7 +262,28 @@ namespace FactionGearCustomizer
                     newItem.Color = item.Color;
                     newItem.SelectionMode = item.SelectionMode;
                     newItem.SelectionChance = item.SelectionChance;
+                    newItem.CountRange = item.CountRange;
                     copy.SpecificWeapons.Add(newItem);
+                }
+            }
+
+            if (this.InventoryItems != null)
+            {
+                copy.InventoryItems = new List<SpecRequirementEdit>();
+                foreach (var item in this.InventoryItems)
+                {
+                    if (item == null) continue;
+                    var newItem = new SpecRequirementEdit();
+                    newItem.Thing = item.Thing;
+                    newItem.Material = item.Material;
+                    newItem.Style = item.Style;
+                    newItem.Quality = item.Quality;
+                    newItem.Biocode = item.Biocode;
+                    newItem.Color = item.Color;
+                    newItem.SelectionMode = item.SelectionMode;
+                    newItem.SelectionChance = item.SelectionChance;
+                    newItem.CountRange = item.CountRange;
+                    copy.InventoryItems.Add(newItem);
                 }
             }
 
@@ -246,6 +292,7 @@ namespace FactionGearCustomizer
                 copy.ForcedHediffs = new List<ForcedHediff>();
                 foreach (var item in this.ForcedHediffs)
                 {
+                    if (item == null) continue;
                     var newItem = new ForcedHediff();
                     newItem.HediffDef = item.HediffDef;
                     newItem.maxParts = item.maxParts;
@@ -262,11 +309,12 @@ namespace FactionGearCustomizer
         public void CopyFrom(KindGearData source)
         {
             this.isModified = source.isModified;
-            this.weapons = source.weapons.Select(g => new GearItem(g.thingDefName, g.weight)).ToList();
-            this.meleeWeapons = source.meleeWeapons.Select(g => new GearItem(g.thingDefName, g.weight)).ToList();
-            this.armors = source.armors.Select(g => new GearItem(g.thingDefName, g.weight)).ToList();
-            this.apparel = source.apparel.Select(g => new GearItem(g.thingDefName, g.weight)).ToList();
-            this.others = source.others.Select(g => new GearItem(g.thingDefName, g.weight)).ToList();
+            this.Label = source.Label;
+            this.weapons = source.weapons?.Select(g => g != null ? new GearItem(g.thingDefName, g.weight) : null).Where(g => g != null).ToList() ?? new List<GearItem>();
+            this.meleeWeapons = source.meleeWeapons?.Select(g => g != null ? new GearItem(g.thingDefName, g.weight) : null).Where(g => g != null).ToList() ?? new List<GearItem>();
+            this.armors = source.armors?.Select(g => g != null ? new GearItem(g.thingDefName, g.weight) : null).Where(g => g != null).ToList() ?? new List<GearItem>();
+            this.apparel = source.apparel?.Select(g => g != null ? new GearItem(g.thingDefName, g.weight) : null).Where(g => g != null).ToList() ?? new List<GearItem>();
+            this.others = source.others?.Select(g => g != null ? new GearItem(g.thingDefName, g.weight) : null).Where(g => g != null).ToList() ?? new List<GearItem>();
 
             this.ForceNaked = source.ForceNaked;
             this.ForceOnlySelected = source.ForceOnlySelected;
@@ -276,7 +324,7 @@ namespace FactionGearCustomizer
             this.TechHediffChance = source.TechHediffChance;
             this.TechHediffsMaxAmount = source.TechHediffsMaxAmount;
             this.ApparelMoney = source.ApparelMoney;
-            this.TechMoney = source.TechMoney;
+            this.TechLevelLimit = source.TechLevelLimit;
             this.WeaponMoney = source.WeaponMoney;
             this.ApparelColor = source.ApparelColor;
 
@@ -294,6 +342,7 @@ namespace FactionGearCustomizer
                 this.SpecificApparel = new List<SpecRequirementEdit>();
                 foreach (var item in source.SpecificApparel)
                 {
+                    if (item == null) continue;
                     var newItem = new SpecRequirementEdit();
                     newItem.Thing = item.Thing;
                     newItem.Material = item.Material;
@@ -313,6 +362,7 @@ namespace FactionGearCustomizer
                 this.SpecificWeapons = new List<SpecRequirementEdit>();
                 foreach (var item in source.SpecificWeapons)
                 {
+                    if (item == null) continue;
                     var newItem = new SpecRequirementEdit();
                     newItem.Thing = item.Thing;
                     newItem.Material = item.Material;
@@ -322,16 +372,39 @@ namespace FactionGearCustomizer
                     newItem.Color = item.Color;
                     newItem.SelectionMode = item.SelectionMode;
                     newItem.SelectionChance = item.SelectionChance;
+                    newItem.CountRange = item.CountRange;
                     this.SpecificWeapons.Add(newItem);
                 }
             }
             else this.SpecificWeapons = null;
+
+            if (source.InventoryItems != null)
+            {
+                this.InventoryItems = new List<SpecRequirementEdit>();
+                foreach (var item in source.InventoryItems)
+                {
+                    if (item == null) continue;
+                    var newItem = new SpecRequirementEdit();
+                    newItem.Thing = item.Thing;
+                    newItem.Material = item.Material;
+                    newItem.Style = item.Style;
+                    newItem.Quality = item.Quality;
+                    newItem.Biocode = item.Biocode;
+                    newItem.Color = item.Color;
+                    newItem.SelectionMode = item.SelectionMode;
+                    newItem.SelectionChance = item.SelectionChance;
+                    newItem.CountRange = item.CountRange;
+                    this.InventoryItems.Add(newItem);
+                }
+            }
+            else this.InventoryItems = null;
 
             if (source.ForcedHediffs != null)
             {
                 this.ForcedHediffs = new List<ForcedHediff>();
                 foreach (var item in source.ForcedHediffs)
                 {
+                    if (item == null) continue;
                     var newItem = new ForcedHediff();
                     newItem.HediffDef = item.HediffDef;
                     newItem.maxParts = item.maxParts;

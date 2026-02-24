@@ -8,7 +8,7 @@ namespace FactionGearCustomizer
 {
     public static class FactionGearManager
     {
-        // 静态缓存 - 只在游戏启动时计算一次，大幅提升性能
+        // 静态缓�?- 只在游戏启动时计算一次，大幅提升性能
         private static List<ThingDef> cachedAllWeapons = null;
         private static List<ThingDef> cachedAllMeleeWeapons = null;
         private static List<ThingDef> cachedAllHelmets = null;
@@ -27,35 +27,41 @@ namespace FactionGearCustomizer
             {
                 if (cacheInitialized) return;
                 
-                // 远程武器：IsRangedWeapon 或 有range>0的Verb
-                cachedAllWeapons = DefDatabase<ThingDef>.AllDefs
-                    .Where(t => t.IsWeapon && (t.IsRangedWeapon || (t.Verbs != null && t.Verbs.Any(v => v.range > 0)))).ToList();
+                var allDefs = DefDatabase<ThingDef>.AllDefs.ToList();
+
+                // --- Weapon 分类逻辑 ---
+                var allWeapons = allDefs.Where(t => t.IsWeapon).ToList();
+                var processedWeapons = new HashSet<ThingDef>();
+
+                // 1. 远程武器：IsRangedWeapon (或者任何有 range > 0 Verb 的武�?
+                cachedAllWeapons = allWeapons
+                    .Where(t => t.IsRangedWeapon || (t.Verbs != null && t.Verbs.Any(v => v.range > 0)))
+                    .ToList();
+                foreach (var t in cachedAllWeapons) processedWeapons.Add(t);
+
+                // 2. 近战武器：所有剩下的 IsWeapon 物品作为兜底 (包括 IsMeleeWeapon，或者既不是远程也不是明确近战但�?IsWeapon 标签的怪东�?
+                cachedAllMeleeWeapons = allWeapons
+                    .Where(t => !processedWeapons.Contains(t))
+                    .ToList();
                 
-                // 近战武器：IsMeleeWeapon 或 没有range>0的Verb 但有tools
-                cachedAllMeleeWeapons = DefDatabase<ThingDef>.AllDefs
-                    .Where(t => t.IsWeapon && (t.IsMeleeWeapon || (t.tools != null && t.tools.Any() && !(t.Verbs != null && t.Verbs.Any(v => v.range > 0))))).ToList();
+                // --- Apparel 分类逻辑 ---
+                var allApparel = allDefs.Where(t => t.IsApparel).ToList();
+                var processedApparel = new HashSet<ThingDef>();
+
+                // 1. 头盔 (Helmets): IsHelmet
+                cachedAllHelmets = allApparel.Where(t => IsHelmet(t)).ToList();
+                foreach (var t in cachedAllHelmets) processedApparel.Add(t);
                 
-                cachedAllHelmets = DefDatabase<ThingDef>.AllDefs
-                    .Where(t => t.IsApparel && t.apparel != null && t.apparel.layers != null && 
-                           t.apparel.layers.Contains(ApparelLayerDefOf.Overhead)).ToList();
+                // 2. 护甲 (Armors): IsArmor (且未处理)
+                cachedAllArmors = allApparel.Where(t => !processedApparel.Contains(t) && IsArmor(t)).ToList();
+                foreach (var t in cachedAllArmors) processedApparel.Add(t);
                 
-                cachedAllArmors = DefDatabase<ThingDef>.AllDefs
-                    .Where(t => t.IsApparel && t.apparel != null && t.apparel.layers != null && 
-                           (t.apparel.layers.Contains(ApparelLayerDefOf.Shell) || 
-                            t.GetStatValueAbstract(StatDefOf.ArmorRating_Sharp) >= 0.4f)).ToList();
-                
-                cachedAllApparel = DefDatabase<ThingDef>.AllDefs
-                    .Where(t => t.IsApparel && t.apparel != null && t.apparel.layers != null && 
-                           !t.apparel.layers.Contains(ApparelLayerDefOf.Overhead) && 
-                           !t.apparel.layers.Contains(ApparelLayerDefOf.Belt) &&
-                           !t.apparel.layers.Contains(ApparelLayerDefOf.Shell) &&
-                           (t.apparel.layers.Contains(ApparelLayerDefOf.OnSkin) || 
-                            t.apparel.layers.Contains(ApparelLayerDefOf.Middle)) &&
-                           t.GetStatValueAbstract(StatDefOf.ArmorRating_Sharp) < 0.4f).ToList();
-                
-                cachedAllOthers = DefDatabase<ThingDef>.AllDefs
-                    .Where(t => t.IsApparel && t.apparel != null && t.apparel.layers != null && 
-                           t.apparel.layers.Contains(ApparelLayerDefOf.Belt)).ToList();
+                // 3. 普通服�?(Apparel): IsStandardApparel (且未处理)
+                cachedAllApparel = allApparel.Where(t => !processedApparel.Contains(t) && IsStandardApparel(t)).ToList();
+                foreach (var t in cachedAllApparel) processedApparel.Add(t);
+
+                // 4. 其他/配件 (Others): 剩下的所�?Apparel
+                cachedAllOthers = allApparel.Where(t => !processedApparel.Contains(t)).ToList();
                 
                 cacheInitialized = true;
             }
@@ -63,14 +69,15 @@ namespace FactionGearCustomizer
 
         public static void LoadDefaultPresets()
         {
-            LoadDefaultPresets(null);
+            // Removed full loading on startup to improve performance
+            // LoadDefaultPresets(null); 
         }
 
         public static void LoadDefaultPresets(string factionDefName)
         {
             var factionDefs = factionDefName != null 
                 ? new List<FactionDef> { DefDatabase<FactionDef>.GetNamedSilentFail(factionDefName) }
-                : DefDatabase<FactionDef>.AllDefs.ToList();
+                : new List<FactionDef>(); // Empty list if no specific faction requested
 
             foreach (var factionDef in factionDefs)
             {
@@ -98,7 +105,7 @@ namespace FactionGearCustomizer
             }
         }
 
-        // [修复] 将 LoadKindDefGear 改为 public，供重置单兵种时重新抓取数据使用
+        // [修复] �?LoadKindDefGear 改为 public，供重置单兵种时重新抓取数据使用
         public static void LoadKindDefGear(PawnKindDef kindDef, KindGearData kindData)
         {
             // 1. 读取原版武器标签
@@ -109,13 +116,14 @@ namespace FactionGearCustomizer
                     var weapons = DefDatabase<ThingDef>.AllDefs.Where(t => t.IsWeapon && t.weaponTags != null && t.weaponTags.Contains(tag)).ToList();
                     foreach (var weapon in weapons)
                     {
-                        if (weapon.IsRangedWeapon)
+                        if (IsRangedWeapon(weapon))
                         {
                             if (!kindData.weapons.Any(g => g.thingDefName == weapon.defName))
                                 kindData.weapons.Add(new GearItem(weapon.defName));
                         }
                         else
                         {
+                            // 剩下的所有武器都归为近战 (作为兜底)
                             if (!kindData.meleeWeapons.Any(g => g.thingDefName == weapon.defName))
                                 kindData.meleeWeapons.Add(new GearItem(weapon.defName));
                         }
@@ -123,31 +131,49 @@ namespace FactionGearCustomizer
                 }
             }
 
-            // 2. 【核心修复】读取原版服装标签 (apparelTags)
+            // 2. 【核心修复】读取原版服装标�?(apparelTags)
             if (kindDef.apparelTags != null)
             {
                 var apparels = DefDatabase<ThingDef>.AllDefs.Where(t => t.IsApparel && t.apparel.tags != null && t.apparel.tags.Intersect(kindDef.apparelTags).Any()).ToList();
                 foreach (var app in apparels)
                 {
-                    if (app.apparel.layers != null)
+                    // 使用统一的分类逻辑
+                    if (IsArmor(app))
                     {
-                        if (app.apparel.layers.Contains(ApparelLayerDefOf.Shell) || app.GetStatValueAbstract(StatDefOf.ArmorRating_Sharp) > 0.4f)
-                        {
-                            if (!kindData.armors.Any(g => g.thingDefName == app.defName)) kindData.armors.Add(new GearItem(app.defName));
-                        }
-                        else if (app.apparel.layers.Contains(ApparelLayerDefOf.Belt))
-                        {
-                            if (!kindData.others.Any(g => g.thingDefName == app.defName)) kindData.others.Add(new GearItem(app.defName));
-                        }
-                        else
-                        {
-                            if (!kindData.apparel.Any(g => g.thingDefName == app.defName)) kindData.apparel.Add(new GearItem(app.defName));
-                        }
+                        if (!kindData.armors.Any(g => g.thingDefName == app.defName)) kindData.armors.Add(new GearItem(app.defName));
+                    }
+                    else if (IsStandardApparel(app) && !IsHelmet(app)) // 排除头盔，避免普通帽子混入 Apparel（视具体需求而定，或者帽子就该在 Apparel）
+                    {
+                        if (!kindData.apparel.Any(g => g.thingDefName == app.defName)) kindData.apparel.Add(new GearItem(app.defName));
+                    }
+                    else
+                    {
+                        // 兜底：包括 Belt, 鞋子, 以及可能的低护甲头盔(如果没进Apparel)
+                        if (!kindData.others.Any(g => g.thingDefName == app.defName)) kindData.others.Add(new GearItem(app.defName));
                     }
                 }
             }
         }
 
+        // --- 辅助分类方法 ---
+        private static bool IsRangedWeapon(ThingDef t) => t.IsRangedWeapon || (t.Verbs != null && t.Verbs.Any(v => v.range > 0));
+
+        private static bool IsHelmet(ThingDef t) => t.apparel?.layers?.Contains(ApparelLayerDefOf.Overhead) ?? false;
+
+        private static bool IsArmor(ThingDef t)
+        {
+            if (t.apparel?.layers == null) return false;
+            // 包含 Shell 层 或 锐利护甲 >= 40%
+            return t.apparel.layers.Contains(ApparelLayerDefOf.Shell) || 
+                   t.GetStatValueAbstract(StatDefOf.ArmorRating_Sharp) >= 0.4f;
+        }
+
+        private static bool IsStandardApparel(ThingDef t)
+        {
+            if (t.apparel?.layers == null) return false;
+            return t.apparel.layers.Contains(ApparelLayerDefOf.OnSkin) || 
+                   t.apparel.layers.Contains(ApparelLayerDefOf.Middle);
+        }
 
         public static List<ThingDef> GetAllWeapons() { EnsureCacheInitialized(); return cachedAllWeapons; }
         public static List<ThingDef> GetAllMeleeWeapons() { EnsureCacheInitialized(); return cachedAllMeleeWeapons; }
@@ -165,11 +191,10 @@ namespace FactionGearCustomizer
             // 检查武器是否有Verbs属性
             if (weaponDef.Verbs != null && weaponDef.Verbs.Count > 0)
             {
-                // 返回第一个Verb的射程
-                return weaponDef.Verbs[0].range;
+                // 返回第一个Verb的射�?                return weaponDef.Verbs[0].range;
             }
 
-            // 对于没有Verbs的武器（如某些特殊武器），返回0
+            // 对于没有Verbs的武器（如某些特殊武器），返�?
             return 0f;
         }
 
@@ -193,19 +218,36 @@ namespace FactionGearCustomizer
                     {
                         try
                         {
-                            // 适配 1.5/1.6 版本，使用 GetDamageAmount 方法
-                            maxDamage = projectileDef.projectile.GetDamageAmount(null);
+                            // 优先尝试反射获取 damageAmountBase (1.5+)
+                            var field = projectileDef.projectile.GetType().GetField("damageAmountBase");
+                            if (field != null)
+                            {
+                                maxDamage = (int)field.GetValue(projectileDef.projectile);
+                            }
+                            else
+                            {
+                                // 回退尝试反射调用 GetDamageAmount (1.4-)
+                                var method = projectileDef.projectile.GetType().GetMethod("GetDamageAmount");
+                                if (method != null)
+                                {
+                                    maxDamage = (int)method.Invoke(projectileDef.projectile, new object[] { null });
+                                }
+                                else
+                                {
+                                    maxDamage = 0f;
+                                }
+                            }
                         }
                         catch
                         {
-                            // 兼容旧版本
+                            // 兼容性异常处理
                             maxDamage = 0f;
                         }
                     }
                 }
             }
 
-            // 2. 读取武器的近战伤害 (近战武器，或是远程武器的枪托砸击)
+            // 2. 读取武器的近战伤害(近战武器，或是远程武器的枪托砸击)
             if (weaponDef.tools != null && weaponDef.tools.Count > 0)
             {
                 float meleeDamage = weaponDef.tools.Max(tool => tool.power);
@@ -243,7 +285,7 @@ namespace FactionGearCustomizer
             
             try
             {
-                // 获取武器的射击/攻击间隔
+                // 获取武器的射击 攻击间隔
                 if (weaponDef.IsRangedWeapon && weaponDef.Verbs != null && weaponDef.Verbs.Count > 0)
                 {
                     var verb = weaponDef.Verbs.FirstOrDefault(v => v.isPrimary) ?? weaponDef.Verbs.First();
@@ -299,33 +341,5 @@ namespace FactionGearCustomizer
         
         public static TechLevel GetTechLevel(ThingDef thingDef) => thingDef.techLevel;
         public static string GetModSource(ThingDef thingDef) => thingDef.modContentPack?.Name ?? "Unknown";
-
-        // [新增] 获取合并后的 Mod 分组名称
-        public static string GetModGroup(ThingDef thingDef)
-        {
-            string rawName = GetModSource(thingDef);
-            
-            // 1. Combat Extended 系列
-            if (rawName.StartsWith("Combat Extended", StringComparison.OrdinalIgnoreCase))
-                return "Combat Extended (Group)";
-                
-            // 2. Vanilla Expanded 系列 (涵盖 VWE, VAE, VFE 等所有原版扩展)
-            if (rawName.StartsWith("Vanilla", StringComparison.OrdinalIgnoreCase) && rawName.Contains("Expanded"))
-                return "Vanilla Expanded (Group)";
-                
-            // 3. Alpha 系列 (Alpha Animals, Alpha Biomes 等)
-            if (rawName.StartsWith("Alpha ", StringComparison.OrdinalIgnoreCase))
-                return "Alpha Series (Group)";
-                
-            // 4. Rimsenal 系列 (边缘军工)
-            if (rawName.StartsWith("Rimsenal", StringComparison.OrdinalIgnoreCase))
-                return "Rimsenal (Group)";
-                
-            // 如果你还有其他想合并的模组，可以在这里继续照猫画虎添加 if 判断
-            // ...
-                
-            // 如果没有匹配到任何热门系列，则返回原始名称
-            return rawName;
-        }
     }
 }

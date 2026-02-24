@@ -364,3 +364,6 @@ FodyWeavers.xsd
 
 # Local configuration overrides
 Local.props
+
+# User custom ignore
+Ref-TotalControl/

@@ -1,0 +1,1114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <FactionGearCustomizer>yc's Faction Editor</FactionGearCustomizer>
+  <Factions>Factions</Factions>
+  <ItemLibrary>Item Library</ItemLibrary>
+  <Advanced>Advanced</Advanced>
+  <Simple>Simple</Simple>
+  <Preview>Preview</Preview>
+  <PawnGroupPreviewTitle>Pawn Group Preview</PawnGroupPreviewTitle>
+  <Seed>Seed</Seed>
+  <DrawsPerList>Draws</DrawsPerList>
+  <RebuildPreview>Rebuild</RebuildPreview>
+  <GeneratePortraits>Generate portraits</GeneratePortraits>
+  <ClearAll>Clear All</ClearAll>
+  <Clear>Clear</Clear>
+  <ApplyOthers>Apply Others</ApplyOthers>
+  <Yes>Yes</Yes>
+  <Cancel>Cancel</Cancel>
+  <Save>Save</Save>
+  <SaveAs>Save As</SaveAs>
+  <Load>Load</Load>
+  <Delete>Delete</Delete>
+  <Export>Export</Export>
+  <Import>Import</Import>
+  <Apply>Apply</Apply>
+  <Reset>Reset</Reset>
+  <Close>Close</Close>
+  <Confirm>Confirm</Confirm>
+  <AddNewApparel>Add New Apparel</AddNewApparel>
+  <AddNewWeapon>Add New Weapon</AddNewWeapon>
+  <AddNewHediff>Add New Hediff</AddNewHediff>
+  <PickColor>Pick Color</PickColor>
+  <SetColor>Set Color</SetColor>
+  <SelectItem>Select Item</SelectItem>
+  <SelectHediff>Select Hediff</SelectHediff>
+  <Show>Show</Show>
+  <Hide>Hide</Hide>
+  <All>All</All>
+  <None>None</None>
+  <Invert>Invert</Invert>
+  <Default>Default</Default>
+  <RandomDefault>Random Material</RandomDefault>
+  <SelectedGear>Selected Gear</SelectedGear>
+  <AdvancedSettings>Advanced Settings</AdvancedSettings>
+  <LayerPreview>Layer Preview</LayerPreview>
+  <GeneralOverrides>General Overrides</GeneralOverrides>
+  <SpecificApparelAdvanced>Specific Apparel (Advanced)</SpecificApparelAdvanced>
+  <SpecificWeaponsAdvanced>Specific Weapons (Advanced)</SpecificWeaponsAdvanced>
+  <ForcedHediffs>Forced Hediffs</ForcedHediffs>
+  <HediffPickerTitle>Add Hediffs</HediffPickerTitle>
+  <InventoryItems>Inventory Items</InventoryItems>
+  <AddNewItem>Add New Item</AddNewItem>
+  <QuickAdd>Quick Add</QuickAdd>
+  <InventoryItemPickerTitle>Add Items</InventoryItemPickerTitle>
+  <ApparelPickerTitle>Add Apparel</ApparelPickerTitle>
+  <WeaponPickerTitle>Add Weapons</WeaponPickerTitle>
+  <DefaultCountRange>Default Count</DefaultCountRange>
+  <DefaultSelectionMode>Default Mode: {0}</DefaultSelectionMode>
+  <DefaultChance>Default Chance</DefaultChance>
+  <SkipExistingItems>Skip Existing</SkipExistingItems>
+  <AlreadyAdded>Exists</AlreadyAdded>
+  <AddSelected>Add Selected</AddSelected>
+  <InventoryItemsAddedMessage>Added {0} items, skipped {1} duplicates.</InventoryItemsAddedMessage>
+  <ApparelItemsAddedMessage>Added {0} apparel, skipped {1} duplicates.</ApparelItemsAddedMessage>
+  <WeaponItemsAddedMessage>Added {0} weapons, skipped {1} duplicates.</WeaponItemsAddedMessage>
+  <HediffsAddedMessage>Added {0} hediffs, skipped {1} duplicates.</HediffsAddedMessage>
+  <SelectionModeAlwaysTake>Always</SelectionModeAlwaysTake>
+  <SelectionModeRandomChance>Chance</SelectionModeRandomChance>
+  <SelectionModeFromPool>Pool {0}</SelectionModeFromPool>
+  <Items>Items</Items>
+  <Count>Count</Count>
+  <AdvancedSpecificItems>Advanced/Specific Items</AdvancedSpecificItems>
+  <EditFactionDetails>Edit Faction Details</EditFactionDetails>
+  <ModFilter>Mod Filter</ModFilter>
+  <CategoryFilter>Category Filter</CategoryFilter>
+  <CategoryAll>Category: All</CategoryAll>
+  <CategoryCountSelected>Category: {0} Selected</CategoryCountSelected>
+  <ApparelColor>Apparel Color:</ApparelColor>
+  <ItemQuality>Item Quality</ItemQuality>
+  <ApparelBudget>Apparel Budget</ApparelBudget>
+  <WeaponBudget>Weapon Budget</WeaponBudget>
+  <TechLevelLimit>Tech Level Limit</TechLevelLimit>
+  <ForcedWeaponQuality>Forced Weapon Quality</ForcedWeaponQuality>
+  <BiocodeChance>Biocode Chance</BiocodeChance>
+  <Biocode>Biocode</Biocode>
+  <ForceNaked>Force Naked</ForceNaked>
+  <ForceOnlySelected>Force Only Selected</ForceOnlySelected>
+  <MinMax>Min (Force Ignore)</MinMax>
+  <MaxForceIgnore>Max (Force Ignore)</MaxForceIgnore>
+  <Ranged>Ranged</Ranged>
+  <Melee>Melee</Melee>
+  <Armors>Armors</Armors>
+  <Clothes>Clothes</Clothes>
+  <Others>Others</Others>
+  <General>General</General>
+  <Apparel>Apparel</Apparel>
+  <Weapons>Weapons</Weapons>
+  <Hediffs>Hediffs</Hediffs>
+  <Head>Head</Head>
+  <Torso>Torso</Torso>
+  <Shoulders>Shoulders</Shoulders>
+  <Arms>Arms</Arms>
+  <Hands>Hands</Hands>
+  <Waist>Waist</Waist>
+  <Legs>Legs</Legs>
+  <Feet>Feet</Feet>
+  <Skin>Skin</Skin>
+  <Mid>Mid</Mid>
+  <SettingsSaved>Settings saved successfully!</SettingsSaved>
+  <SettingsDiscarded>Settings changes discarded.</SettingsDiscarded>
+  <PresetUpdated>Preset '{0}' updated.</PresetUpdated>
+  <PresetSaved>Settings saved successfully.</PresetSaved>
+  <TipCreatePreset>Tip: Please create a preset to safely back up your hard work!</TipCreatePreset>
+  <CannotPreviewFactionNotPresent>Cannot preview: Faction not present in current game.</CannotPreviewFactionNotPresent>
+  <AppliedToAllKinds>Applied current gear to ALL Kind Defs in this faction!</AppliedToAllKinds>
+  <CopiedKindGear>Copied KindDef gear!</CopiedKindGear>
+  <PastedGearTo>Pasted gear to {0}</PastedGearTo>
+  <CopiedGearFrom>Copied gear from {0}</CopiedGearFrom>
+  <ClearAllGearConfirm>Clear All Gear</ClearAllGearConfirm>
+  <ClearAllGearConfirmMessage>Are you sure you want to clear ALL gear for this kind?</ClearAllGearConfirmMessage>
+  <ClearCategoryGearConfirm>Clear Category</ClearCategoryGearConfirm>
+  <ClearCategoryGearConfirmMessage>Are you sure you want to clear all items in this category?</ClearCategoryGearConfirmMessage>
+  <ApplyToAllKindsConfirm>Are you sure you want to overwrite ALL Kind Defs in this faction with the current gear loadout?</ApplyToAllKindsConfirm>
+  <NoItemsInThisCategory>No items in this category.</NoItemsInThisCategory>
+  <SelectAKindDefFirst>Select a KindDef first.</SelectAKindDefFirst>
+  <PresetManager>Preset Manager</PresetManager>
+  <PresetMetadataSaved>Preset metadata saved.</PresetMetadataSaved>
+  <PresetUpdatedFromGameSettings>Preset updated from game settings.</PresetUpdatedFromGameSettings>
+  <PresetOverwritten>Preset '{0}' overwritten with current settings!</PresetOverwritten>
+  <NewPresetCreated>New preset created and saved from current settings!</NewPresetCreated>
+  <PresetApplied>Preset applied successfully to current game!</PresetApplied>
+  <ApplyPresetFailed>Failed to apply preset. Check log for details.</ApplyPresetFailed>
+  <PresetDeleted>Preset deleted.</PresetDeleted>
+  <PresetExportedToClipboard>Preset '{0}' exported to clipboard!</PresetExportedToClipboard>
+  <ImportFailedInvalidData>Import failed: Invalid preset data in clipboard!</ImportFailedInvalidData>
+  <ImportFailed>Import failed: {0}</ImportFailed>
+  <ClipboardIsEmpty>Clipboard is empty!</ClipboardIsEmpty>
+  <ExportFailed>Export failed!</ExportFailed>
+  <PresetImportedFromClipboard>Preset '{0}' imported from clipboard!</PresetImportedFromClipboard>
+  <FactionDetailsUpdated>Faction details updated (In-Memory Only)</FactionDetailsUpdated>
+  <TechLevel>Tech Level</TechLevel>
+  <QualityAwful>Awful</QualityAwful>
+  <QualityPoor>Poor</QualityPoor>
+  <QualityNormal>Normal</QualityNormal>
+  <QualityGood>Good</QualityGood>
+  <QualityExcellent>Excellent</QualityExcellent>
+  <QualityMasterwork>Masterwork</QualityMasterwork>
+  <QualityLegendary>Legendary</QualityLegendary>
+  <SelectionModeIfPossible>If Possible</SelectionModeIfPossible>
+  <SelectionModeBest>Best</SelectionModeBest>
+  <SelectionModeRandom>Random</SelectionModeRandom>
+  <ResetFilters>Reset Filters</ResetFilters>
+  <ResetCurrentKind>Reset Current Kind</ResetCurrentKind>
+  <LoadDefaultFaction>Load Default Faction</LoadDefaultFaction>
+  <ResetCurrentFaction>Reset Current Faction</ResetCurrentFaction>
+  <ResetEVERYTHING>Reset EVERYTHING</ResetEVERYTHING>
+  <UndoTooltip>Undo (Ctrl+Z)</UndoTooltip>
+  <RedoTooltip>Redo (Ctrl+Y)</RedoTooltip>
+  <PreviewAllKindsTooltip>Preview all kinds in this faction</PreviewAllKindsTooltip>
+  <PreviewInGameOnlyTooltip>In-game only</PreviewInGameOnlyTooltip>
+  <ApplyToOthersTooltip>Apply current gear to ALL other Kind Defs in this faction</ApplyToOthersTooltip>
+  <ClearCategoryTooltip>Clear all items in the current category.</ClearCategoryTooltip>
+  <ForceNakedTooltip>If enabled, apparel will be stripped and this kind will be kept nude.
+
+Make sure you're 18+.</ForceNakedTooltip>
+  <ForceOnlySelectedTooltip>If enabled, ALL existing/vanilla gear will be stripped before applying your custom gear. This ensures the pawn ONLY wears what you specify here, preventing mixed vanilla/custom loadouts.
+
+Recommended: ON for total control.</ForceOnlySelectedTooltip>
+  <WeightMechanicsTooltip>Weight Mechanics: In RimWorld, gear weight acts as a selection weight, not a guarantee. Higher-weight equipment will be prioritized for wearing.</WeightMechanicsTooltip>
+  <ColorPicker>Color Picker</ColorPicker>
+  <ColorPickerApply>Apply</ColorPickerApply>
+  <UnsavedChanges>Unsaved Changes</UnsavedChanges>
+  <UnsavedChangesMessage>You have unsaved changes. Do you want to save them?</UnsavedChangesMessage>
+  <Discard>Discard</Discard>
+  <Version>Version</Version>
+  <VersionLog>Version Log</VersionLog>
+  <GiveMeALike>Give me a like</GiveMeALike>
+  <AvgValue>Avg Value</AvgValue>
+  <AvgWeight>Avg Weight</AvgWeight>
+  <Weight>W</Weight>
+  <Missing>Missing</Missing>
+  <MissingParts>Missing Parts</MissingParts>
+  <NoPreset>[No Preset]</NoPreset>
+  <NoPresetWarning>No Active Preset</NoPresetWarning>
+  <NoPresetDescription>You need to create or load a preset to start configuring faction gear. Presets are used to save your configurations.</NoPresetDescription>
+  <CreatePreset>Create Preset</CreatePreset>
+  <PresetEqualsConfigTip>Tip: Preset = Config, create a preset to start editing</PresetEqualsConfigTip>
+  <ClearAllConfigs>Clear All Configs</ClearAllConfigs>
+  <ClearAllConfigsTooltip>Clear all saved configuration data and restore to initial state</ClearAllConfigsTooltip>
+  <ClearAllConfigsConfirm>Clear All Configurations?</ClearAllConfigsConfirm>
+  <ClearAllConfigsConfirmMessage>This will delete all saved faction gear configurations and cannot be undone.</ClearAllConfigsConfirmMessage>
+  <ActivePreset>[Active: {0}]</ActivePreset>
+  <AddedItemsToGearList>Added {0} items to gear list</AddedItemsToGearList>
+  <SaveChangesToGame>Save changes to current game</SaveChangesToGame>
+  <SaveImmediateEffectTooltip>All changes apply immediately. No restart required.</SaveImmediateEffectTooltip>
+  <Presets>Presets</Presets>
+  <Options>Options</Options>
+  <AdvancedOptionsTooltip>Advanced options</AdvancedOptionsTooltip>
+  <ShowHiddenFactions>Show hidden/non-human factions</ShowHiddenFactions>
+  <ShowInMainTab>Show bottom main button</ShowInMainTab>
+  <ForceIgnore>Force Ignore</ForceIgnore>
+  <ForceIgnoreTooltip>Force remove conflicting apparel/weapons and ignore budget limits. Pawns will attempt to equip all possible items from the configured list which allows you to ignore constraints and always create god-tier units.</ForceIgnoreTooltip>
+  <AdvancedItemTooltip>This is an item added via Advanced Mode (Specific Requirement).</AdvancedItemTooltip>
+  <Shell>Shell</Shell>
+  <Belt>Belt</Belt>
+  <Over>Over</Over>
+  <Reroll>Reroll</Reroll>
+  <Retry>Retry</Retry>
+  <PortraitUnavailable>Portrait unavailable</PortraitUnavailable>
+  <Rotate>Rotate</Rotate>
+  <RerollPawn>Reroll Pawn</RerollPawn>
+  <EquippedGear><b>Equipped Gear:</b></EquippedGear>
+  <ApparelWorn><b>Apparel Worn:</b></ApparelWorn>
+  <FailedToGeneratePreview>Failed to generate preview pawn. (Faction might not be active)</FailedToGeneratePreview>
+  <SavedPresets>Saved Presets</SavedPresets>
+  <SearchPresets>Search presets</SearchPresets>
+  <CreateNew>Create New</CreateNew>
+  <Name>Name</Name>
+  <Add>Add</Add>
+  <AddAll>Add All</AddAll>
+  <SelectPresetFirst>Please select a preset from the left list.</SelectPresetFirst>
+  <PresetDetails>Preset Details</PresetDetails>
+  <PresetName>Preset Name</PresetName>
+  <Description>Description</Description>
+  <Management><b>Management:</b></Management>
+  <SaveNameDesc>Save Name/Desc</SaveNameDesc>
+  <UpdateFromGame>Update from Game</UpdateFromGame>
+  <PresetUpdatedFromGameSettings>Preset updated from game settings.</PresetUpdatedFromGameSettings>
+  <OverwritePresetConfirm>Overwrite preset '{0}' with current game settings?</OverwritePresetConfirm>
+  <UpdateFromGameTooltip>Overwrite this preset's gear data with your current in-game configuration.</UpdateFromGameTooltip>
+  <RequiredMods>Required Mods</RequiredMods>
+  <FactionPreview>Faction Preview</FactionPreview>
+  <NoFactionDataInPreset>No faction data in preset.</NoFactionDataInPreset>
+  <NoRequiredMods>No required mods.</NoRequiredMods>
+  <ModNotActiveTooltip>This mod is not active in your current game.</ModNotActiveTooltip>
+  <Chance>Chance</Chance>
+  <MaxParts>Max Parts</MaxParts>
+  <Severity>Severity</Severity>
+  <SelectHediffToViewDetails>Select a Hediff to view details.</SelectHediffToViewDetails>
+  <FromMod>From</FromMod>
+  <KindDefs>Kind Defs</KindDefs>
+  <DontShowAgain>Don't show again</DontShowAgain>
+  <Label>Label</Label>
+  <InGame>In-game</InGame>
+  <ShowInGameFactionNamesTooltip>Show in-game faction names. Grayed out if faction is not present in current game.</ShowInGameFactionNamesTooltip>
+  <LoadPreset>Load Preset</LoadPreset>
+  <LoadPresetTooltip>Apply this preset to your game.</LoadPresetTooltip>
+  <LoadPresetConfirmTitle>Load Preset</LoadPresetConfirmTitle>
+  <LoadPresetConfirmMessage>Do you want to CLEAR current custom gear before applying this preset?
+
+Yes: Overwrite everything (Recommended)
+No: Merge preset with current tweaks</LoadPresetConfirmMessage>
+  <LoadPresetOverwrite>Yes (Overwrite)</LoadPresetOverwrite>
+  <LoadPresetMerge>No (Merge)</LoadPresetMerge>
+  <MissingModsWarningTitle>Warning: Missing Required Mods</MissingModsWarningTitle>
+  <MissingModsWarningMessage>Warning: The following mods required by this preset are missing or not active:
+
+- {0}
+
+Applying this preset may result in missing items or errors. Continue?</MissingModsWarningMessage>
+  <MissingModsWarningRiskIt>Yes (Risk it)</MissingModsWarningRiskIt>
+  <MissingModsWarningCancel>No (Cancel)</MissingModsWarningCancel>
+  <DeletePresetConfirm>Are you sure you want to permanently delete preset '{0}'?</DeletePresetConfirm>
+  <ExportTooltip>Copy preset to clipboard for sharing.</ExportTooltip>
+  <DeletePresetTooltip>Delete this preset entry. This does not automatically roll back changes already saved to the game.</DeletePresetTooltip>
+  <SavePresetMetadataTooltip>Save preset name/description only (does not update gear content).</SavePresetMetadataTooltip>
+  <CreatePresetTooltip>Create a new preset and save current settings as its initial content.</CreatePresetTooltip>
+  <ImportFromClipboard>Import from Clipboard</ImportFromClipboard>
+  <ImportFromClipboardTooltip>Import a preset from base64 string in your clipboard.</ImportFromClipboardTooltip>
+  <PresetAlreadyExists>A preset named '{0}' already exists. Do you want to overwrite it?</PresetAlreadyExists>
+  <Overwrite>Overwrite</Overwrite>
+  <CannotAddItemsInCurrentTabTooltip>Cannot add items in current Advanced Mode tab.</CannotAddItemsInCurrentTabTooltip>
+  <NewPreset>New Preset</NewPreset>
+  <ClearSearch>Clear search</ClearSearch>
+  <ModAll>Mod: All</ModAll>
+  <ModCountSelected>Mod: {0} Selected</ModCountSelected>
+  <FilterByModTooltip>Filter by Mod (Multi-select)</FilterByModTooltip>
+  <AmmoAll>Caliber: All</AmmoAll>
+  <AmmoFilter>Caliber Filter</AmmoFilter>
+  <FilterByAmmoTooltip>Filter by ammo caliber (Multiselect)</FilterByAmmoTooltip>
+  <AmmoCountSelected>Caliber: {0} Selected</AmmoCountSelected>
+  <TechAll>Tech: All</TechAll>
+  <FilterByTechLevelTooltip>Filter by tech level. Tech level comes from ThingDef/weapon TechLevel and represents progression stage.</FilterByTechLevelTooltip>
+  <SortBy>Sort by: {0}</SortBy>
+  <SortAscending>Ascending</SortAscending>
+  <SortDescending>Descending</SortDescending>
+  <SortFieldTooltip>Click to choose sort field. Available fields vary by category.</SortFieldTooltip>
+  <SortField_Name>Name</SortField_Name>
+  <SortField_MarketValue>Market Value</SortField_MarketValue>
+  <SortField_TechLevel>Tech Level</SortField_TechLevel>
+  <SortField_ModSource>Mod Source</SortField_ModSource>
+  <SortField_Accuracy>Accuracy</SortField_Accuracy>
+  <SortField_DPS>DPS</SortField_DPS>
+  <SortField_Armor_Sharp>Sharp Armor</SortField_Armor_Sharp>
+  <SortField_Armor_Blunt>Blunt Armor</SortField_Armor_Blunt>
+  <BaseMarketValue>Base Value</BaseMarketValue>
+  <DPS>DPS</DPS>
+  <ArmorSharp>Sharp Armor</ArmorSharp>
+  <ArmorBlunt>Blunt Armor</ArmorBlunt>
+  <Value>Value</Value>
+  <RangeFilterTooltip>Drag to filter {0} range (min~max). Upper bounds come from current candidate list.</RangeFilterTooltip>
+  <Range>Range</Range>
+  <Damage>Damage</Damage>
+  <Material>Material</Material>
+  <MaterialSelect>Material: {0}</MaterialSelect>
+  <QualitySelect>Quality: {0}</QualitySelect>
+  <SelectionMode>Mode: {0}</SelectionMode>
+  <SelectionMode_AlwaysTake>Always Take</SelectionMode_AlwaysTake>
+  <SelectionMode_RandomChance>Random Chance</SelectionMode_RandomChance>
+  <SelectionMode_FromPool1>Pool 1</SelectionMode_FromPool1>
+  <SelectionMode_FromPool2>Pool 2</SelectionMode_FromPool2>
+  <SelectionMode_FromPool3>Pool 3</SelectionMode_FromPool3>
+  <SelectionMode_FromPool4>Pool 4</SelectionMode_FromPool4>
+  <Remove>Remove</Remove>
+  <Search>Search</Search>
+  <Active>(Active)</Active>
+  <ManagePresetsTooltip>Manage gear presets</ManagePresetsTooltip>
+  <GithubLinkTooltip>Open project homepage (issues/changelog).</GithubLinkTooltip>
+  <VersionLogTooltip>Open version log and changelog.</VersionLogTooltip>
+  <ResetMenuTooltip>Open reset menu: reset filters, current kind, current faction, or everything.</ResetMenuTooltip>
+  <Changelog>Changes</Changelog>
+  <FactionEdit>Faction Edit</FactionEdit>
+  <FactionEditTooltip>Edit Faction Name, Icon, Color, etc.</FactionEditTooltip>
+  <Settings>Settings</Settings>
+  <PawnKinds>Pawn Kinds</PawnKinds>
+  <FactionName>Faction Name</FactionName>
+  <FactionDescription>Faction Description</FactionDescription>
+  <FactionIconPath>Icon Path</FactionIconPath>
+  <FactionColor>Faction Color</FactionColor>
+  <PawnKindLabel>PawnKind Label</PawnKindLabel>
+  <OriginalValue>Original Value</OriginalValue>
+  <CurrentValue>Current Value</CurrentValue>
+  <ApplyChanges>Apply Changes</ApplyChanges>
+  <ResetChanges>Reset Changes</ResetChanges>
+  <Browse>Browse</Browse>
+  <IconPathPlaceholder>Enter texture path (e.g. World/WorldObjects/Expanding/Town)</IconPathPlaceholder>
+  <OnlyAvailableInGame>Only available in-game.</OnlyAvailableInGame>
+  <AdvancedModeTooltip>Advanced mode enables more granular editing (e.g. specific items/special requirements). Simple mode edits base gear pools.</AdvancedModeTooltip>
+  <ClearAllGearTooltip>Clear all custom gear configuration for current kind. Shows confirmation and can be undone.</ClearAllGearTooltip>
+  <FactionInfoCardTooltip>Show this faction's Def info card.</FactionInfoCardTooltip>
+  <DefName>DefName</DefName>
+  <XenotypeChances>Xenotype Chances (Biotech)</XenotypeChances>
+  <AddXenotype>Add Xenotype</AddXenotype>
+  <AllXenotypesAdded>All xenotypes added.</AllXenotypesAdded>
+  <BatchApply>Batch Apply</BatchApply>
+  <BatchApplyTooltip>Open batch apply window to copy current settings to multiple selected kinds.</BatchApplyTooltip>
+  <BatchApplyTitle>Batch Apply Configuration</BatchApplyTitle>
+  <SelectAll>Select All</SelectAll>
+  <SelectNone>Select None</SelectNone>
+  <Selected>Selected</Selected>
+  <BatchApplyConfirm>Are you sure you want to apply configuration to {0} selected kinds?</BatchApplyConfirm>
+  <BatchApplied>Successfully applied configuration to {0} kinds.</BatchApplied>
+  <NewFaction>New</NewFaction>
+  <NewFactionTooltip>Create a new faction. Only available in-game.</NewFactionTooltip>
+  <CreateFaction>Create Faction</CreateFaction>
+  <CreateFactionTooltip>Create a new faction by cloning an existing one.</CreateFactionTooltip>
+  <SelectTemplateFaction>Select Template Faction</SelectTemplateFaction>
+  <SelectTemplateFactionTooltip>Choose a faction to use as template. The new faction will inherit its pawnKindDefs and settlement generation settings.</SelectTemplateFactionTooltip>
+  <NewFactionDefName>New Faction DefName</NewFactionDefName>
+  <NewFactionLabel>New Faction Name</NewFactionLabel>
+  <CloneFactionSuccess>Successfully created new faction: {0}</CloneFactionSuccess>
+  <FactionDefNameRequired>DefName is required and must be unique.</FactionDefNameRequired>
+  <FactionDefNameExists>A faction with this DefName already exists.</FactionDefNameExists>
+  <PawnGroups>Pawn Groups</PawnGroups>
+  <GeneralSettings>General Settings</GeneralSettings>
+  <SortByPower>Sort by Power</SortByPower>
+  <PawnKind>Pawn Kind</PawnKind>
+  <Race>Race</Race>
+  <Power>Power</Power>
+  <Points>Points</Points>
+  <Unknown>Unknown</Unknown>
+  <Category_All>All</Category_All>
+  <Category_Humanlike>Humanlike</Category_Humanlike>
+  <Category_Animal>Animal</Category_Animal>
+  <Category_Mechanoid>Mechanoid</Category_Mechanoid>
+  <Category_Other>Other</Category_Other>
+  <AddGroup>Add Group</AddGroup>
+  <Group>Group</Group>
+  <GroupName>Group Name</GroupName>
+  <GroupDefaultName>{0} #{1}</GroupDefaultName>
+  <Commonality>Commonality</Commonality>
+  <EditGroup>Edit Group</EditGroup>
+  <MaxTotalPoints>Max Total Points</MaxTotalPoints>
+  <AddPawn>Add Pawn</AddPawn>
+  <AddKindDef>Add Kind Def</AddKindDef>
+  <Traders>Traders</Traders>
+  <Carriers>Carriers</Carriers>
+  <Guards>Guards</Guards>
+  <GroupOptions>Regular Members</GroupOptions>
+  <Weight>Weight</Weight>
+  <Edit>Edit</Edit>
+  <Delete>Del</Delete>
+  <WorldOperations>World Operations</WorldOperations>
+  <InstanceCount>Instance Count</InstanceCount>
+  <Create>Create</Create>
+  <SelectFactionToCreate>Select a faction template to create a new instance.</SelectFactionToCreate>
+  <CreateNewInstance>Create New Instance</CreateNewInstance>
+  <ConfirmCreateNewInstance>Are you sure you want to create a new faction instance?\n\nNote: Too many faction instances may impact game performance. It is recommended not to exceed 10 instances of the same faction type.</ConfirmCreateNewInstance>
+  <NewInstancePreview>New instance name: {0}</NewInstancePreview>
+  <TooManyInstances>Too many faction instances of this type already exist (over 20). Cannot create more.</TooManyInstances>
+  <SpawnRandomSettlement>Spawn Random Settlement</SpawnRandomSettlement>
+  <SelectSettlementLocation>Select Settlement Location</SelectSettlementLocation>
+  <FactionInstanceCreated>Faction instance '{0}' created!</FactionInstanceCreated>
+  <SettlementCreated>Settlement '{0}' created!</SettlementCreated>
+  <NoValidTileFound>No valid tile found for settlement.</NoValidTileFound>
+  <InvalidTile>Invalid tile selected.</InvalidTile>
+  <FilterByFaction>Filter by Faction</FilterByFaction>
+  <SpawnSettlements>Spawn Settlements</SpawnSettlements>
+  <TargetFaction>Target Faction</TargetFaction>
+  <RandomGeneration>Random Generation</RandomGeneration>
+  <SettlementCount>Count</SettlementCount>
+  <MinDistanceToPlayer>Min Distance to Player</MinDistanceToPlayer>
+  <GenerateRandomly>Generate Randomly</GenerateRandomly>
+  <ManualSelection>Manual Selection</ManualSelection>
+  <ManualSelectionDesc>Select a location on the world map manually.</ManualSelectionDesc>
+  <SettlementPermanentWarning>Warning: once added, the settlement cannot be removed.</SettlementPermanentWarning>
+  <SelectOnWorldMap>Select on World Map</SelectOnWorldMap>
+  <SettlementsCreated>{0} settlements created!</SettlementsCreated>
+  <EnterSpawningModeMessage>Entered Spawning Mode. Right-click on World Map to spawn settlement for {0}.</EnterSpawningModeMessage>
+  <SpawningModeExited>Exited Spawning Mode.</SpawningModeExited>
+  <ExitSpawningMode>Exit Spawning Mode</ExitSpawningMode>
+  <SpawnSettlementFor>Spawn {0} Settlement</SpawnSettlementFor>
+  <CreateAndSpawn>Create and Spawn {0} Settlement</CreateAndSpawn>
+  <CannotSpawnHere>Cannot Spawn Here</CannotSpawnHere>
+  <EnableSpawningMode>Enable Map Spawning Mode</EnableSpawningMode>
+  <SelectFactionInstanceTitle>Select Instance: {0}</SelectFactionInstanceTitle>
+  <NoFactionInstancesFound>No instances found. Create one first.</NoFactionInstancesFound>
+  <SelectInstanceToContinue>Select an instance to continue.</SelectInstanceToContinue>
+  <ClickToSpawn>Click map to spawn settlement ({0})</ClickToSpawn>
+  <ConfirmCreateSettlement>Faction created. Do you want to select a site for a settlement immediately?
+
+(Without a settlement, the faction will not be visible in-game)</ConfirmCreateSettlement>
+  <NameColor>Name Color:</NameColor>
+  <NameColorTooltip>Display color of the faction member's name.</NameColorTooltip>
+  <RimTalkLinkage>Integrates with RimTalk</RimTalkLinkage>
+  <RimTalkUnderDev>Under Development</RimTalkUnderDev>
+  <NameCannotBeEmpty>Name cannot be empty</NameCannotBeEmpty>
+  <NameTooShort>Name is too short</NameTooShort>
+  <NameTooLong>Name is too long (max 100 characters)</NameTooLong>
+  <NameCannotBeOnlySpecialChars>Name cannot contain only special characters</NameCannotBeOnlySpecialChars>
+  <Refresh>Refresh</Refresh>
+  <CachesRefreshed>Caches refreshed</CachesRefreshed>
+  <RefreshTooltip>Refresh all UI caches, including faction list, kind list, and icon caches.</RefreshTooltip>
+  <AlreadyExists>Already Exists</AlreadyExists>
+  <FactionAlreadyExistsTooltip>This faction already exists in the game. Each faction template can only have one instance. To modify an existing faction, please use the "Faction Edit" feature.</FactionAlreadyExistsTooltip>
+  <Changelog_FixWikiLang>Fixed Wiki language settings not taking effect</Changelog_FixWikiLang>
+  <Changelog_AddWikiUI>Wiki UI beautification: added title bar, segmented color display, optimized layout</Changelog_AddWikiUI>
+
+  <!-- Delete Faction -->
+  <DeleteFactionTitle>Delete Faction</DeleteFactionTitle>
+  <DeleteFactionWarning>Warning: This action is irreversible!</DeleteFactionWarning>
+  <TargetFaction>Target Faction</TargetFaction>
+  <SettlementsToRemove>Settlements to be removed</SettlementsToRemove>
+  <PawnsToRemove>Pawns to be removed</PawnsToRemove>
+  <OtherEffects>Other Effects</OtherEffects>
+  <FactionRelationsRemoved>Faction relations will be cleared</FactionRelationsRemoved>
+  <ActiveQuestsAffected>Active quests may be affected</ActiveQuestsAffected>
+  <DeleteFaction>Delete Faction</DeleteFaction>
+  <DangerZone>Danger Zone</DangerZone>
+  <NoFactionInstanceToDelete>No faction instance to delete</NoFactionInstanceToDelete>
+  <FactionDeleted>Faction '{0}' has been deleted.</FactionDeleted>
+  <FactionDeleteFailed>Failed to delete faction. Check the log.</FactionDeleteFailed>
+  <SelectFactionInstanceToDelete>Select {0} instance to delete</SelectFactionInstanceToDelete>
+  <SelectInstance>Please select an instance</SelectInstance>
+  <Next>Next</Next>
+  <Settlements>Settlements</Settlements>
+  <UnknownLocation>Unknown Location</UnknownLocation>
+  <PlayerRelationSettings>Player Relation Settings</PlayerRelationSettings>
+  <RelationAlly>Ally</RelationAlly>
+  <RelationNeutral>Neutral</RelationNeutral>
+  <RelationHostile>Hostile</RelationHostile>
+  <RelationCurrent>Current: {0}</RelationCurrent>
+  <RelationDefault>Use game default relation</RelationDefault>
+
+  <!-- First Time Save Prompt -->
+  <FGC_FirstTimePrompt_Title>Choose Faction Gear Preset</FGC_FirstTimePrompt_Title>
+  <FGC_FirstTimePrompt_Description>You have saved faction gear presets. Which preset would you like to use for this save?\n\nYou can change this later in the Mod settings.</FGC_FirstTimePrompt_Description>
+  <FGC_FirstTimePrompt_VanillaOption>Use Vanilla Settings (not recommended for modification)</FGC_FirstTimePrompt_VanillaOption>
+  <FGC_FirstTimePrompt_UseVanilla>Use Vanilla</FGC_FirstTimePrompt_UseVanilla>
+  <FGC_FirstTimePrompt_ApplyPreset>Apply Preset</FGC_FirstTimePrompt_ApplyPreset>
+  <FGC_FirstTimePrompt_DecideLater>Decide Later</FGC_FirstTimePrompt_DecideLater>
+  <FGC_FirstTimePrompt_DontAskAgain>Don't ask again</FGC_FirstTimePrompt_DontAskAgain>
+  <FGC_Preset_NoDescription>No description</FGC_Preset_NoDescription>
+  <FGC_Factions_Label>factions</FGC_Factions_Label>
+  <FGC_Message_PresetApplied>Preset "{0}" has been applied to current save.</FGC_Message_PresetApplied>
+  <FGC_Message_UsingVanilla>Current save is using vanilla faction settings.</FGC_Message_UsingVanilla>
+  <NoPresetEditingDisabledTooltip>Please create or load a preset first to start editing</NoPresetEditingDisabledTooltip>
+  <NoPresetCannotSave>Please create or load a preset first to save</NoPresetCannotSave>
+
+  <!-- PawnGroupKind translations -->
+  <PawnGroupKind_Combat>Combat</PawnGroupKind_Combat>
+  <PawnGroupKind_Trader>Trader</PawnGroupKind_Trader>
+  <PawnGroupKind_Settlement>Settlement</PawnGroupKind_Settlement>
+  <PawnGroupKind_Peaceful>Peaceful</PawnGroupKind_Peaceful>
+  <PawnGroupKind_FactionBase>Faction Base</PawnGroupKind_FactionBase>
+  <PawnGroupKind_Settlement_Remote>Remote Settlement</PawnGroupKind_Settlement_Remote>
+  <PawnGroupKind_WorkSite>Work Site</PawnGroupKind_WorkSite>
+  <PawnGroupKind_Refugee>Refugee</PawnGroupKind_Refugee>
+  <PawnGroupKind_Beggar>Beggar</PawnGroupKind_Beggar>
+  <PawnGroupKind_Pilgrims>Pilgrims</PawnGroupKind_Pilgrims>
+  <PawnGroupKind_Hunters>Hunters</PawnGroupKind_Hunters>
+  <PawnGroupKind_Loggers>Loggers</PawnGroupKind_Loggers>
+  <PawnGroupKind_Miners>Miners</PawnGroupKind_Miners>
+  <PawnGroupKind_Farmers>Farmers</PawnGroupKind_Farmers>
+  <PawnGroupKind_Kidnappers>Kidnappers</PawnGroupKind_Kidnappers>
+  <PawnGroupKind_Villagers>Villagers</PawnGroupKind_Villagers>
+  <PawnGroupKind_Junkyard>Junkyard</PawnGroupKind_Junkyard>
+
+  <!-- Wiki -->
+  <WikiTooltip>Open Wiki help documentation</WikiTooltip>
+  <WikiMascotTip>Slipin' Coati - Click to view on Steam Workshop</WikiMascotTip>
+  <WikiTab_Principles>Principles</WikiTab_Principles>
+  <WikiTab_Terminology>Terminology</WikiTab_Terminology>
+  <WikiTab_Workflow>Workflow</WikiTab_Workflow>
+  <WikiTab_Notes>Notes</WikiTab_Notes>
+  <Wiki_Principles_Content>[Core Principles]
+
+This mod uses Harmony's Postfix patch to intercept the PawnGenerator.GeneratePawn method, intervening immediately after the game generates a pawn to apply custom gear configurations.
+
+[Technical Implementation]
+
+• Interception Timing: Harmony's Postfix patch triggers immediately after the vanilla GeneratePawn method completes
+• Override Logic: The mod clears vanilla-generated gear based on configuration and applies custom settings
+• Scope: Only affects newly generated pawns (new raids, caravans, reinforcements, settlement defenders)
+• Data Persistence: All configurations are saved in the save file's game component and don't transfer between saves
+
+[Gear Pool System]
+
+Each pawn kind has a set of gear tags that the game uses to select equipment from the item library. Gear tags determine which items can be used by that pawn kind.
+
+• Simple Mode: Adjust weights for different categories (weapons/armor/clothing) to influence random probability
+• Advanced Mode: Directly specify specific items, bypassing the random pool
+• Weight Mechanics: RimWorld's weights are "selection weights" rather than "guaranteed picks" - higher weight means higher probability but not 100%
+
+[Budget Limits]
+
+Each pawn kind has preset apparel budget (ApparelMoney) and weapon budget (WeaponMoney). The system decides whether to generate an item based on these budgets.
+
+• Default Behavior: Items exceeding budget are skipped
+• ForceIgnore Option: Ignores budget limits and forces all configured gear (may create "god-tier" characters)
+• Recommendation: Keep budget limits for normal gameplay; enable ForceIgnore for creative mode or testing
+
+[Body Part Conflicts]
+
+RimWorld's apparel system is based on body part coverage - only one apparel item can cover the same body part.
+
+• Detection Mechanism: Uses ApparelUtility.HasPartsToWear to check if body parts are occupied
+• Typical Conflicts: Two bulletproof vests cannot be worn simultaneously
+• Resolution: Enabling ForceIgnore attempts to force override conflicting gear
+
+[Advanced Mode Details]
+
+Advanced mode provides fine-grained control:
+
+1. Specific Items
+   Abandon random pools and directly specify equipment. The system strictly follows configuration without randomness.
+
+2. Material Override
+   Force equipment to use specific materials like steel, plasteel, devilstrand, etc. Leaving empty uses game defaults.
+
+3. Quality Override
+   Set equipment quality range from awful to legendary. Quality directly affects stats and market value.
+
+4. Color Customization
+   Use the color picker to customize apparel colors, creating unified faction visual styles. Colors affect textile display.
+
+5. Style Override
+   Supports Ideology DLC style overrides, allowing specific religious/ideological apparel styles.
+
+6. Selection Mode
+   • AlwaysTake: Equipment always appears on the character
+   • RandomChance: Randomly decides based on set probability
+   • FromPool: Randomly selects one from specified item pool
+
+7. Forced Hediffs
+   Force-add health states to generated units like bionic limbs, implants, addictions, diseases, etc.
+
+8. Item Pool System (Pool)
+   Group items into 4 different pools, each with independent weights. The system randomly draws from pools based on weights.</Wiki_Principles_Content>
+  <Wiki_Terminology_Content>[Core Concepts]
+
+PawnKind
+Definition: A pawn kind definition describing a character type (e.g., Pirate Gunner, Tribal Warrior).
+Layman's Terms: Think of it as a "class" or "template" - each PawnKind determines base stats, gear preferences, skill levels, etc.
+
+Faction
+Definition: A faction consisting of multiple pawn kinds.
+Layman's Terms: The various factions in the game like pirates, tribals, empire, player colony. Each has diplomatic relations, tech levels, and pawn kind compositions.
+
+[Gear-Related Terms]
+
+Gear Tag
+Definition: Equipment tags used to mark which items can be used by which pawn kinds.
+Layman's Terms: Like product category tags such as "military", "tribal", "noble". Pawn kinds use these tags to determine available equipment.
+
+ApparelMoney (Apparel Budget)
+Definition: Maximum silver value a pawn kind can spend on apparel when generating.
+Layman's Terms: The character's "shopping budget" - items exceeding budget won't be purchased/generated.
+
+WeaponMoney (Weapon Budget)
+Definition: Maximum silver value a pawn kind can spend on weapons when generating.
+Layman's Terms: Same as above but specifically for weapons.
+
+[Selection Mode Terms]
+
+Selection Mode
+Definition: Rules determining how gear is selected.
+
+• AlwaysTake
+  Definition: Equipment always appears on the character.
+  Layman's Terms: 100% generation, no randomness.
+
+• RandomChance
+  Definition: Randomly decides based on set probability.
+  Layman's Terms: Roll the dice - 50% chance is like flipping a coin.
+
+• FromPool
+  Definition: Randomly selects one from specified item pool (Pool 1-4).
+  Layman's Terms: Draw one from a preset "lottery pool".
+
+[Advanced Settings Terms]
+
+Force Ignore
+Definition: Force ignore budget limits and body part conflicts.
+Layman's Terms: Ignore all rules and force all configured gear. May create "god-tier" characters but can cause issues.
+
+Force Naked
+Definition: Strip all apparel when generating.
+Layman's Terms: Generate the character naked, then only equip what you specify.
+
+Force Only Selected
+Definition: All vanilla/existing gear is stripped before applying custom gear.
+Layman's Terms: Strip first, then equip only what you specified - prevents vanilla/custom gear mixing.
+
+Biocode
+Definition: Biocoded weapons bound to specific characters.
+Layman's Terms: Weapons have a "DNA lock" - only the specific character can use them, others get mood debuffs.
+
+[Item Property Terms]
+
+Material
+Definition: The crafting material of equipment.
+Common Materials: Cloth, leather, steel, plasteel, uranium, devilstrand, gold, etc.
+Effect: Material determines protection values, durability, weight, and appearance.
+
+Quality
+Definition: Equipment quality level.
+Range: Awful → Poor → Normal → Good → Excellent → Masterwork → Legendary
+Effect: Quality directly affects equipment stats and market value. Legendary quality can be 2-3x better than awful.
+
+Stuff (Material Items)
+Definition: Material items that can be used to craft equipment.
+Layman's Terms: Cloth for clothing, metal plates for armor, etc.
+
+[Health State Terms]
+
+Hediff (Health State)
+Definition: Any health-related state on a character.
+Categories:
+• Implants: Bionic limbs, organ replacements
+• Addictions: Addictions, tolerances
+• Diseases: Infections, plagues, cancers
+• Injuries: Cuts, burns, bruises
+• Other: Pregnancy, age-related degradation, etc.
+
+Severity
+Definition: Intensity level of a Hediff.
+Effect: Disease severity determines symptom severity, addiction severity determines effect strength.
+
+[Pawn Group Terms]
+
+PawnGroupKind (Group Type)
+Definition: Determines the purpose of this group in the game.
+
+• Combat: For raids, sieges, and other combat scenarios
+• Trader: For caravan generation, must include traders
+• Settlement: For faction settlement defenders
+• Peaceful: For peaceful visitors, travelers
+
+Commonality (Spawn Weight)
+Definition: Relative probability of this group being selected.
+Layman's Terms: Higher weight means this group appears more frequently.
+
+Points
+Definition: Limits the maximum combat power points of this group.
+Layman's Terms: Controls group strength - higher points allow stronger characters.
+
+[Other Terms]
+
+DefName (Definition Name)
+Definition: Unique identifier used internally by the game.
+Layman's Terms: Like an ID number - each Def has a unique string like "Pirate", "TribalWarrior".
+
+TechLevel (Tech Level)
+Definition: Technology level of items or factions.
+Levels: Neolithic → Medieval → Industrial → Spacer → Ultra
+Effect: Determines which equipment can be used - high-tech gear won't appear in low-tech factions.
+
+Xenotype (Xenotype)
+Definition: Genetically modified human subspecies introduced by Biotech DLC.
+Examples: Sanguophages, pigskins, mole people, etc. Each has unique genetic traits.</Wiki_Terminology_Content>
+  <Wiki_Workflow_Content>[Quick Start]
+
+This chapter guides you from zero to using the mod, covering the complete workflow from creating presets to exporting and sharing.
+
+[Step 1: Create Preset]
+
+Presets are the basic containers for saving configurations. All gear configurations must be saved in a preset.
+
+Steps:
+1. Open Mod Settings (Main Menu → Options → Mod Settings → Faction Gear Customizer)
+2. Click "Preset Manager" button
+3. Click "Create New Preset"
+4. Enter preset name (e.g., "My Custom Configuration")
+5. Optional: Add description for future identification
+
+Tip: When using for the first time, create a "Backup Preset" to save vanilla settings for recovery.
+
+[Step 2: Select Faction]
+
+The left list shows all available factions.
+
+• Faction Categories: Humanlike factions, animal factions, mechanoid factions, others
+• Color Coding: Gray indicates faction doesn't exist in current game
+• Search: Use search box to quickly locate factions
+
+Action: Click faction name to expand and view all pawn kinds under that faction.
+
+[Step 3: Select Pawn Kind]
+
+The pawn kind list shows all PawnKinds under the selected faction.
+
+• Icon: Shows default appearance of this pawn kind
+• Name: Display name of the pawn kind
+• DefName: Internal identifier
+
+Action: Click pawn kind name to enter edit interface.
+
+[Step 4: Configure Gear - Simple Mode]
+
+Simple mode is suitable for quick adjustments through the weight system to influence random probability.
+
+Interface:
+• Weapons: Ranged weapons, melee weapons
+• Armor: Helmets, bulletproof vests and other protective gear
+• Clothing: Shirts, pants, coats, etc.
+• Others: Accessories, belts, etc.
+
+How to:
+1. Click "Add" button to open item selector
+2. Check items you want this pawn kind to use
+3. Adjust slider to set weight (0-100)
+4. Higher weight means higher probability of being selected
+
+Budget Settings:
+• Drag budget slider to adjust total budget
+• Low budget may prevent some gear from generating
+• Recommend setting based on faction tech level
+
+[Step 5: Configure Gear - Advanced Mode]
+
+Advanced mode provides fine-grained control for players with specific needs.
+
+Switch: Click "Simple/Advanced" button at top
+
+Advanced Mode Features:
+
+1. Specific Items
+   • Click "Add Weapon" or "Add Apparel"
+   • Search and select specific items in the selector
+   • Can add multiple items to form a list
+
+2. Set Item Properties
+   Click "Edit" icon on right side of item:
+   • Material: Force specific material (empty for random)
+   • Quality: Set quality range (e.g., Good-Excellent)
+   • Color: Use color picker to customize
+   • Selection Mode: AlwaysTake/RandomChance/FromPool
+
+3. Configure Item Pools
+   • Pool 1-4: Four independent item pools
+   • Each pool can contain multiple items
+   • Set pool weights to affect draw probability
+
+4. Add Hediffs (Health States)
+   • Click "Add Forced Hediff"
+   • Select Hediff to add (e.g., bionic leg, addiction)
+   • Set Severity
+   • Set Chance
+
+5. Advanced Options
+   • ForceNaked: Generate naked
+   • ForceOnlySelected: Only use specified gear
+   • ForceIgnore: Ignore budget and conflict limits
+
+[Step 6: Real-time Preview]
+
+Preview lets you see modification effects before saving.
+
+How to:
+1. Click "Preview" button to open preview window
+2. Window shows generated character appearance and gear list
+3. Click "Rebuild" to refresh preview
+4. Adjust seed value to see different random results
+
+Note: Preview only works in-game, limited functionality in main menu.
+
+[Step 7: Batch Operations]
+
+Batch apply lets you quickly apply current configuration to multiple pawn kinds.
+
+How to:
+1. Click "Batch Apply" button
+2. Select target pawn kinds in popup window
+3. Can "Select All" or check individually
+4. Click confirm to apply
+
+Use Cases:
+• Unify uniform style across entire faction
+• Quickly configure similar pawn kinds
+
+[Step 8: Save Changes]
+
+All modifications must be saved to take effect.
+
+How to:
+1. Click "Save changes to current game" button
+2. Changes take effect immediately, no restart needed
+3. Newly generated characters will use new configuration
+
+Important Notes:
+• Modifications only affect newly generated characters
+• Existing characters are not affected
+• Recommend previewing before saving
+
+[Step 9: Preset Management]
+
+Presets can be exported for sharing or imported for use.
+
+Export Preset:
+1. Select preset to share in Preset Manager
+2. Click "Export" button
+3. Preset data copied to clipboard
+4. Send string to friends or post to community
+
+Import Preset:
+1. Click "Import from Clipboard"
+2. Paste preset string
+3. Confirm import
+
+Notes:
+• Imported presets may depend on specific mods
+• Missing mods will show items as missing
+• Recommend checking compatibility after import
+
+[Step 10: Pawn Group Editing (Advanced)]
+
+Pawn groups determine how factions generate various unit combinations in the game.
+
+Access:
+1. Select faction then click "Pawn Groups" tab
+2. View all group configurations for this faction
+
+Group Types:
+• Combat: Combat groups for raids
+• Trader: Caravan groups, must include traders
+• Settlement: Settlement defenders
+• Peaceful: Peaceful visitors
+
+Edit Points:
+• Commonality: Higher weight means appears more frequently
+• Points: Controls group strength
+• Options: General combat personnel
+• Traders/Carriers/Guards: Specific roles
+
+Warnings:
+• Deleting all Combat groups prevents raid generation
+• Trader groups without traders cause caravan generation failures
+
+[Complete Workflow Example]
+
+Scenario: Make all Empire soldiers wear red power armor
+
+1. Create preset "Empire Red Legion"
+2. Select "Empire" faction
+3. Select "Empire Soldier" pawn kind
+4. Switch to Advanced Mode
+5. Add power armor, set color to red
+6. Add power helmet, set color to red
+7. Set selection mode to AlwaysTake
+8. Click Batch Apply, select all Empire combat pawn kinds
+9. Preview to confirm effect
+10. Save changes
+11. Export preset to share with friends</Wiki_Workflow_Content>
+  <Wiki_Notes_Content>[Important Information]
+
+This chapter covers essential information for using this mod, including effect mechanisms, compatibility, common issues and solutions.
+
+[Modification Effect Mechanism]
+
+When Changes Take Effect:
+• Changes take effect immediately after saving, no restart needed
+• Only affects newly generated characters (new raids, caravans, settlement defenders, etc.)
+• Characters already on the map are not affected
+• Units already generated in ongoing quests won't change
+
+When Changes Don't Take Effect:
+• Existing characters and animals
+• Player colony's starting characters (unless regenerated)
+• Some special event-generated units (depends on event implementation)
+
+How to Verify Effect:
+• Use preview function to see generation results
+• Wait for new raids/caravans and observe gear
+• Use dev mode to force generate for testing
+
+[Preset Management Notes]
+
+Role of Presets:
+• Presets are containers for configurations - all modifications are saved in the active preset
+• Switching presets loads different configuration sets
+• Presets don't affect each other
+
+Important Reminders:
+• Deleting a preset will NOT rollback changes already saved to the game
+• Applied configurations persist even if the preset is deleted
+• To restore vanilla, you must manually reset or load a "vanilla" preset
+• Recommend regularly exporting presets for backup
+
+Save Independence:
+• Each save has independent configurations
+• Configurations don't auto-sync when switching saves
+• First time entering a save will prompt to select a preset
+
+[Common Issues & Solutions]
+
+Issue 1: Gear not generating as expected
+Possible Causes:
+• Budget limits: Gear value exceeds pawn kind budget
+• Part conflicts: Body parts already occupied by other gear
+• Tech limits: Gear tech level higher than faction
+• Race limits: Some races cannot wear specific gear
+
+Solutions:
+• Enable ForceIgnore option
+• Check and adjust budget settings
+• Confirm gear matches pawn kind tech level
+• Check race apparel compatibility
+
+Issue 2: Some items cannot be selected
+Possible Causes:
+• Items disabled by other mods
+• Items require specific DLC (Ideology, Biotech)
+• Item tech level too high
+• Items are quest/event exclusive
+
+Solutions:
+• Check mod load order
+• Confirm required DLCs are installed
+• Use search function to confirm item exists
+
+Issue 3: Game lag or crashes
+Possible Causes:
+• Large number of configured items causing complex generation calculations
+• Conflicts with other gear modification mods
+• Circular references or invalid configurations
+
+Solutions:
+• Reduce number of gear items per pawn kind
+• Check mod compatibility
+• Reset configuration and troubleshoot step by step
+
+Issue 4: Color/style not applying
+Possible Causes:
+• Some items don't support dyeing (specific materials)
+• Ideology styles require corresponding DLC
+• Style incompatible with item
+
+Solutions:
+• Confirm item supports dyeing
+• Check DLC installation status
+• Try other style options
+
+[Advanced Option Warnings]
+
+ForceIgnore:
+• Completely ignores budget limits
+• Attempts to force override body part conflicts
+• May create "god-tier" characters, breaking game balance
+• Recommend only for creative mode or testing
+
+ForceNaked:
+• Strips all vanilla apparel
+• If subsequent configuration is incomplete, character may actually be naked
+• Ensure sufficient alternative gear is configured
+
+ForceOnlySelected:
+• Removes all vanilla gear
+• If custom list is empty, character will have no gear
+• Recommend enabling for total control
+
+[Compatibility Notes]
+
+Fully Compatible:
+• Combat Extended (CE): Ammo system works normally
+• Humanoid Alien Races: Alien race gear works normally
+• Vanilla Expanded series: All VE gear available
+• Ideology DLC: Style system fully supported
+• Biotech DLC: Gene and xenotype system supported
+
+Known Limitations:
+• Some mods that completely overhaul gear systems may conflict
+• Dynamic gear generation mods may produce unexpected results
+• Other mods that modify PawnKindDef may overwrite each other
+
+Recommended Mod Load Order:
+1. Harmony
+2. Core
+3. Other large mods (like CE)
+4. Faction Gear Customizer
+5. Small patch mods
+
+[Performance Optimization Tips]
+
+Avoid Performance Issues:
+• Don't make gear lists too long per pawn kind (recommend &lt;50 items)
+• Avoid complex rules for large numbers of pawn kinds simultaneously
+• Use item pools reasonably instead of specifying each item individually
+• Regularly clean up unused presets
+
+Large Mod Pack Users:
+• First load may take longer to build caches
+• Item selector may have brief delay when opening
+• Previewing many pawn kinds may lag
+
+[Backup & Recovery]
+
+Recommended Backup Strategy:
+1. Export "vanilla configuration" preset before first use
+2. Export current preset before major modifications
+3. Regularly backup entire save files
+4. Test compatibility before sharing presets
+
+Recovery Methods:
+• Load backup preset
+• Reset specific faction/pawn kind
+• Complete reset of all configurations
+
+[Multiplayer & Sharing]
+
+Sharing Presets:
+• Exported preset strings contain all configurations
+• Recipients need same mod environment
+• Recommend sharing mod list together
+
+Multiplayer:
+• Host configuration determines generation rules
+• Clients don't need this mod (host only)
+• Ensure all players use same configuration version
+
+[Developer & Debug]
+
+Dev Mode Features:
+• Force generate specific pawn kinds for testing
+• View detailed generation logs
+• Modify configuration in real-time and observe effects
+
+Debug Tips:
+• Use preview function for quick verification
+• Increase complexity gradually to troubleshoot
+• Check game logs for error information
+
+[Best Practices]
+
+Beginner Recommendations:
+1. Start with simple mode to familiarize with weight system
+2. Modify one pawn kind first, observe effects
+3. Create backup preset before large-scale modifications
+4. Preview frequently to verify configuration
+
+Advanced Tips:
+1. Use item pools to create random but themed configurations
+2. Combine with Hediffs to create unique pawn kinds (e.g., all bionic)
+3. Use batch apply to quickly unify faction style
+4. Create different presets for different game stages
+
+Creative Playstyles:
+• "Steel Legion" - All power armor
+• "Uniform Faction" - Unified apparel colors
+• "Special Forces" - All carrying specific weapons
+• "Future Warriors" - All bionic enhanced
+
+[Technical Support]
+
+Troubleshooting Steps:
+1. Confirm mod is latest version
+2. Check if required mods are missing
+3. Try resetting configuration to see if issue disappears
+4. Check game logs for error information
+5. Submit issue report on Steam Workshop or GitHub
+
+[Support Channels]
+
+Click the links below for help or to report issues:
+
+• Steam Workshop Page
+https://steamcommunity.com/sharedfiles/filedetails/?id=3670833973
+
+• GitHub Repository
+https://github.com/yancy22737-sudo/FactionGearCustomizer
+
+• QQ Group (Player community and technical discussion)
+Group ID: 984338429</Wiki_Notes_Content>
+</LanguageData>

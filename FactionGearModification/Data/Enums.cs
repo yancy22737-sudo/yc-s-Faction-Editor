@@ -22,6 +22,18 @@ namespace FactionGearCustomizer
         General, 
         Apparel, 
         Weapons, 
-        Hediffs 
+        Hediffs,
+        Items,
+        Groups
+    }
+
+    public enum PawnGroupType
+    {
+        Raid,
+        Defense,
+        Trading,
+        Visitor,
+        Aid,
+        Attack
     }
 }

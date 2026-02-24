@@ -85,23 +85,22 @@ namespace FactionGearCustomizer
             factionGearData.Clear();
             foreach (var faction in currentSettingsData)
             {
-                // 只保存有修改兵种的派系
+                // Check if faction itself is modified OR if any kinds are modified
                 var modifiedKinds = faction.kindGearData.Where(k => k.isModified).ToList();
-                if (modifiedKinds.Any())
+                
+                if (faction.isModified || modifiedKinds.Any())
                 {
                     // 创建深拷贝
                     FactionGearData newFactionData = new FactionGearData(faction.factionDefName);
+                    newFactionData.isModified = faction.isModified;
+                    newFactionData.Label = faction.Label;
+                    newFactionData.Description = faction.Description;
+                    newFactionData.IconPath = faction.IconPath;
+                    newFactionData.Color = faction.Color;
+
                     foreach (var kind in modifiedKinds)
                     {
-                        KindGearData newKindData = new KindGearData(kind.kindDefName)
-                        {
-                            isModified = true,
-                            weapons = kind.weapons.Select(g => new GearItem(g.thingDefName, g.weight)).ToList(),
-                            meleeWeapons = kind.meleeWeapons.Select(g => new GearItem(g.thingDefName, g.weight)).ToList(),
-                            armors = kind.armors.Select(g => new GearItem(g.thingDefName, g.weight)).ToList(),
-                            apparel = kind.apparel.Select(g => new GearItem(g.thingDefName, g.weight)).ToList(),
-                            others = kind.others.Select(g => new GearItem(g.thingDefName, g.weight)).ToList()
-                        };
+                        KindGearData newKindData = kind.DeepCopy();
                         newFactionData.kindGearData.Add(newKindData);
                     }
                     factionGearData.Add(newFactionData);

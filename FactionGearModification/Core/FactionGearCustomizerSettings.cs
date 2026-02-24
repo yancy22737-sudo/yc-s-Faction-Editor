@@ -6,6 +6,18 @@ namespace FactionGearCustomizer
 {
     public class FactionGearCustomizerSettings : ModSettings
     {
+        public class CustomFactionData : IExposable
+        {
+            public string defName;
+            public string templateDefName;
+
+            public void ExposeData()
+            {
+                Scribe_Values.Look(ref defName, "defName");
+                Scribe_Values.Look(ref templateDefName, "templateDefName");
+            }
+        }
+
         // 版本控制
         private int version = 2;
         public List<FactionGearData> factionGearData = new List<FactionGearData>();
@@ -13,30 +25,41 @@ namespace FactionGearCustomizer
         
         // 优化查询效率的字典索引
         [Unsaved]
-        private Dictionary<string, FactionGearData> factionGearDataDict;
+        internal Dictionary<string, FactionGearData> factionGearDataDict;
 
         // [新增] 强制忽略原版限制的全局开关
         public bool forceIgnoreRestrictions = false;
 
-        // [New] Current active preset name
-        public string currentPresetName = null;
-
         // [New] Show in main tab toggle
         public bool ShowInMainTab = true;
 
+        // [New] Show hidden/non-human factions
+        public bool ShowHiddenFactions = false;
+
         // [New] Dismissed dialogs
         private HashSet<string> dismissedDialogs = new HashSet<string>();
+
+        // [New] Suppress delete group confirmation
+        public bool suppressDeleteGroupConfirmation = false;
+
+        // [New] Current active preset name
+        public string currentPresetName = null;
 
         public override void ExposeData()
         {
             base.ExposeData();
             Scribe_Values.Look(ref version, "version", 2);
             Scribe_Values.Look(ref forceIgnoreRestrictions, "forceIgnoreRestrictions", false);
-            Scribe_Values.Look(ref currentPresetName, "currentPresetName");
             Scribe_Values.Look(ref ShowInMainTab, "ShowInMainTab", true);
+            Scribe_Values.Look(ref ShowHiddenFactions, "ShowHiddenFactions", false);
+            Scribe_Values.Look(ref suppressDeleteGroupConfirmation, "suppressDeleteGroupConfirmation", false);
             Scribe_Collections.Look(ref dismissedDialogs, "dismissedDialogs", LookMode.Value);
             if (dismissedDialogs == null) dismissedDialogs = new HashSet<string>();
+            Scribe_Values.Look(ref currentPresetName, "currentPresetName", null);
             
+            // Scribe_Collections.Look(ref customFactions, "customFactions", LookMode.Deep);
+            // if (customFactions == null) customFactions = new List<CustomFactionData>();
+
             // 处理不同版本的数据结构
             if (version == 1)
             {
@@ -85,8 +108,11 @@ namespace FactionGearCustomizer
                 factionGearDataDict.Clear();
             }
             FactionGearManager.LoadDefaultPresets();
-            currentPresetName = null;
             Write();
+
+            // 清除所有缓存和会话状态，确保UI正确刷新
+            EditorSession.ResetSession();
+            UndoManager.Clear();
         }
 
         public FactionGearData GetOrCreateFactionData(string factionDefName)
@@ -129,7 +155,6 @@ namespace FactionGearCustomizer
             var copy = new FactionGearCustomizerSettings();
             copy.version = this.version;
             copy.forceIgnoreRestrictions = this.forceIgnoreRestrictions;
-            copy.currentPresetName = this.currentPresetName;
             copy.ShowInMainTab = this.ShowInMainTab;
             foreach (var faction in this.factionGearData)
             {
@@ -148,7 +173,6 @@ namespace FactionGearCustomizer
         {
             this.version = source.version;
             this.forceIgnoreRestrictions = source.forceIgnoreRestrictions;
-            this.currentPresetName = source.currentPresetName;
             this.ShowInMainTab = source.ShowInMainTab;
             this.factionGearData.Clear();
             foreach (var faction in source.factionGearData)

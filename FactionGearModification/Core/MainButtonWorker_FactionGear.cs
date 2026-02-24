@@ -1,6 +1,7 @@
 using RimWorld;
 using Verse;
 using FactionGearCustomizer.UI;
+using UnityEngine;
 
 namespace FactionGearCustomizer
 {
@@ -16,7 +17,7 @@ namespace FactionGearCustomizer
 
         public override void Activate()
         {
-            Find.WindowStack.Add(new FactionGearMainTabWindow());
+            Find.WindowStack.Add(new FactionGearSettingsWindow());
         }
     }
 }

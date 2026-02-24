@@ -54,15 +54,15 @@ namespace FactionGearCustomizer.UI
             Rect btnRect = new Rect(0f, y, inRect.width, 30f);
             float btnWidth = (btnRect.width - 10f) / 3f;
 
-            if (Widgets.ButtonText(new Rect(btnRect.x, btnRect.y, btnWidth, btnRect.height), "All"))
+            if (Widgets.ButtonText(new Rect(btnRect.x, btnRect.y, btnWidth, btnRect.height), LanguageManager.Get("All")))
             {
                 foreach (var mod in filteredMods) tempSelectedMods.Add(mod);
             }
-            if (Widgets.ButtonText(new Rect(btnRect.x + btnWidth + 5f, btnRect.y, btnWidth, btnRect.height), "None"))
+            if (Widgets.ButtonText(new Rect(btnRect.x + btnWidth + 5f, btnRect.y, btnWidth, btnRect.height), LanguageManager.Get("None")))
             {
                 foreach (var mod in filteredMods) tempSelectedMods.Remove(mod);
             }
-            if (Widgets.ButtonText(new Rect(btnRect.x + (btnWidth + 5f) * 2, btnRect.y, btnWidth, btnRect.height), "Invert"))
+            if (Widgets.ButtonText(new Rect(btnRect.x + (btnWidth + 5f) * 2, btnRect.y, btnWidth, btnRect.height), LanguageManager.Get("Invert")))
             {
                 foreach (var mod in filteredMods)
                 {
@@ -107,13 +107,13 @@ namespace FactionGearCustomizer.UI
             float spacing = 20f;
             float startX = (inRect.width - (buttonWidth * 2 + spacing)) / 2f;
 
-            if (Widgets.ButtonText(new Rect(startX, bottomY, buttonWidth, 30f), "Apply"))
+            if (Widgets.ButtonText(new Rect(startX, bottomY, buttonWidth, 30f), LanguageManager.Get("Apply")))
             {
                 ApplyChanges();
                 Close();
             }
 
-            if (Widgets.ButtonText(new Rect(startX + buttonWidth + spacing, bottomY, buttonWidth, 30f), "Cancel"))
+            if (Widgets.ButtonText(new Rect(startX + buttonWidth + spacing, bottomY, buttonWidth, 30f), LanguageManager.Get("Cancel")))
             {
                 Close();
             }

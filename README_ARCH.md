@@ -69,6 +69,7 @@
 | `FactionGearManager.cs` | **核心管理器**，负责：从DefDatabase加载装备数据、计算武器DPS/射程/伤害、获取护甲评级、管理装备分类缓存（静态缓存提升性能）、提供Mod来源分组成员功能 |
 | `GearApplier.cs` | 装备应用器，负责将配置应用到游戏中的Pawn，生成实际的装备 |
 | `UndoManager.cs` | 撤销管理器，记录并恢复兵种装备数据的修改历史，支持撤销/重做功能 |
+| `FactionSpawnManager.cs` | 派系生成与殖民地管理，负责派系实例生成、世界地图定居点生成、瓦片查找验证、WorldTargeter目标选择等功能 |
 
 ---
 
@@ -90,24 +91,37 @@
 
 ```
 UI/
+├── Dialogs/                   # 专用对话框（局部功能弹窗）
+│   ├── Dialog_ConfirmDeleteGroup.cs  # 删除群组确认弹窗
+│   └── Dialog_PawnGroupGenerationPreview.cs # 派系群组生成预览弹窗（懒加载Pawn肖像）
 ├── Panels/                    # 可复用的UI面板组件
 │   ├── FactionListPanel.cs   # 阵营列表面板
 │   ├── KindListPanel.cs      # 兵种列表面板
 │   ├── GearEditPanel.cs      # 装备编辑面板（Simple/Advanced模式）
 │   └── ItemLibraryPanel.cs   # 物品库面板（筛选、排序、搜索）
+├── Pickers/                   # 可复用的选择器/筛选器组件
+│   └── ThingPickerFilterBar.cs # ThingDef 选择器筛选条（搜索/Mod/Tech/排序/范围）
 ├── State/                    # UI状态管理
-│   └── EditorSession.cs      # 编辑器会话状态（静态类，存储当前选中的阵营/兵种/筛选条件等）
+│   ├── EditorSession.cs      # 编辑器会话状态（静态类，存储当前选中的阵营/兵种/筛选条件等）
+│   └── PickerSession.cs      # 选择器会话状态（静态类，记忆各新增界面筛选条件）
 ├── Dialog_ConfirmWithCheckbox.cs  # 带复选框的确认对话框
+├── Dialog_ApparelPicker.cs   # 服装新增/选择弹窗（带筛选器）
+├── Dialog_HediffPicker.cs    # 状态新增/选择弹窗（带筛选器）
 ├── FactionDetailWindow.cs    # 阵营详情弹窗
 ├── FactionGearEditor.cs     # 编辑器主控制器（协调各面板布局）
-├── FactionGearMainTabWindow.cs  # 主Tab窗口
+├── FactionGearMainTabWindow.cs  # 主Tab窗口（已废弃，保留兼容性）
+├── FactionGearSettingsWindow.cs # 新版设置窗口（标准弹窗模式）
 ├── FactionGearPreviewWindow.cs  # 装备预览窗口（游戏内生成Pawn预览）
 ├── PresetManagerWindow.cs    # 预设管理窗口
 ├── TexCache.cs              # 纹理缓存（图标缓存优化性能）
 ├── Window_ColorPicker.cs    # 颜色选择器弹窗
 ├── Window_ModFilter.cs      # Mod筛选器弹窗
+├── Dialog_WeaponPicker.cs    # 武器新增/选择弹窗（带筛选器）
 └── WidgetsUtils.cs          # UI工具类，封装DrawTextureFitted等兼容性方法（集成智能反射兼容1.6）
 ```
+
+补充约定：
+- UI 窗口可能在主菜单/设置界面中打开（非 Playing 状态），此时不应调用 `Verse.Messages.Message`，应使用弹窗或日志作为提示渠道（例如 PresetManagerWindow 的 Notify 策略）。
 
 #### 2.5.2 面板职责说明
 
@@ -131,6 +145,7 @@ UI/
 | 文件 | 职责描述 |
 |------|----------|
 | `Patch_GeneratePawn.cs` | 补丁文件，拦截游戏生成Pawn的逻辑，在生成装备前应用本模组的自定义配置 |
+| `Patch_FloatMenuMakerWorld.cs` | 补丁文件，拦截世界地图右键菜单生成逻辑，添加派系殖民地生成选项 |
 
 ---
 
@@ -176,23 +191,7 @@ Core (启动入口)
    - 图标缓存（`iconCache`）减少纹理加载开销
    - 字典索引（`kindGearDataDict`）加速数据查询
 5. **可维护性**：清晰的层次结构和命名规范，提高代码可读性
-
----
-
-## 五、更新日志
-
-- **v1.1.0** - 大版本更新：添加高级编辑器模式、基因支持和颜色选择器功能
-  - 新增高级编辑器模式：支持Simple/Advanced模式切换，Advanced模式提供精确的装备控制
-  - 新增多标签页界面：武器、护甲、物品、Hediff、基因等多个编辑标签
-  - 新增撤销/重做功能：通过UndoManager实现修改历史记录支持
-  - 新增颜色选择器：Window_ColorPicker支持自定义颜色配置
-  - 新增基因支持：ForcedHediff类支持强制健康状态配置
-  - 改进预设导入导出：优化PresetIOManager和数据结构
-  - 修复装备应用逻辑：GearApplier重构确保自定义装备正确生效
-  - UI优化：扩展编辑器界面，提升用户体验
-- **v1.0.22** - 优化 Hediff 卡片 UI 布局，增加 Severity 控制和详细信息展示区
-- **v1.0.7** - 修复预览卡片功能，解决 PortraitsCache 和 DrawWindowBackground 兼容性问题。
-
-
-
-
+6. **项目DLC功能与本体环境完全兼容**：
+    - 所有DLC相关功能均已正确使用 ModsConfig.*Active 进行条件保护，不会在本体不含DLC的测试环境中引发错误或异常。
+    - 数据持久化层也采用了安全的字符串引用方式，确保跨环境存档兼容性。
+  

@@ -1,3 +1,191 @@
+v1.2.2
+- Fix: 修复Wiki语言设置不生效问题（Wiki语言定义已添加到Language目录）
+- Add: Wiki UI美化：添加标题栏、分段着色显示、优化排版布局
+
+v1.2.1
+- Add: 主界面toolbar新增迷你Wiki按钮，包含工作原理、名词解释、典型工作流和注意事项四个标签页。
+- Add: 新增WikiWindow.cs实现Wiki窗口UI。
+- Add: 新增多语言支持（中英文）用于Wiki内容。
+
+v1.1.67
+- Optimize: 优化高级模式下物品卡片UI高度计算，改为根据实际内容动态计算高度，减少留白。
+- Optimize: ItemCardUI、ApparelCardUI、HediffCardUI 新增 GetCardHeight 静态方法，支持动态高度计算。
+- Fix: 删除错误的 GameComponents.xml 文件（GameComponentDef 不是有效的 Def 类型）。
+- Add: 新增 Patch_GameComponent.cs，使用 Harmony Patch 正确注册 FactionGearGameComponent。
+
+v1.1.66
+- Add: 新增功能：检测到当前无生效预设时自动清除所有配置文件，避免残留配置影响新游戏。
+
+v1.1.65
+- Change: 将"科技预算"改为"科技限制"，使用原版TechLevel枚举（原始/中世纪/工业/太空/超凡/远古）。
+- Add: 科技限制默认读取派系默认科技等级，可手动选择不同等级限制生成高于该等级的物品。
+- Add: 新增语言条目：TechLevelLimit。
+
+v1.1.64
+- Add: 添加异种人概率总和验证，当概率总和超过100%时阻止保存并提示用户。
+- Add: 新增语言条目：XenotypeChancesExceed100。
+
+v1.1.63
+- Fix: 修复"重置所有"后仍然能看到以前修改的派系数据的问题。现在在重置后会清除所有缓存和会话状态，确保UI正确刷新。
+
+v1.1.62
+- Add: 派系编辑菜单新增删除派系功能，可安全移除派系及其据点，包含二次确认界面。
+- Add: 新增语言条目：DeleteFactionTitle, DeleteFactionWarning, TargetFaction, SettlementsToRemove, PawnsToRemove, OtherEffects, FactionRelationsRemoved, ActiveQuestsAffected, DeleteFaction, DangerZone, NoFactionInstanceToDelete, FactionDeleted, FactionDeleteFailed, SelectFactionInstanceToDelete, SelectInstance, Next, Settlements, UnknownLocation。
+
+v1.1.61
+- Add: 派系编辑菜单新增玩家关系设置功能，允许玩家设定自身与派系的关系为结盟/中立/敌对。
+- Add: 新增语言条目：PlayerRelationSettings, RelationAlly, RelationNeutral, RelationHostile, RelationCurrent, RelationDefault。
+
+v1.1.60
+- Optimize: 预览窗口多预览模式改为分帧生成Pawn，避免打开时卡顿。
+- Optimize: Hediff卡片控件ID改为基于对象生成，降低控件ID冲突风险。
+- Refactor: 重构派系列表构建逻辑，消除重复代码并统一过滤/显示规则。
+- Optimize: 新增EditorSession.ResetSession，在游戏状态切换时自动重置会话状态。
+v1.1.59
+- Optimize: 优化 FactionGearManager.LoadDefaultPresets 为按需加载 (Lazy Loading)，仅在用户点击某个阵营时才加载该阵营的详细数据，提升启动性能。
+- Fix: 增强 GearApplier.ApplyCustomGear 的异常捕获 (try-catch)，防止 Patch 注入点报错打断 Pawn 生成流程。
+- Update: 移除 FactionGearManager.GetModGroup 相关功能及引用，简化代码。
+v1.1.58
+- Update: 将“服饰颜色”选项更名为“名称颜色”，并添加了相关说明提示。
+- Add: 在高级设置中新增“RimTalk联动”按钮（暂未开放，显示为开发中）。
+v1.1.57
+- Fix: 修复“在地图上选择”功能因调用旧方法而导致的 NullReferenceException。现在该功能使用新的 FactionSpawnWindow 逻辑。
+v1.1.56
+- Build: Release build.
+v1.1.55
+- Fix: Fixed TopBar not showing in MainTabWindow.
+v1.1.54
+- Add: 新增“在地图上选择”据点功能 (FactionSpawnWindow)，参考 WorldEdit 实现，支持在世界地图上连续点击生成据点。
+- Update: 替换原有的 WorldTargeter 选择方式，改为更直观的非模态窗口交互。
+v1.1.53
+- Fix: 修复 FactionSpawnManager 中切换 World 标签页时可能发生的 NullReferenceException，增加对 MainButtonDefOf.World.TabWindow 的空值检查和自动修复逻辑。
+v1.1.52
+- Fix: 修复 FactionSpawnManager.BeginTargetingForSettlement 中 World Tab 无法切换的问题，增加了回退机制（尝试使用 Inspect 窗口作为占位符，防止空指针）。
+- Fix: 修复 FactionSpawnManager.BeginTargetingForSettlement 中可能出现的 NullReferenceException，增加详细的调试日志和空值检查。
+- Fix: 修复 Dialog_PawnKindPicker 中访问 defaultFactionType 属性可能导致的编译错误。
+- Update: 派系编辑窗口 (FactionEditWindow) 移除选项卡设计，改为单页长滚动布局，集中展示设置、兵种列表和群组列表。
+v1.1.51
+- Update: 预览界面中，鼠标悬浮1秒后才显示悬浮信息卡 (装备栏)，避免快速移动鼠标时频繁弹出窗口。
+v1.1.50
+- Fix: 修复游戏外编辑器界面强制忽略选项重复显示的问题。
+- Update: Mod 选项页直接进入编辑器，不再需要点击 Open Editor。
+- Update: 底部主按钮点击后打开非全屏编辑器窗口。
+v1.1.49
+- Fix: 修复高级模式下添加武器时因消息类型为空导致的界面崩溃 (NullReferenceException)。
+- Fix: 优化默认武器添加逻辑，增加安全检查防止因 "Gun_AssaultRifle" 缺失导致的问题。
+v1.1.48
+- Fix: 修复主界面和编辑面板中 Reset 按钮重复显示的问题。
+- Add: 新增 CE 弹药口径筛选功能 (ItemLibrary)，支持按口径过滤远程武器。
+- Fix: 调整 Mod 加载顺序，确保在 Combat Extended 之后加载。
+v1.1.47
+- Fix: 修复了 Preset 加载时可能因语言文件加载失败导致的界面崩溃 (NullReferenceException)。
+- Fix: 恢复了点击 MainTab 直接打开编辑器的逻辑，不再弹出全屏设置窗口。
+v1.1.46
+- Add: 新增 Inventory (物品清单) 支持，允许配置药品、食物、工具等任意物品。
+- Add: 兼容 Combat Extended (CE)，支持自动添加武器弹药、显示物品体积 (Bulk) 和重量 (Mass)。
+- Add: 支持配置物品的堆叠数量范围 (Count Range)。
+v1.1.45
+- Update: 将底部按钮打开的界面从全屏 Tab 模式更改为标准 Mod 设置弹窗模式，提升用户体验。
+- Add: 新增 FactionGearSettingsWindow 类，实现标准的设置窗口逻辑（支持暂停游戏、居中显示、关闭确认等）。
+v1.1.44
+- Fix: 移除 KindListPanel 中非标准的手动滚轮处理代码，解决列表滑动条无法鼠标拖动的问题。
+v1.1.43
+- Fix: 删除 Patch_ModSettingsTitleIcon.cs，该补丁错误地将主界面识别为目标并强制绘制了标题和图标，导致顶部出现不可移除的标题栏。
+v1.1.42
+- Fix: 在 PreOpen 中强制清空 optionalTitle，防止 RimWorld 绘制原生窗口标题及关闭按钮。
+v1.1.41
+- Fix: 进一步强制主界面 WindowOnGUI 的绘制区域从屏幕顶部 (0,0) 开始，解决部分情况下 windowRect 偏移导致的顶部留白问题；同时减小内容边距。
+v1.1.40
+- Fix: 彻底移除主界面上方空白，重写 WindowOnGUI 接管绘制。
+- Fix: 移除 Mod 设置界面中重复的标题文本，优化 TopBarPanel 布局。
+v1.1.39
+- Build: Release build.
+v1.1.38
+- Fix: 最高优先级处理顶部留白：移除主界面自定义 TopBar，恢复游戏原生标题栏；将保存/预设/重置等按钮移动到编辑面板顶部，避免额外占用窗口顶部高度。
+v1.1.37
+- Fix: 彻底移除主界面窗口的原生标题栏与顶部留白：对 FactionGearMainTabWindow 接管 WindowOnGUI，绕过 GUI.Window 固定标题栏高度，改为 BeginGroup+自绘内容。
+v1.1.36
+- Fix: 增强主界面重复标题抑制的鲁棒性：将补丁前置设为 Priority.Last，并同时拦截 Window.InnerWindowOnGUI，降低被其他 Mod 覆盖导致的重复标题概率。
+v1.1.35
+- Fix: 彻底修复主界面重复标题问题。通过 Harmony Patch 拦截 Window.WindowOnGUI，强制禁用 FactionGearMainTabWindow 的系统默认标题绘制逻辑。
+v1.1.34
+- Fix: 增强 FactionGearMainTabWindow 的标题隐藏逻辑，在 PreOpen、PostOpen 和 DoWindowContents 中强制将 optionalTitle 设为空格，彻底解决重复标题问题。
+v1.1.33
+- Fix: 禁用 FactionGearMainTabWindow 的系统默认标题绘制，解决主界面顶部出现“巨大的重复标题”问题。
+v1.1.32
+- Fix: 彻底修复主界面重复标题问题，通过重写 Title 属性确保原生标题不被绘制。
+v1.1.31
+- Fix: 修复 FactionGearMainTabWindow 在某些情况下可能出现重复标题的问题。
+- Optimize: 重写 WindowOnGUI 方法，在绘制前清除 optionalTitle，确保界面整洁。
+v1.1.30
+- Update: 恢复主界面顶部 "FactionGearCustomizer" 标题显示，采用单行紧凑布局，消除顶部多余空白。
+v1.1.29
+- Update: 优化主界面顶部栏布局，精简按钮文本，修复UI重叠问题，并移除了顶部多余空白。
+v1.1.28
+- Update: 移除了主界面顶部的 "Faction Gear Customizer" 标题文本，优化空间利用。
+v1.1.27
+- Refactor: 重构 UI 结构，提取顶部工具栏为 TopBarPanel 组件，优化代码模块化。
+v1.1.26
+- Fix: 修复标题栏 Logo 坐标系错误导致飞到屏幕角落。
+- Update: 主界面标题行将 Logo 放到标题右侧，并移除顶部多余留空。
+v1.1.25
+- Fix: 调整设置窗口标题区域绘制，使 Logo 与标题在同一行显示。
+v1.1.24
+- Update: 优化派系设置界面，将派系图标和名称调整为同一行显示。
+v1.1.23
+- Update: 移除了 Mod 设置界面中重复的标题文本，优化了 UI 布局。
+v1.1.22
+- Fix: 修复随机生成据点时可能生成在海里（无效地形）的问题。
+v1.1.21
+- Update: Maintenance build.
+v1.1.20
+- Fix: 修复 Mod 选项界面 Logo 丢失的问题，现在会显示 Logo。
+v1.1.19
+- Update: Maintenance build.
+v1.1.18
+- Update: 修改底部按钮图标，不再使用原版派系图标，改为使用自定义图标。
+- Update: 为 Mod 设置列表添加图标 (modIconPath)。
+- Update: 简化 Mod 简介，并注明包含中文汉化。
+v1.1.17
+- Update: 调整装备编辑器 UI 布局，将平均价值和平均权重信息移至底部，修复显示不全的问题。
+- Fix: 修复预设管理器 (PresetManagerWindow) 编译错误，解决内部类引用问题。
+v1.1.16
+- Update: 移除了游戏初始化时可能弹出的日志信息，避免干扰用户。
+- Optimize: 优化了图标和语言文件缺失时的日志记录，不再弹出警告窗口。
+v1.1.15
+- Fix: 修复派系编辑菜单顶部选项卡（Settings/PawnKinds）无法点击的问题。调整了 Tab 绘制位置，使其正确显示在窗口内容区域内。
+v1.1.14
+- Update: 修改默认排序方式为按“市场价值”降序
+- Update: 将价值筛选范围默认设置为最大覆盖范围
+v1.1.14
+- Fix: 修复 MainButtonWorker_FactionGear 中激活逻辑，改用 Find.MainTabsRoot.ToggleTab(def) 代替手动 WindowStack.Add，解决了因 MainTabWindow.def 未赋值导致的 NullReferenceException 崩溃。
+- Fix: 为 MainButtonDef 添加 iconPath，修复主界面按钮缺失图标的错误。
+v1.1.13
+- Fix: 修复 FactionGearManager 中 GetWeaponDamage 方法在 RimWorld 1.5/1.6 版本因 GetDamageAmount API 移除导致的 MissingMethodException 崩溃问题。
+- Fix: 为 MainButtonDef 添加 iconPath，修复主界面按钮缺失图标的错误。
+v1.1.12
+- Fix: 修复物品库中部分头部装备和可装备神器不显示的问题。问题原因是缓存过滤逻辑要求所有服装必须有apparel.layers属性，导致VE Hats和Rags等没有设置layers的装备被完全排除
+- Fix: 优化缓存过滤逻辑，允许apparel.layers为null或空列表的服装也能正确归类
+v1.1.11
+- Optimize: 优化 FactionGearEditor.cs，将 DrawTopBar 方法拆分为更小的模块方法，提升代码可维护性
+- Optimize: 简化缓存逻辑，移除冗余的本地缓存字段，委托给 FactionGearManager 处理
+- Optimize: 提取 FloatMenu 选项构建逻辑到独立方法 BuildResetMenuOptions
+v1.1.10
+- Add: 点击右上角版本号可打开版本日志窗口，窗口内显示更新历史并提供"给我点赞"按钮跳转Steam创意工坊页面
+v1.1.9
+- Fix: 修复 FactionEditWindow 打开时的 NullReferenceException 错误，增强了空值检查
+v1.1.8
+- Fix: 当前没有预设生效时，点击保存/应用按钮会自动跳转到新建预设界面，并提示用户创建预设。
+v1.1.7
+- Update: Maintenance build.
+v1.1.6
+- Fix: 修复进入游戏后 "In-Game" 选项虽然勾选但派系名称列表未自动刷新的问题。现在从主菜单进入游戏时会自动刷新列表。
+v1.1.5
+- Update: 进入游戏后自动勾选 "In-Game" 按钮（默认使用游戏内派系名称）。
+v1.1.4
+- Add: 新增 Faction Edit 功能，允许修改派系名称、图标和颜色
+- Add: 新增 FactionDefManager 管理器，处理运行时 Def 修改
+- Add: 预设系统支持保存派系静态数据修改
 v1.1.3
 - Add: 新增Language文件夹，包含English和SimplifiedChinese完整翻译文件
 - Add: 新增LanguageManager语言管理器，支持游戏语言自动检测

@@ -1,23 +1,15 @@
-2026-02-22 10:30:00 - Version updated from 1.0.25 to 1.1.0
-2026-02-21 21:26:05 - Version updated from 1.0.1 to 1.0.2
-2026-02-21 21:28:00 - Version updated from 1.0.2 to 1.0.3
-2026-02-21 22:04:49 - Version updated from 1.0.0 to 1.0.1
-2026-02-21 22:36:09 - Version updated from 1.0.1 to 1.0.2
-2026-02-21 22:36:39 - Version updated from 1.0.2 to 1.0.3
-2026-02-21 22:37:41 - Version updated from 1.0.4 to 1.0.5
-2026-02-21 22:42:10 - Version updated from 1.0.7 to 1.0.8
-2026-02-21 22:47:37 - Version updated from 1.0.9 to 1.0.10
-2026-02-21 22:48:11 - Version updated from 1.0.10 to 1.0.11
-2026-02-21 22:48:47 - Version updated from 1.0.11 to 1.0.12
-2026-02-21 22:49:47 - Version updated from 1.0.12 to 1.0.13
-2026-02-21 22:57:22 - Version updated from 1.0.13 to 1.0.14
-2026-02-21 23:03:49 - Version updated from 1.0.14 to 1.0.15
-2026-02-21 23:14:40 - Version updated from 1.0.15 to 1.0.16
-2026-02-21 23:16:01 - Version updated from 1.0.16 to 1.0.17
-2026-02-21 23:16:08 - Version updated from 1.0.17 to 1.0.18
-2026-02-21 23:27:01 - Version updated from 1.0.18 to 1.0.19
-2026-02-21 23:33:01 - Version updated from 1.0.19 to 1.0.20
-2026-02-21 23:50:50 - Version updated from 1.0.20 to 1.0.21
-2026-02-21 23:52:13 - Version updated from 1.0.22 to 1.0.23
-2026-02-21 23:52:40 - Version updated from 1.0.23 to 1.0.24
-2026-02-21 23:54:56 - Version updated from 1.0.24 to 1.0.25
+2026-02-23 20:38:50 - Version updated from 1.1.52 to 1.1.53
+2026-02-23 - Version updated to 1.1.54 - Added active preset display on toolbar
+2026-02-23 - Version updated to 1.1.55 - Fixed TopBar not showing in MainTabWindow
+2026-02-24 - Version updated to 1.1.56 - Added faction deletion feature with confirmation dialog and settlement removal
+2026-02-24 - Version updated to 1.1.57 - Added refresh button to toolbar for manual cache refresh; caches now auto-refresh on mod initialization and when resetting all settings
+2026-02-24 - Version updated to 1.2.0 - Major update: Save-Isolated Preset System
+  - Presets are now isolated per save game instead of global
+  - New saves default to vanilla settings (no preset applied)
+  - Added first-time prompt when entering a save with available presets
+  - Added FactionGearGameComponent for save-level preset management
+  - Removed global currentPresetName from settings (now stored per-save)
+  - Removed auto-clear config when no preset active
+  - GearApplier and FactionDefManager now prioritize save-specific settings
+  - Added Dialog_FirstTimePresetPrompt for preset selection on save load
+  - Added Patch_GameInit to show prompt on new game and save load

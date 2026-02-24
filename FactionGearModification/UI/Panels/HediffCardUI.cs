@@ -15,18 +15,34 @@ namespace FactionGearCustomizer.UI.Panels
         private static readonly Color RemoveButtonColor = new Color(0.8f, 0.25f, 0.2f);
         private static readonly Color InfoBgColor = new Color(0.08f, 0.08f, 0.1f);
 
+        public static float GetCardHeight(ForcedHediff item)
+        {
+            float height = 36f;
+            float rowHeight = 26f;
+            float gap = 4f;
+
+            height += rowHeight + gap;
+
+            height += rowHeight + gap;
+
+            height += 50f + gap;
+
+            height += 12f;
+
+            return height;
+        }
+
         public static void Draw(Listing_Standard ui, ForcedHediff item, int index, System.Action onRemove)
         {
-            float cardHeight = 165f;
+            float cardHeight = GetCardHeight(item);
             Rect area = ui.GetRect(cardHeight);
             DrawCardBackground(area);
             area = area.ContractedBy(6f);
 
-            DrawHeader(area, item, index);
+            DrawHeader(area, item, index, onRemove);
             DrawContent(area, item, index);
             DrawInfoSection(area, item);
-            DrawRemoveButton(area, onRemove);
-
+            
             ui.Gap(8f);
         }
 
@@ -41,7 +57,7 @@ namespace FactionGearCustomizer.UI.Panels
             Widgets.DrawBoxSolid(innerBorder, ContentBgColor);
         }
 
-        private static void DrawHeader(Rect area, ForcedHediff item, int index)
+        private static void DrawHeader(Rect area, ForcedHediff item, int index, System.Action onRemove)
         {
             Rect headerRect = new Rect(area.x, area.y + 2f, area.width, 28f);
             Widgets.DrawBoxSolid(headerRect, HeaderBgColor);
@@ -49,9 +65,16 @@ namespace FactionGearCustomizer.UI.Panels
             Rect iconRect = new Rect(headerRect.x + 6f, headerRect.y + 4f, 20f, 20f);
             Widgets.DrawBoxSolid(iconRect, new Color(0.3f, 0.3f, 0.35f));
 
-            Rect titleRect = new Rect(iconRect.xMax + 8f, headerRect.y, headerRect.width - 90f, headerRect.height);
-            string titleText = item.HediffDef?.LabelCap ?? "Select Hediff";
+            Rect titleRect = new Rect(iconRect.xMax + 8f, headerRect.y, headerRect.width - 100f, headerRect.height);
+            string titleText = item.HediffDef?.LabelCap ?? LanguageManager.Get("SelectHediff");
             Widgets.Label(titleRect, titleText);
+
+            // Remove Button
+            Rect removeRect = new Rect(headerRect.xMax - 24f, headerRect.y + (headerRect.height - 24f) / 2f, 24f, 24f);
+            if (Widgets.ButtonImage(removeRect, TexButton.Delete, Color.white, GenUI.SubtleMouseoverColor))
+            {
+                onRemove?.Invoke();
+            }
 
             DrawTypeTag(headerRect, item.HediffDef);
         }
@@ -59,11 +82,11 @@ namespace FactionGearCustomizer.UI.Panels
         private static string GetHediffTypeLabel(HediffDef def)
         {
             if (def == null) return "";
-            if (def.isBad) return "Debuff";
-            if (def.makesSickThought) return "Illness";
-            if (def.countsAsAddedPartOrImplant) return "Implant";
-            if (def.defName.Contains("Missing")) return "Missing";
-            return "Other";
+            if (def.isBad) return LanguageManager.Get("HediffType_Debuff");
+            if (def.makesSickThought) return LanguageManager.Get("HediffType_Illness");
+            if (def.countsAsAddedPartOrImplant) return LanguageManager.Get("HediffType_Implant");
+            if (def.defName.Contains("Missing")) return LanguageManager.Get("HediffType_Missing");
+            return LanguageManager.Get("HediffType_Other");
         }
 
         private static void DrawTypeTag(Rect headerRect, HediffDef def)
@@ -75,23 +98,24 @@ namespace FactionGearCustomizer.UI.Panels
 
             if (def.isBad)
             {
-                tagText = "DEBUFF";
+                tagText = LanguageManager.Get("HediffType_Debuff").ToUpper();
                 tagColor = new Color(0.9f, 0.4f, 0.3f);
             }
             else if (def.countsAsAddedPartOrImplant)
             {
-                tagText = "IMPLANT";
+                tagText = LanguageManager.Get("HediffType_Implant").ToUpper();
                 tagColor = new Color(0.3f, 0.7f, 0.9f);
             }
             else if (def.makesSickThought)
             {
-                tagText = "ILLNESS";
+                tagText = LanguageManager.Get("HediffType_Illness").ToUpper();
                 tagColor = new Color(0.9f, 0.8f, 0.3f);
             }
 
             if (!string.IsNullOrEmpty(tagText))
             {
-                Rect tagRect = new Rect(headerRect.xMax - 70f, headerRect.y + 4f, 65f, 20f);
+                // Move tag to the left of the delete button
+                Rect tagRect = new Rect(headerRect.xMax - 24f - 69f, headerRect.y + 4f, 65f, 20f);
                 Widgets.DrawBoxSolid(tagRect, tagColor * 0.2f);
                 Widgets.DrawBox(tagRect, 1);
                 Rect tagLabelRect = tagRect.ContractedBy(2f);
@@ -107,7 +131,11 @@ namespace FactionGearCustomizer.UI.Panels
             Rect selectRect = new Rect(area.x, contentY, area.width * 0.58f, rowHeight);
             if (Widgets.ButtonText(selectRect, item.HediffDef?.LabelCap ?? LanguageManager.Get("SelectHediff")))
             {
-                ShowHediffSelectionMenu(item);
+                Find.WindowStack.Add(new Dialog_HediffPicker(def =>
+                {
+                    item.HediffDef = def;
+                    FactionGearEditor.MarkDirty();
+                }));
             }
 
             Rect chanceLabelRect = new Rect(area.x + area.width * 0.60f, contentY, area.width * 0.15f, rowHeight);
@@ -130,7 +158,7 @@ namespace FactionGearCustomizer.UI.Panels
                 partsRange = new IntRange(1, 3);
                 item.maxPartsRange = partsRange;
             }
-            WidgetsUtils.IntRange(new Rect(area.x + area.width * 0.28f, partsY, area.width * 0.30f, rowHeight), 12340 + index, ref item.maxPartsRange, 1, 10);
+            WidgetsUtils.IntRange(new Rect(area.x + area.width * 0.28f, partsY, area.width * 0.30f, rowHeight), item.GetHashCode() ^ 12340, ref item.maxPartsRange, 1, 10);
 
             Rect severityLabelRect = new Rect(area.x + area.width * 0.62f, partsY, area.width * 0.15f, rowHeight);
             Widgets.Label(severityLabelRect, LanguageManager.Get("Severity") + ":");
@@ -140,7 +168,7 @@ namespace FactionGearCustomizer.UI.Panels
                 item.severityRange = new FloatRange(0.5f, 1f);
             }
             FloatRange newSeverity = item.severityRange;
-            WidgetsUtils.FloatRange(severitySliderRect, 12341 + index, ref newSeverity, 0.01f, 1f);
+            WidgetsUtils.FloatRange(severitySliderRect, item.GetHashCode() ^ 12341, ref newSeverity, 0.01f, 1f);
             item.severityRange = newSeverity;
         }
 
@@ -157,7 +185,7 @@ namespace FactionGearCustomizer.UI.Panels
                 string descText = item.HediffDef.description;
                 if (string.IsNullOrEmpty(descText))
                 {
-                    descText = "No description available.";
+                    descText = LanguageManager.Get("NoDescription");
                 }
                 if (descText.Length > 150)
                 {
@@ -166,10 +194,10 @@ namespace FactionGearCustomizer.UI.Panels
                 Widgets.Label(descRect, descText);
 
                 Rect detailRect = new Rect(area.x, infoRect.yMax - 18f, area.width, 16f);
-                string detailText = $"Type: {GetHediffTypeLabel(item.HediffDef)}";
+                string detailText = $"{LanguageManager.Get("TypePrefix")}: {GetHediffTypeLabel(item.HediffDef)}";
                 if (item.HediffDef.lethalSeverity > 0)
                 {
-                    detailText += $" | Lethal: {item.HediffDef.lethalSeverity:F1}";
+                    detailText += $" | {LanguageManager.Get("HediffLethal")}: {item.HediffDef.lethalSeverity:F1}";
                 }
                 Widgets.Label(detailRect, detailText);
             }
@@ -178,37 +206,6 @@ namespace FactionGearCustomizer.UI.Panels
                 Rect placeholderRect = infoRect.ContractedBy(6f);
                 Widgets.Label(placeholderRect, LanguageManager.Get("SelectHediffToViewDetails"));
             }
-        }
-
-        private static void DrawRemoveButton(Rect area, System.Action onRemove)
-        {
-            Rect removeBtnRect = new Rect(area.xMax - 70f, area.y + 2f, 64f, 22f);
-
-            Color originalColor = GUI.color;
-            bool isMouseOver = Mouse.IsOver(removeBtnRect);
-            bool isClicked = Widgets.ButtonInvisible(removeBtnRect);
-
-            if (isClicked)
-            {
-                onRemove?.Invoke();
-            }
-
-            if (isMouseOver)
-            {
-                GUI.color = RemoveButtonColor;
-                Widgets.DrawBoxSolid(removeBtnRect, RemoveButtonColor * 0.3f);
-            }
-            else
-            {
-                Widgets.DrawBoxSolid(removeBtnRect, new Color(0.2f, 0.2f, 0.2f));
-            }
-
-            Widgets.DrawBox(removeBtnRect, 1);
-
-            Rect labelRect = removeBtnRect.ContractedBy(3f);
-            GUI.color = isMouseOver ? Color.white : new Color(0.9f, 0.7f, 0.7f);
-            Widgets.Label(labelRect, LanguageManager.Get("Remove"));
-            GUI.color = originalColor;
         }
 
         private static void ShowHediffSelectionMenu(ForcedHediff item)
@@ -240,11 +237,11 @@ namespace FactionGearCustomizer.UI.Panels
 
         private static string GetHediffCategory(HediffDef def)
         {
-            if (def.countsAsAddedPartOrImplant) return "Implants";
-            if (def.isBad && def.defName.Contains("Missing")) return "Missing Parts";
-            if (def.isBad) return "Debuffs";
-            if (def.makesSickThought) return "Illnesses";
-            return "Other";
+            if (def.countsAsAddedPartOrImplant) return LanguageManager.Get("HediffType_Implant");
+            if (def.isBad && def.defName.Contains("Missing")) return LanguageManager.Get("HediffType_Missing");
+            if (def.isBad) return LanguageManager.Get("HediffType_Debuff");
+            if (def.makesSickThought) return LanguageManager.Get("HediffType_Illness");
+            return LanguageManager.Get("HediffType_Other");
         }
 
         private static Color GetHediffCategoryColor(HediffDef def)

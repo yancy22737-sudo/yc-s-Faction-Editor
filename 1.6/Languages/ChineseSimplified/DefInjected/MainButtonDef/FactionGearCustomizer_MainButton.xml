@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <FactionGear_MainButton.label>派系装备</FactionGear_MainButton.label>
+  <FactionGear_MainButton.description>打开派系装备编辑器。</FactionGear_MainButton.description>
+</LanguageData>

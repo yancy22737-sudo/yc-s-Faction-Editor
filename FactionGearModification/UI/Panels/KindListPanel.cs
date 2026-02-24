@@ -5,6 +5,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 using FactionGearModification.UI;
+using FactionGearCustomizer.UI;
 
 namespace FactionGearCustomizer.UI.Panels
 {
@@ -22,16 +23,49 @@ namespace FactionGearCustomizer.UI.Panels
             Widgets.DrawMenuSection(rect);
             Rect innerRect = rect.ContractedBy(5f);
 
-            // Title "Kind Defs"
+            // Title "Kind Defs" and Add Button
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleLeft;
             Widgets.Label(new Rect(innerRect.x, innerRect.y, 150f, 30f), LanguageManager.Get("KindDefs"));
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.UpperLeft;
 
+            // Add PawnKind Button
+            bool inGame = Current.Game != null;
+            bool hasSelectedFaction = !string.IsNullOrEmpty(EditorSession.SelectedFactionDefName);
+            Rect addBtnRect = new Rect(innerRect.xMax - 100f, innerRect.y + 3f, 95f, 24f);
+
+            if (!inGame || !hasSelectedFaction)
+            {
+                GUI.color = Color.gray;
+            }
+
+            if (Widgets.ButtonText(addBtnRect, LanguageManager.Get("AddPawnKind")))
+            {
+                if (inGame && hasSelectedFaction)
+                {
+                    OpenAddPawnKindDialog();
+                }
+            }
+
+            if (!inGame)
+            {
+                TooltipHandler.TipRegion(addBtnRect, LanguageManager.Get("OnlyAvailableInGame"));
+                GUI.color = Color.white;
+            }
+            else if (!hasSelectedFaction)
+            {
+                TooltipHandler.TipRegion(addBtnRect, LanguageManager.Get("SelectFactionFirst"));
+                GUI.color = Color.white;
+            }
+            else
+            {
+                TooltipHandler.TipRegion(addBtnRect, LanguageManager.Get("AddPawnKindTooltip"));
+            }
+
             // List area calculation
-            float listStartY = innerRect.y + 35f;
-            float kindListHeight = innerRect.height - 35f;
+            float listStartY = innerRect.y + 32f;
+            float kindListHeight = innerRect.height - (listStartY - innerRect.y);
 
             Rect kindListOutRect = new Rect(innerRect.x, listStartY, innerRect.width, kindListHeight);
 
@@ -39,6 +73,10 @@ namespace FactionGearCustomizer.UI.Panels
             List<PawnKindDef> kindDefsToDraw = GetKindsToDraw();
 
             Rect kindListViewRect = new Rect(0, 0, kindListOutRect.width - 16f, kindDefsToDraw.Count * 32f);
+            
+            // Scroll handling is done by BeginScrollView automatically
+
+
             Widgets.BeginScrollView(kindListOutRect, ref EditorSession.KindListScrollPos, kindListViewRect);
             
             float kindY = 0;
@@ -58,16 +96,37 @@ namespace FactionGearCustomizer.UI.Panels
                 return new List<PawnKindDef>();
             }
 
-            if (cachedFactionKinds.TryGetValue(EditorSession.SelectedFactionDefName, out var cachedList))
+            List<PawnKindDef> fullList;
+            if (!cachedFactionKinds.TryGetValue(EditorSession.SelectedFactionDefName, out fullList))
             {
-                return cachedList;
+                var factionDef = DefDatabase<FactionDef>.GetNamedSilentFail(EditorSession.SelectedFactionDefName);
+                fullList = FactionGearEditor.GetFactionKinds(factionDef);
+                
+                // 合并用户新增的兵种（来自设置数据）
+                var factionData = FactionGearCustomizerMod.Settings.factionGearData.FirstOrDefault(f => f.factionDefName == EditorSession.SelectedFactionDefName);
+                if (factionData != null && factionData.kindGearData != null)
+                {
+                    var existingKindNames = new HashSet<string>(fullList.Select(k => k.defName));
+                    foreach (var kindData in factionData.kindGearData)
+                    {
+                        if (!existingKindNames.Contains(kindData.kindDefName))
+                        {
+                            var kindDef = DefDatabase<PawnKindDef>.GetNamedSilentFail(kindData.kindDefName);
+                            if (kindDef != null)
+                            {
+                                fullList.Add(kindDef);
+                                existingKindNames.Add(kindData.kindDefName);
+                            }
+                        }
+                    }
+                    // 重新排序
+                    fullList.Sort((a, b) => (a.label ?? a.defName).CompareTo(b.label ?? b.defName));
+                }
+                
+                cachedFactionKinds[EditorSession.SelectedFactionDefName] = fullList;
             }
 
-            var factionDef = DefDatabase<FactionDef>.GetNamedSilentFail(EditorSession.SelectedFactionDefName);
-            var list = FactionGearEditor.GetFactionKinds(factionDef);
-            
-            cachedFactionKinds[EditorSession.SelectedFactionDefName] = list;
-            return list;
+            return fullList;
         }
 
         private static void DrawKindRow(PawnKindDef kindDef, float y, float width)
@@ -114,6 +173,19 @@ namespace FactionGearCustomizer.UI.Panels
             // Draw Label
             Rect labelRect = new Rect(rowRect.x + 6f, rowRect.y, rowRect.width - 60f, rowRect.height); // Reserve space for buttons
             string labelText = kindDef.label != null ? kindDef.LabelCap.ToString() : kindDef.defName;
+
+            if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName))
+            {
+                var factionData = FactionGearCustomizerMod.Settings.factionGearData.FirstOrDefault(f => f.factionDefName == EditorSession.SelectedFactionDefName);
+                if (factionData != null)
+                {
+                    var kindData = factionData.kindGearData.FirstOrDefault(k => k.kindDefName == kindDef.defName);
+                    if (kindData != null && !string.IsNullOrEmpty(kindData.Label))
+                    {
+                        labelText = kindData.Label;
+                    }
+                }
+            }
             
             if (isModified)
             {
@@ -147,7 +219,7 @@ namespace FactionGearCustomizer.UI.Panels
                     var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
                     var kindData = factionData.GetOrCreateKindData(kindDef.defName);
                     EditorSession.CopiedKindGearData = kindData.DeepCopy();
-                    Messages.Message("Copied gear from " + labelText, MessageTypeDefOf.TaskCompletion, false);
+                    Messages.Message("Copied gear from " + labelText, MessageTypeDefOf.NeutralEvent, false);
                 }
             }
             TooltipHandler.TipRegion(copyBtnRect, "Copy this KindDef's gear");
@@ -156,7 +228,7 @@ namespace FactionGearCustomizer.UI.Panels
             btnX += btnSize + btnSpacing;
             Texture2D kindPasteTex = TexCache.PasteTex ?? Widgets.CheckboxOnTex;
             Rect pasteBtnRect = new Rect(btnX, btnY, btnSize, btnSize);
-            
+
             if (EditorSession.CopiedKindGearData != null)
             {
                 if (Widgets.ButtonImage(pasteBtnRect, kindPasteTex))
@@ -171,7 +243,7 @@ namespace FactionGearCustomizer.UI.Panels
                             targetKindData.CopyFrom(EditorSession.CopiedKindGearData);
                             targetKindData.isModified = true;
                             FactionGearEditor.MarkDirty(); // Notify editor
-                            Messages.Message("Pasted gear to " + labelText, MessageTypeDefOf.TaskCompletion, false);
+                            Messages.Message("Pasted gear to " + labelText, MessageTypeDefOf.NeutralEvent, false);
                         }
                     }
                 }
@@ -183,6 +255,45 @@ namespace FactionGearCustomizer.UI.Panels
                 Widgets.ButtonImage(pasteBtnRect, kindPasteTex);
                 GUI.color = Color.white;
             }
+        }
+
+        private static void OpenAddPawnKindDialog()
+        {
+            var factionDef = DefDatabase<FactionDef>.GetNamedSilentFail(EditorSession.SelectedFactionDefName);
+            if (factionDef == null) return;
+
+            // 获取当前派系已有的兵种
+            var existingKinds = GetKindsToDraw();
+            var existingKindNames = new HashSet<string>(existingKinds.Select(k => k.defName));
+
+            // 打开兵种选择器，排除已有的兵种
+            Find.WindowStack.Add(new Dialog_PawnKindPicker((selectedKinds) => {
+                if (selectedKinds != null && selectedKinds.Count > 0)
+                {
+                    var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
+                    int addedCount = 0;
+
+                    foreach (var kind in selectedKinds)
+                    {
+                        if (!existingKindNames.Contains(kind.defName))
+                        {
+                            // 为该兵种创建设置数据
+                            var kindData = factionData.GetOrCreateKindData(kind.defName);
+                            kindData.isModified = true;
+                            addedCount++;
+                        }
+                    }
+
+                    if (addedCount > 0)
+                    {
+                        // 清除缓存以刷新列表
+                        ClearCache();
+                        FactionGearEditor.ClearFactionKindsCache();
+                        FactionGearEditor.MarkDirty();
+                        Messages.Message(LanguageManager.Get("AddedPawnKinds", addedCount), MessageTypeDefOf.PositiveEvent, false);
+                    }
+                }
+            }, factionDef, existingKindNames));
         }
     }
 }

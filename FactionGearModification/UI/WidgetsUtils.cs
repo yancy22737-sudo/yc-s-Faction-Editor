@@ -11,6 +11,42 @@ namespace FactionGearModification.UI
         private static MethodInfo floatRangeMethod;
         private static object[] floatRangeArgs;
 
+        public static void SplitRow2(Rect row, float gap, float leftFraction, out Rect left, out Rect right)
+        {
+            float x0 = Mathf.Floor(row.x);
+            float xMax = Mathf.Floor(row.xMax);
+            float y0 = Mathf.Floor(row.y);
+            float yMax = Mathf.Floor(row.yMax);
+            float w = Mathf.Max(0f, xMax - x0);
+            float h = Mathf.Max(0f, yMax - y0);
+            float avail = Mathf.Max(0f, w - gap);
+
+            float leftW = Mathf.Floor(avail * leftFraction);
+            float rightW = avail - leftW;
+
+            left = new Rect(x0, y0, leftW, h);
+            right = new Rect(x0 + leftW + gap, y0, rightW, h);
+        }
+
+        public static void SplitRow3(Rect row, float gap, float firstFraction, float secondFraction, out Rect first, out Rect second, out Rect third)
+        {
+            float x0 = Mathf.Floor(row.x);
+            float xMax = Mathf.Floor(row.xMax);
+            float y0 = Mathf.Floor(row.y);
+            float yMax = Mathf.Floor(row.yMax);
+            float w = Mathf.Max(0f, xMax - x0);
+            float h = Mathf.Max(0f, yMax - y0);
+            float avail = Mathf.Max(0f, w - gap * 2f);
+
+            float w0 = Mathf.Floor(avail * firstFraction);
+            float w1 = Mathf.Floor(avail * secondFraction);
+            float w2 = avail - w0 - w1;
+
+            first = new Rect(x0, y0, w0, h);
+            second = new Rect(x0 + w0 + gap, y0, w1, h);
+            third = new Rect(x0 + w0 + gap + w1 + gap, y0, w2, h);
+        }
+
         public static void DrawTextureFitted(Rect outerRect, Texture tex, float scale)
         {
             if (tex == null)
@@ -268,9 +304,9 @@ namespace FactionGearModification.UI
 
             // Fallback: Manual DrawBox
             Vector2 topLeft = new Vector2(rect.x, rect.y);
-            Vector2 topRight = new Vector2(rect.x + rect.width, rect.y);
-            Vector2 bottomLeft = new Vector2(rect.x, rect.y + rect.height);
-            Vector2 bottomRight = new Vector2(rect.x + rect.width, rect.y + rect.height);
+            Vector2 topRight = new Vector2(rect.x + rect.width - 1f, rect.y);
+            Vector2 bottomLeft = new Vector2(rect.x, rect.y + rect.height - 1f);
+            Vector2 bottomRight = new Vector2(rect.x + rect.width - 1f, rect.y + rect.height - 1f);
 
             Widgets.DrawLineHorizontal(topLeft.x, topLeft.y, rect.width);
             Widgets.DrawLineHorizontal(bottomLeft.x, bottomLeft.y, rect.width);

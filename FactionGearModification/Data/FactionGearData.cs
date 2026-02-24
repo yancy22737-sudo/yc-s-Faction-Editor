@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
+using UnityEngine;
 using Verse;
 
 namespace FactionGearCustomizer
@@ -10,8 +11,24 @@ namespace FactionGearCustomizer
         public string factionDefName;
         public List<KindGearData> kindGearData = new List<KindGearData>();
         
-        // 优化查询效率的字典索引
-        [Unsaved]
+        // Faction Edit Fields
+        public bool isModified = false;
+        public string Label;
+        public string Description;
+        public string IconPath;
+        public Color? Color;
+        
+        // Xenotype Settings (Biotech DLC)
+        // Key: XenotypeDefName, Value: Chance (0.0 - 1.0)
+        public Dictionary<string, float> XenotypeChances = new Dictionary<string, float>();
+
+        // Pawn Group Makers (Raids, Caravans, etc.)
+        public List<PawnGroupMakerData> groupMakers = new List<PawnGroupMakerData>();
+
+        // Player Relation Override (Ally/Neutral/Hostile)
+        public FactionRelationKind? PlayerRelationOverride;
+
+        // 优化查询效率的字典索引        [Unsaved]
         private Dictionary<string, KindGearData> kindGearDataDict;
 
         public FactionGearData() { }
@@ -26,11 +43,25 @@ namespace FactionGearCustomizer
         {
             Scribe_Values.Look(ref factionDefName, "factionDefName");
             Scribe_Collections.Look(ref kindGearData, "kindGearData", LookMode.Deep);
+            
+            Scribe_Values.Look(ref isModified, "isModified", false);
+            Scribe_Values.Look(ref Label, "label");
+            Scribe_Values.Look(ref Description, "description");
+            Scribe_Values.Look(ref IconPath, "iconPath");
+            Scribe_Values.Look(ref Color, "color");
+            
+            Scribe_Collections.Look(ref XenotypeChances, "xenotypeChances", LookMode.Value, LookMode.Value);
+            if (XenotypeChances == null) XenotypeChances = new Dictionary<string, float>();
+
+            Scribe_Collections.Look(ref groupMakers, "groupMakers", LookMode.Deep);
+            if (groupMakers == null) groupMakers = new List<PawnGroupMakerData>();
+
+            Scribe_Values.Look(ref PlayerRelationOverride, "playerRelationOverride");
+
             if (kindGearData == null)
                 kindGearData = new List<KindGearData>();
                 
-            // 重新初始化字典索引
-            InitializeDictionary();
+            // 重新初始化字典索�?            InitializeDictionary();
         }
         
         private void InitializeDictionary()
@@ -38,7 +69,7 @@ namespace FactionGearCustomizer
             kindGearDataDict = new Dictionary<string, KindGearData>();
             foreach (var kindData in kindGearData)
             {
-                if (!kindGearDataDict.ContainsKey(kindData.kindDefName))
+                if (kindData != null && !string.IsNullOrEmpty(kindData.kindDefName) && !kindGearDataDict.ContainsKey(kindData.kindDefName))
                 {
                     kindGearDataDict.Add(kindData.kindDefName, kindData);
                 }
@@ -70,11 +101,22 @@ namespace FactionGearCustomizer
             {
                 kindGearDataDict.Clear();
             }
+            
+            isModified = false;
+            Label = null;
+            Description = null;
+            IconPath = null;
+            Color = null;
+            XenotypeChances?.Clear();
+            groupMakers?.Clear();
+            PlayerRelationOverride = null;
         }
         
         // 添加或更新兵种数据
         public void AddOrUpdateKindData(KindGearData data)
         {
+            if (data == null) return;
+
             var existing = kindGearData.FirstOrDefault(k => k.kindDefName == data.kindDefName);
             if (existing != null)
             {
@@ -107,9 +149,34 @@ namespace FactionGearCustomizer
         public FactionGearData DeepCopy()
         {
             var copy = new FactionGearData(factionDefName);
+            
+            copy.isModified = this.isModified;
+            copy.Label = this.Label;
+            copy.Description = this.Description;
+            copy.IconPath = this.IconPath;
+            copy.Color = this.Color;
+            copy.PlayerRelationOverride = this.PlayerRelationOverride;
+            
+            if (this.XenotypeChances != null)
+            {
+                foreach (var kvp in this.XenotypeChances)
+                {
+                    copy.XenotypeChances[kvp.Key] = kvp.Value;
+                }
+            }
+
+            if (this.groupMakers != null)
+            {
+                foreach (var group in this.groupMakers)
+                {
+                    copy.groupMakers.Add(group.DeepCopy());
+                }
+            }
+
             foreach (var kind in kindGearData)
             {
-                copy.kindGearData.Add(kind.DeepCopy());
+                if (kind != null)
+                    copy.kindGearData.Add(kind.DeepCopy());
             }
             copy.InitializeDictionary();
             return copy;

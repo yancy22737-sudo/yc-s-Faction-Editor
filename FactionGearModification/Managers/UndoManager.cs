@@ -7,12 +7,18 @@ namespace FactionGearCustomizer
     public static class UndoManager
     {
         private const int MaxUndoSteps = 30;
-        private static LinkedList<KindGearData> undoList = new LinkedList<KindGearData>();
-        private static Stack<KindGearData> redoStack = new Stack<KindGearData>();
+        
+        private struct UndoStep
+        {
+            public IUndoable Target;
+            public object Snapshot;
+        }
+
+        private static LinkedList<UndoStep> undoList = new LinkedList<UndoStep>();
+        private static Stack<UndoStep> redoStack = new Stack<UndoStep>();
         private static readonly object lockObj = new object();
 
-        // Tracks the object currently being modified to ensure we don't mix up contexts
-        private static string currentContextKindDefName = null;
+        private static string currentContextId = null;
 
         public static bool CanUndo
         {
@@ -36,84 +42,86 @@ namespace FactionGearCustomizer
             }
         }
 
-        public static void RecordState(KindGearData currentState)
+        public static void RecordState(IUndoable target)
         {
-            if (currentState == null) return;
+            if (target == null) return;
 
             lock (lockObj)
             {
-                // If context changed (user switched to another pawn kind), clear stacks
-                if (currentContextKindDefName != currentState.kindDefName)
+                // If context changed, clear stacks
+                if (currentContextId != target.ContextId)
                 {
                     ClearInternal();
-                    currentContextKindDefName = currentState.kindDefName;
+                    currentContextId = target.ContextId;
                 }
 
                 // Create a snapshot
-                KindGearData snapshot = currentState.DeepCopy();
+                object snapshot = target.CreateSnapshot();
                 
                 // Add to undo list
-                undoList.AddLast(snapshot);
+                undoList.AddLast(new UndoStep { Target = target, Snapshot = snapshot });
                 
-                // Limit stack size by removing oldest
                 if (undoList.Count > MaxUndoSteps)
                 {
                     undoList.RemoveFirst();
                 }
 
-                // New action clears redo history
                 redoStack.Clear();
             }
         }
 
-        public static void Undo(KindGearData targetState)
+        public static void Undo()
         {
-            if (targetState == null) return;
-
             lock (lockObj)
             {
                 if (undoList.Count == 0) return;
 
+                UndoStep last = undoList.Last.Value;
+                
                 // Check context
-                if (currentContextKindDefName != targetState.kindDefName)
+                if (currentContextId != last.Target.ContextId)
                 {
                     ClearInternal();
                     return;
                 }
 
                 // Save current state to Redo stack before restoring
-                redoStack.Push(targetState.DeepCopy());
+                redoStack.Push(new UndoStep { 
+                    Target = last.Target, 
+                    Snapshot = last.Target.CreateSnapshot() 
+                });
 
                 // Restore
-                KindGearData previousState = undoList.Last.Value;
                 undoList.RemoveLast();
-                
-                targetState.CopyFrom(previousState);
+                last.Target.RestoreFromSnapshot(last.Snapshot);
             }
         }
 
-        public static void Redo(KindGearData targetState)
+        public static void Redo()
         {
-            if (targetState == null) return;
-
             lock (lockObj)
             {
                 if (redoStack.Count == 0) return;
 
+                UndoStep next = redoStack.Pop();
+
                 // Check context
-                if (currentContextKindDefName != targetState.kindDefName)
+                if (currentContextId != next.Target.ContextId)
                 {
                     ClearInternal();
                     return;
                 }
 
-                // Save current state to Undo stack (as if it was recorded)
-                undoList.AddLast(targetState.DeepCopy());
+                // Save current state to Undo stack
+                undoList.AddLast(new UndoStep { 
+                    Target = next.Target, 
+                    Snapshot = next.Target.CreateSnapshot() 
+                });
+                
                 if (undoList.Count > MaxUndoSteps) undoList.RemoveFirst();
 
                 // Restore
-                KindGearData nextState = redoStack.Pop();
-                targetState.CopyFrom(nextState);
+                next.Target.RestoreFromSnapshot(next.Snapshot);
             }
         }
 
@@ -129,7 +137,7 @@ namespace FactionGearCustomizer
         {
             undoList.Clear();
             redoStack.Clear();
-            currentContextKindDefName = null;
+            currentContextId = null;
         }
     }
 }

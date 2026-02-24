@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using Verse;
 using RimWorld;
@@ -22,6 +23,15 @@ namespace FactionGearCustomizer
         private List<PawnKindDef> allKinds;
         private Dictionary<PawnKindDef, Pawn> previewPawns = new Dictionary<PawnKindDef, Pawn>();
         private Dictionary<PawnKindDef, string> previewErrors = new Dictionary<PawnKindDef, string>();
+
+        private Queue<PawnKindDef> generationQueue = new Queue<PawnKindDef>();
+        private HashSet<PawnKindDef> pendingKinds = new HashSet<PawnKindDef>();
+        private int totalToGenerate = 0;
+        private int generatedCount = 0;
+        private const int BATCH_SIZE = 1;
+
+        private PawnKindDef hoveredKind;
+        private float hoverStartTime;
 
         public override Vector2 InitialSize => isMultiMode ? new Vector2(1100f, 750f) : new Vector2(450f, 650f);
 
@@ -74,15 +84,46 @@ namespace FactionGearCustomizer
             previewPawns.Clear();
             previewErrors.Clear();
 
+            generationQueue.Clear();
+            pendingKinds.Clear();
+            foreach (var k in allKinds)
+            {
+                generationQueue.Enqueue(k);
+                pendingKinds.Add(k);
+            }
+            totalToGenerate = allKinds.Count;
+            generatedCount = 0;
+
             Faction faction = GetFaction();
             if (faction == null && Current.ProgramState == ProgramState.Playing)
             {
                 errorMessage = "Cannot preview: Faction not found in current game.";
+                generationQueue.Clear();
+                pendingKinds.Clear();
                 return;
             }
+        }
 
-            foreach (var k in allKinds)
+        public override void WindowUpdate()
+        {
+            base.WindowUpdate();
+            if (isMultiMode && generationQueue.Count > 0)
             {
+                ProcessGenerationQueue();
+            }
+        }
+
+        private void ProcessGenerationQueue()
+        {
+            Faction faction = GetFaction();
+            if (faction == null && Current.ProgramState == ProgramState.Playing) return;
+
+            for (int i = 0; i < BATCH_SIZE && generationQueue.Count > 0; i++)
+            {
+                var k = generationQueue.Dequeue();
+                pendingKinds.Remove(k);
+                generatedCount++;
+                
                 try
                 {
                     Pawn p = GeneratePawnInternal(k, faction);
@@ -119,7 +160,7 @@ namespace FactionGearCustomizer
                 if (faction == null && Current.ProgramState == ProgramState.Playing)
                 {
                     Log.Warning($"[FactionGearCustomizer] Could not find active faction for {factionDef.defName}. Preview might fail.");
-                    errorMessage = "Cannot preview: Faction not found in current game.";
+                    errorMessage = LanguageManager.Get("PreviewFailed_FactionNotFound");
                     return;
                 }
 
@@ -128,7 +169,7 @@ namespace FactionGearCustomizer
                 if (previewPawn == null)
                 {
                     Log.Error($"[FactionGearCustomizer] PawnGenerator.GeneratePawn returned null for {kindDef.defName}");
-                    errorMessage = "Failed to generate preview pawn.";
+                    errorMessage = LanguageManager.Get("PreviewFailed_GenFailed");
                     return;
                 }
 
@@ -152,6 +193,13 @@ namespace FactionGearCustomizer
 
         private Pawn GeneratePawnInternal(PawnKindDef kDef, Faction faction)
         {
+            // 跳过 creepjoiner 类型的 PawnKindDef，因为它们需要特殊的生成逻辑
+            if (kDef?.race?.defName == "CreepJoiner")
+            {
+                Log.Warning($"[FactionGearCustomizer] Skipping preview for creepjoiner kindDef: {kDef.defName}");
+                return null;
+            }
+
             PawnGenerationRequest request = new PawnGenerationRequest(
                 kDef, 
                 faction, 
@@ -200,6 +248,15 @@ namespace FactionGearCustomizer
             {
                  Widgets.Label(new Rect(inRect.x, inRect.y + 40f, inRect.width, 30f), errorMessage);
                  return;
+            }
+            if (generationQueue.Count > 0)
+            {
+                float progress = (float)generatedCount / totalToGenerate;
+                Rect progressRect = new Rect(inRect.x + 200f, inRect.y + 5f, inRect.width - 400f, 20f);
+                Widgets.FillableBar(progressRect, progress);
+                Text.Anchor = TextAnchor.MiddleCenter;
+                Widgets.Label(progressRect, $"{generatedCount}/{totalToGenerate}");
+                Text.Anchor = TextAnchor.UpperLeft;
             }
 
             Rect outRect = new Rect(inRect.x, inRect.y + 40f, inRect.width, inRect.height - 40f);
@@ -259,17 +316,32 @@ namespace FactionGearCustomizer
             Rect inner = rect.ContractedBy(4f);
             
             // Header
-            Rect headerRect = new Rect(inner.x, inner.y, inner.width, 22f);
+            Rect headerRect = new Rect(inner.x, inner.y, inner.width - 24f, 22f);
             Text.Anchor = TextAnchor.MiddleCenter;
             Text.Font = GameFont.Tiny;
-            Widgets.Label(headerRect, k.LabelCap);
+            
+            string label = k.LabelCap;
+            var factionData = FactionGearCustomizerMod.Settings.factionGearData.FirstOrDefault(f => f.factionDefName == factionDef.defName);
+            if (factionData != null)
+            {
+                var kindData = factionData.kindGearData.FirstOrDefault(kd => kd.kindDefName == k.defName);
+                if (kindData != null && !string.IsNullOrEmpty(kindData.Label))
+                {
+                    label = kindData.Label;
+                }
+            }
+            
+            Widgets.Label(headerRect, label);
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.UpperLeft;
+
+            Pawn p = null;
+            previewPawns.TryGetValue(k, out p);
 
             // Portrait
             Rect portraitRect = new Rect(inner.x, inner.y + 24f, inner.width, inner.height - 24f);
             
-            if (previewPawns.TryGetValue(k, out Pawn p) && p != null)
+            if (p != null)
             {
                 // Draw Pawn
                 RenderTexture image = WidgetsUtils.GetPortrait(p, new Vector2(portraitRect.width, portraitRect.height), rotation, new Vector3(0f, 0f, 0f), 1f);
@@ -296,73 +368,100 @@ namespace FactionGearCustomizer
                     TooltipHandler.TipRegion(weaponRect, weapon.LabelCap);
                 }
 
-                // Hover Tooltip
-                TooltipHandler.TipRegion(rect, new TipSignal(() => GetPawnTooltip(p), k.GetHashCode()));
-            }
-            else
-            {
-                string err = previewErrors.ContainsKey(k) ? previewErrors[k] : "No Pawn";
-                Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(portraitRect, err);
-                Text.Anchor = TextAnchor.UpperLeft;
-            }
-        }
-
-        private string GetPawnTooltip(Pawn p)
-        {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            sb.AppendLine($"<b>{p.LabelCap}</b>");
-            sb.AppendLine();
-            
-            sb.AppendLine("<b>Weapons:</b>");
-            if (p.equipment != null && p.equipment.AllEquipmentListForReading.Any())
-            {
-                foreach (var eq in p.equipment.AllEquipmentListForReading)
+                // Hover Preview (Based on Ref-TotalControl)
+                if (Mouse.IsOver(rect))
                 {
-                     sb.AppendLine($"- {eq.LabelCap}");
-                }
-            }
-            else
-            {
-                sb.AppendLine("- None");
-            }
-            
-            sb.AppendLine();
-            sb.AppendLine("<b>Apparel:</b>");
-            if (p.apparel != null && p.apparel.WornApparel.Any())
-            {
-                foreach (var app in p.apparel.WornApparel)
-                {
-                    sb.AppendLine($"- {app.LabelCap}");
-                }
-            }
-            else
-            {
-                sb.AppendLine("- None");
-            }
-
-            if (p.health != null && p.health.hediffSet.hediffs.Any())
-            {
-                var visibleHediffs = p.health.hediffSet.hediffs.Where(h => h.Visible).ToList();
-                if (visibleHediffs.Any())
-                {
-                    sb.AppendLine();
-                    sb.AppendLine("<b>Hediffs:</b>");
-                    foreach (var h in visibleHediffs)
+                    if (hoveredKind != k)
                     {
-                        sb.AppendLine($"- {h.LabelCap}");
+                        hoveredKind = k;
+                        hoverStartTime = Time.realtimeSinceStartup;
+                    }
+                    else if (Time.realtimeSinceStartup - hoverStartTime > 0.35f)
+                    {
+                        Vector2 mousePos = Verse.UI.MousePositionOnUIInverted;
+                        Rect windowRect = new Rect(mousePos.x + 15f, mousePos.y + 15f, 432f, 550f);
+                        
+                        // Keep within screen bounds
+                        if (windowRect.xMax > Verse.UI.screenWidth) windowRect.x = mousePos.x - windowRect.width - 15f;
+                        if (windowRect.yMax > Verse.UI.screenHeight) windowRect.y = Verse.UI.screenHeight - windowRect.height;
+                        if (windowRect.y < 0) windowRect.y = 0;
+
+                        Find.WindowStack.ImmediateWindow(9845124, windowRect, WindowLayer.Super, () =>
+                        {
+                            try
+                            {
+                                var selector = Find.Selector;
+                                if (selector == null) return;
+
+                                var listField = typeof(Selector).GetField("selected", BindingFlags.Instance | BindingFlags.NonPublic);
+                                if (listField == null) return;
+                                
+                                var list = listField.GetValue(selector) as List<object>;
+                                if (list == null) return;
+
+                                list.Clear();
+                                list.Add(p);
+
+                                var fillTabMethod = typeof(ITab_Pawn_Gear).GetMethod("FillTab", BindingFlags.Instance | BindingFlags.NonPublic);
+                                if (fillTabMethod != null)
+                                {
+                                    ITab_Pawn_Gear tab = new ITab_Pawn_Gear();
+                                    fillTabMethod.Invoke(tab, new object[] { });
+                                }
+                                
+                                list.Clear();
+                            }
+                            catch (Exception)
+                            {
+                                // Silent fail to avoid spamming logs on hover
+                            }
+                        });
                     }
                 }
+                else if (hoveredKind == k)
+                {
+                    hoveredKind = null;
+                }
             }
-
-            return sb.ToString();
+            else
+            {
+                string err = previewErrors.ContainsKey(k) ? previewErrors[k] : 
+                            (pendingKinds.Contains(k) ? "..." : LanguageManager.Get("PreviewFailed_NoPawn"));
+                
+                Text.Anchor = TextAnchor.MiddleCenter;
+                
+                if (pendingKinds.Contains(k))
+                {
+                     GUI.color = Color.gray;
+                     Widgets.Label(portraitRect, "...");
+                     GUI.color = Color.white;
+                }
+                else
+                {
+                    Widgets.Label(portraitRect, err);
+                }
+                
+                Text.Anchor = TextAnchor.UpperLeft;
+            }
         }
 
         private void DoSingleWindowContents(Rect inRect)
         {
             // Original implementation
             Text.Font = GameFont.Medium;
-            Widgets.Label(new Rect(inRect.x, inRect.y, inRect.width, 30f), LanguageManager.Get("Preview") + ": " + kindDef.LabelCap);
+            
+            string label = kindDef.LabelCap;
+            var factionData = FactionGearCustomizerMod.Settings.factionGearData.FirstOrDefault(f => f.factionDefName == factionDef.defName);
+            if (factionData != null)
+            {
+                var kindData = factionData.kindGearData.FirstOrDefault(kd => kd.kindDefName == kindDef.defName);
+                if (kindData != null && !string.IsNullOrEmpty(kindData.Label))
+                {
+                    label = kindData.Label;
+                }
+            }
+            
+            Widgets.Label(new Rect(inRect.x, inRect.y, inRect.width, 30f), LanguageManager.Get("Preview") + ": " + label);
             Text.Font = GameFont.Small;
 
             if (previewPawn == null || errorMessage != null)
@@ -387,6 +486,9 @@ namespace FactionGearCustomizer
             if (image != null)
             {
                 GUI.DrawTexture(pawnRect, image);
+                
+                // Info Card Button
+                Widgets.InfoCardButton(pawnRect.xMax - 24f, pawnRect.y, previewPawn);
             }
             else
             {

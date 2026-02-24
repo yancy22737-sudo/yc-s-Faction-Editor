@@ -10,6 +10,12 @@ namespace FactionGearCustomizer
         // 导出预设为 Base64 字符串
         public static string ExportToBase64(FactionGearPreset preset)
         {
+            if (preset == null)
+            {
+                Log.Warning("[FactionGearCustomizer] ExportToBase64 called with null preset.");
+                return null;
+            }
+
             string path = Path.Combine(GenFilePaths.ConfigFolderPath, "TempPresetExport.xml");
             try
             {
@@ -31,6 +37,12 @@ namespace FactionGearCustomizer
         // 从 Base64 字符串导入预设
         public static FactionGearPreset ImportFromBase64(string base64)
         {
+            if (string.IsNullOrEmpty(base64))
+            {
+                Log.Warning("[FactionGearCustomizer] ImportFromBase64 called with null or empty base64 string.");
+                return null;
+            }
+
             string path = Path.Combine(GenFilePaths.ConfigFolderPath, "TempPresetImport.xml");
             try
             {

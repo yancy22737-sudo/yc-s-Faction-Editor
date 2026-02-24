@@ -1,199 +1,264 @@
-1. 增加派系优先级排序 & 删去左侧繁杂图标
-首先，在 FactionGearEditor 类的顶部（也就是声明变量 private static string searchText = ""; 的附近），加上这个控制展开状态的变量：
+Command line arguments: -disable-compute-shaders
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+Verse.Log:Message (string)
+Verse.Root:CheckGlobalInit ()
+Verse.Root:Start ()
+Verse.Root_Entry:Start ()
 
-C#
-        // 用于记录当前展开权重的物品
-        private static GearItem expandedGearItem = null;
-然后，在 FactionGearEditor 类中新增一个派系优先级判断方法：
+RimWorld 1.6.4633 rev1261
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+Verse.Log:Message (string)
+RimWorld.VersionControl:LogVersionNumber ()
+Verse.Root:CheckGlobalInit ()
+Verse.Root:Start ()
+Verse.Root_Entry:Start ()
 
-C#
-        // 派系排序优先级（数字越小越靠前）
-        private static int GetFactionPriority(FactionDef f)
-        {
-            if (f == null) return 100;
-            string name = f.defName.ToLower();
-            if (name.Contains("player")) return 1;
-            if (name.Contains("empire")) return 2;
-            if (name.Contains("outlander")) return 3;
-            if (name.Contains("tribe")) return 4;
-            if (name.Contains("pirate")) return 5;
-            if (name.Contains("mechanoid") || name.Contains("insect")) return 10;
-            return 6; // 其他 Mod 派系
-        }
-接下来，找到 DrawLeftPanel 方法，进行以下两处替换：
-将派系列表排序代码（var allFactions = ...）替换为：
+Mod Nice Inventory Tab CE Integration dependency (andromeda.niceinventorytab) needs to have <downloadUrl> and/or <steamWorkshopUrl> specified.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+Verse.Log:Warning (string)
+Verse.ModMetaData/ModMetaDataInternal:ValidateDependencies (bool)
+Verse.ModMetaData:Init ()
+Verse.ModMetaData:.ctor (Verse.Steam.WorkshopItem)
+Verse.ModLister:RebuildModList ()
+Verse.ModLister:.cctor ()
+Verse.ModsConfig:.cctor ()
+Verse.LoadedModManager:InitializeMods ()
+Verse.LoadedModManager:LoadAllActiveMods (bool)
+Verse.PlayDataLoader:DoPlayLoad ()
+Verse.PlayDataLoader:LoadAllPlayData (bool)
+Verse.Root/<>c:<Start>b__10_1 ()
+Verse.LongEventHandler:RunEventFromAnotherThread (System.Action)
+Verse.LongEventHandler/<>c:<UpdateCurrentAsynchronousEvent>b__28_0 ()
+System.Threading.ThreadHelper:ThreadStart_Context (object)
+System.Threading.ExecutionContext:RunInternal (System.Threading.ExecutionContext,System.Threading.ContextCallback,object,bool)
+System.Threading.ExecutionContext:Run (System.Threading.ExecutionContext,System.Threading.ContextCallback,object,bool)
+System.Threading.ExecutionContext:Run (System.Threading.ExecutionContext,System.Threading.ContextCallback,object)
+System.Threading.ThreadHelper:ThreadStart ()
 
-C#
-            // 【修复 4】按照常见频率优先级排序
-            var allFactions = DefDatabase<FactionDef>.AllDefs
-                .OrderBy(f => GetFactionPriority(f))
-                .ThenBy(f => f.label != null ? f.LabelCap.ToString() : f.defName)
-                .ToList();
-往下找，将“Kind Defs”标题与周围被删去的图标部分彻底精简，替换为：
+[HugsLib] version 12.0.0
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+Verse.Log:Message (string)
+HugsLib.Utils.ModLogger:Message (string,object[])
+HugsLib.HugsLibController:InitializeController ()
+HugsLib.HugsLibController:EarlyInitialize (Verse.ModContentPack)
+HugsLib.Core.HugsLibMod:.ctor (Verse.ModContentPack)
+System.Reflection.RuntimeConstructorInfo:InternalInvoke (object,object[],bool)
+System.Reflection.RuntimeConstructorInfo:DoInvoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.RuntimeConstructorInfo:Invoke (System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.RuntimeType:CreateInstanceImpl (System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo,object[],System.Threading.StackCrawlMark&)
+System.Activator:CreateInstance (System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo,object[])
+System.Activator:CreateInstance (System.Type,object[])
+Verse.LoadedModManager:CreateModClasses ()
+Verse.LoadedModManager:LoadAllActiveMods (bool)
+Verse.PlayDataLoader:DoPlayLoad ()
+Verse.PlayDataLoader:LoadAllPlayData (bool)
+Verse.Root/<>c:<Start>b__10_1 ()
+Verse.LongEventHandler:RunEventFromAnotherThread (System.Action)
+Verse.LongEventHandler/<>c:<UpdateCurrentAsynchronousEvent>b__28_0 ()
+System.Threading.ThreadHelper:ThreadStart_Context (object)
+System.Threading.ExecutionContext:RunInternal (System.Threading.ExecutionContext,System.Threading.ContextCallback,object,bool)
+System.Threading.ExecutionContext:Run (System.Threading.ExecutionContext,System.Threading.ContextCallback,object,bool)
+System.Threading.ExecutionContext:Run (System.Threading.ExecutionContext,System.Threading.ContextCallback,object)
+System.Threading.ThreadHelper:ThreadStart ()
 
-C#
-            // ================= 兵种列表绘制 =================
-            float kindListY = innerRect.y + factionListHeight + 10f;
-            float kindListHeight = innerRect.height - factionListHeight - 10f;
-            
-            Text.Font = GameFont.Medium;
-            Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(new Rect(innerRect.x, kindListY, 150f, 30f), "Kind Defs");
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.UpperLeft;
+Error while instantiating a mod of type FactionGearCustomizer.FactionGearCustomizerMod: System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> HarmonyLib.HarmonyException: Ambiguous match for HarmonyMethod[(class=RimWorld.Planet.FloatMenuMakerWorld, methodname=ChoicesAtFor, type=Normal, args=undefined)] ---> System.Reflection.AmbiguousMatchException: Ambiguous match found.
+[Ref E7DD75BD]
+  at System.RuntimeType.GetMethodImplCommon (System.String name, System.Int32 genericParameterCount, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, System.Reflection.CallingConventions callConv, System.Type[] types, System.Reflection.ParameterModifier[] modifiers) [0x00050] in <51fded79cd284d4d911c5949aff4cb21>:0 
+  at System.RuntimeType.GetMethodImpl (System.String name, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, System.Reflection.CallingConventions callConv, System.Type[] types, System.Reflection.ParameterModifier[] modifiers) [0x00000] in <51fded79cd284d4d911c5949aff4cb21>:0 
+  at System.Type.GetMethod (System.String name, System.Reflection.BindingFlags bindingAttr) [0x0000e] in <51fded79cd284d4d911c5949aff4cb21>:0 
+  at HarmonyLib.AccessTools.DeclaredMethod (System.Type type, System.String name, System.Type[] parameters, System.Type[] generics) [0x0002d] in <e53399289d9b419d83f9f5b02c5cf609>:0 
+  at HarmonyLib.PatchTools.GetOriginalMethod (HarmonyLib.HarmonyMethod attr) [0x000d1] in <e53399289d9b419d83f9f5b02c5cf609>:0 
+   --- End of inner exception stack trace ---
+[Ref 311BAD8]
+  at HarmonyLib.PatchClassProcessor.ReportException (System.Exception exception, System.Reflection.MethodBase original) [0x0013c] in <e53399289d9b419d83f9f5b02c5cf609>:0 
+  at HarmonyLib.PatchClassProcessor.Patch () [0x00096] in <e53399289d9b419d83f9f5b02c5cf609>:0 
+  at HarmonyLib.Harmony.<PatchAll>b__10_1 (System.Type type) [0x00007] in <e53399289d9b419d83f9f5b02c5cf609>:0 
+  at HarmonyLib.CollectionExtensions.Do[T] (System.Collections.Generic.IEnumerable`1[T] sequence, System.Action`1[T] action) [0x00014] in <e53399289d9b419d83f9f5b02c5cf609>:0 
+  at HarmonyLib.CollectionExtensions.DoIf[T] (System.Collections.Generic.IEnumerable`1[T] sequence, System.Func`2[T,TResult] condition, System.Action`1[T] action) [0x00007] in <e53399289d9b419d83f9f5b02c5cf609>:0 
+  at HarmonyLib.Harmony.PatchAll (System.Reflection.Assembly assembly) [0x00006] in <e53399289d9b419d83f9f5b02c5cf609>:0 
+  at HarmonyLib.Harmony.PatchAll () [0x0001d] in <e53399289d9b419d83f9f5b02c5cf609>:0 
+FactionGearCustomizer.FactionGearCustomizerMod..ctor(ModContentPack content)
+(wrapper managed-to-native) System.Reflection.RuntimeConstructorInfo.InternalInvoke(System.Reflection.RuntimeConstructorInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeConstructorInfo.InternalInvoke (System.Object obj, System.Object[] parameters, System.Boolean wrapExceptions) [0x00005] in <51fded79cd284d4d911c5949aff4cb21>:0 
+   --- End of inner exception stack trace ---
+[Ref C8EC1B89]
+  at System.Reflection.RuntimeConstructorInfo.InternalInvoke (System.Object obj, System.Object[] parameters, System.Boolean wrapExceptions) [0x0001a] in <51fded79cd284d4d911c5949aff4cb21>:0 
+  at System.Reflection.RuntimeConstructorInfo.DoInvoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00086] in <51fded79cd284d4d911c5949aff4cb21>:0 
+  at System.Reflection.RuntimeConstructorInfo.Invoke (System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00000] in <51fded79cd284d4d911c5949aff4cb21>:0 
+  at System.RuntimeType.CreateInstanceImpl (System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, System.Object[] args, System.Globalization.CultureInfo culture, System.Object[] activationAttributes, System.Threading.StackCrawlMark& stackMark) [0x0022b] in <51fded79cd284d4d911c5949aff4cb21>:0 
+  at System.Activator.CreateInstance (System.Type type, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, System.Object[] args, System.Globalization.CultureInfo culture, System.Object[] activationAttributes) [0x0009c] in <51fded79cd284d4d911c5949aff4cb21>:0 
+  at System.Activator.CreateInstance (System.Type type, System.Object[] args) [0x00000] in <51fded79cd284d4d911c5949aff4cb21>:0 
+  at Verse.LoadedModManager.CreateModClasses () [0x00085] in <46372f5dadbf4af8939e608076251180>:0 
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+Verse.Log:Error (string)
+Verse.LoadedModManager:CreateModClasses ()
+Verse.LoadedModManager:LoadAllActiveMods (bool)
+Verse.PlayDataLoader:DoPlayLoad ()
+Verse.PlayDataLoader:LoadAllPlayData (bool)
+Verse.Root/<>c:<Start>b__10_1 ()
+Verse.LongEventHandler:RunEventFromAnotherThread (System.Action)
+Verse.LongEventHandler/<>c:<UpdateCurrentAsynchronousEvent>b__28_0 ()
+System.Threading.ThreadHelper:ThreadStart_Context (object)
+System.Threading.ExecutionContext:RunInternal (System.Threading.ExecutionContext,System.Threading.ContextCallback,object,bool)
+System.Threading.ExecutionContext:Run (System.Threading.ExecutionContext,System.Threading.ContextCallback,object,bool)
+System.Threading.ExecutionContext:Run (System.Threading.ExecutionContext,System.Threading.ContextCallback,object)
+System.Threading.ThreadHelper:ThreadStart ()
 
-            // 【修复 2】删去了此处标题栏右侧的复制、粘贴、应用三个图标
+XML error: <minWidth>170</minWidth> doesn't correspond to any field in type MainButtonDef. Context: <MainButtonDef><defName>FactionGear_MainButton</defName><label>FactionGearCustomizer</label><description>Open Faction Gear Editor.</description><tabWindowClass>FactionGearCustomizer.UI.FactionGearMainTabWindow</tabWindowClass><order>99</order><minWidth>170</minWidth><workerClass>FactionGearCustomizer.MainButtonWorker_FactionGear</workerClass></MainButtonDef>
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+Verse.Log:Error (string)
+Verse.XmlToObjectUtils:DoFieldSearch (System.Type,System.Xml.XmlNode,System.Xml.XmlNode)
+Verse.DirectXmlToObjectNew:ResolveFieldForNode (System.Type,System.Xml.XmlNode,System.Xml.XmlNode)
+(wrapper dynamic-method) Verse.DirectXmlToObjectNew/DummyTypeToHoldDynamicMethods:ParseAndReturnDef_RimWorld_MainButtonDef (int,int,System.Xml.XmlNode,System.Type)
+Verse.DirectXmlToObjectNew:DefFromNodeNew (System.Xml.XmlNode,Verse.LoadableXmlAsset)
+Verse.LoadedModManager:ParseAndProcessXML (System.Xml.XmlDocument,System.Collections.Generic.Dictionary`2<System.Xml.XmlNode, Verse.LoadableXmlAsset>,bool)
+Verse.LoadedModManager:LoadAllActiveMods (bool)
+Verse.PlayDataLoader:DoPlayLoad ()
+Verse.PlayDataLoader:LoadAllPlayData (bool)
+Verse.Root/<>c:<Start>b__10_1 ()
+Verse.LongEventHandler:RunEventFromAnotherThread (System.Action)
+Verse.LongEventHandler/<>c:<UpdateCurrentAsynchronousEvent>b__28_0 ()
+System.Threading.ThreadHelper:ThreadStart_Context (object)
+System.Threading.ExecutionContext:RunInternal (System.Threading.ExecutionContext,System.Threading.ContextCallback,object,bool)
+System.Threading.ExecutionContext:Run (System.Threading.ExecutionContext,System.Threading.ContextCallback,object,bool)
+System.Threading.ExecutionContext:Run (System.Threading.ExecutionContext,System.Threading.ContextCallback,object)
+System.Threading.ThreadHelper:ThreadStart ()
 
-            Rect kindListOutRect = new Rect(innerRect.x, kindListY + 35f, innerRect.width, kindListHeight - 35f);
-🛠️ 2. 中间面板：加入 "AA" 按钮 & 动态高度计算
-找到 DrawMiddlePanel 方法，将顶部绘制按钮和滚动列表的部分替换为：
+[XML Extensions] Initialized 0 SettingsMenuDef(s) and found 0 unused key(s) from 0 mod(s)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+Verse.Log:Message (string)
+XmlExtensions.XmlExtensions:.cctor ()
+System.Runtime.CompilerServices.RuntimeHelpers:RunClassConstructor (System.RuntimeTypeHandle)
+Verse.StaticConstructorOnStartupUtility:CallAll ()
+Verse.PlayDataLoader/<>c:<DoPlayLoad>b__4_4 ()
+Verse.LongEventHandler:ExecuteToExecuteWhenFinished ()
+Verse.LongEventHandler:UpdateCurrentAsynchronousEvent ()
+Verse.LongEventHandler:LongEventsUpdate (bool&)
+(wrapper dynamic-method) MonoMod.Utils.DynamicMethodDefinition:Verse.Root.Update_Patch1 (Verse.Root)
+Verse.Root_Entry:Update ()
 
-C#
-            // 【修复 2】将 AA (Apply All) 按钮放在 Selected Gear 标题旁边
-            Widgets.Label(new Rect(innerRect.x, innerRect.y, 120f, 24f), "Selected Gear");
+[XML Extensions] 29 total patch operations run in 56ms, 0 failed
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+Verse.Log:Message (string)
+XmlExtensions.XmlExtensions:.cctor ()
+System.Runtime.CompilerServices.RuntimeHelpers:RunClassConstructor (System.RuntimeTypeHandle)
+Verse.StaticConstructorOnStartupUtility:CallAll ()
+Verse.PlayDataLoader/<>c:<DoPlayLoad>b__4_4 ()
+Verse.LongEventHandler:ExecuteToExecuteWhenFinished ()
+Verse.LongEventHandler:UpdateCurrentAsynchronousEvent ()
+Verse.LongEventHandler:LongEventsUpdate (bool&)
+(wrapper dynamic-method) MonoMod.Utils.DynamicMethodDefinition:Verse.Root.Update_Patch1 (Verse.Root)
+Verse.Root_Entry:Update ()
 
-            Rect clearButtonRect = new Rect(innerRect.xMax - 70f, innerRect.y, 70f, 20f);
-            if (Widgets.ButtonText(clearButtonRect, "Clear All"))
-            {
-                if (currentKindData != null) { ClearAllGear(currentKindData); FactionGearCustomizerMod.Settings.Write(); }
-            }
+[XML Extensions] Emitted 0 mod class(es)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+Verse.Log:Message (string)
+XmlExtensions.XmlExtensions:.cctor ()
+System.Runtime.CompilerServices.RuntimeHelpers:RunClassConstructor (System.RuntimeTypeHandle)
+Verse.StaticConstructorOnStartupUtility:CallAll ()
+Verse.PlayDataLoader/<>c:<DoPlayLoad>b__4_4 ()
+Verse.LongEventHandler:ExecuteToExecuteWhenFinished ()
+Verse.LongEventHandler:UpdateCurrentAsynchronousEvent ()
+Verse.LongEventHandler:LongEventsUpdate (bool&)
+(wrapper dynamic-method) MonoMod.Utils.DynamicMethodDefinition:Verse.Root.Update_Patch1 (Verse.Root)
+Verse.Root_Entry:Update ()
 
-            Rect aaButtonRect = new Rect(clearButtonRect.x - 35f, innerRect.y, 30f, 20f);
-            if (Widgets.ButtonText(aaButtonRect, "AA"))
-            {
-                if (!string.IsNullOrEmpty(selectedFactionDefName) && !string.IsNullOrEmpty(selectedKindDefName))
-                {
-                    CopyKindDefGear(); // 复制当前兵种配置
-                    ApplyToAllKindsInFaction(); // 应用到全局
-                    Messages.Message("Applied current gear to ALL Kind Defs in this faction!", MessageTypeDefOf.PositiveEvent);
-                }
-            }
-            TooltipHandler.TipRegion(aaButtonRect, "Apply current gear to ALL other Kind Defs in this faction");
+Could not load reference to Verse.ThingDef named RNApparel_MedEng_JuggernautSuit
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+Verse.Log:Error (string)
+Verse.ScribeExtractor:DefFromNode<Verse.ThingDef> (System.Xml.XmlNode)
+Verse.ScribeExtractor:DefFromNodeUnsafe<Verse.ThingDef> (System.Xml.XmlNode)
+Verse.Scribe_Collections:Look<Verse.ThingDef> (System.Collections.Generic.List`1<Verse.ThingDef>&,bool,string,Verse.LookMode,object[])
+Verse.Scribe_Collections:Look<Verse.ThingDef> (System.Collections.Generic.List`1<Verse.ThingDef>&,string,bool,Verse.LookMode,object[])
+Verse.Scribe_Collections:Look<Verse.ThingDef> (System.Collections.Generic.List`1<Verse.ThingDef>&,string,Verse.LookMode,object[])
+FactionLoadout.PawnKindEdit:ExposeData ()
+Verse.ScribeExtractor:SaveableFromNode<FactionLoadout.PawnKindEdit> (System.Xml.XmlNode,object[])
+Verse.Scribe_Collections:Look<FactionLoadout.PawnKindEdit> (System.Collections.Generic.List`1<FactionLoadout.PawnKindEdit>&,bool,string,Verse.LookMode,object[])
+Verse.Scribe_Collections:Look<FactionLoadout.PawnKindEdit> (System.Collections.Generic.List`1<FactionLoadout.PawnKindEdit>&,string,bool,Verse.LookMode,object[])
+Verse.Scribe_Collections:Look<FactionLoadout.PawnKindEdit> (System.Collections.Generic.List`1<FactionLoadout.PawnKindEdit>&,string,Verse.LookMode,object[])
+FactionLoadout.FactionEdit:ExposeData ()
+Verse.ScribeExtractor:SaveableFromNode<FactionLoadout.FactionEdit> (System.Xml.XmlNode,object[])
+Verse.Scribe_Collections:Look<FactionLoadout.FactionEdit> (System.Collections.Generic.List`1<FactionLoadout.FactionEdit>&,bool,string,Verse.LookMode,object[])
+Verse.Scribe_Collections:Look<FactionLoadout.FactionEdit> (System.Collections.Generic.List`1<FactionLoadout.FactionEdit>&,string,bool,Verse.LookMode,object[])
+Verse.Scribe_Collections:Look<FactionLoadout.FactionEdit> (System.Collections.Generic.List`1<FactionLoadout.FactionEdit>&,string,Verse.LookMode,object[])
+FactionLoadout.Preset:ExposeData ()
+FactionLoadout.IO:LoadFromFile (Verse.IExposable,string)
+FactionLoadout.Preset:LoadAllPresets ()
+FactionLoadout.ModCore:LoadLate ()
+Verse.LongEventHandler:UpdateCurrentSynchronousEvent (bool&)
+Verse.LongEventHandler:LongEventsUpdate (bool&)
+(wrapper dynamic-method) MonoMod.Utils.DynamicMethodDefinition:Verse.Root.Update_Patch1 (Verse.Root)
+Verse.Root_Entry:Update ()
 
-            Rect tabRect = new Rect(innerRect.x, innerRect.y + 24f, innerRect.width, 24f);
-            DrawCategoryTabs(tabRect);
+Could not load reference to Verse.ThingDef named RNApparel_Helmet_Juggernaut
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+Verse.Log:Error (string)
+Verse.ScribeExtractor:DefFromNode<Verse.ThingDef> (System.Xml.XmlNode)
+Verse.ScribeExtractor:DefFromNodeUnsafe<Verse.ThingDef> (System.Xml.XmlNode)
+Verse.Scribe_Collections:Look<Verse.ThingDef> (System.Collections.Generic.List`1<Verse.ThingDef>&,bool,string,Verse.LookMode,object[])
+Verse.Scribe_Collections:Look<Verse.ThingDef> (System.Collections.Generic.List`1<Verse.ThingDef>&,string,bool,Verse.LookMode,object[])
+Verse.Scribe_Collections:Look<Verse.ThingDef> (System.Collections.Generic.List`1<Verse.ThingDef>&,string,Verse.LookMode,object[])
+FactionLoadout.PawnKindEdit:ExposeData ()
+Verse.ScribeExtractor:SaveableFromNode<FactionLoadout.PawnKindEdit> (System.Xml.XmlNode,object[])
+Verse.Scribe_Collections:Look<FactionLoadout.PawnKindEdit> (System.Collections.Generic.List`1<FactionLoadout.PawnKindEdit>&,bool,string,Verse.LookMode,object[])
+Verse.Scribe_Collections:Look<FactionLoadout.PawnKindEdit> (System.Collections.Generic.List`1<FactionLoadout.PawnKindEdit>&,string,bool,Verse.LookMode,object[])
+Verse.Scribe_Collections:Look<FactionLoadout.PawnKindEdit> (System.Collections.Generic.List`1<FactionLoadout.PawnKindEdit>&,string,Verse.LookMode,object[])
+FactionLoadout.FactionEdit:ExposeData ()
+Verse.ScribeExtractor:SaveableFromNode<FactionLoadout.FactionEdit> (System.Xml.XmlNode,object[])
+Verse.Scribe_Collections:Look<FactionLoadout.FactionEdit> (System.Collections.Generic.List`1<FactionLoadout.FactionEdit>&,bool,string,Verse.LookMode,object[])
+Verse.Scribe_Collections:Look<FactionLoadout.FactionEdit> (System.Collections.Generic.List`1<FactionLoadout.FactionEdit>&,string,bool,Verse.LookMode,object[])
+Verse.Scribe_Collections:Look<FactionLoadout.FactionEdit> (System.Collections.Generic.List`1<FactionLoadout.FactionEdit>&,string,Verse.LookMode,object[])
+FactionLoadout.Preset:ExposeData ()
+FactionLoadout.IO:LoadFromFile (Verse.IExposable,string)
+FactionLoadout.Preset:LoadAllPresets ()
+FactionLoadout.ModCore:LoadLate ()
+Verse.LongEventHandler:UpdateCurrentSynchronousEvent (bool&)
+Verse.LongEventHandler:LongEventsUpdate (bool&)
+(wrapper dynamic-method) MonoMod.Utils.DynamicMethodDefinition:Verse.Root.Update_Patch1 (Verse.Root)
+Verse.Root_Entry:Update ()
 
-            float totalFixedHeight = 24f + 24f + 10f;
-            float availableHeight = innerRect.height - totalFixedHeight;
-            float previewHeight = Mathf.Clamp(availableHeight * 0.3f, 50f, 100f);
-            float listHeight = Mathf.Max(availableHeight - previewHeight, 80f);
-            Rect listOutRect = new Rect(innerRect.x, tabRect.yMax + 5f, innerRect.width, listHeight);
+<color=#1c6beb>[FacLoadout]</color> Cloned 破碎帝国, creating 12 kindDefs: Muffalo, Dromedary, Alpaca, Elephant, Villager, Empire_Fighter_Trooper, Empire_Fighter_Cataphract, Empire_Fighter_Janissary, Empire_Fighter_Champion, Empire_Common_Trader, Empire_Fighter_Grenadier, Empire_Royal_Stellarch
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+Verse.Log:Message (string)
+FactionLoadout.ModCore:Log (string)
+FactionLoadout.CloningUtility:Clone (RimWorld.FactionDef)
+FactionLoadout.FactionEdit:EnsureOriginal (RimWorld.FactionDef)
+FactionLoadout.FactionEdit:Apply (RimWorld.FactionDef,bool)
+FactionLoadout.Preset:TryApplyAll ()
+FactionLoadout.ModCore:LoadLate ()
+Verse.LongEventHandler:UpdateCurrentSynchronousEvent (bool&)
+Verse.LongEventHandler:LongEventsUpdate (bool&)
+(wrapper dynamic-method) MonoMod.Utils.DynamicMethodDefinition:Verse.Root.Update_Patch1 (Verse.Root)
+Verse.Root_Entry:Update ()
 
-            // 【修复 1】动态计算展开和折叠的总高度
-            float contentHeight = 0f;
-            foreach (var item in gearItemsToDraw) {
-                contentHeight += (item == expandedGearItem) ? 60f : 30f;
-            }
-            Rect listViewRect = new Rect(0, 0, listOutRect.width - 16f, Mathf.Max(contentHeight, listOutRect.height));
+<color=#1c6beb>[FacLoadout]</color>   - Applied changes to 破碎帝国
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+Verse.Log:Message (string)
+FactionLoadout.ModCore:Log (string)
+FactionLoadout.Preset:TryApplyAll ()
+FactionLoadout.ModCore:LoadLate ()
+Verse.LongEventHandler:UpdateCurrentSynchronousEvent (bool&)
+Verse.LongEventHandler:LongEventsUpdate (bool&)
+(wrapper dynamic-method) MonoMod.Utils.DynamicMethodDefinition:Verse.Root.Update_Patch1 (Verse.Root)
+Verse.Root_Entry:Update ()
 
-            Widgets.BeginScrollView(listOutRect, ref gearListScrollPos, listViewRect);
-            if (gearItemsToDraw.Any() && currentKindData != null)
-            {
-                Listing_Standard gearListing = new Listing_Standard();
-                gearListing.Begin(listViewRect);
-                foreach (var gearItem in gearItemsToDraw.ToList())
-                {
-                    bool isExpanded = (gearItem == expandedGearItem);
-                    // 根据是否展开，分配不同的行高
-                    Rect rowRect = gearListing.GetRect(isExpanded ? 56f : 28f);
-                    DrawGearItem(rowRect, gearItem, currentKindData, isExpanded);
-                    gearListing.Gap(2f);
-                }
-                gearListing.End();
-            }
-            Widgets.EndScrollView();
-🛠️ 3. 彻底重构物品绘制（折叠与展开）
-将原来的 DrawGearItem 方法签名和内容完全替换为支持展开逻辑的以下代码：
+<color=#1c6beb>[FacLoadout]</color> Applied preset 'My preset': 1 factions were edited.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+Verse.Log:Message (string)
+FactionLoadout.ModCore:Log (string)
+FactionLoadout.Preset:TryApplyAll ()
+FactionLoadout.ModCore:LoadLate ()
+Verse.LongEventHandler:UpdateCurrentSynchronousEvent (bool&)
+Verse.LongEventHandler:LongEventsUpdate (bool&)
+(wrapper dynamic-method) MonoMod.Utils.DynamicMethodDefinition:Verse.Root.Update_Patch1 (Verse.Root)
+Verse.Root_Entry:Update ()
 
-C#
-        // 【修复 1】支持点击展开滑块的 UI 重构
-        private static void DrawGearItem(Rect rect, GearItem gearItem, KindGearData kindData, bool isExpanded)
-        {
-            var thingDef = gearItem.ThingDef;
-            if (thingDef == null) return;
-
-            Widgets.DrawHighlightIfMouseover(rect);
-            if (gearItem.weight != 1f)
-            {
-                GUI.color = new Color(1f, 0.8f, 0.4f, 0.3f);
-                Widgets.DrawHighlight(rect);
-                GUI.color = Color.white;
-            }
-
-            // 第一行：图标、名称、极简权重文本（仅折叠时）、删除按钮
-            Rect row1 = new Rect(rect.x, rect.y, rect.width, 28f);
-            Rect iconRect = new Rect(row1.x + 4f, row1.y + 2f, 24f, 24f);
-            Rect removeRect = new Rect(row1.xMax - 26f, row1.y + 2f, 24f, 24f);
-            
-            // 互交区域（点击空白处展开/折叠，避开删除按钮）
-            Rect interactRect = new Rect(row1.x, row1.y, row1.width - 30f, 28f);
-            if (Widgets.ButtonInvisible(interactRect))
-            {
-                expandedGearItem = (expandedGearItem == gearItem) ? null : gearItem;
-            }
-
-            if (thingDef.uiIcon != null) GUI.DrawTexture(iconRect, thingDef.uiIcon);
-            else if (thingDef.graphic?.MatSingle?.mainTexture != null) GUI.DrawTexture(iconRect, thingDef.graphic.MatSingle.mainTexture);
-
-            Rect nameRect = new Rect(iconRect.xMax + 8f, row1.y, row1.width - 100f, 28f);
-            Text.Anchor = TextAnchor.MiddleLeft;
-            Text.WordWrap = false; // 防止超长名字换行把 UI 撑爆
-            Widgets.Label(nameRect, thingDef.LabelCap);
-            Text.WordWrap = true;
-
-            // 折叠状态时，在最右侧极简显示当前权重
-            if (!isExpanded)
-            {
-                Text.Anchor = TextAnchor.MiddleRight;
-                GUI.color = Color.gray;
-                Widgets.Label(new Rect(removeRect.x - 45f, row1.y, 40f, 28f), $"W:{gearItem.weight:F1}");
-                GUI.color = Color.white;
-            }
-            Text.Anchor = TextAnchor.UpperLeft;
-
-            if (Widgets.ButtonText(removeRect, "X"))
-            {
-                RemoveGearItem(gearItem, kindData);
-                if (expandedGearItem == gearItem) expandedGearItem = null;
-                FactionGearCustomizerMod.Settings.Write();
-            }
-
-            // 第二行：仅在展开时绘制大尺寸精度滑块
-            if (isExpanded)
-            {
-                Rect row2 = new Rect(rect.x, rect.y + 28f, rect.width, 28f);
-                Rect sliderRect = new Rect(row2.x + 10f, row2.y + 4f, row2.width - 60f, 20f);
-                Rect weightRect = new Rect(row2.xMax - 40f, row2.y, 35f, 28f);
-
-                gearItem.weight = Widgets.HorizontalSlider(sliderRect, gearItem.weight, 0.1f, 10f);
-                Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(weightRect, gearItem.weight.ToString("F1"));
-                Text.Anchor = TextAnchor.UpperLeft;
-            }
-        }
-最后，为了防止切换页签时滑块状态错乱，在 DrawCategoryTabs 方法中找到 if (Widgets.ButtonInvisible(tab))，在里面加一行：
-
-C#
-                if (Widgets.ButtonInvisible(tab))
-                {
-                    selectedCategory = category;
-                    expandedGearItem = null; // 【新增】切换页签时自动收起所有展开项
-                    needCalculateBounds = true;
-                }
-🛠️ 4. 解决右侧列表浮动滑块 (FloatRange) 的溢出问题
-找到 DrawFilters 方法中，绘制“市场价值”滑块的代码区域，将其替换为：
-
-C#
-            // 【修复 3】修复市场价值滑块文本溢出和精度问题
-            Rect mvHeaderRect = listing.GetRect(18f);
-            Text.Font = GameFont.Tiny;
-            GUI.color = Color.gray;
-            // 剥离官方滑块内部的文字，我们将上下限以整数形式画在滑块正上方
-            Widgets.Label(mvHeaderRect, $"Value Range: {marketValueFilter.min:F0} - {marketValueFilter.max:F0}");
-            Text.Font = GameFont.Small;
-            GUI.color = Color.white;
-
-            Rect marketValueRect = listing.GetRect(28f);
-            // 传入 null 去掉内部 label，并使用 ToStringStyle.Integer 强行抹除 .00 的小数点
-            Widgets.FloatRange(marketValueRect, 3, ref marketValueFilter, minMarketValue, maxMarketValue, null, ToStringStyle.Integer);
-完成这四步替换后，你的 UI 会变得极其清爽：中间的物品默认只占细细的一行（不再重叠），点击物品瞬间平滑展开调参区域；不需要的功能按钮已清理，派系也依据使用频率排列了。去游戏里看看效果吧！
+<color=#1c6beb>[FacLoadout]</color> Game comp finalized init, applied 1 presets that affected 1 factions.
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+Verse.Log:Message (string)
+FactionLoadout.ModCore:Log (string)
+FactionLoadout.ModCore:LoadLate ()
+Verse.LongEventHandler:UpdateCurrentSynchronousEvent (bool&)
+Verse.LongEventHandler:LongEventsUpdate (bool&)
+(wrapper dynamic-method) MonoMod.Utils.DynamicMethodDefinition:Verse.Root.Update_Patch1 (Verse.Root)
+Verse.Root_Entry:Update ()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 using RimWorld;
+using FactionGearCustomizer.UI.Panels;
 
 namespace FactionGearCustomizer
 {
@@ -10,9 +11,11 @@ namespace FactionGearCustomizer
     {
         // Selection State
         public static string SelectedFactionDefName = "";
+        public static Faction SelectedFactionInstance = null;
         public static string SelectedKindDefName = "";
         public static GearCategory SelectedCategory = GearCategory.Weapons;
         public static HashSet<string> SelectedModSources = new HashSet<string>();
+        public static HashSet<string> SelectedAmmoSets = new HashSet<string>();
         public static TechLevel? SelectedTechLevel = null;
         public static GearItem ExpandedGearItem = null;
         public static SpecRequirementEdit ExpandedSpecItem = null;
@@ -29,9 +32,10 @@ namespace FactionGearCustomizer
 
         // Filter State
         public static string SearchText = "";
+        public static string KindListSearchText = "";
         public static FloatRange RangeFilter = new FloatRange(0f, 100f);
         public static FloatRange DamageFilter = new FloatRange(0f, 100f);
-        public static FloatRange MarketValueFilter = new FloatRange(0f, 10000f);
+        public static FloatRange MarketValueFilter = new FloatRange(0f, 100000f);
         
         // Filter Bounds (Calculated)
         public static float MinRange = 0f;
@@ -39,19 +43,19 @@ namespace FactionGearCustomizer
         public static float MinDamage = 0f;
         public static float MaxDamage = 100f;
         public static float MinMarketValue = 0f;
-        public static float MaxMarketValue = 10000f;
+        public static float MaxMarketValue = 100000f;
         public static bool NeedCalculateBounds = true;
 
         // Sort State
-        public static string SortField = "Name";
-        public static bool SortAscending = true;
+        public static string SortField = "MarketValue";
+        public static bool SortAscending = false;
 
         // Mode State
         public static EditorMode CurrentMode = EditorMode.Simple;
         public static AdvancedTab CurrentAdvancedTab = AdvancedTab.General;
         
         // Settings State
-        public static bool UseInGameNames = false;
+        public static bool UseInGameNames = true;
         
         // Layer Preview State
         public static bool LayerPreviewHidden = true;
@@ -61,6 +65,7 @@ namespace FactionGearCustomizer
 
         // Caching
         public static List<string> CachedModSources = null;
+        public static List<string> CachedAmmoSets = null;
         
         // Performance Caching
         public static List<ThingDef> CachedFilteredItems = null;
@@ -82,6 +87,7 @@ namespace FactionGearCustomizer
         {
             SearchText = "";
             SelectedModSources.Clear();
+            SelectedAmmoSets.Clear();
             SelectedTechLevel = null;
             
             // Reset ranges to full bounds
@@ -99,6 +105,36 @@ namespace FactionGearCustomizer
             GearListScrollPos = Vector2.zero;
             LibraryScrollPos = Vector2.zero;
             AdvancedScrollPos = Vector2.zero;
+        }
+
+        public static void ResetSession()
+        {
+            SelectedFactionDefName = "";
+            SelectedFactionInstance = null;
+            SelectedKindDefName = "";
+            SelectedCategory = GearCategory.Weapons;
+            SelectedModSources.Clear();
+            SelectedAmmoSets.Clear();
+            SelectedTechLevel = null;
+            ExpandedGearItem = null;
+            ExpandedSpecItem = null;
+            
+            ResetScrollPositions();
+            ResetFilters();
+            
+            CopiedKindGearData = null;
+            
+            // Clear caches
+            CachedModSources = null;
+            CachedAmmoSets = null;
+            CachedFilteredItems = null;
+            CachedAllWeapons = null;
+            
+            NeedCalculateBounds = true;
+            
+            // Clear faction and kind list caches
+            FactionListPanel.MarkDirty();
+            KindListPanel.ClearCache();
         }
     }
 }

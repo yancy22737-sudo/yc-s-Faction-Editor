@@ -1,0 +1,4 @@
+- [x] Title "FactionGearCustomizer" (or localized equivalent) is visible in the Top Bar.
+- [x] Title and Action Buttons appear on the same horizontal row.
+- [x] Vertical height of the Top Bar is approximately 40px.
+- [x] No excessive whitespace exists above the Title or below the Top Bar.

@@ -8,7 +8,7 @@ namespace FactionGearCustomizer
         public string thingDefName;
         public float weight = 1f;
         
-        // 缓存 ThingDef 引用，避免频繁访问 DefDatabase
+        // 缓存 ThingDef 引用，避免频繁访�?DefDatabase
         [Unsaved]
         private ThingDef cachedThingDef;
 
@@ -18,8 +18,7 @@ namespace FactionGearCustomizer
         {
             this.thingDefName = thingDefName;
             this.weight = weight;
-            // 在创建时就解析 ThingDef 并缓存
-            if (!string.IsNullOrEmpty(thingDefName))
+            // 在创建时就解�?ThingDef 并缓�?            if (!string.IsNullOrEmpty(thingDefName))
             {
                 cachedThingDef = DefDatabase<ThingDef>.GetNamedSilentFail(thingDefName);
             }
@@ -30,7 +29,7 @@ namespace FactionGearCustomizer
             Scribe_Values.Look(ref thingDefName, "thingDefName");
             Scribe_Values.Look(ref weight, "weight", 1f);
             
-            // 加载后重新缓存 ThingDef 引用
+            // 加载后重新缓�?ThingDef 引用
             if (!string.IsNullOrEmpty(thingDefName))
             {
                 cachedThingDef = DefDatabase<ThingDef>.GetNamedSilentFail(thingDefName);
