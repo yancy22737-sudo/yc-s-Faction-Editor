@@ -1,150 +1,487 @@
-[h1]全面自定义派系装备[/h1]
+# yc's Faction Editor / yc的派系编辑器
 
-[b]游戏后期觉得应对部落老哥的突袭是浪费子弹毫无收益？
-修改派系群组逻辑？想用mod装备来一场沙盒战斗？
-调整派系异种人概率？
-在基地旁生成友军定居点？
-自定义一个US Marine派系并且全身装备严格按mod生成？[/b]
+<p align="center">
+  <b>一款功能强大的 RimWorld 派系编辑器</b><br>
+  <i>A Powerful RimWorld Faction Editor</i>
+</p>
 
-[b]yc的派系装备修改器[/b] 让这一切成为可能！本 Mod 允许你在游戏内实时深度定制任何派系、任何兵种的装备、武器甚至健康状态。
+<p align="center">
+  <a href="#功能特性">功能特性</a> •
+  <a href="#技术原理">技术原理</a> •
+  <a href="#项目架构">项目架构</a> •
+  <a href="#使用方法">使用方法</a> •
+  <a href="#兼容性">兼容性</a>
+</p>
 
-[quote][b]🌟 核心理念：轻量、兼容性、可视化[/b]
-现代化的 UI 设计，支持一键导出分享配置，支持按 Mod 来源筛选物品，让复杂的自定义变得简单直观。[/quote]
+---
 
-[hr][/hr]
+## 🎯 简介
 
-[h2]✨ 功能[/h2]
+**yc's Faction Editor** 是一个 RimWorld 1.6 Mod，用于实时定制派系单位的装备生成逻辑。通过 Harmony Patch 技术拦截游戏原生 Pawn 生成流程，在不修改游戏本体的情况下实现装备、服装、健康状态的深度自定义。
 
-[h3]🎯 精确到兵种的控制[/h3]
-不仅仅是针对派系，你可以精确控制到具体的兵种类型。
-[list]
-[*]想让 [b]帝国骑兵 (Empire Trooper)[/b] 装备特定的动力甲？没问题。
-[*]想让 [b]海盗枪手 (Pirate Gunner)[/b] 只使用特定 Mod 的枪械？完全可以。
-[*]想自定义中世纪骑士对决US Marines？简单。
-[/list]
+### 主要功能
+- 派系兵种装备定制（武器、服装、背包物品）
+- 群组生成逻辑修改（袭击、商队、定居点）
+- 健康状态与义体植入配置
+- 异种人概率调整（Biotech DLC）
+- 派系基础信息编辑（名称、图标、好感度）
 
-[h3]⚔️ 深度武器定制[/h3]
-[list]
-[*][b]强制装备[/b]：指定兵种必须携带的武器。
-[*][b]材质与品质[/b]：设定武器的材质（如玻璃钢、铀）和品质（如极佳、传奇）。
-[*][b]生物编码[/b]：设置武器被生物编码的概率，防止玩家轻易缴获。
-[/list]
+---
 
-[h3]🛡️ 服装与外观[/h3]
-[list]
-[*][b]强制着装[/b]：指定兵种必须穿戴的特定服装（头盔、护甲、衣物等）。
-[*][b]剥离原有装备[/b]：可选择移除该兵种原本随机生成的服装，确保统一着装。
-[*][b]分层管理[/b]：分别管理头饰、外衣、内衣和配件，互不冲突。
-[/list]
+## ✨ 功能特性
 
-[h3]🏥 健康与义体[/h3]
-[list]
-[*][b]添加健康状态[/b]：给生成的单位添加特定的健康状态（Hediff）。
-[*][b]义体植入[/b]：可以强制给某些兵种安装仿生腿、战术眼或其他植入物。
-[*][b]概率控制[/b]：设定每种健康状态出现的概率，创造多样化的敌人（如 30% 概率携带增强义体）。
-[/list]
+### 装备系统
+| 功能 | 说明 |
+|------|------|
+| 武器定制 | 强制装备指定武器，支持品质、材质、生物编码设置 |
+| 服装定制 | 强制着装指定装备，支持预算控制、颜色设置 |
+| 背包物品 | 添加特定物品到单位背包，支持堆叠数量配置 |
+| 健康状态 | 添加 Hediff（疾病、义体、成瘾等），支持概率和部位控制 |
 
-[h3]🛠️ 强大的游戏内编辑器[/h3]
-[list]
-[*][b]现代可视化界面[/b]：无需修改 XML 文件，所有操作都在游戏内通过现代化图形界面完成。
-[*][b]高级 Mod 筛选[/b]：支持按 Mod 来源筛选物品（如只显示 "Vanilla Expanded" 系列装备），配合科技等级、伤害值等过滤器，快速定位目标装备。
-[*][b]预设管理与分享[/b]：保存你的配置为预设，支持导出分享给朋友，或在不同存档间无缝迁移。
-[*][b]复制粘贴[/b]：支持在不同兵种间复制配置，快速批量应用。
-[/list]
+### 群组系统
+| 功能 | 说明 |
+|------|------|
+| 袭击群组 | 修改 Raid 事件的兵种组成和权重 |
+| 商队群组 | 修改 Trader Caravan 的商人、守卫、驮运动物组成 |
+| 定居点群组 | 修改派系定居点的防御兵种配置 |
+| 访客群组 | 修改 Visitor 事件的兵种组成 |
 
-[hr][/hr]
+### 派系系统
+| 功能 | 说明 |
+|------|------|
+| 基础信息 | 修改派系名称、描述、图标、颜色 |
+| 好感度 | 覆盖派系与玩家的默认关系 |
+| 异种人 | 配置 Biotech DLC 异种人出现概率 |
+| 新派系 | 基于模板创建新派系，支持地图定居点生成 |
 
-[h2]💡 灵感与推荐[/h2]
+### 编辑器功能
+- **三栏布局**：派系列表 → 兵种列表 → 配置面板
+- **Mod 筛选**：按 Mod 来源筛选物品，支持多条件组合过滤
+- **预设系统**：导出/导入 JSON 格式预设文件
+- **实时预览**：无需生成事件即可预览配置效果
+- **撤销重做**：支持操作历史回溯
 
-本 Mod 的灵感来源于经典的 [b]Total Control[/b]。
-[list]
-[*]如果你需要更全面、更底层的游戏机制修改（不仅限于装备），强烈推荐订阅 [b]Total Control[/b]。
-[*]本 Mod 专注于提供更轻量化、专注于装备与健康状态管理的现代化解决方案。
-[/list]
+---
 
-[hr][/hr]
+## 🔧 技术原理
 
-[h2]🚧 测试阶段[/h2]
+### 核心机制
 
-⚠️ [b]目前 Mod 仍处于测试阶段[/b]。
-虽然我们已经进行了大量测试，但仍可能存在未知的 Bug。
-[list]
-[*]如果您遇到任何问题，或有改进建议，请在评论区或讨论组留言。
-[*]您的反馈对我们至关重要！
-[/list]
+本 Mod 通过 **Harmony Patch** 技术实现对 RimWorld 原生生成逻辑的拦截和修改：
 
-[hr][/hr]
+#### 1. 装备注入点
+```csharp
+[HarmonyPatch(typeof(PawnGenerator), "GeneratePawn")]
+[HarmonyPriority(Priority.Last)]
+public static class Patch_GeneratePawn
+{
+    public static void Postfix(Pawn __result, PawnGenerationRequest request)
+    {
+        // 在 pawn 生成后，根据配置应用自定义装备
+        GearApplier.ApplyCustomGear(__result, faction);
+    }
+}
+```
 
-[h2]📖 如何使用[/h2]
+**原理说明**：
+- 使用 Harmony 的 `Postfix` 补丁在 `PawnGenerator.GeneratePawn()` 方法执行后介入
+- 通过 `Priority.Last` 确保在其他 Mod 之后执行，获得最终控制权
+- 利用 `ThreadStatic` 标志防止递归调用
 
-[olist]
-[*]进入游戏，打开 Mod 设置。
-[*]找到 [b]Faction Gear Customizer[/b] 的编辑器按钮。
-[*]在左侧选择你想要修改的 [b]派系[/b]。
-[*]在中间列表选择具体的 [b]兵种[/b]。
-[*]在右侧面板配置该兵种的 [b]武器、服装[/b] 或 [b]健康状态[/b]。
-[*]点击保存，配置即刻生效（对新生成的单位有效）。
-[/olist]
+#### 2. 数据持久化架构
 
-[hr][/hr]
+```
+存档数据结构:
+├── FactionGearPreset (预设)
+│   ├── factionGearData: List<FactionGearData>
+│   └── version: string
+│
+└── FactionGearData (派系数据)
+    ├── factionDefName: string
+    ├── kindGearData: List<KindGearData>
+    ├── XenotypeChances: Dictionary<string, float>
+    ├── groupMakers: List<PawnGroupMakerData>
+    └── 派系编辑字段 (Label, Description, IconPath, Color)
+```
 
-[h2]🤝 兼容性[/h2]
+#### 3. 装备应用流程
 
-[list]
-[*][b]现有存档[/b]：可以安全地加入现有存档。配置仅影响新生成的单位。
-[*][b]Harmony[/b]：本 Mod 依赖 Harmony 库运行。
-[/list]
+```
+Pawn 生成
+    ↓
+Patch_GeneratePawn.Postfix()
+    ↓
+GearApplier.ApplyCustomGear()
+    ↓
+├─ ApplyWeapons()      → 应用武器配置
+├─ ApplyApparel()      → 应用服装配置
+├─ ApplyInventory()    → 应用背包物品
+└─ ApplyHediffs()      → 应用健康状态/义体
+```
 
-[hr][/hr]
+#### 4. 预算控制系统
 
-[h2]🚀 更新计划[/h2]
+```csharp
+// 预算检查逻辑
+float budget = kindData.ApparelMoney?.RandomInRange ?? pawn.kindDef?.apparelMoney.RandomInRange ?? 0f;
+float currentSpent = pawn.apparel.WornApparel.Sum(a => a.MarketValue);
 
-[list]
-[*] [b]更多派系选项：[/b]全面修改派系名称、Logo 以及异种人出现概率。
-[*] [b]派系群组生成：[/b]为派系袭击、援军或商队加入动物、机械族等特殊单位。
-[*] [b]创建新派系：[/b]根据已有模板建立新派系，并支持手动在地图上添加定居点。
-[*] [b]RimTalk 联动：[/b]生成受派系背景和特定兵种信息影响的动态对话。
-[*] [b]更多功能...[/b]
-[/list]
+if (currentSpent + app.MarketValue > budget)
+{
+    // 超出预算，跳过该物品
+    created.Destroy();
+    continue;
+}
+```
 
-[h2]⚠️ 常见问题[/h2]
+#### 5. 科技等级限制
 
-[b]Q: 兼容 Total Control 吗? [/b]
+```csharp
+private static bool IsTechLevelAllowed(ThingDef def, TechLevel? limit)
+{
+    if (!limit.HasValue) return true;
+    TechLevel itemTechLevel = def.techLevel;
+    if (itemTechLevel == TechLevel.Undefined) return true;
+    return itemTechLevel <= limit.Value;  // 只允许低于或等于限制等级的物品
+}
+```
+
+---
+
+## 🏗️ 项目架构
+
+### 目录结构
+
+```
+FactionGearModification/
+├── Core/                           # 核心模块
+│   ├── FactionGearCustomizerMod.cs    # Mod 入口类
+│   ├── FactionGearCustomizerSettings.cs # 设置管理
+│   ├── FactionGearGameComponent.cs    # 游戏组件（存档数据）
+│   ├── Startup.cs                     # 启动逻辑
+│   └── ModVersion.cs                  # 版本信息
+│
+├── Data/                           # 数据模型
+│   ├── FactionGearData.cs             # 派系装备数据
+│   ├── KindGearData.cs                # 兵种装备数据
+│   ├── PawnGroupData.cs               # 群组生成数据
+│   ├── GearItem.cs                    # 物品定义
+│   ├── ForcedHediff.cs                # 强制健康状态
+│   ├── SpecRequirementEdit.cs         # 特定需求编辑
+│   └── Enums.cs                       # 枚举定义
+│
+├── Managers/                       # 管理器
+│   ├── FactionGearManager.cs          # 装备管理器
+│   ├── FactionDefManager.cs           # 派系定义管理器
+│   ├── GearApplier.cs                 # 装备应用器（核心逻辑）
+│   ├── FactionSpawnManager.cs         # 派系生成管理器
+│   ├── PresetFactionImporter.cs       # 预设导入器
+│   ├── UndoManager.cs                 # 撤销管理器
+│   └── LanguageManager.cs             # 多语言管理器
+│
+├── Patches/                        # Harmony 补丁
+│   ├── Patch_GeneratePawn.cs          # 核心：Pawn生成补丁
+│   ├── Patch_GameInit.cs              # 游戏初始化
+│   ├── Patch_FactionDef_FactionIcon.cs # 派系图标补丁
+│   └── Patch_FloatMenuMakerWorld.cs   # 世界地图菜单补丁
+│
+├── UI/                             # 用户界面
+│   ├── FactionGearMainTabWindow.cs    # 主窗口
+│   ├── FactionGearEditor.cs           # 编辑器核心
+│   ├── Panels/                        # 面板组件
+│   │   ├── FactionListPanel.cs
+│   │   ├── KindListPanel.cs
+│   │   ├── GearEditPanel.cs
+│   │   └── ...
+│   ├── Dialogs/                       # 对话框
+│   │   ├── Dialog_PawnGroupGenerationPreview.cs
+│   │   └── ...
+│   └── Pickers/                       # 选择器
+│       └── ThingPickerFilterBar.cs
+│
+├── IO/                             # 输入输出
+│   └── PresetIOManager.cs             # 预设文件IO
+│
+├── Compat/                         # 兼容性
+│   └── CECompat.cs                    # Combat Extended 兼容
+│
+└── About/
+    └── About.xml                      # Mod 元数据
+```
+
+### 关键类说明
+
+| 类名 | 职责 | 核心方法 |
+|------|------|----------|
+| `FactionGearCustomizerMod` | Mod 入口 | `PatchAllSafely()`, `DoSettingsWindowContents()` |
+| `Patch_GeneratePawn` | 装备注入点 | `Postfix()` |
+| `GearApplier` | 装备应用逻辑 | `ApplyCustomGear()`, `ApplyWeapons()`, `ApplyApparel()` |
+| `FactionGearData` | 派系数据容器 | `GetOrCreateKindData()`, `ExposeData()` |
+| `KindGearData` | 兵种数据容器 | `DeepCopy()`, `ResetToDefault()` |
+| `FactionGearEditor` | UI 编辑器核心 | `DrawEditor()`, `InitializeWorkingSettings()` |
+
+---
+
+## 📖 使用指南
+
+### 基础操作流程
+
+1. 进入游戏，打开 Mod 设置（主菜单 → 选项 → Mod 设置）
+2. 找到 **yc's Faction Editor** 的编辑器按钮
+3. 在左侧选择你想要修改的 **派系**
+4. 在中间列表选择具体的 **兵种**
+5. 在右侧面板配置该兵种的 **武器、服装** 或 **健康状态**
+6. 点击保存，配置即刻生效
+
+### 详细配置说明
+
+#### 武器配置
+- **强制装备列表**：指定兵种必定携带的武器
+- **品质设置**：可选 极差/较差/一般/良好/极佳/大师/传奇
+- **材质选择**：如玻璃钢、铀、黄金等（取决于武器是否可由材料制作）
+- **生物编码概率**：0-100%，决定武器是否绑定到特定角色
+
+#### 服装配置
+- **强制着装**：指定必须穿戴的装备
+- **预算范围**：控制生成装备的市场价值范围
+- **仅使用选定**：开启后移除该兵种默认装备，只使用自定义装备
+- **强制裸体**：特殊选项，生成时不穿着任何服装
+
+#### 健康状态配置
+- **强制健康状态**：添加特定的 Hediff（如疾病、义体、成瘾等）
+- **概率控制**：设置每个健康状态的出现概率
+- **部位指定**：针对特定身体部位添加健康状态
+
+#### 群组生成配置
+- **袭击群组**：修改派系袭击时的兵种组成
+- **商队群组**：修改派系商队的兵种和动物组成
+- **定居点群组**：修改派系定居点的防御兵种
+
+### 配置生效机制
+
+| 操作类型 | 生效时机 | 影响范围 |
+|----------|----------|----------|
+| 保存配置 | 立即 | 新生成的单位 |
+| 修改装备 | 保存后 | 下次生成的该兵种 |
+| 修改群组 | 保存后 | 下次生成的群组 |
+| 加载预设 | 加载后 | 新生成的单位 |
+
+### 重要注意事项
+
+1. **仅影响新生成单位**：已存在于地图上的单位不会受到影响
+2. **存档安全**：配置保存在存档中，跨存档需要导出预设
+3. **预算限制**：如果配置的装备超出预算，系统会自动跳过
+4. **科技等级**：装备科技等级高于派系等级时可能被过滤（除非关闭限制）
+
+---
+
+## 🎮 游戏机制详解
+
+### 装备生成流程
+
+当游戏需要生成一个带有派系的单位时，以下流程会被触发：
+
+```
+游戏事件触发
+    │
+    ├─ 袭击生成 (Raid)
+    ├─ 商队生成 (Caravan)
+    ├─ 访客生成 (Visitor)
+    ├─ 任务生成 (Quest)
+    └─ 其他事件
+    │
+    ▼
+PawnGenerator.GeneratePawn()
+    │
+    ▼
+[Harmony Patch] Postfix 拦截
+    │
+    ▼
+GearApplier.ApplyCustomGear()
+    │
+    ├─ 检查是否存在自定义配置
+    ├─ 检查兵种匹配
+    └─ 应用配置
+        │
+        ├─ ApplyWeapons()    → 替换/添加武器
+        ├─ ApplyApparel()    → 替换/添加服装
+        ├─ ApplyInventory()  → 添加背包物品
+        └─ ApplyHediffs()    → 添加健康状态
+```
+
+### 各游戏场景生效说明
+
+#### 1. 派系袭击 (Raid)
+- **生效时机**：袭击事件生成时
+- **影响对象**：袭击者中的所有单位
+- **特殊说明**：包括空投袭击、步行袭击、机械族袭击
+
+#### 2. 商队 (Caravan)
+- **生效时机**：商队生成时
+- **影响对象**：商人、守卫、驮运动物
+- **特殊说明**：商队群组配置控制兵种组成
+
+#### 3. 访客 (Visitor)
+- **生效时机**：访客组生成时
+- **影响对象**：访客及其护卫
+
+#### 4. 任务相关
+- **生效时机**：任务目标生成时
+- **影响对象**：任务相关的所有派系单位
+- **特殊说明**：包括救援任务、狩猎任务等
+
+#### 5. 世界地图生成
+- **生效时机**：新存档或派系定居点生成时
+- **影响对象**：派系定居点的防御者
+
+### 配置优先级
+
+当多个配置可能同时生效时，系统按以下优先级处理：
+
+```
+优先级从高到低：
+
+1. 预览模式配置 (PreviewPreset)
+   └─ 用于实时预览功能
+
+2. 存档特定配置 (Save-specific)
+   └─ 存储在当前存档中的配置
+
+3. 全局配置 (Global Settings)
+   └─ Mod 设置中的默认配置
+
+4. 原版默认 (Vanilla)
+   └─ 游戏原生生成逻辑
+```
+
+### 数据存储位置
+
+#### 存档内存储
+```
+SaveFile/
+└── FactionGearGameComponent
+    ├── factionGearPresets: List<FactionGearPreset>
+    └── currentPresetIndex: int
+```
+
+#### 预设文件存储
+```
+RimWorld/
+└── Mods/
+    └── FactionGearCustomizer/
+        └── Presets/
+            ├── PresetName_1.json
+            ├── PresetName_2.json
+            └── ...
+```
+
+### 冲突解决机制
+
+当多个 Mod 同时修改同一单位时：
+
+1. **Harmony 优先级**：本 Mod 使用 `Priority.Last` 确保最后执行
+2. **装备覆盖策略**：后应用的配置会覆盖先应用的配置
+3. **合并策略**：部分配置（如背包物品）采用追加而非替换
+
+### 性能考虑
+
+- **缓存机制**：派系和兵种数据在首次访问后缓存
+- **延迟加载**：配置数据按需加载，不占用启动时间
+- **字典索引**：使用字典优化兵种数据查询，O(1) 复杂度
+
+---
+
+## 🤝 兼容性
+
+- **现有存档**：可以安全地加入现有存档。配置仅影响新生成的单位
+- **Harmony**：本 Mod 依赖 Harmony 库运行
+- **Combat Extended (CE)**：完全兼容，自动为CE武器生成弹药
+- **Total Control**：兼容
+- **Biotech DLC**：支持异种人概率设置
+- **Royalty DLC**：支持生物编码武器
+- **Ideology DLC**：支持风格设置
+
+---
+
+## 🚀 更新计划
+
+- [ ] **RimTalk 联动**：生成受派系背景和特定兵种信息影响的动态对话
+- [ ] **更多派系选项**：全面修改派系名称、Logo 以及异种人出现概率
+- [ ] **派系群组生成**：为派系袭击、援军或商队加入动物、机械族等特殊单位
+
+---
+
+## ⚠️ 常见问题
+
+**Q: 兼容 Total Control 吗?**  
 A: 是的。
 
-[b]Q: 兼容 CE 吗？[/b]
+**Q: 兼容 CE 吗？**  
 A: 是的。
 
-[b]Q: 支持 Mod 派系吗？[/b]
+**Q: 支持 Mod 派系吗？**  
 A: 理论上是的。
 
-[b]Q: 这会影响已经存在的单位吗？[/b]
-A: 不会。修改只会影响[h3]新生成[/h3]的单位（如新刷新的袭击、援军或商队）。
+**Q: 这会影响已经存在的单位吗？**  
+A: 不会。修改只会影响**新生成**的单位（如新刷新的袭击、援军或商队）。
 
-[b]Q: 可以中途加入存档吗？[/b]
+**Q: 可以中途加入存档吗？**  
 A: 没问题。
 
-[b]Q: 如果我卸载 Mod 会怎样？[/b]
+**Q: 如果我卸载 Mod 会怎样？**  
 A: 只有 Mod 的配置数据会丢失，游戏存档通常是安全的，会报几行红字，不影响正常游戏。
 
-[hr][/hr]
+---
 
-[h2]📝 最近更新[/h2]
+## 📝 最近更新
 
-[h3]v1.1.3[/h3]
-[list]
-[*][b]多语言支持[/b]：提供简体中文和英文
-[/list]
+### v1.2
+- **多语言支持**：提供简体中文和英文
 
+---
 
+## 💡 灵感与推荐
 
-[hr][/hr]
+本 Mod 的灵感来源于经典的 **Total Control**。  
+如果你需要更全面、更底层的游戏机制修改（不仅限于装备），推荐订阅 **Total Control**。
 
-[h2]声明[/h2]
-这是我在ai帮助下制作的第一个 Mod，我正在尽力读懂C#并跑通代码。如果你对AI制作mod感兴趣，强烈推荐这个MCP工具——[url=https://github.com/kearril/RimSearcher]RimSearcher[/url]它允许Coding Agent获取环世界游戏底层运行代码。
+---
 
-[url=https://github.com/yancy22737-sudo/FactionGearCustomizer]Github[/url]
-[url=https://afdian.com/a/yancy12138]赞助我[/url]
+## 🛠️ 开发信息
 
-[b]Created by yancy[/b]
-如果喜欢这个 Mod，请点赞收藏！如有 Bug 或建议，请在评论区留言。
+### 技术栈
+- **语言**: C# (.NET Framework 4.8)
+- **框架**: RimWorld 1.6 Modding API
+- **依赖**: Harmony 2.x
+- **补丁技术**: HarmonyLib Postfix/Prefix Patches
+
+### 构建要求
+- Visual Studio 2019+ 或 Rider
+- RimWorld 1.6
+- Harmony Mod
+
+---
+
+## 📄 许可证
+
+本项目采用 MIT 许可证。
+
+---
+
+## 🙏 致谢
+
+- **Ludeon Studios** - 创造了 RimWorld 这款伟大的游戏
+- **pardeike** - 开发了 Harmony 补丁框架
+- **Total Control** - 提供了最初的灵感
+
+---
+
+<p align="center">
+  <b>Created by yancy</b><br>
+  如果喜欢这个 Mod，请点赞收藏！如有 Bug 或建议，请在评论区留言。
+</p>
+
+<p align="center">
+  <a href="https://github.com/yancy22737-sudo/FactionGearCustomizer">GitHub</a> •
+  <a href="https://afdian.com/a/yancy12138">赞助我</a>
+</p>

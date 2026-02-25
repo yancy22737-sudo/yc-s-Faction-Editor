@@ -86,21 +86,58 @@ namespace FactionGearCustomizer
             return true;
         }
 
-        private static void ApplyInventory(Pawn pawn, KindGearData kindData)
+            private static void ApplyInventory(Pawn pawn, KindGearData kindData)
         {
+            if (kindData.InventoryItems.NullOrEmpty() && !kindData.ForceOnlySelected) return;
+
+            if (kindData.ForceOnlySelected && pawn.inventory != null && pawn.inventory.innerContainer != null)
+            {
+                pawn.inventory.innerContainer.ClearAndDestroyContents();
+            }
+
             if (kindData.InventoryItems.NullOrEmpty()) return;
+
+            ApplyInventoryOnce(pawn, kindData);
+
+            ScheduleDelayedInventoryApply(pawn, kindData, 3);
+        }
+
+        private static void ScheduleDelayedInventoryApply(Pawn pawn, KindGearData kindData, int remainingAttempts)
+        {
+            if (remainingAttempts <= 0) return;
+
+            LongEventHandler.ExecuteWhenFinished(() =>
+            {
+                ApplyInventoryOnce(pawn, kindData);
+                ScheduleDelayedInventoryApply(pawn, kindData, remainingAttempts - 1);
+            });
+        }
+
+        private static void ApplyInventoryOnce(Pawn pawn, KindGearData kindData)
+        {
+            if (pawn == null || pawn.inventory == null || pawn.inventory.innerContainer == null) return;
 
             foreach (var item in GetWhatToGive(kindData.InventoryItems, pawn))
             {
                 if (item.Thing == null) continue;
 
+                if (IsSpecialItem(item.Thing))
+                {
+                    continue;
+                }
+
                 int count = item.CountRange.RandomInRange;
                 if (count <= 0) count = 1;
 
-                // Handle non-stackable items (loop to create multiple)
+                int currentCount = pawn.inventory.innerContainer.Where(t => t.def == item.Thing).Sum(t => t.stackCount);
+                if (currentCount >= count) continue;
+
+                int toAdd = count - currentCount;
+                if (toAdd <= 0) continue;
+
                 if (item.Thing.stackLimit == 1)
                 {
-                    for (int i = 0; i < count; i++)
+                    for (int i = 0; i < toAdd; i++)
                     {
                         var created = GenerateItem(pawn, item, kindData);
                         if (created != null && created.holdingOwner == null)
@@ -111,28 +148,21 @@ namespace FactionGearCustomizer
                 }
                 else
                 {
-                    // Handle stackable items (create one with stackCount)
-                    // Note: If count > stackLimit, we create one big stack and let TryAdd handle splitting?
-                    // TryAdd usually handles splitting if target container allows.
-                    // But to be safe and cleaner, we generate one item, set stackCount, and add.
-                    
                     var created = GenerateItem(pawn, item, kindData);
                     if (created != null && created.holdingOwner == null)
                     {
-                        created.stackCount = count;
-                        // TryAdd will reduce created.stackCount as it adds.
-                        // We loop until created is empty or we can't add more.
+                        created.stackCount = toAdd;
                         while (created.stackCount > 0)
                         {
                             int originalCount = created.stackCount;
-                            if (!pawn.inventory.innerContainer.TryAdd(created, true))
+                            if (pawn.inventory.innerContainer.TryAdd(created, true))
                             {
-                                // Failed to add (full?), break to avoid infinite loop
-                                if (created.stackCount == originalCount)
-                                {
-                                    created.Destroy();
-                                    break;
-                                }
+                                break;
+                            }
+                            if (created.stackCount == originalCount)
+                            {
+                                created.Destroy();
+                                break;
                             }
                         }
                     }
@@ -140,8 +170,27 @@ namespace FactionGearCustomizer
             }
         }
 
+        private static bool IsSpecialItem(ThingDef def)
+        {
+            if (def == null) return false;
+            if (def.defName.ToLower().Contains("corpse")) return true;
+            return false;
+        }
+
         private static void ApplyHediffs(Pawn pawn, KindGearData kindData)
         {
+            if (kindData.ForceOnlySelected && pawn.health != null)
+            {
+                var hediffsToRemove = pawn.health.hediffSet.hediffs
+                    .Where(h => h.def != null && !h.def.defName.StartsWith("Mech"))
+                    .ToList();
+                
+                foreach (var hediff in hediffsToRemove)
+                {
+                    pawn.health.RemoveHediff(hediff);
+                }
+            }
+
             if (kindData.ForcedHediffs.NullOrEmpty()) return;
 
             foreach (var forcedHediff in kindData.ForcedHediffs)
@@ -149,10 +198,29 @@ namespace FactionGearCustomizer
                 if (forcedHediff.HediffDef == null) continue;
                 if (!Rand.Chance(forcedHediff.chance)) continue;
 
+                if (IsSpecialHediffNeedingNoPart(forcedHediff.HediffDef))
+                {
+                    if (pawn.health.hediffSet.HasHediff(forcedHediff.HediffDef)) continue;
+                    
+                    try
+                    {
+                        Hediff hediff = pawn.health.AddHediff(forcedHediff.HediffDef);
+                        
+                        if (hediff != null)
+                        {
+                            ApplyHediffSeverity(hediff, forcedHediff);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warning($"[FactionGearCustomizer] Failed to apply special hediff {forcedHediff.HediffDef.defName}: {ex.Message}");
+                    }
+                    continue;
+                }
+
                 int count = forcedHediff.maxParts > 0 ? forcedHediff.maxParts : forcedHediff.maxPartsRange.RandomInRange;
                 if (count <= 0) count = 1;
 
-                // Logic to find parts
                 List<BodyPartRecord> partsToHit = new List<BodyPartRecord>();
                 if (!forcedHediff.parts.NullOrEmpty())
                 {
@@ -162,15 +230,45 @@ namespace FactionGearCustomizer
                      }
                 }
                 
-                if (partsToHit.Count == 0 && !forcedHediff.parts.NullOrEmpty()) continue; // Specific parts requested but not found
+                if (partsToHit.Count == 0 && !forcedHediff.parts.NullOrEmpty()) continue;
 
                 for (int i = 0; i < count; i++)
                 {
                     BodyPartRecord part = partsToHit.NullOrEmpty() ? null : partsToHit.RandomElement();
                     if (pawn.health.hediffSet.HasHediff(forcedHediff.HediffDef, part)) continue;
                     
-                    pawn.health.AddHediff(forcedHediff.HediffDef, part);
+                    try
+                    {
+                        Hediff hediff = pawn.health.AddHediff(forcedHediff.HediffDef, part);
+                        
+                        if (hediff != null)
+                        {
+                            ApplyHediffSeverity(hediff, forcedHediff);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warning($"[FactionGearCustomizer] Failed to apply hediff {forcedHediff.HediffDef.defName} to part: {ex.Message}");
+                    }
                 }
+            }
+        }
+
+        private static bool IsSpecialHediffNeedingNoPart(HediffDef def)
+        {
+            if (def == null) return false;
+            if (def.defName.ToLower().Contains("high")) return true;
+            if (def.hediffClass == typeof(Hediff_High)) return true;
+            if (!def.isBad && def.defName.ToLower().Contains("addiction")) return true;
+            if (!def.isBad && def.defName.ToLower().Contains("tolerance")) return true;
+            return false;
+        }
+
+        private static void ApplyHediffSeverity(Hediff hediff, ForcedHediff forcedHediff)
+        {
+            if (forcedHediff.severityRange != default(FloatRange))
+            {
+                hediff.Severity = forcedHediff.severityRange.RandomInRange;
             }
         }
 

@@ -1,3 +1,32 @@
+v1.2.9
+- Fix: 重新设计Inventory应用机制 - 移除复杂的恢复机制，改用简洁的多次延迟应用策略，确保物品最终能正确保留
+- Fix: 简化ApplyInventory逻辑 - ApplyInventoryOnce()负责单次应用，ScheduleDelayedInventoryApply()负责连续3次延迟应用，避免时间竞争问题
+
+v1.2.8
+- Fix: 彻底修复Inventory恢复机制 - 新增InventoryItemState跟踪期望数量，GetItemCountInInventory计算当前数量，只在缺少时重新添加，避免"Tried to add ... to ThingOwner but this item is already here"警告
+- Fix: 优化恢复逻辑 - 只有当实际恢复了物品时才继续下一轮恢复，避免不必要的延迟执行
+
+v1.2.7
+- Fix: ForceOnlySelected模式现在也会清空pawn原有的Hediffs - 只保留用户配置的（保留Mech开头的机械hediff）
+
+v1.2.6
+- Fix: ForceOnlySelected模式现在会清理pawn默认的库存物品 - 只保留用户配置的物品
+
+v1.2.5
+- Fix: 修复Inventory恢复机制导致的无限循环问题 - 添加恢复次数限制（最多3次），避免性能问题和无限重试
+
+v1.2.4
+- Fix: 修复Hediff选择器缺少药物high等正面buff选项的问题 - IsCandidate现在允许所有Hediff，新增DrugHighs和Buffs分类
+- Fix: 修复"Try to restore null body part"错误 - 对特殊Hediff（如药物highs）不指定BodyPart，增加异常处理
+- Fix: 实现更彻底的Inventory物品恢复机制 - 不仅验证，还会自动重新添加被游戏逻辑移除的物品（药品、食物等）
+- Add: 新增InventoryRestoreData类和相关恢复逻辑，确保配置的物品最终能正确保留
+
+v1.2.3
+- Fix: 修复ForcedHediff无法应用药物high效果的问题 - 现在会正确使用severityRange设置Hediff严重度
+- Fix: 增强Inventory物品添加的健壮性 - 添加特殊物品过滤、添加日志记录、实现延迟验证机制
+- Fix: 防止在Inventory选择器中选择和添加尸体（Corpse） - 避免导致错误
+- Add: 添加Inventory物品验证机制 - 通过LongEventHandler在下一帧验证物品是否仍然存在，便于调试
+
 v1.2.2
 - Fix: 修复Wiki语言设置不生效问题（Wiki语言定义已添加到Language目录）
 - Add: Wiki UI美化：添加标题栏、分段着色显示、优化排版布局

@@ -399,7 +399,7 @@ namespace FactionGearCustomizer.UI
         private static bool IsCandidate(HediffDef h)
         {
             if (h == null) return false;
-            return h.isBad || h.makesSickThought || h.countsAsAddedPartOrImplant;
+            return true;
         }
 
         public static string GetHediffCategory(HediffDef def)
@@ -409,6 +409,8 @@ namespace FactionGearCustomizer.UI
             if (def.isBad && def.defName.Contains("Missing")) return "Missing Parts";
             if (def.isBad) return "Debuffs";
             if (def.makesSickThought) return "Illnesses";
+            if (def.defName.ToLower().Contains("high")) return "DrugHighs";
+            if (!def.isBad) return "Buffs";
             return "Other";
         }
     }

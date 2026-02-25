@@ -462,6 +462,7 @@ namespace FactionGearCustomizer.UI
             if (t.destroyOnDrop) return false;
             if (t.IsApparel || t.IsWeapon) return false;
             if (t.BaseMarketValue <= 0f) return false;
+            if (t.defName.ToLower().Contains("corpse")) return false;
             return t.category == ThingCategory.Item || t.IsShell;
         }
  
