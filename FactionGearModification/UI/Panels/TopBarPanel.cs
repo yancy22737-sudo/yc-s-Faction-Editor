@@ -89,12 +89,13 @@ namespace FactionGearCustomizer.UI.Panels
             if (!inGame)
             {
                 TooltipHandler.TipRegion(factionEditRect, LanguageManager.Get("OnlyAvailableInGame"));
-                GUI.color = Color.white;
             }
             else
             {
                 TooltipHandler.TipRegion(factionEditRect, LanguageManager.Get("FactionEditTooltip"));
             }
+            
+            GUI.color = Color.white;
             
             currentX = factionEditRect.xMax + gap;
 

@@ -5,6 +5,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 using FactionGearModification.UI;
+using FactionGearCustomizer.Core;
 
 namespace FactionGearCustomizer
 {
@@ -260,16 +261,16 @@ namespace FactionGearCustomizer
             }
             else
             {
-                // 创建新预设（空预设）
+                // 创建新预设 - 自动从当前游戏设置保存所有派系数据
                 var newPreset = new FactionGearPreset();
                 newPreset.name = finalName;
                 newPreset.description = newPresetDescription;
                 
-                // 新建空预设，不抓取当前游戏数据
-                // factionGearData 已在构造函数中初始化为空列表
+                // 创建预设时自动保存当前所有派系数据（包含已修改的派系和兵种）
+                newPreset.SaveFromCurrentSettings(FactionGearCustomizerMod.Settings.factionGearData);
                 
                 FactionGearCustomizerMod.Settings.AddPreset(newPreset);
-                // [New] Set as current preset
+                // 设置为当前预设
                 FactionGearCustomizerMod.Settings.currentPresetName = newPreset.name;
                 
                 selectedPreset = newPreset;
@@ -342,45 +343,51 @@ namespace FactionGearCustomizer
 
             try
             {
-                // 【修复】先清空当前数据和字典，确保预设加载后不会残留旧数据
-                FactionGearCustomizerMod.Settings.factionGearData.Clear();
-                // 强制重新初始化字典，确保旧数据完全清除
-                if (FactionGearCustomizerMod.Settings.factionGearDataDict != null)
+                // 【修复】优先使用 GameComponent 管理存档级别的数据
+                var gameComponent = FactionGearGameComponent.Instance;
+                if (gameComponent != null)
                 {
-                    FactionGearCustomizerMod.Settings.factionGearDataDict.Clear();
+                    // 使用 GameComponent 的 ApplyPresetToSave 方法，它会正确同步所有数据
+                    gameComponent.ApplyPresetToSave(selectedPreset);
                 }
-                
-                if (selectedPreset.factionGearData != null)
+                else
                 {
-                    foreach (var factionData in selectedPreset.factionGearData)
+                    // 降级处理：如果没有 GameComponent（主菜单场景），只更新 Settings
+                    FactionGearCustomizerMod.Settings.factionGearData.Clear();
+                    if (FactionGearCustomizerMod.Settings.factionGearDataDict != null)
                     {
-                        if (factionData == null || string.IsNullOrEmpty(factionData.factionDefName)) continue;
-
-                        // 【修复】使用深拷贝创建新的派系数据，避免引用问题
-                        var clonedFactionData = factionData.DeepCopy();
-                        FactionGearCustomizerMod.Settings.factionGearData.Add(clonedFactionData);
-                        
-                        // 更新字典索引
-                        if (FactionGearCustomizerMod.Settings.factionGearDataDict != null)
+                        FactionGearCustomizerMod.Settings.factionGearDataDict.Clear();
+                    }
+                    
+                    if (selectedPreset.factionGearData != null)
+                    {
+                        foreach (var factionData in selectedPreset.factionGearData)
                         {
-                            if (!FactionGearCustomizerMod.Settings.factionGearDataDict.ContainsKey(clonedFactionData.factionDefName))
+                            if (factionData == null || string.IsNullOrEmpty(factionData.factionDefName)) continue;
+
+                            var clonedFactionData = factionData.DeepCopy();
+                            FactionGearCustomizerMod.Settings.factionGearData.Add(clonedFactionData);
+                            
+                            if (FactionGearCustomizerMod.Settings.factionGearDataDict != null)
                             {
-                                FactionGearCustomizerMod.Settings.factionGearDataDict.Add(clonedFactionData.factionDefName, clonedFactionData);
-                            }
-                            else
-                            {
-                                FactionGearCustomizerMod.Settings.factionGearDataDict[clonedFactionData.factionDefName] = clonedFactionData;
+                                if (!FactionGearCustomizerMod.Settings.factionGearDataDict.ContainsKey(clonedFactionData.factionDefName))
+                                {
+                                    FactionGearCustomizerMod.Settings.factionGearDataDict.Add(clonedFactionData.factionDefName, clonedFactionData);
+                                }
+                                else
+                                {
+                                    FactionGearCustomizerMod.Settings.factionGearDataDict[clonedFactionData.factionDefName] = clonedFactionData;
+                                }
                             }
                         }
                     }
+
+                    FactionGearCustomizerMod.Settings.currentPresetName = selectedPreset.name;
+                    FactionGearCustomizerMod.Settings.Write();
                 }
-
-                FactionGearCustomizerMod.Settings.currentPresetName = selectedPreset.name;
                 
-                // 【修复】刷新UI缓存，确保界面显示新预设的数据
+                // 刷新UI缓存
                 FactionGearEditor.RefreshAllCaches();
-
-                FactionGearCustomizerMod.Settings.Write();
                 Notify(LanguageManager.Get("PresetApplied"));
                 this.Close();
             }

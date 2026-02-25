@@ -124,7 +124,7 @@ namespace FactionGearCustomizer
             {
                 maker.kindDef = DefDatabase<PawnGroupKindDef>.GetNamedSilentFail(kindDefName);
             }
-            
+
             if (maker.kindDef == null)
             {
                 Log.Warning($"[FactionGearCustomizer] PawnGroupMakerData.ToPawnGroupMaker: kindDef is null for kindDefName: {kindDefName}");
@@ -138,6 +138,14 @@ namespace FactionGearCustomizer
             maker.traders = ConvertToGenOptions(traders);
             maker.carriers = ConvertToGenOptions(carriers);
             maker.guards = ConvertToGenOptions(guards);
+
+            // 验证 Trader 类型的群组必须有至少一个 trader
+            if (maker.kindDef.defName == "Trader" && (maker.traders == null || maker.traders.Count == 0))
+            {
+                Log.Warning($"[FactionGearCustomizer] PawnGroupMakerData.ToPawnGroupMaker: Trader group '{kindDefName}' has no traders. This will cause caravan generation to fail. Please add at least one trader to the group.");
+                // 返回 null 以防止游戏使用无效的 PawnGroupMaker
+                return null;
+            }
 
             return maker;
         }

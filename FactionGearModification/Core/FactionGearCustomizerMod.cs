@@ -4,6 +4,7 @@ using HarmonyLib;
 using System.Reflection;
 using FactionGearCustomizer.UI;
 using FactionGearCustomizer.UI.Panels;
+using FactionGearCustomizer.Managers;
 
 namespace FactionGearCustomizer
 {
@@ -21,6 +22,15 @@ namespace FactionGearCustomizer
             // Initialize Harmony patches
             HarmonyInstance = new Harmony("FactionGearCustomizer");
             PatchAllSafely();
+
+            // 在静态构造函数中清理缓存，确保每次游戏启动时都是干净状态
+            FactionDefManager.ClearOriginalDataCache();
+
+            // 延迟保存原始数据，等待DefDatabase完全加载
+            LongEventHandler.QueueLongEvent(() =>
+            {
+                FactionDefManager.SaveAllOriginalData();
+            }, "SavingFactionOriginalData", false, null);
         }
 
         private void PatchAllSafely()

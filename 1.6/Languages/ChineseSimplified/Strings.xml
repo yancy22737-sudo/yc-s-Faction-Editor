@@ -557,6 +557,8 @@
   <FGC_Preset_NoDescription>无描述</FGC_Preset_NoDescription>
   <FGC_Factions_Label>个派系</FGC_Factions_Label>
   <FGC_Message_PresetApplied>已应用预设"{0}"到当前存档。</FGC_Message_PresetApplied>
+  <FGC_Message_SelectedFactionsApplied>已从预设"{0}"应用{1}个派系到当前存档。</FGC_Message_SelectedFactionsApplied>
+  <FGC_SelectFactions>选择派系</FGC_SelectFactions>
   <FGC_Message_UsingVanilla>当前存档使用原版派系设置。</FGC_Message_UsingVanilla>
   <NoPresetEditingDisabledTooltip>请先创建或加载预设才能进行编辑</NoPresetEditingDisabledTooltip>
   <NoPresetCannotSave>请先创建或加载预设才能保存</NoPresetCannotSave>
@@ -1174,4 +1176,17 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <TechLevelLimitTooltip>限制装备为指定科技等级或以下。</TechLevelLimitTooltip>
   <SkippedNonHumanKinds>已跳过 {0} 个非人类兵种。</SkippedNonHumanKinds>
   <AddedPawnKinds>已添加 {0} 个兵种。</AddedPawnKinds>
+  
+  <!-- 装备详情对话框 -->
+  <MassCarried>负重</MassCarried>
+  <ComfortableTemperature>适宜温度范围</ComfortableTemperature>
+  <OverallArmor>总护甲</OverallArmor>
+  <ArmorSharp>利器护甲</ArmorSharp>
+  <ArmorBlunt>钝器护甲</ArmorBlunt>
+  <ArmorHeat>热能护甲</ArmorHeat>
+  <Equipment>装备</Equipment>
+  <Apparel>衣着</Apparel>
+  <Inventory>库存</Inventory>
+  <TotalMass>总重量</TotalMass>
+  <ClickToViewGearInfo>点击查看装备详情</ClickToViewGearInfo>
 </LanguageData>

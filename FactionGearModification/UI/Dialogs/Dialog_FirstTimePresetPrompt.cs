@@ -8,7 +8,7 @@ using Verse;
 namespace FactionGearCustomizer.UI.Dialogs
 {
     /// <summary>
-    /// 首次进入存档时的预设选择提示对话框
+    /// 首次进入存档时的预设选择提示对话框 - 支持选择单个或多个派系
     /// </summary>
     public class Dialog_FirstTimePresetPrompt : Window
     {
@@ -16,8 +16,10 @@ namespace FactionGearCustomizer.UI.Dialogs
         private FactionGearPreset selectedPreset;
         private Vector2 scrollPosition;
         private bool dontAskAgain;
+        private HashSet<string> selectedFactions = new HashSet<string>();
+        private bool isExpanded = false;
 
-        public override Vector2 InitialSize => new Vector2(600f, 500f);
+        public override Vector2 InitialSize => new Vector2(650f, 550f);
 
         public Dialog_FirstTimePresetPrompt()
         {
@@ -37,22 +39,32 @@ namespace FactionGearCustomizer.UI.Dialogs
             Text.Font = GameFont.Small;
 
             // 说明文字
-            Rect descRect = new Rect(inRect.x, titleRect.yMax + 10f, inRect.width, 60f);
+            Rect descRect = new Rect(inRect.x, titleRect.yMax + 10f, inRect.width, 50f);
             GUI.color = Color.gray;
             Widgets.Label(descRect, LanguageManager.Get("FGC_FirstTimePrompt_Description"));
             GUI.color = Color.white;
 
-            // 预设列表
-            float listY = descRect.yMax + 15f;
-            Rect listRect = new Rect(inRect.x, listY, inRect.width, inRect.height - listY - 80f);
+            // 预设列表 - 上半部分
+            float listY = descRect.yMax + 10f;
+            float listHeight = isExpanded ? 180f : 280f;
+            Rect listRect = new Rect(inRect.x, listY, inRect.width, listHeight);
 
             DrawPresetList(listRect);
+
+            // 派系选择区域（展开时显示）
+            if (isExpanded && selectedPreset != null)
+            {
+                float factionY = listY + listHeight + 10f;
+                float factionHeight = inRect.yMax - factionY - 90f;
+                Rect factionRect = new Rect(inRect.x, factionY, inRect.width, factionHeight);
+                DrawFactionSelection(factionRect);
+            }
 
             // 底部按钮区域
             float buttonY = inRect.yMax - 35f;
 
             // 不再询问复选框
-            Rect checkboxRect = new Rect(inRect.x, buttonY - 25f, 200f, 24f);
+            Rect checkboxRect = new Rect(inRect.x, buttonY - 25f, 250f, 24f);
             Widgets.CheckboxLabeled(checkboxRect, LanguageManager.Get("FGC_FirstTimePrompt_DontAskAgain"), ref dontAskAgain);
 
             // 按钮行
@@ -65,9 +77,9 @@ namespace FactionGearCustomizer.UI.Dialogs
             Widgets.DrawBox(rect);
 
             Rect innerRect = rect.ContractedBy(10f);
-            float itemHeight = 70f;
+            float itemHeight = 60f;
             float spacing = 5f;
-            float totalHeight = availablePresets.Count * (itemHeight + spacing);
+            float totalHeight = (availablePresets.Count + 1) * (itemHeight + spacing);
 
             Rect viewRect = new Rect(innerRect.x, innerRect.y, innerRect.width - 20f, totalHeight);
 
@@ -106,6 +118,14 @@ namespace FactionGearCustomizer.UI.Dialogs
             if (Widgets.ButtonInvisible(rect))
             {
                 selectedPreset = preset;
+                selectedFactions.Clear();
+                if (preset.factionGearData != null)
+                {
+                    foreach (var f in preset.factionGearData)
+                    {
+                        selectedFactions.Add(f.factionDefName);
+                    }
+                }
             }
 
             Rect contentRect = rect.ContractedBy(8f);
@@ -113,19 +133,22 @@ namespace FactionGearCustomizer.UI.Dialogs
             // 预设名称
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Rect nameRect = new Rect(contentRect.x, contentRect.y, contentRect.width, 24f);
+            Rect nameRect = new Rect(contentRect.x, contentRect.y, contentRect.width - 60f, 24f);
             Widgets.Label(nameRect, preset.name);
 
-            // 描述
-            Text.Font = GameFont.Tiny;
-            GUI.color = Color.gray;
-            Rect descRect = new Rect(contentRect.x, nameRect.yMax, contentRect.width, contentRect.height - 24f);
-            string desc = string.IsNullOrEmpty(preset.description)
-                ? LanguageManager.Get("FGC_Preset_NoDescription")
-                : preset.description;
-            Widgets.Label(descRect, desc);
-            GUI.color = Color.white;
-            Text.Anchor = TextAnchor.UpperLeft;
+            // 展开/折叠按钮
+            if (isSelected && (preset.factionGearData?.Count ?? 0) > 0)
+            {
+                Rect expandRect = new Rect(contentRect.xMax - 50f, contentRect.y, 50f, 24f);
+                string expandText = isExpanded ? "▲" : "▼";
+                Text.Anchor = TextAnchor.MiddleCenter;
+                Widgets.Label(expandRect, expandText);
+                if (Widgets.ButtonInvisible(expandRect))
+                {
+                    isExpanded = !isExpanded;
+                }
+                Text.Anchor = TextAnchor.UpperLeft;
+            }
 
             // 派系数量标签
             int factionCount = preset.factionGearData?.Count ?? 0;
@@ -136,7 +159,7 @@ namespace FactionGearCustomizer.UI.Dialogs
                 Vector2 labelSize = Text.CalcSize(countLabel);
                 Rect countRect = new Rect(
                     contentRect.xMax - labelSize.x - 5f,
-                    contentRect.y + 5f,
+                    contentRect.y + 22f,
                     labelSize.x + 10f,
                     18f);
                 GUI.color = new Color(0.3f, 0.6f, 0.9f);
@@ -164,6 +187,8 @@ namespace FactionGearCustomizer.UI.Dialogs
             if (Widgets.ButtonInvisible(rect))
             {
                 selectedPreset = null;
+                selectedFactions.Clear();
+                isExpanded = false;
             }
 
             Rect contentRect = rect.ContractedBy(8f);
@@ -177,25 +202,100 @@ namespace FactionGearCustomizer.UI.Dialogs
             Text.Anchor = TextAnchor.UpperLeft;
         }
 
+        private void DrawFactionSelection(Rect rect)
+        {
+            Widgets.DrawBox(rect);
+            Rect innerRect = rect.ContractedBy(10f);
+
+            // 标题和全选按钮
+            Rect headerRect = new Rect(innerRect.x, innerRect.y, innerRect.width, 25f);
+            Widgets.Label(headerRect, LanguageManager.Get("FGC_SelectFactions") + ":");
+            
+            Rect selectAllRect = new Rect(innerRect.xMax - 100f, innerRect.y, 80f, 20f);
+            if (Widgets.ButtonText(selectAllRect, LanguageManager.Get("SelectAll")))
+            {
+                if (selectedPreset?.factionGearData != null)
+                {
+                    selectedFactions.Clear();
+                    foreach (var f in selectedPreset.factionGearData)
+                    {
+                        selectedFactions.Add(f.factionDefName);
+                    }
+                }
+            }
+
+            // 派系列表
+            if (selectedPreset?.factionGearData == null || selectedPreset.factionGearData.Count == 0)
+            {
+                Widgets.Label(innerRect, LanguageManager.Get("NoFactionDataInPreset"));
+                return;
+            }
+
+            Rect listRect = new Rect(innerRect.x, headerRect.yMax + 5f, innerRect.width, innerRect.height - 30f);
+            float itemHeight = 28f;
+            float totalHeight = selectedPreset.factionGearData.Count * itemHeight;
+
+            Rect viewRect = new Rect(listRect.x, listRect.y, listRect.width - 16f, totalHeight);
+            Vector2 factionScrollPos = new Vector2();
+            Widgets.BeginScrollView(listRect, ref factionScrollPos, viewRect);
+
+            float y = viewRect.y;
+            foreach (var factionData in selectedPreset.factionGearData)
+            {
+                Rect itemRect = new Rect(viewRect.x, y, viewRect.width, itemHeight);
+                
+                var factionDef = DefDatabase<FactionDef>.GetNamedSilentFail(factionData.factionDefName);
+                string factionName = factionDef != null ? factionDef.LabelCap.ToString() : factionData.factionDefName;
+
+                // 复选框
+                bool isChecked = selectedFactions.Contains(factionData.factionDefName);
+                Rect checkboxRect = new Rect(itemRect.x, itemRect.y + 4f, 20f, 20f);
+                Widgets.Checkbox(checkboxRect.position, ref isChecked);
+
+                if (isChecked != selectedFactions.Contains(factionData.factionDefName))
+                {
+                    if (isChecked)
+                        selectedFactions.Add(factionData.factionDefName);
+                    else
+                        selectedFactions.Remove(factionData.factionDefName);
+                }
+
+                // 派系名称
+                Rect labelRect = new Rect(checkboxRect.xMax + 5f, itemRect.y, viewRect.width - 30f, itemHeight);
+                Widgets.Label(labelRect, factionName);
+
+                y += itemHeight;
+            }
+
+            Widgets.EndScrollView();
+        }
+
         private void DrawButtons(Rect rect)
         {
-            float buttonWidth = 120f;
+            float buttonWidth = 130f;
 
             // 使用原版设置按钮
             Rect vanillaButtonRect = new Rect(rect.x, rect.y, buttonWidth, rect.height);
             if (Widgets.ButtonText(vanillaButtonRect, LanguageManager.Get("FGC_FirstTimePrompt_UseVanilla")))
             {
-                ApplyAndClose(null);
+                ApplyAndClose(null, new List<string>());
             }
 
-            // 应用预设按钮
+            // 应用选中的派系按钮
+            int selectedCount = selectedFactions.Count;
+            bool canApply = selectedPreset != null && selectedCount > 0;
+            
             Rect applyButtonRect = new Rect(rect.xMax - buttonWidth, rect.y, buttonWidth, rect.height);
-            GUI.color = selectedPreset != null ? new Color(0.3f, 0.7f, 0.4f) : Color.gray;
-            if (Widgets.ButtonText(applyButtonRect, LanguageManager.Get("FGC_FirstTimePrompt_ApplyPreset")))
+            string applyText = canApply 
+                ? $"{LanguageManager.Get("FGC_FirstTimePrompt_ApplyPreset")} ({selectedCount})"
+                : LanguageManager.Get("FGC_FirstTimePrompt_ApplyPreset");
+            
+            GUI.color = canApply ? new Color(0.3f, 0.7f, 0.4f) : Color.gray;
+            if (Widgets.ButtonText(applyButtonRect, applyText))
             {
-                if (selectedPreset != null)
+                if (selectedPreset != null && selectedCount > 0)
                 {
-                    ApplyAndClose(selectedPreset);
+                    ApplyAndClose(selectedPreset, selectedFactions.ToList());
                 }
             }
             GUI.color = Color.white;
@@ -209,28 +309,41 @@ namespace FactionGearCustomizer.UI.Dialogs
             }
         }
 
-        private void ApplyAndClose(FactionGearPreset preset)
+        private void ApplyAndClose(FactionGearPreset preset, List<string> factionDefNames)
         {
-            // 应用预设到当前存档
             var gameComponent = FactionGearGameComponent.Instance;
             if (gameComponent != null)
             {
-                gameComponent.ApplyPresetToSave(preset);
+                if (preset != null && factionDefNames.Any())
+                {
+                    gameComponent.ApplyFactionsFromPreset(preset, factionDefNames);
+                }
+                else if (preset == null)
+                {
+                    gameComponent.ApplyPresetToSave(null);
+                }
                 gameComponent.MarkFirstTimePromptShown();
 
                 if (dontAskAgain)
                 {
-                    // 保存"不再询问"偏好到全局设置
-                    // 这里可以添加一个全局设置项
                 }
             }
 
             Close();
 
-            // 显示确认消息
-            string message = preset != null
-                ? string.Format(LanguageManager.Get("FGC_Message_PresetApplied"), preset.name)
-                : LanguageManager.Get("FGC_Message_UsingVanilla");
+            string message;
+            if (preset != null && factionDefNames.Any())
+            {
+                message = string.Format(LanguageManager.Get("FGC_Message_SelectedFactionsApplied"), preset.name, factionDefNames.Count);
+            }
+            else if (preset != null)
+            {
+                message = string.Format(LanguageManager.Get("FGC_Message_PresetApplied"), preset.name);
+            }
+            else
+            {
+                message = LanguageManager.Get("FGC_Message_UsingVanilla");
+            }
             Messages.Message(message, MessageTypeDefOf.PositiveEvent);
         }
 

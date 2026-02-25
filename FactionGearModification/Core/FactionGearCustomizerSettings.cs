@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Verse;
+using FactionGearCustomizer.Core;
 
 namespace FactionGearCustomizer
 {
@@ -45,6 +46,9 @@ namespace FactionGearCustomizer
         // [New] Current active preset name
         public string currentPresetName = null;
 
+        // [New] 上一个存档的唯一标识符，用于检测存档切换
+        public string previousSaveIdentifier = null;
+
         public override void ExposeData()
         {
             base.ExposeData();
@@ -56,6 +60,7 @@ namespace FactionGearCustomizer
             Scribe_Collections.Look(ref dismissedDialogs, "dismissedDialogs", LookMode.Value);
             if (dismissedDialogs == null) dismissedDialogs = new HashSet<string>();
             Scribe_Values.Look(ref currentPresetName, "currentPresetName", null);
+            Scribe_Values.Look(ref previousSaveIdentifier, "previousSaveIdentifier", null);
             
             // Scribe_Collections.Look(ref customFactions, "customFactions", LookMode.Deep);
             // if (customFactions == null) customFactions = new List<CustomFactionData>();
@@ -102,11 +107,22 @@ namespace FactionGearCustomizer
 
         public void ResetToDefault()
         {
+            // 【修复】先清理存档级别的数据
+            var gameComponent = FactionGearGameComponent.Instance;
+            if (gameComponent != null)
+            {
+                gameComponent.ApplyPresetToSave(null);
+            }
+            
+            // 清理全局设置数据
             factionGearData.Clear();
             if (factionGearDataDict != null)
             {
                 factionGearDataDict.Clear();
             }
+            
+            currentPresetName = null;
+            
             FactionGearManager.LoadDefaultPresets();
             Write();
 

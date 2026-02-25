@@ -73,6 +73,13 @@ namespace FactionGearCustomizer.UI.Panels
                         var newGroup = new PawnGroupMakerData();
                         newGroup.kindDefName = kindDefName;
                         newGroup.customLabel = GenerateDefaultGroupLabel(kind, groupList);
+
+                        // 如果是 Trader 类型，自动添加默认的 trader
+                        if (kindDefName == "Trader")
+                        {
+                            AddDefaultTraderToGroup(newGroup, factionDef);
+                        }
+
                         groupList.Add(newGroup);
                     }));
                 }
@@ -249,7 +256,7 @@ namespace FactionGearCustomizer.UI.Panels
 
             if (label.IndexOf("missing translation", StringComparison.OrdinalIgnoreCase) >= 0)
                 return true;
-            
+
             if (label.IndexOf("missing label", StringComparison.OrdinalIgnoreCase) >= 0)
                 return true;
 
@@ -257,6 +264,153 @@ namespace FactionGearCustomizer.UI.Panels
                 return true;
 
             return false;
+        }
+
+        /// <summary>
+        /// 为 Trader 类型的群组添加默认的 trader
+        /// </summary>
+        private static void AddDefaultTraderToGroup(PawnGroupMakerData groupData, FactionDef factionDef)
+        {
+            if (factionDef == null) return;
+
+            // 尝试从派系的原始 pawnGroupMakers 中找到一个 Trader 类型的 maker
+            // 并复制其 traders 配置
+            if (factionDef.pawnGroupMakers != null)
+            {
+                foreach (var maker in factionDef.pawnGroupMakers)
+                {
+                    if (maker?.kindDef?.defName == "Trader" && maker.traders != null && maker.traders.Count > 0)
+                    {
+                        // 复制 traders
+                        foreach (var trader in maker.traders)
+                        {
+                            if (trader?.kind != null)
+                            {
+                                groupData.traders.Add(new PawnGenOptionData
+                                {
+                                    kindDefName = trader.kind.defName,
+                                    selectionWeight = trader.selectionWeight > 0 ? trader.selectionWeight : 10f
+                                });
+                            }
+                        }
+
+                        // 同时复制 carriers 和 guards（如果有的话）
+                        if (maker.carriers != null)
+                        {
+                            foreach (var carrier in maker.carriers)
+                            {
+                                if (carrier?.kind != null)
+                                {
+                                    groupData.carriers.Add(new PawnGenOptionData
+                                    {
+                                        kindDefName = carrier.kind.defName,
+                                        selectionWeight = carrier.selectionWeight > 0 ? carrier.selectionWeight : 10f
+                                    });
+                                }
+                            }
+                        }
+
+                        if (maker.guards != null)
+                        {
+                            foreach (var guard in maker.guards)
+                            {
+                                if (guard?.kind != null)
+                                {
+                                    groupData.guards.Add(new PawnGenOptionData
+                                    {
+                                        kindDefName = guard.kind.defName,
+                                        selectionWeight = guard.selectionWeight > 0 ? guard.selectionWeight : 10f
+                                    });
+                                }
+                            }
+                        }
+
+                        if (groupData.traders.Count > 0)
+                        {
+                            Log.Message($"[FactionGearCustomizer] Auto-populated Trader group with {groupData.traders.Count} traders from faction defaults");
+                            return;
+                        }
+                    }
+                }
+            }
+
+            // 如果没有找到默认配置，尝试从 faction 的 pawnGroupMakers 的 options 中找一个合适的 kind
+            // 或者使用一个通用的商人 kind
+            if (groupData.traders.Count == 0)
+            {
+                // 尝试找到一个适合作为商人的 PawnKindDef
+                PawnKindDef traderKind = FindSuitableTraderKind(factionDef);
+                if (traderKind != null)
+                {
+                    groupData.traders.Add(new PawnGenOptionData
+                    {
+                        kindDefName = traderKind.defName,
+                        selectionWeight = 10f
+                    });
+                    Log.Message($"[FactionGearCustomizer] Auto-added default trader: {traderKind.defName}");
+                }
+                else
+                {
+                    Log.Warning($"[FactionGearCustomizer] Could not find suitable trader kind for faction {factionDef.defName}. Please manually add traders to the group.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// 寻找适合作为商人的 PawnKindDef
+        /// </summary>
+        private static PawnKindDef FindSuitableTraderKind(FactionDef factionDef)
+        {
+            // 首先尝试从 faction 的 pawnGroupMakers 中找一个 kind
+            if (factionDef.pawnGroupMakers != null)
+            {
+                foreach (var maker in factionDef.pawnGroupMakers)
+                {
+                    if (maker?.options != null)
+                    {
+                        foreach (var opt in maker.options)
+                        {
+                            if (opt?.kind != null && !opt.kind.RaceProps.Animal)
+                            {
+                                // 优先选择带有 "Trader" 或 "Merchant" 字样的 kind
+                                string kindName = opt.kind.defName.ToLowerInvariant();
+                                if (kindName.Contains("trader") || kindName.Contains("merchant") ||
+                                    kindName.Contains("商业") || kindName.Contains("商人"))
+                                {
+                                    return opt.kind;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // 如果没有找到特定的商人 kind，返回第一个人形 kind
+                foreach (var maker in factionDef.pawnGroupMakers)
+                {
+                    if (maker?.options != null)
+                    {
+                        foreach (var opt in maker.options)
+                        {
+                            if (opt?.kind != null && !opt.kind.RaceProps.Animal)
+                            {
+                                return opt.kind;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 最后尝试从 DefDatabase 中找一个通用的商人 kind
+            PawnKindDef genericTrader = DefDatabase<PawnKindDef>.GetNamedSilentFail("Empire_Trader");
+            if (genericTrader != null) return genericTrader;
+
+            genericTrader = DefDatabase<PawnKindDef>.GetNamedSilentFail("Outlander_Trader");
+            if (genericTrader != null) return genericTrader;
+
+            genericTrader = DefDatabase<PawnKindDef>.GetNamedSilentFail("Tribal_Trader");
+            if (genericTrader != null) return genericTrader;
+
+            return null;
         }
     }
 }

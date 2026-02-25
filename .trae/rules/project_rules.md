@@ -28,8 +28,7 @@
 
 6. **测试与环境**
    - 项目实际运行测试地址：E:\SteamLibrary\steamapps\common\RimWorld\Mods\FactionGearCustomizer
-   - build流程为运行build.ps1,修复报错,然后运行deploy_test.ps1
-   - Mods\FactionGearCustomizer\Language是唯一正确语言文件路径
+   - build流程为运行build.ps1,直到修复报错
    - 项目环境为Rimworld 1.6，注意Harmony Patch相关问题。
 
 7. **开发决策与限制**
@@ -39,3 +38,11 @@
    - 没有build指令禁止build。
    - 存档安全,mod兼容性高,修改无需重启游戏，不会导致游戏崩溃或数据丢失是底线。
    - xml语言文件注意转义字符问题!
+   - 你是一名专业的边缘世界unity mod开发者。
+
+8. **回答前置** ​
+   - 请你在回答前，先调用trae智能体提问功能问我问题。​
+   - 要求:​
+   - 根据我的回答，继续追问。​
+   - 直到你有90%的信心理解我的真实需求和目标。​
+   - 然后才给出方案并实施。

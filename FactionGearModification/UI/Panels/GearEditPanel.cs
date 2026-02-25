@@ -675,6 +675,18 @@ namespace FactionGearCustomizer.UI.Panels
 
             PawnKindDef kindDef = DefDatabase<PawnKindDef>.GetNamedSilentFail(kindData.kindDefName);
 
+            // Force Ignore option at the top
+            bool localForceIgnore = kindData.ForceIgnoreRestrictions ?? forceIgnore;
+            ui.CheckboxLabeled(LanguageManager.Get("ForceIgnore"), ref localForceIgnore, LanguageManager.Get("ForceIgnoreTooltip"));
+            if (localForceIgnore != (kindData.ForceIgnoreRestrictions ?? forceIgnore))
+            {
+                UndoManager.RecordState(kindData);
+                kindData.ForceIgnoreRestrictions = localForceIgnore != forceIgnore ? localForceIgnore : (bool?)null;
+                FactionGearEditor.MarkDirty();
+            }
+
+            ui.Gap();
+
             ui.CheckboxLabeled(LanguageManager.Get("ForceNaked"), ref kindData.ForceNaked, LanguageManager.Get("ForceNakedTooltip"));
             if (!kindData.ForceNaked)
             {
@@ -692,8 +704,9 @@ namespace FactionGearCustomizer.UI.Panels
             ui.Gap();
 
             DrawOverrideEnumWithTooltip(ui, LanguageManager.Get("ItemQuality"), kindData.ItemQuality, val => { UndoManager.RecordState(kindData); kindData.ItemQuality = val; FactionGearEditor.MarkDirty(); }, q => LanguageManager.Get("Quality" + q), LanguageManager.Get("ItemQualityTooltip"));
-            DrawOverrideFloatRangeWithTooltip(ui, LanguageManager.Get("ApparelBudget"), ref kindData.ApparelMoney, val => { UndoManager.RecordState(kindData); kindData.ApparelMoney = val; FactionGearEditor.MarkDirty(); }, forceIgnore, LanguageManager.Get("ApparelBudgetTooltip"));
-            DrawOverrideFloatRangeWithTooltip(ui, LanguageManager.Get("WeaponBudget"), ref kindData.WeaponMoney, val => { UndoManager.RecordState(kindData); kindData.WeaponMoney = val; FactionGearEditor.MarkDirty(); }, forceIgnore, LanguageManager.Get("WeaponBudgetTooltip"));
+            bool effectiveForceIgnore = kindData.ForceIgnoreRestrictions ?? forceIgnore;
+            DrawOverrideFloatRangeWithTooltip(ui, LanguageManager.Get("ApparelBudget"), ref kindData.ApparelMoney, val => { UndoManager.RecordState(kindData); kindData.ApparelMoney = val; FactionGearEditor.MarkDirty(); }, effectiveForceIgnore, LanguageManager.Get("ApparelBudgetTooltip"));
+            DrawOverrideFloatRangeWithTooltip(ui, LanguageManager.Get("WeaponBudget"), ref kindData.WeaponMoney, val => { UndoManager.RecordState(kindData); kindData.WeaponMoney = val; FactionGearEditor.MarkDirty(); }, effectiveForceIgnore, LanguageManager.Get("WeaponBudgetTooltip"));
             DrawTechLevelLimitWithTooltip(ui, kindData, LanguageManager.Get("TechLevelLimitTooltip"));
 
             Rect colorRect = ui.GetRect(28f);

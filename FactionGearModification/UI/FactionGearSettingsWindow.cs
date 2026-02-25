@@ -26,6 +26,7 @@ namespace FactionGearCustomizer.UI
         public override void PreOpen()
         {
             base.PreOpen();
+            this.optionalTitle = "";
             FactionGearEditor.InitializeWorkingSettings(true);
         }
 
@@ -58,14 +59,29 @@ namespace FactionGearCustomizer.UI
 
         public override void DoWindowContents(Rect inRect)
         {
-            // Draw Top Bar
+            // Draw Custom Header (Title)
+            float headerHeight = 30f;
+            Rect headerRect = new Rect(inRect.x, inRect.y, inRect.width, headerHeight);
+            DrawCustomHeader(headerRect);
+
+            // Draw Top Bar (Toolbar)
             float topBarHeight = 40f;
-            Rect topBarRect = new Rect(inRect.x, inRect.y, inRect.width, topBarHeight);
+            Rect topBarRect = new Rect(inRect.x, inRect.y + headerHeight, inRect.width, topBarHeight);
             TopBarPanel.Draw(topBarRect);
 
-            // Draw Editor Content below TopBar
-            Rect contentRect = new Rect(inRect.x + 10f, inRect.y + topBarHeight + 10f, inRect.width - 20f, inRect.height - topBarHeight - 20f);
+            // Draw Editor Content below Header and TopBar
+            Rect contentRect = new Rect(inRect.x + 10f, inRect.y + headerHeight + topBarHeight + 10f, inRect.width - 20f, inRect.height - headerHeight - topBarHeight - 20f);
             FactionGearEditor.DrawEditor(contentRect);
+        }
+
+        private void DrawCustomHeader(Rect inRect)
+        {
+            Text.Font = GameFont.Medium;
+            GUI.color = new Color(0.9f, 0.85f, 0.7f);
+            Widgets.Label(inRect, LanguageManager.Get("FactionGearCustomizer"));
+            Text.Font = GameFont.Small;
+            GUI.color = Color.white;
+            Widgets.DrawLineHorizontal(inRect.x, inRect.yMax - 2f, inRect.width, new Color(0.3f, 0.3f, 0.3f));
         }
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 using Verse;
 using RimWorld;
@@ -30,8 +29,7 @@ namespace FactionGearCustomizer
         private int generatedCount = 0;
         private const int BATCH_SIZE = 1;
 
-        private PawnKindDef hoveredKind;
-        private float hoverStartTime;
+
 
         public override Vector2 InitialSize => isMultiMode ? new Vector2(1100f, 750f) : new Vector2(450f, 650f);
 
@@ -301,16 +299,12 @@ namespace FactionGearCustomizer
                 WidgetsUtils.DrawMenuSection(rect);
             }
 
-            // Click to select
-            if (Widgets.ButtonInvisible(rect))
+            // Click to select (leave space for info button on the right)
+            Rect buttonRect = new Rect(rect.x, rect.y, rect.width - 35f, rect.height);
+            if (Widgets.ButtonInvisible(buttonRect))
             {
                 EditorSession.SelectedKindDefName = k.defName;
                 EditorSession.GearListScrollPos = Vector2.zero;
-                // Optional: Close window on select? User didn't specify, but for "Preview" usually we want to see.
-                // If this is a "Gallery" replacement for the sidebar, we might keep it open.
-                // But since it's a modal window, maybe we should close it?
-                // The user said "Preview all -> Preview", implying this IS the preview.
-                // I'll keep it open so they can browse. Selection updates the editor in background.
             }
 
             Rect inner = rect.ContractedBy(4f);
@@ -368,61 +362,18 @@ namespace FactionGearCustomizer
                     TooltipHandler.TipRegion(weaponRect, weapon.LabelCap);
                 }
 
-                // Hover Preview (Based on Ref-TotalControl)
+                // 点击显示装备详情
+                Rect infoButtonRect = new Rect(rect.xMax - 30f, rect.y + 30f, 26f, 26f);
+                if (Widgets.InfoCardButton(infoButtonRect.x, infoButtonRect.y, p))
+                {
+                    Find.WindowStack.Add(new Dialog_PawnGearInfo(p));
+                }
+                
+                // 提示点击可以查看详情
                 if (Mouse.IsOver(rect))
                 {
-                    if (hoveredKind != k)
-                    {
-                        hoveredKind = k;
-                        hoverStartTime = Time.realtimeSinceStartup;
-                    }
-                    else if (Time.realtimeSinceStartup - hoverStartTime > 0.35f)
-                    {
-                        Vector2 mousePos = Verse.UI.MousePositionOnUIInverted;
-                        Rect windowRect = new Rect(mousePos.x + 15f, mousePos.y + 15f, 432f, 550f);
-                        
-                        // Keep within screen bounds
-                        if (windowRect.xMax > Verse.UI.screenWidth) windowRect.x = mousePos.x - windowRect.width - 15f;
-                        if (windowRect.yMax > Verse.UI.screenHeight) windowRect.y = Verse.UI.screenHeight - windowRect.height;
-                        if (windowRect.y < 0) windowRect.y = 0;
-
-                        Find.WindowStack.ImmediateWindow(9845124, windowRect, WindowLayer.Super, () =>
-                        {
-                            try
-                            {
-                                var selector = Find.Selector;
-                                if (selector == null) return;
-
-                                var listField = typeof(Selector).GetField("selected", BindingFlags.Instance | BindingFlags.NonPublic);
-                                if (listField == null) return;
-                                
-                                var list = listField.GetValue(selector) as List<object>;
-                                if (list == null) return;
-
-                                list.Clear();
-                                list.Add(p);
-
-                                var fillTabMethod = typeof(ITab_Pawn_Gear).GetMethod("FillTab", BindingFlags.Instance | BindingFlags.NonPublic);
-                                if (fillTabMethod != null)
-                                {
-                                    ITab_Pawn_Gear tab = new ITab_Pawn_Gear();
-                                    // FillTab需要一个Rect参数来定义绘制区域
-                                    Rect tabRect = new Rect(0f, 0f, windowRect.width, windowRect.height);
-                                    fillTabMethod.Invoke(tab, new object[] { tabRect });
-                                }
-                                
-                                list.Clear();
-                            }
-                            catch (Exception)
-                            {
-                                // Silent fail to avoid spamming logs on hover
-                            }
-                        });
-                    }
-                }
-                else if (hoveredKind == k)
-                {
-                    hoveredKind = null;
+                    TooltipHandler.TipRegion(rect, LanguageManager.Get("ClickToViewGearInfo"));
+                    Widgets.DrawHighlight(rect);
                 }
             }
             else

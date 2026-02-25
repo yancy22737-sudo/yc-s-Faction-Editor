@@ -1,3 +1,11 @@
+2026-02-25 - Version updated to 1.2.2 - Fixed save switch data pollution
+  - Fixed issue where previous save's modifications would leak to new save
+  - Fixed FactionDef Name and Faction Name confusion when switching saves
+  - Added FactionDef restoration when switching saves without custom settings
+  - Added Faction instance name and color restoration in ResetFaction method
+  - Improved save switch detection by ensuring save identifier exists before comparison
+  - When switching saves, current modifications are reset and preset selection dialog is shown
+
 2026-02-23 20:38:50 - Version updated from 1.1.52 to 1.1.53
 2026-02-23 - Version updated to 1.1.54 - Added active preset display on toolbar
 2026-02-23 - Version updated to 1.1.55 - Fixed TopBar not showing in MainTabWindow

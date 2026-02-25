@@ -59,6 +59,7 @@ namespace FactionGearCustomizer
         public List<SpecRequirementEdit> SpecificWeapons = null;
         public List<SpecRequirementEdit> InventoryItems = null;
         public List<ForcedHediff> ForcedHediffs = null;
+        public bool? ForceIgnoreRestrictions = null;
 
         public KindGearData() { }
 
@@ -80,6 +81,7 @@ namespace FactionGearCustomizer
 
             Scribe_Values.Look(ref ForceNaked, "forceNaked");
             Scribe_Values.Look(ref ForceOnlySelected, "forceOnlySelected");
+            Scribe_Values.Look(ref ForceIgnoreRestrictions, "forceIgnoreRestrictions");
             Scribe_Values.Look(ref ItemQuality, "itemQuality");
             Scribe_Values.Look(ref ForcedWeaponQuality, "forcedWeaponQuality");
             Scribe_Values.Look(ref BiocodeWeaponChance, "biocodeWeaponChance");
@@ -162,6 +164,7 @@ namespace FactionGearCustomizer
             
             ForceNaked = false;
             ForceOnlySelected = true; // Default to true
+            ForceIgnoreRestrictions = null;
             ItemQuality = null;
             ForcedWeaponQuality = null;
             BiocodeWeaponChance = null;
@@ -200,6 +203,7 @@ namespace FactionGearCustomizer
                 
                 ForceNaked = this.ForceNaked,
                 ForceOnlySelected = this.ForceOnlySelected,
+                ForceIgnoreRestrictions = this.ForceIgnoreRestrictions,
                 ItemQuality = this.ItemQuality,
                 ForcedWeaponQuality = this.ForcedWeaponQuality,
                 BiocodeWeaponChance = this.BiocodeWeaponChance,
@@ -318,6 +322,7 @@ namespace FactionGearCustomizer
 
             this.ForceNaked = source.ForceNaked;
             this.ForceOnlySelected = source.ForceOnlySelected;
+            this.ForceIgnoreRestrictions = source.ForceIgnoreRestrictions;
             this.ItemQuality = source.ItemQuality;
             this.ForcedWeaponQuality = source.ForcedWeaponQuality;
             this.BiocodeWeaponChance = source.BiocodeWeaponChance;

@@ -367,3 +367,11 @@ Local.props
 
 # User custom ignore
 Ref-TotalControl/
+
+# Project specific files
+WorkshopDescription.md
+WorkshopDescription_EN.md
+increment_version.ps1
+prompt.txt
+tmp_log.txt
+workshop_description_plan.md

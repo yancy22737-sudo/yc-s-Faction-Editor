@@ -82,19 +82,13 @@ namespace FactionGearCustomizer
         // 从当前游戏设置中抓取被修改的数据并深拷贝保存
         public void SaveFromCurrentSettings(List<FactionGearData> currentSettingsData)
         {
-            SaveFullFactionData(currentSettingsData, false);
-        }
-
-        // 保存完整的派系配置（所有派系和兵种，不仅仅是修改过的）
-        public void SaveFullFactionData(List<FactionGearData> currentSettingsData, bool saveAll = true)
-        {
             factionGearData.Clear();
             foreach (var faction in currentSettingsData)
             {
-                // 检查是否保存所有派系，或者只保存修改过的派系
+                // Check if faction itself is modified OR if any kinds are modified
                 var modifiedKinds = faction.kindGearData.Where(k => k.isModified).ToList();
                 
-                if (saveAll || faction.isModified || modifiedKinds.Any())
+                if (faction.isModified || modifiedKinds.Any())
                 {
                     // 创建深拷贝
                     FactionGearData newFactionData = new FactionGearData(faction.factionDefName);
@@ -103,27 +97,12 @@ namespace FactionGearCustomizer
                     newFactionData.Description = faction.Description;
                     newFactionData.IconPath = faction.IconPath;
                     newFactionData.Color = faction.Color;
-                    newFactionData.XenotypeChances = faction.XenotypeChances != null ? new Dictionary<string, float>(faction.XenotypeChances) : null;
-                    newFactionData.PlayerRelationOverride = faction.PlayerRelationOverride;
 
-                    // 保存所有兵种或只保存修改过的兵种
-                    if (saveAll)
+                    foreach (var kind in modifiedKinds)
                     {
-                        foreach (var kind in faction.kindGearData)
-                        {
-                            KindGearData newKindData = kind.DeepCopy();
-                            newFactionData.kindGearData.Add(newKindData);
-                        }
+                        KindGearData newKindData = kind.DeepCopy();
+                        newFactionData.kindGearData.Add(newKindData);
                     }
-                    else
-                    {
-                        foreach (var kind in modifiedKinds)
-                        {
-                            KindGearData newKindData = kind.DeepCopy();
-                            newFactionData.kindGearData.Add(newKindData);
-                        }
-                    }
-
                     factionGearData.Add(newFactionData);
                 }
             }

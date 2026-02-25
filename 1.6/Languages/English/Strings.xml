@@ -559,6 +559,8 @@ You can change this later in Mod Settings.</FGC_FirstTimePrompt_Description>
   <FGC_Preset_NoDescription>No Description</FGC_Preset_NoDescription>
   <FGC_Factions_Label>factions</FGC_Factions_Label>
   <FGC_Message_PresetApplied>Applied preset "{0}" to current save.</FGC_Message_PresetApplied>
+  <FGC_Message_SelectedFactionsApplied>Applied {1} factions from preset "{0}" to current save.</FGC_Message_SelectedFactionsApplied>
+  <FGC_SelectFactions>Select Factions</FGC_SelectFactions>
   <FGC_Message_UsingVanilla>Current save uses vanilla faction settings.</FGC_Message_UsingVanilla>
   <NoPresetEditingDisabledTooltip>Create or load preset to enable editing</NoPresetEditingDisabledTooltip>
   <NoPresetCannotSave>Create or load preset to save</NoPresetCannotSave>
@@ -1176,4 +1178,17 @@ Group: 984338429</Wiki_Notes_Content>
   <TechLevelLimitTooltip>Limit equipment to specific tech level or below.</TechLevelLimitTooltip>
   <SkippedNonHumanKinds>Skipped {0} non-human pawn kinds.</SkippedNonHumanKinds>
   <AddedPawnKinds>Added {0} pawn kinds.</AddedPawnKinds>
+  
+  <!-- Gear Info Dialog -->
+  <MassCarried>Mass carried</MassCarried>
+  <ComfortableTemperature>Comfortable temperature range</ComfortableTemperature>
+  <OverallArmor>Overall armor</OverallArmor>
+  <ArmorSharp>Sharp</ArmorSharp>
+  <ArmorBlunt>Blunt</ArmorBlunt>
+  <ArmorHeat>Heat</ArmorHeat>
+  <Equipment>Equipment</Equipment>
+  <Apparel>Apparel</Apparel>
+  <Inventory>Inventory</Inventory>
+  <TotalMass>Total mass</TotalMass>
+  <ClickToViewGearInfo>Click to view gear details</ClickToViewGearInfo>
 </LanguageData>

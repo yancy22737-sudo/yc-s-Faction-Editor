@@ -16,6 +16,10 @@ namespace FactionGearCustomizer.Managers
         private static Dictionary<FactionDef, OriginalFactionData> originalFactionData = new Dictionary<FactionDef, OriginalFactionData>();
         private static Dictionary<PawnKindDef, string> originalKindLabels = new Dictionary<PawnKindDef, string>();
 
+        // 标记是否已保存所有原始数据（游戏启动时只保存一次）
+        private static bool hasSavedAllOriginalData = false;
+        private static readonly object originalDataLock = new object();
+
         private static FieldInfo factionIconField = typeof(FactionDef).GetField("factionIcon", BindingFlags.Instance | BindingFlags.NonPublic);
         private static FieldInfo cachedDescriptionField = typeof(FactionDef).GetField("cachedDescription", BindingFlags.Instance | BindingFlags.NonPublic);
         private static FieldInfo xenotypeChancesField = typeof(XenotypeSet).GetField("xenotypeChances", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
@@ -46,31 +50,108 @@ namespace FactionGearCustomizer.Managers
             xenotypeChancesField?.SetValue(set, chances);
         }
 
+        /// <summary>
+        /// 清理原始数据缓存，在切换存档或游戏重启时调用
+        /// </summary>
+        public static void ClearOriginalDataCache()
+        {
+            lock (originalDataLock)
+            {
+                originalFactionData.Clear();
+                originalKindLabels.Clear();
+                hasSavedAllOriginalData = false;
+                Log.Message("[FactionGearCustomizer] Original data cache cleared.");
+            }
+        }
+
+        /// <summary>
+        /// 保存所有派系和兵种的原始数据（应在游戏启动时调用，在任何修改之前）
+        /// </summary>
+        public static void SaveAllOriginalData()
+        {
+            lock (originalDataLock)
+            {
+                if (hasSavedAllOriginalData)
+                    return;
+
+                Log.Message("[FactionGearCustomizer] Saving all original faction data...");
+
+                // 保存所有派系Def的原始数据
+                foreach (var factionDef in DefDatabase<FactionDef>.AllDefs)
+                {
+                    if (factionDef != null && !originalFactionData.ContainsKey(factionDef))
+                    {
+                        SaveOriginalFactionDataInternal(factionDef);
+                    }
+                }
+
+                // 保存所有兵种Def的原始数据
+                foreach (var kindDef in DefDatabase<PawnKindDef>.AllDefs)
+                {
+                    if (kindDef != null && !originalKindLabels.ContainsKey(kindDef))
+                    {
+                        originalKindLabels[kindDef] = kindDef.label;
+                    }
+                }
+
+                hasSavedAllOriginalData = true;
+                Log.Message($"[FactionGearCustomizer] Saved original data for {originalFactionData.Count} factions and {originalKindLabels.Count} kinds.");
+            }
+        }
+
+        /// <summary>
+        /// 内部方法：保存单个派系的原始数据
+        /// </summary>
+        private static void SaveOriginalFactionDataInternal(FactionDef faction)
+        {
+            if (faction == null) return;
+
+            originalFactionData[faction] = new OriginalFactionData
+            {
+                Label = faction.label,
+                Description = faction.description,
+                ColorSpectrum = faction.colorSpectrum != null ? new List<Color>(faction.colorSpectrum) : null,
+                IconPath = faction.factionIconPath,
+                Icon = faction.FactionIcon,
+                PawnGroupMakers = faction.pawnGroupMakers != null ? new List<PawnGroupMaker>(faction.pawnGroupMakers) : null,
+                XenotypeChances = (ModsConfig.BiotechActive && faction.humanlikeFaction && faction.xenotypeSet != null) 
+                    ? new List<XenotypeChance>(GetXenotypeChances(faction.xenotypeSet) ?? new List<XenotypeChance>()) 
+                    : null,
+                PlayerRelationKind = null
+            };
+        }
+
         public static void EnsureOriginalDataSaved(FactionDef faction)
         {
             if (faction == null) return;
-            if (!originalFactionData.ContainsKey(faction))
+
+            lock (originalDataLock)
             {
-                originalFactionData[faction] = new OriginalFactionData
+                // 如果已经保存过所有原始数据，不需要重复保存
+                if (hasSavedAllOriginalData)
+                    return;
+
+                if (!originalFactionData.ContainsKey(faction))
                 {
-                    Label = faction.label,
-                    Description = faction.description,
-                    ColorSpectrum = faction.colorSpectrum != null ? new List<Color>(faction.colorSpectrum) : null,
-                    IconPath = faction.factionIconPath,
-                    Icon = faction.FactionIcon,
-                    PawnGroupMakers = faction.pawnGroupMakers != null ? new List<PawnGroupMaker>(faction.pawnGroupMakers) : null,
-                    XenotypeChances = (ModsConfig.BiotechActive && faction.humanlikeFaction && faction.xenotypeSet != null) ? new List<XenotypeChance>(GetXenotypeChances(faction.xenotypeSet) ?? new List<XenotypeChance>()) : null,
-                    PlayerRelationKind = null
-                };
+                    SaveOriginalFactionDataInternal(faction);
+                }
             }
         }
 
         public static void EnsureOriginalDataSaved(PawnKindDef kind)
         {
             if (kind == null) return;
-            if (!originalKindLabels.ContainsKey(kind))
+
+            lock (originalDataLock)
             {
-                originalKindLabels[kind] = kind.label;
+                // 如果已经保存过所有原始数据，不需要重复保存
+                if (hasSavedAllOriginalData)
+                    return;
+
+                if (!originalKindLabels.ContainsKey(kind))
+                {
+                    originalKindLabels[kind] = kind.label;
+                }
             }
         }
 

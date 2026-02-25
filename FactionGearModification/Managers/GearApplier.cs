@@ -176,8 +176,8 @@ namespace FactionGearCustomizer
 
         private static void ApplyWeapons(Pawn pawn, KindGearData kindData)
         {
-            // Global Force Ignore check
-            bool forceIgnore = FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
+            // Use kind-specific setting if available, otherwise use global setting
+            bool forceIgnore = kindData.ForceIgnoreRestrictions ?? FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
 
             // Get effective tech level limit
             TechLevel? techLevelLimit = GetEffectiveTechLevelLimit(kindData, pawn);
@@ -363,7 +363,7 @@ namespace FactionGearCustomizer
 
             // Get effective tech level limit
             TechLevel? techLevelLimit = GetEffectiveTechLevelLimit(kindData, pawn);
-            bool forceIgnore = FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
+            bool forceIgnore = kindData.ForceIgnoreRestrictions ?? FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
 
             // Strip logic
             if (kindData.ForceOnlySelected)

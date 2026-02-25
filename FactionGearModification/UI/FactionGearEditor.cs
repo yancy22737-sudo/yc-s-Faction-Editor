@@ -4,6 +4,7 @@ using System.Linq;
 using RimWorld;
 using UnityEngine;
 using Verse;
+using FactionGearCustomizer.Core;
 using FactionGearCustomizer.UI.Panels;
 using FactionGearCustomizer.Compat;
 using FactionGearCustomizer.Managers;
@@ -177,10 +178,48 @@ namespace FactionGearCustomizer
                 }
             }
 
+            // 【关键修复】同步全局设置到存档级别设置，确保修改立即生效
+            SyncGlobalSettingsToSave();
+
             FactionGearCustomizerMod.Settings.Write();
             IsDirty = false;
             backupSettings = null; 
             Log.Message("[FactionGearCustomizer] Settings saved successfully.");
+        }
+
+        /// <summary>
+        /// 同步全局设置到存档级别设置，确保修改在当前存档中立即生效
+        /// </summary>
+        private static void SyncGlobalSettingsToSave()
+        {
+            var gameComponent = FactionGearGameComponent.Instance;
+            if (gameComponent == null)
+            {
+                Log.Message("[FactionGearCustomizer] No active game, skipping save sync.");
+                return;
+            }
+
+            // 如果存档没有使用自定义设置，先启用它
+            if (!gameComponent.useCustomSettings)
+            {
+                gameComponent.useCustomSettings = true;
+                Log.Message("[FactionGearCustomizer] Enabled custom settings for current save.");
+            }
+
+            // 同步当前预设名称
+            gameComponent.activePresetName = FactionGearCustomizerMod.Settings.currentPresetName;
+
+            // 深拷贝全局设置到存档设置
+            gameComponent.savedFactionGearData.Clear();
+            foreach (var factionData in FactionGearCustomizerMod.Settings.factionGearData)
+            {
+                gameComponent.savedFactionGearData.Add(factionData.DeepCopy());
+            }
+
+            Log.Message($"[FactionGearCustomizer] Synced global settings to save. Faction count: {gameComponent.savedFactionGearData.Count}");
+
+            // 立即应用设置到游戏
+            FactionDefManager.ApplyAllSettings();
         }
 
         public static void DrawEditor(Rect inRect)
