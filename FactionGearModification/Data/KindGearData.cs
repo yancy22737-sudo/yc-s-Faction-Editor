@@ -247,6 +247,9 @@ namespace FactionGearCustomizer
                     newItem.Color = item.Color;
                     newItem.SelectionMode = item.SelectionMode;
                     newItem.SelectionChance = item.SelectionChance;
+                    newItem.CountRange = item.CountRange;
+                    newItem.PoolType = item.PoolType;
+                    newItem.weight = item.weight;
                     copy.SpecificApparel.Add(newItem);
                 }
             }
@@ -267,6 +270,8 @@ namespace FactionGearCustomizer
                     newItem.SelectionMode = item.SelectionMode;
                     newItem.SelectionChance = item.SelectionChance;
                     newItem.CountRange = item.CountRange;
+                    newItem.PoolType = item.PoolType;
+                    newItem.weight = item.weight;
                     copy.SpecificWeapons.Add(newItem);
                 }
             }
@@ -287,6 +292,8 @@ namespace FactionGearCustomizer
                     newItem.SelectionMode = item.SelectionMode;
                     newItem.SelectionChance = item.SelectionChance;
                     newItem.CountRange = item.CountRange;
+                    newItem.PoolType = item.PoolType;
+                    newItem.weight = item.weight;
                     copy.InventoryItems.Add(newItem);
                 }
             }
@@ -299,9 +306,11 @@ namespace FactionGearCustomizer
                     if (item == null) continue;
                     var newItem = new ForcedHediff();
                     newItem.HediffDef = item.HediffDef;
+                    newItem.PoolType = item.PoolType;
                     newItem.maxParts = item.maxParts;
                     newItem.maxPartsRange = item.maxPartsRange;
                     newItem.chance = item.chance;
+                    newItem.severityRange = item.severityRange;
                     if (item.parts != null) newItem.parts = new List<BodyPartDef>(item.parts);
                     copy.ForcedHediffs.Add(newItem);
                 }
@@ -357,6 +366,9 @@ namespace FactionGearCustomizer
                     newItem.Color = item.Color;
                     newItem.SelectionMode = item.SelectionMode;
                     newItem.SelectionChance = item.SelectionChance;
+                    newItem.CountRange = item.CountRange;
+                    newItem.PoolType = item.PoolType;
+                    newItem.weight = item.weight;
                     this.SpecificApparel.Add(newItem);
                 }
             }
@@ -378,6 +390,8 @@ namespace FactionGearCustomizer
                     newItem.SelectionMode = item.SelectionMode;
                     newItem.SelectionChance = item.SelectionChance;
                     newItem.CountRange = item.CountRange;
+                    newItem.PoolType = item.PoolType;
+                    newItem.weight = item.weight;
                     this.SpecificWeapons.Add(newItem);
                 }
             }
@@ -399,6 +413,8 @@ namespace FactionGearCustomizer
                     newItem.SelectionMode = item.SelectionMode;
                     newItem.SelectionChance = item.SelectionChance;
                     newItem.CountRange = item.CountRange;
+                    newItem.PoolType = item.PoolType;
+                    newItem.weight = item.weight;
                     this.InventoryItems.Add(newItem);
                 }
             }
@@ -412,9 +428,11 @@ namespace FactionGearCustomizer
                     if (item == null) continue;
                     var newItem = new ForcedHediff();
                     newItem.HediffDef = item.HediffDef;
+                    newItem.PoolType = item.PoolType;
                     newItem.maxParts = item.maxParts;
                     newItem.maxPartsRange = item.maxPartsRange;
                     newItem.chance = item.chance;
+                    newItem.severityRange = item.severityRange;
                     if (item.parts != null) newItem.parts = new List<BodyPartDef>(item.parts);
                     this.ForcedHediffs.Add(newItem);
                 }

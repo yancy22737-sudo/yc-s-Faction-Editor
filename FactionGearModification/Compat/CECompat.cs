@@ -39,6 +39,9 @@ namespace FactionGearCustomizer.Compat
         private static PropertyInfo _currentAmmoProperty; // In CompAmmoUser
         private static PropertyInfo _magSizeProperty; // In CompAmmoUser
 
+        private static Type _compPropertiesAmmoUserType2; // CompProperties_AmmoUser for ammo items
+        private static Type _ammoDefType; // AmmoDef
+
         private static StatDef _bulkStat;
 
         public static void Init()
@@ -76,6 +79,9 @@ namespace FactionGearCustomizer.Compat
                 }
 
                 _bulkStat = DefDatabase<StatDef>.GetNamedSilentFail("Bulk");
+
+                _ammoDefType = AccessTools.TypeByName("CombatExtended.AmmoDef");
+                _compPropertiesAmmoUserType2 = AccessTools.TypeByName("CombatExtended.CompProperties_AmmoUser");
             }
             catch (Exception ex)
             {
@@ -232,6 +238,72 @@ namespace FactionGearCustomizer.Compat
             if (_compAmmoUserType == null) return false;
 
             return weapon.AllComps.Any(c => c.GetType() == _compAmmoUserType || c.GetType().IsSubclassOf(_compAmmoUserType));
+        }
+
+        /// <summary>
+        /// 检查物品是否为CE弹药
+        /// </summary>
+        public static bool IsCEAmmo(ThingDef thingDef)
+        {
+            if (!IsCEActive || thingDef == null) return false;
+            if (_ammoDefType == null) Init();
+            if (_ammoDefType == null) return false;
+
+            return _ammoDefType.IsAssignableFrom(thingDef.GetType());
+        }
+
+        /// <summary>
+        /// 获取物品的建议数量上限
+        /// 对于CE弹药，返回弹匣容量的倍数（10倍）
+        /// 对于普通物品，返回stackLimit
+        /// </summary>
+        public static int GetSuggestedMaxCount(ThingDef thingDef, int defaultMax = 50)
+        {
+            if (thingDef == null) return defaultMax;
+
+            if (IsCEAmmo(thingDef))
+            {
+                int magSize = GetAmmoMagSize(thingDef);
+                if (magSize > 0)
+                {
+                    return magSize * 10;
+                }
+            }
+
+            return thingDef.stackLimit > 0 ? thingDef.stackLimit : defaultMax;
+        }
+
+        /// <summary>
+        /// 获取弹药的弹匣容量（如果有）
+        /// </summary>
+        private static int GetAmmoMagSize(ThingDef thingDef)
+        {
+            if (!IsCEActive || thingDef == null) return 0;
+            if (_compPropertiesAmmoUserType2 == null) Init();
+            if (_compPropertiesAmmoUserType2 == null) return 0;
+
+            try
+            {
+                if (thingDef.comps != null)
+                {
+                    foreach (var comp in thingDef.comps)
+                    {
+                        if (_compPropertiesAmmoUserType2.IsAssignableFrom(comp.GetType()))
+                        {
+                            var magSizeValue = _magazineSizeField?.GetValue(comp);
+                            if (magSizeValue != null)
+                            {
+                                return (int)magSizeValue;
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+            }
+
+            return 0;
         }
     }
 }

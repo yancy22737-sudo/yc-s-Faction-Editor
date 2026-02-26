@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FactionGearCustomizer.UI.Pickers;
+using FactionGearCustomizer.UI.Utils;
+using FactionGearCustomizer.Validation;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -12,6 +14,7 @@ namespace FactionGearCustomizer.UI
     {
         private readonly Action<ThingDef> onPickSingle;
         private readonly List<SpecRequirementEdit> targetList;
+        private readonly KindGearData kindData;
         private readonly bool multiSelect;
  
         private List<ThingDef> allCandidates = new List<ThingDef>();
@@ -29,14 +32,19 @@ namespace FactionGearCustomizer.UI
         private ApparelSelectionMode defaultMode = ApparelSelectionMode.AlwaysTake;
         private float defaultChance = 1f;
         private bool skipExisting = true;
+
+        private PickerSearchDebouncer searchDebouncer;
+        private string lastSearchText = "";
  
         private const float RowHeight = 28f;
+        private const float SearchDebounceDelay = 0.25f;
  
         public override Vector2 InitialSize => new Vector2(780f, 760f);
- 
-        public Dialog_InventoryItemPicker(List<SpecRequirementEdit> targetList)
+
+        public Dialog_InventoryItemPicker(List<SpecRequirementEdit> targetList, KindGearData kindData = null)
         {
             this.targetList = targetList;
+            this.kindData = kindData;
             multiSelect = true;
             InitCommon();
         }
@@ -56,11 +64,17 @@ namespace FactionGearCustomizer.UI
             draggable = true;
             resizeable = true;
             filterState = PickerSession.Inventory;
+            
+            searchDebouncer = new PickerSearchDebouncer(SearchDebounceDelay, OnSearchDebounced);
+            
+            ThingDefCache.Initialize();
             BuildCandidates();
         }
- 
+
         public override void DoWindowContents(Rect inRect)
         {
+            searchDebouncer.Update();
+            
             float y = 0f;
  
             Text.Font = GameFont.Medium;
@@ -75,9 +89,11 @@ namespace FactionGearCustomizer.UI
                 AllAmmoSets = null,
                 ShowAmmoFilter = false,
                 ShowRangeDamage = false,
+                ShowCategoryFilter = true,
                 SortOptions = GetSortOptions(),
                 IdSeed = GetHashCode(),
-                OnChanged = OnFilterChanged
+                OnChanged = OnFilterChanged,
+                SearchDebouncer = searchDebouncer
             });
             if (multiSelect) DrawDefaultsRow(inRect, ref y);
             if (multiSelect) DrawSelectionRow(inRect, ref y);
@@ -205,8 +221,9 @@ namespace FactionGearCustomizer.UI
  
         private void DrawRow(Rect rowRect, ThingDef def)
         {
-            string modName = FactionGearManager.GetModSource(def);
-            string tip = $"{def.LabelCap}\n{def.defName}\n{modName}";
+            var cacheEntry = ThingDefCache.Get(def);
+            string modName = cacheEntry?.ModSource ?? "";
+            string tip = $"{cacheEntry?.LabelCap}\n{cacheEntry?.DefName}\n{modName}";
             TooltipHandler.TipRegion(rowRect, tip);
  
             Rect inner = rowRect.ContractedBy(4f, 2f);
@@ -240,7 +257,7 @@ namespace FactionGearCustomizer.UI
             Rect rightRect = labelRect.RightPartPixels(210f);
             Rect leftRect = new Rect(labelRect.x, labelRect.y, labelRect.width - 210f, labelRect.height);
  
-            string label = def.LabelCap.ToString();
+            string label = cacheEntry?.LabelCap ?? def.defName;
             Widgets.Label(leftRect, label);
  
             Text.Anchor = TextAnchor.MiddleRight;
@@ -278,18 +295,113 @@ namespace FactionGearCustomizer.UI
             float btnW = 180f;
             float gap = 14f;
             float x = bottom.xMax - (btnW * 2 + gap);
- 
+
             Rect addRect = new Rect(x, bottom.y, btnW, 32f);
             Rect closeRect = new Rect(addRect.xMax + gap, bottom.y, btnW, 32f);
- 
-            if (Widgets.ButtonText(addRect, LanguageManager.Get("AddSelected")))
+
+            bool canAdd = true;
+            bool isCritical = false;
+            string tooltip = "";
+
+            if (kindData != null && selected.Count > 0)
             {
-                AddSelectedToTarget();
+                var validation = ValidateSelection();
+                canAdd = validation.IsValid;
+                isCritical = validation.IsCritical;
+                if (!canAdd)
+                {
+                    tooltip = LanguageManager.Get(validation.ErrorKey, validation.ErrorArgs);
+                }
+                else if (validation.IsWarning)
+                {
+                    tooltip = FormatWarningMessage(validation.WarningMessage);
+                }
             }
+
+            Color btnColor = !canAdd ? Color.gray : (isCritical ? new Color(0.9f, 0.5f, 0.2f) : Color.white);
+            GUI.color = btnColor;
+            if (Widgets.ButtonText(addRect, LanguageManager.Get("AddSelected"), true, false, canAdd))
+            {
+                if (canAdd)
+                {
+                    if (isCritical)
+                    {
+                        Messages.Message(LanguageManager.Get("InventoryOverweightWarning"), MessageTypeDefOf.CautionInput, false);
+                    }
+                    AddSelectedToTarget();
+                }
+            }
+            GUI.color = Color.white;
+
+            if (!string.IsNullOrEmpty(tooltip))
+            {
+                TooltipHandler.TipRegion(addRect, tooltip);
+            }
+
             if (Widgets.ButtonText(closeRect, LanguageManager.Get("Cancel")))
             {
                 Close();
             }
+        }
+
+        private string FormatWarningMessage(string warningMessage)
+        {
+            if (string.IsNullOrEmpty(warningMessage))
+                return "";
+
+            var parts = warningMessage.Split('|');
+            var formatted = new System.Text.StringBuilder();
+
+            foreach (var part in parts)
+            {
+                if (part.StartsWith("MassCritical:"))
+                {
+                    var values = part.Substring("MassCritical:".Length);
+                    formatted.AppendLine($"[!] {LanguageManager.Get("MassCriticalWarning", values)}");
+                }
+                else if (part.StartsWith("BulkCritical:"))
+                {
+                    var values = part.Substring("BulkCritical:".Length);
+                    formatted.AppendLine($"[!] {LanguageManager.Get("BulkCriticalWarning", values)}");
+                }
+                else if (part.StartsWith("MassWarning:"))
+                {
+                    var values = part.Substring("MassWarning:".Length);
+                    formatted.AppendLine(LanguageManager.Get("MassWarning", values));
+                }
+                else if (part.StartsWith("BulkWarning:"))
+                {
+                    var values = part.Substring("BulkWarning:".Length);
+                    formatted.AppendLine(LanguageManager.Get("BulkWarning", values));
+                }
+            }
+
+            return formatted.ToString().TrimEnd();
+        }
+
+        private ValidationResult ValidateSelection()
+        {
+            if (kindData == null || selected.Count == 0)
+                return ValidationResult.Success();
+
+            foreach (var def in selected)
+            {
+                if (def == null) continue;
+                if (skipExisting && existingDefNames != null && existingDefNames.Contains(def.defName))
+                    continue;
+
+                var result = InventoryLimitValidator.ValidateAddItem(kindData, def, defaultCountRange.max);
+                if (!result.IsValid)
+                {
+                    return result;
+                }
+                if (result.IsWarning)
+                {
+                    return result;
+                }
+            }
+
+            return ValidationResult.Success();
         }
  
         private void DrawBottomButtonsSingle(Rect inRect)
@@ -307,6 +419,12 @@ namespace FactionGearCustomizer.UI
         {
             if (targetList == null || selected.Count == 0) return;
  
+            if (kindData != null)
+            {
+                UndoManager.RecordState(kindData);
+                kindData.isModified = true;
+            }
+
             if (existingDefNames == null)
             {
                 existingDefNames = new HashSet<string>(targetList.Where(x => x?.Thing != null).Select(x => x.Thing.defName));
@@ -368,6 +486,12 @@ namespace FactionGearCustomizer.UI
             filterDirty = true;
         }
 
+        private void OnSearchDebounced(string searchText)
+        {
+            lastSearchText = searchText ?? "";
+            filterDirty = true;
+        }
+
         private void EnsureFilterUpToDate()
         {
             if (!filterDirty) return;
@@ -406,34 +530,53 @@ namespace FactionGearCustomizer.UI
             filterState.ClampRanges();
         }
 
+        private static bool MatchesCategory(ThingDef def, ItemCategoryFilter? category)
+        {
+            if (!category.HasValue) return true;
+            switch (category.Value)
+            {
+                case ItemCategoryFilter.Food:
+                    return def.IsIngestible && def.IsNutritionGivingIngestible;
+                case ItemCategoryFilter.Medicine:
+                    return def.IsMedicine;
+                case ItemCategoryFilter.SocialDrug:
+                    return def.IsDrug && def.IsPleasureDrug && !def.IsAddictiveDrug;
+                case ItemCategoryFilter.HardDrug:
+                    return def.IsDrug && def.IsAddictiveDrug;
+                case ItemCategoryFilter.Ammo:
+                    return def.IsShell;
+                default:
+                    return true;
+            }
+        }
+
         private List<ThingDef> ApplyFilterAndSort()
         {
             IEnumerable<ThingDef> items = allCandidates;
+            
             if (filterState.SelectedMods.Count > 0 && filterState.SelectedMods.Count != allMods.Count)
             {
                 items = items.Where(d => filterState.SelectedMods.Contains(FactionGearManager.GetModSource(d)));
             }
+            
             if (filterState.SelectedTechLevel.HasValue)
             {
                 TechLevel level = filterState.SelectedTechLevel.Value;
                 items = items.Where(d => d.techLevel == level);
             }
+            
+            if (filterState.SelectedCategory.HasValue)
+            {
+                items = items.Where(d => MatchesCategory(d, filterState.SelectedCategory.Value));
+            }
 
             items = items.Where(d => d.BaseMarketValue >= filterState.MarketValue.min && d.BaseMarketValue <= filterState.MarketValue.max);
 
-            string term = (filterState.SearchText ?? "").Trim();
+            string term = lastSearchText.Trim();
             if (!string.IsNullOrEmpty(term))
             {
                 string lower = term.ToLowerInvariant();
-                items = items.Where(def =>
-                {
-                    if (def == null) return false;
-                    string mod = FactionGearManager.GetModSource(def) ?? "";
-                    if ((def.LabelCap.ToString() ?? "").ToLowerInvariant().Contains(lower)) return true;
-                    if ((def.defName ?? "").ToLowerInvariant().Contains(lower)) return true;
-                    if (mod.ToLowerInvariant().Contains(lower)) return true;
-                    return false;
-                });
+                items = items.Where(def => ThingDefCache.MatchesSearch(def, lower));
             }
 
             return Sort(items).ToList();
@@ -444,15 +587,15 @@ namespace FactionGearCustomizer.UI
             switch (filterState.SortField)
             {
                 case "Name":
-                    return filterState.SortAscending ? items.OrderBy(t => t.LabelCap.ToString() ?? t.defName) : items.OrderByDescending(t => t.LabelCap.ToString() ?? t.defName);
+                    return filterState.SortAscending ? items.OrderBy(t => ThingDefCache.Get(t)?.LabelCap ?? t.defName) : items.OrderByDescending(t => ThingDefCache.Get(t)?.LabelCap ?? t.defName);
                 case "MarketValue":
                     return filterState.SortAscending ? items.OrderBy(t => t.BaseMarketValue) : items.OrderByDescending(t => t.BaseMarketValue);
                 case "TechLevel":
                     return filterState.SortAscending ? items.OrderBy(t => (int)t.techLevel) : items.OrderByDescending(t => (int)t.techLevel);
                 case "ModSource":
-                    return filterState.SortAscending ? items.OrderBy(t => FactionGearManager.GetModSource(t)) : items.OrderByDescending(t => FactionGearManager.GetModSource(t));
+                    return filterState.SortAscending ? items.OrderBy(t => ThingDefCache.Get(t)?.ModSource ?? "") : items.OrderByDescending(t => ThingDefCache.Get(t)?.ModSource ?? "");
                 default:
-                    return filterState.SortAscending ? items.OrderBy(t => t.LabelCap.ToString() ?? t.defName) : items.OrderByDescending(t => t.LabelCap.ToString() ?? t.defName);
+                    return filterState.SortAscending ? items.OrderBy(t => ThingDefCache.Get(t)?.LabelCap ?? t.defName) : items.OrderByDescending(t => ThingDefCache.Get(t)?.LabelCap ?? t.defName);
             }
         }
  
@@ -473,6 +616,12 @@ namespace FactionGearCustomizer.UI
             int pool = (int)mode - (int)ApparelSelectionMode.FromPool1 + 1;
             if (pool >= 1 && pool <= 4) return LanguageManager.Get("SelectionModeFromPool", pool);
             return mode.ToString();
+        }
+
+        public override void PreClose()
+        {
+            base.PreClose();
+            searchDebouncer?.ForceExecute();
         }
     }
 }

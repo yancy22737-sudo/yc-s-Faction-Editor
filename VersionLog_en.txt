@@ -1,3 +1,9 @@
+v1.2.5
+- Fix: Item count slider now uses item's stackLimit as max value instead of fixed 50
+- Add: CE ammo items use magazine size × 10 as max value for better compatibility
+- Fix: Item pool count slider max value changed from 500 to 100
+- Add: CECompat.GetSuggestedMaxCount() for intelligent count limit detection
+
 v1.2.2
 - Fix: Fix Wiki language settings not taking effect (Wiki language keys added to Language directory)
 - Add: Wiki UI beautification: added header bar, section-based color coding, optimized layout

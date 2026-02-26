@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FactionGearCustomizer.UI.Pickers;
+using FactionGearCustomizer.UI.Utils;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -12,6 +13,7 @@ namespace FactionGearCustomizer.UI
     {
         private readonly Action<ThingDef> onPickSingle;
         private readonly List<SpecRequirementEdit> targetList;
+        private readonly KindGearData kindData;
         private readonly bool multiSelect;
 
         private List<ThingDef> allCandidates = new List<ThingDef>();
@@ -30,13 +32,18 @@ namespace FactionGearCustomizer.UI
         private float defaultChance = 1f;
         private bool skipExisting = true;
 
+        private PickerSearchDebouncer searchDebouncer;
+        private string lastSearchText = "";
+
         private const float RowHeight = 28f;
+        private const float SearchDebounceDelay = 0.25f;
 
         public override Vector2 InitialSize => new Vector2(780f, 760f);
 
-        public Dialog_ApparelPicker(List<SpecRequirementEdit> targetList)
+        public Dialog_ApparelPicker(List<SpecRequirementEdit> targetList, KindGearData kindData = null)
         {
             this.targetList = targetList;
+            this.kindData = kindData;
             multiSelect = true;
             InitCommon();
         }
@@ -56,11 +63,17 @@ namespace FactionGearCustomizer.UI
             draggable = true;
             resizeable = true;
             filterState = PickerSession.Apparel;
+            
+            searchDebouncer = new PickerSearchDebouncer(SearchDebounceDelay, OnSearchDebounced);
+            
+            ThingDefCache.Initialize();
             BuildCandidates();
         }
 
         public override void DoWindowContents(Rect inRect)
         {
+            searchDebouncer.Update();
+            
             float y = 0f;
 
             Text.Font = GameFont.Medium;
@@ -77,7 +90,8 @@ namespace FactionGearCustomizer.UI
                 ShowRangeDamage = false,
                 SortOptions = GetSortOptions(),
                 IdSeed = GetHashCode(),
-                OnChanged = OnFilterChanged
+                OnChanged = OnFilterChanged,
+                SearchDebouncer = searchDebouncer
             });
 
             if (multiSelect) DrawDefaultsRow(inRect, ref y);
@@ -200,8 +214,9 @@ namespace FactionGearCustomizer.UI
 
         private void DrawRow(Rect rowRect, ThingDef def)
         {
-            string modName = FactionGearManager.GetModSource(def);
-            string tip = $"{def.LabelCap}\n{def.defName}\n{modName}";
+            var cacheEntry = ThingDefCache.Get(def);
+            string modName = cacheEntry?.ModSource ?? "";
+            string tip = $"{cacheEntry?.LabelCap}\n{cacheEntry?.DefName}\n{modName}";
             TooltipHandler.TipRegion(rowRect, tip);
 
             Rect inner = rowRect.ContractedBy(4f, 2f);
@@ -235,7 +250,8 @@ namespace FactionGearCustomizer.UI
             Rect rightRect = labelRect.RightPartPixels(210f);
             Rect leftRect = new Rect(labelRect.x, labelRect.y, labelRect.width - 210f, labelRect.height);
 
-            Widgets.Label(leftRect, def.LabelCap.ToString());
+            string label = cacheEntry?.LabelCap ?? def.defName;
+            Widgets.Label(leftRect, label);
 
             Text.Anchor = TextAnchor.MiddleRight;
             GUI.color = Color.gray;
@@ -301,6 +317,12 @@ namespace FactionGearCustomizer.UI
         {
             if (targetList == null || selected.Count == 0) return;
 
+            if (kindData != null)
+            {
+                UndoManager.RecordState(kindData);
+                kindData.isModified = true;
+            }
+
             if (existingDefNames == null)
             {
                 existingDefNames = new HashSet<string>(targetList.Where(x => x?.Thing != null).Select(x => x.Thing.defName));
@@ -362,6 +384,12 @@ namespace FactionGearCustomizer.UI
             filterDirty = true;
         }
 
+        private void OnSearchDebounced(string searchText)
+        {
+            lastSearchText = searchText ?? "";
+            filterDirty = true;
+        }
+
         private void EnsureFilterUpToDate()
         {
             if (!filterDirty) return;
@@ -415,19 +443,11 @@ namespace FactionGearCustomizer.UI
 
             items = items.Where(d => d.BaseMarketValue >= filterState.MarketValue.min && d.BaseMarketValue <= filterState.MarketValue.max);
 
-            string term = (filterState.SearchText ?? "").Trim();
+            string term = lastSearchText.Trim();
             if (!string.IsNullOrEmpty(term))
             {
                 string lower = term.ToLowerInvariant();
-                items = items.Where(def =>
-                {
-                    if (def == null) return false;
-                    string mod = FactionGearManager.GetModSource(def) ?? "";
-                    if ((def.LabelCap.ToString() ?? "").ToLowerInvariant().Contains(lower)) return true;
-                    if ((def.defName ?? "").ToLowerInvariant().Contains(lower)) return true;
-                    if (mod.ToLowerInvariant().Contains(lower)) return true;
-                    return false;
-                });
+                items = items.Where(def => ThingDefCache.MatchesSearch(def, lower));
             }
 
             return Sort(items).ToList();
@@ -438,19 +458,19 @@ namespace FactionGearCustomizer.UI
             switch (filterState.SortField)
             {
                 case "Name":
-                    return filterState.SortAscending ? items.OrderBy(t => t.LabelCap.ToString() ?? t.defName) : items.OrderByDescending(t => t.LabelCap.ToString() ?? t.defName);
+                    return filterState.SortAscending ? items.OrderBy(t => ThingDefCache.Get(t)?.LabelCap ?? t.defName) : items.OrderByDescending(t => ThingDefCache.Get(t)?.LabelCap ?? t.defName);
                 case "MarketValue":
                     return filterState.SortAscending ? items.OrderBy(t => t.BaseMarketValue) : items.OrderByDescending(t => t.BaseMarketValue);
                 case "TechLevel":
                     return filterState.SortAscending ? items.OrderBy(t => (int)t.techLevel) : items.OrderByDescending(t => (int)t.techLevel);
                 case "ModSource":
-                    return filterState.SortAscending ? items.OrderBy(t => FactionGearManager.GetModSource(t)) : items.OrderByDescending(t => FactionGearManager.GetModSource(t));
+                    return filterState.SortAscending ? items.OrderBy(t => ThingDefCache.Get(t)?.ModSource ?? "") : items.OrderByDescending(t => ThingDefCache.Get(t)?.ModSource ?? "");
                 case "Armor_Sharp":
                     return SortBy(items, FactionGearManager.GetArmorRatingSharp);
                 case "Armor_Blunt":
                     return SortBy(items, FactionGearManager.GetArmorRatingBlunt);
                 default:
-                    return filterState.SortAscending ? items.OrderBy(t => t.LabelCap.ToString() ?? t.defName) : items.OrderByDescending(t => t.LabelCap.ToString() ?? t.defName);
+                    return filterState.SortAscending ? items.OrderBy(t => ThingDefCache.Get(t)?.LabelCap ?? t.defName) : items.OrderByDescending(t => ThingDefCache.Get(t)?.LabelCap ?? t.defName);
             }
         }
 
@@ -467,6 +487,12 @@ namespace FactionGearCustomizer.UI
             int pool = (int)mode - (int)ApparelSelectionMode.FromPool1 + 1;
             if (pool >= 1 && pool <= 4) return LanguageManager.Get("SelectionModeFromPool", pool);
             return mode.ToString();
+        }
+
+        public override void PreClose()
+        {
+            base.PreClose();
+            searchDebouncer?.ForceExecute();
         }
     }
 }

@@ -5,14 +5,51 @@ using Verse;
 
 namespace FactionGearCustomizer
 {
+    public enum HediffPoolType
+    {
+        None,
+        AnyDebuff,
+        AnyDrugHigh,
+        AnyAddiction,
+        AnyImplant,
+        AnyIllness,
+        AnyBuff
+    }
+
     public class ForcedHediff : IExposable
     {
         public HediffDef HediffDef;
+        public HediffPoolType PoolType = HediffPoolType.None;
         public int maxParts = 0;
         public IntRange maxPartsRange = default(IntRange);
         public float chance = 1f;
         public FloatRange severityRange = default(FloatRange);
         public List<BodyPartDef> parts;
+
+        public bool IsPool => PoolType != HediffPoolType.None;
+
+        public string GetDisplayLabel()
+        {
+            if (IsPool)
+            {
+                return GetPoolLabel(PoolType);
+            }
+            return HediffDef?.LabelCap ?? "Unknown";
+        }
+
+        private string GetPoolLabel(HediffPoolType type)
+        {
+            switch (type)
+            {
+                case HediffPoolType.AnyDebuff: return LanguageManager.Get("HediffPool_AnyDebuff");
+                case HediffPoolType.AnyDrugHigh: return LanguageManager.Get("HediffPool_AnyDrugHigh");
+                case HediffPoolType.AnyAddiction: return LanguageManager.Get("HediffPool_AnyAddiction");
+                case HediffPoolType.AnyImplant: return LanguageManager.Get("HediffPool_AnyImplant");
+                case HediffPoolType.AnyIllness: return LanguageManager.Get("HediffPool_AnyIllness");
+                case HediffPoolType.AnyBuff: return LanguageManager.Get("HediffPool_AnyBuff");
+                default: return "Unknown Pool";
+            }
+        }
 
         public void ExposeData()
         {
@@ -31,6 +68,7 @@ namespace FactionGearCustomizer
                 }
             }
 
+            Scribe_Values.Look(ref PoolType, "poolType", HediffPoolType.None);
             Scribe_Values.Look(ref maxParts, "maxParts");
             Scribe_Values.Look(ref maxPartsRange, "maxPartsRange");
             Scribe_Values.Look(ref chance, "chance");

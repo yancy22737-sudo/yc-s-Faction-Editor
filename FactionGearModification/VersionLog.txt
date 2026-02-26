@@ -1,3 +1,23 @@
+2026-02-26 - Version updated to 1.2.5 - Item Count Range Limit Fix
+  - Fixed item count slider using unreasonable max value (50)
+  - Item count slider now uses item's stackLimit as max value
+  - CE ammo items use magazine size × 10 as max value for better compatibility
+  - Item pool count slider max value changed from 500 to 100
+  - Added CECompat.GetSuggestedMaxCount() for intelligent count limit detection
+
+2026-02-26 - Version updated to 1.2.4 - Status UI Unification & Quick Pools
+  - Unified Hediff status UI layout with inventory item cards
+  - Added quick status pool feature (Any Debuff/Drug High/Addiction/Implant/Illness/Buff)
+  - HediffCardUI now supports pool type display with visual tags
+  - Updated language files for new status pool features
+
+2026-02-26 - Version updated to 1.2.3 - UI Enhancements
+  - Fixed search box clear button not working (UI overlay issue)
+  - Added category filter in item picker (Food/Medicine/Social Drug/Hard Drug/Ammo)
+  - Added preview save confirmation dialog with auto-save option
+  - Added clear button for Status bar (Hediffs) and Inventory items
+  - Language files updated for new features
+
 2026-02-25 - Version updated to 1.2.2 - Fixed save switch data pollution
   - Fixed issue where previous save's modifications would leak to new save
   - Fixed FactionDef Name and Faction Name confusion when switching saves

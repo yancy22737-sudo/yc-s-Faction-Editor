@@ -5,6 +5,16 @@ using Verse;
 
 namespace FactionGearCustomizer
 {
+    public enum ItemCategoryFilter
+    {
+        All,
+        Food,
+        Medicine,
+        SocialDrug,
+        HardDrug,
+        Ammo
+    }
+
     public class ThingPickerFilterState
     {
         public string SearchText = "";
@@ -13,6 +23,7 @@ namespace FactionGearCustomizer
         public HashSet<string> SelectedAmmoSets = new HashSet<string>();
         public int LastAmmoSetCount = 0;
         public TechLevel? SelectedTechLevel = null;
+        public ItemCategoryFilter? SelectedCategory = null;
         public string SortField = "MarketValue";
         public bool SortAscending = false;
         public FloatRange MarketValue = new FloatRange(0f, 100000f);

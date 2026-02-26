@@ -14,6 +14,19 @@ namespace FactionGearCustomizer
         FromPool4
     }
 
+    public enum ItemPoolType
+    {
+        None,
+        AnyFood,
+        AnyMeal,
+        AnyRawFood,
+        AnyMeat,
+        AnyVegetable,
+        AnyMedicine,
+        AnySocialDrug,
+        AnyHardDrug
+    }
+
     public class SpecRequirementEdit : IExposable
     {
         public ThingDef Thing;
@@ -26,6 +39,7 @@ namespace FactionGearCustomizer
         public float SelectionChance = 1f;
         public float weight = 1f;
         public IntRange CountRange = new IntRange(1, 1);
+        public ItemPoolType PoolType = ItemPoolType.None;
 
         public SpecRequirementEdit() { }
 
@@ -86,6 +100,7 @@ namespace FactionGearCustomizer
             Scribe_Values.Look(ref SelectionChance, "selectionChance");
             Scribe_Values.Look(ref weight, "weight", 1f);
             Scribe_Values.Look(ref CountRange, "countRange", new IntRange(1, 1));
+            Scribe_Values.Look(ref PoolType, "poolType", ItemPoolType.None);
         }
     }
 }

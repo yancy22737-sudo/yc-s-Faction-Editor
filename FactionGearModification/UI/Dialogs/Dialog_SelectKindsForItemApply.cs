@@ -1,0 +1,184 @@
+using System.Collections.Generic;
+using System.Linq;
+using RimWorld;
+using UnityEngine;
+using Verse;
+
+namespace FactionGearCustomizer.UI.Dialogs
+{
+    public class Dialog_SelectKindsForItemApply : Window
+    {
+        private FactionDef factionDef;
+        private KindGearData sourceKindData;
+        private List<PawnKindDef> targetKinds;
+        private HashSet<PawnKindDef> selectedKinds = new HashSet<PawnKindDef>();
+        private string searchText = "";
+        private Vector2 scrollPos;
+
+        public override Vector2 InitialSize => new Vector2(500f, 700f);
+
+        public Dialog_SelectKindsForItemApply(FactionDef faction, KindGearData source, List<PawnKindDef> targets)
+        {
+            this.factionDef = faction;
+            this.sourceKindData = source;
+            this.targetKinds = targets;
+            this.doCloseX = true;
+            this.forcePause = true;
+            this.absorbInputAroundWindow = true;
+        }
+
+        public override void DoWindowContents(Rect inRect)
+        {
+            Text.Font = GameFont.Medium;
+            Widgets.Label(new Rect(inRect.x, inRect.y, inRect.width, 30f), LanguageManager.Get("ApplyItemsToOthersTitle"));
+            Text.Font = GameFont.Small;
+
+            float y = inRect.y + 40f;
+            
+            // Search
+            Rect searchRect = new Rect(inRect.x, y, inRect.width, 24f);
+            string oldSearch = searchText;
+            searchText = Widgets.TextField(searchRect, searchText);
+            if (searchText != oldSearch) scrollPos = Vector2.zero;
+            y += 30f;
+
+            // Buttons: Select All / None
+            Rect btnRow = new Rect(inRect.x, y, inRect.width, 24f);
+            if (Widgets.ButtonText(new Rect(btnRow.x, btnRow.y, 100f, 24f), LanguageManager.Get("SelectAll")))
+            {
+                selectedKinds.Clear();
+                foreach (var k in GetFilteredKinds()) selectedKinds.Add(k);
+            }
+            if (Widgets.ButtonText(new Rect(btnRow.x + 110f, btnRow.y, 100f, 24f), LanguageManager.Get("SelectNone")))
+            {
+                selectedKinds.Clear();
+            }
+            
+            // Selected Count
+            Text.Anchor = TextAnchor.MiddleRight;
+            Widgets.Label(new Rect(btnRow.xMax - 200f, btnRow.y, 200f, 24f), $"{LanguageManager.Get("Selected")}: {selectedKinds.Count}");
+            Text.Anchor = TextAnchor.UpperLeft;
+
+            y += 30f;
+
+            // List
+            Rect listRect = new Rect(inRect.x, y, inRect.width, inRect.height - y - 40f);
+            var filtered = GetFilteredKinds().ToList();
+            Rect viewRect = new Rect(0, 0, listRect.width - 16f, filtered.Count * 28f);
+            
+            Widgets.BeginScrollView(listRect, ref scrollPos, viewRect);
+            float curY = 0f;
+            foreach (var kind in filtered)
+            {
+                Rect rowRect = new Rect(0, curY, viewRect.width, 24f);
+                
+                // Alternating row background
+                if ((int)(curY / 28f) % 2 == 1) Widgets.DrawAltRect(rowRect);
+
+                bool selected = selectedKinds.Contains(kind);
+                bool oldSelected = selected;
+                
+                Widgets.CheckboxLabeled(rowRect, kind.LabelCap, ref selected);
+                
+                if (selected != oldSelected)
+                {
+                    if (selected) selectedKinds.Add(kind);
+                    else selectedKinds.Remove(kind);
+                }
+                curY += 28f;
+            }
+            Widgets.EndScrollView();
+
+            // Apply Button
+            Rect applyRect = new Rect(inRect.x, inRect.height - 30f, inRect.width, 30f);
+            if (Widgets.ButtonText(applyRect, LanguageManager.Get("Apply")))
+            {
+                if (selectedKinds.Count > 0)
+                {
+                    Find.WindowStack.Add(new Dialog_MessageBox(
+                        string.Format(LanguageManager.Get("ApplyItemsConfirm"), selectedKinds.Count),
+                        LanguageManager.Get("Yes"),
+                        () => {
+                            Apply();
+                            Close();
+                        },
+                        LanguageManager.Get("No"),
+                        null,
+                        null,
+                        false,
+                        null,
+                        null
+                    ));
+                }
+                else
+                {
+                    Close();
+                }
+            }
+        }
+
+        private IEnumerable<PawnKindDef> GetFilteredKinds()
+        {
+            if (string.IsNullOrEmpty(searchText)) return targetKinds;
+            string term = searchText.ToLower();
+            return targetKinds.Where(k => (k.label ?? "").ToLower().Contains(term) || k.defName.ToLower().Contains(term));
+        }
+
+        private void Apply()
+        {
+            var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(factionDef.defName);
+            int count = 0;
+
+            // Collect targets for undo
+            List<KindGearData> targets = new List<KindGearData>();
+            foreach (var kind in selectedKinds)
+            {
+                var targetKindData = factionData.GetOrCreateKindData(kind.defName);
+                if (targetKindData != null)
+                {
+                    targets.Add(targetKindData);
+                }
+            }
+
+            // Record state
+            if (targets.Count > 0)
+            {
+                UndoManager.RecordState(new BatchUndoable(targets));
+            }
+
+            foreach (var targetKindData in targets)
+            {
+                // Copy items from source to target
+                if (sourceKindData.InventoryItems != null)
+                {
+                    if (targetKindData.InventoryItems == null)
+                        targetKindData.InventoryItems = new List<SpecRequirementEdit>();
+                    
+                    // Deep copy items
+                    foreach (var item in sourceKindData.InventoryItems)
+                    {
+                        var newItem = new SpecRequirementEdit
+                        {
+                            Thing = item.Thing,
+                            Material = item.Material,
+                            Style = item.Style,
+                            Quality = item.Quality,
+                            Biocode = item.Biocode,
+                            Color = item.Color,
+                            SelectionMode = item.SelectionMode,
+                            SelectionChance = item.SelectionChance,
+                            weight = item.weight,
+                            CountRange = item.CountRange,
+                            PoolType = item.PoolType
+                        };
+                        targetKindData.InventoryItems.Add(newItem);
+                    }
+                    targetKindData.isModified = true;
+                }
+                count++;
+            }
+            FactionGearEditor.MarkDirty();
+            Messages.Message(string.Format(LanguageManager.Get("ItemsApplied"), count), MessageTypeDefOf.PositiveEvent, false);
+        }
+    }
+}

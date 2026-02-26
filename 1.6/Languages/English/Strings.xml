@@ -234,7 +234,7 @@ Recommended: Enable for full control.</ForceOnlySelectedTooltip>
   <NoRequiredMods>No required mods.</NoRequiredMods>
   <ModNotActiveTooltip>This mod is not enabled in current game.</ModNotActiveTooltip>
   <Chance>Chance</Chance>
-  <MaxParts>Max Parts</MaxParts>
+  <MaxParts>Parts</MaxParts>
   <Severity>Severity</Severity>
   <SelectHediffToViewDetails>Select a hediff to view details.</SelectHediffToViewDetails>
   <FromMod>From Mod</FromMod>
@@ -272,7 +272,7 @@ Applying this preset may cause missing items or errors. Continue?</MissingModsWa
   <CannotAddItemsInCurrentTabTooltip>Cannot add items in current advanced mode tab.</CannotAddItemsInCurrentTabTooltip>
   <NewPreset>New Preset</NewPreset>
   <ClearSearch>Clear Search</ClearSearch>
-  <ModAll>Mod: All</ModAll>
+  <ModAll>All</ModAll>
   <ModCountSelected>Mod: {0} Selected</ModCountSelected>
   <FilterByModTooltip>Filter by Mod (Multi-select)</FilterByModTooltip>
   <AmmoAll>Caliber: All</AmmoAll>
@@ -620,21 +620,18 @@ Advanced mode provides fine-grained control:
 3. Quality Override
    Set equipment quality range from awful to legendary. Quality directly affects stats and value.
 
-4. Color Customization
-   Use the color picker to customize apparel colors, creating unified faction visual styles. Colors affect textile display.
-
-5. Style Override
+4. Style Override
    Supports Ideology DLC style overrides, allowing specific religious/ideological apparel styles.
 
-6. Selection Mode
+5. Selection Mode
    • AlwaysTake: Equipment always appears on the character
    • RandomChance: Randomly decides based on set probability
    • FromPool: Randomly selects one from specified item pools
 
-7. Forced Hediffs
+6. Forced Hediffs
    Add health states to generated units: bionic limbs, implants, drugs, diseases, etc.
 
-8. Item Pool System
+7. Item Pool System
    Group items into 4 different pools, each with independent weights. The system randomly draws from pools based on weights.</Wiki_Principles_Content>
   <Wiki_Terminology_Content>[Core Concepts]
 
@@ -833,7 +830,6 @@ Advanced Mode Features:
    Click edit icon next to item:
    • Material: Force specific material (empty for random)
    • Quality: Set quality range (e.g., Good-Excellent)
-   • Color: Use color picker to customize
    • Selection Mode: AlwaysTake/RandomChance/FromPool
 
 3. Configure Item Pools
@@ -944,13 +940,11 @@ Scenario: Make all empire soldiers wear red power armor
 2. Select "Empire" faction
 3. Select "Empire Soldier" pawn kind
 4. Switch to Advanced Mode
-5. Add power armor, set color to red
-6. Add power helmet, set color to red
-7. Set selection mode to AlwaysTake
-8. Click Batch Apply, select all empire combat pawn kinds
-9. Preview to confirm effect
-10. Save changes
-11. Export preset to share with friends</Wiki_Workflow_Content>
+6. Set selection mode to AlwaysTake
+7. Click Batch Apply, select all empire combat pawn kinds
+8. Preview to confirm effect
+9. Save changes
+10. Export preset to share with friends</Wiki_Workflow_Content>
   <Wiki_Notes_Content>[Important Notes]
 
 This chapter covers essential information for using this mod, including effect mechanisms, compatibility, common issues and solutions.
@@ -1028,17 +1022,6 @@ Solutions:
 • Reduce number of items per pawn kind
 • Check mod compatibility
 • Reset configuration and troubleshoot step by step
-
-Issue 4: Color/style not applying
-Possible Causes:
-• Some items don't support dyeing (specific materials)
-• Ideology styles require corresponding DLC
-• Style incompatible with item
-
-Solutions:
-• Confirm item supports dyeing
-• Check DLC installation status
-• Try other style options
 
 [Advanced Options Warnings]
 
@@ -1145,7 +1128,6 @@ Advanced Tips:
 
 Creative Playstyles:
 • "Iron Legion" - All power armor
-• "Uniform Faction" - Unified apparel colors
 • "Special Forces" - All carrying specific weapons
 • "Future Warriors" - All bionic enhanced
 
@@ -1191,4 +1173,82 @@ Group: 984338429</Wiki_Notes_Content>
   <Inventory>Inventory</Inventory>
   <TotalMass>Total mass</TotalMass>
   <ClickToViewGearInfo>Click to view gear details</ClickToViewGearInfo>
+
+  <!-- Category Filter -->
+  <CategoryAll>All Categories</CategoryAll>
+  <Category_Food>Food</Category_Food>
+  <Category_Medicine>Medicine</Category_Medicine>
+  <Category_SocialDrug>Social Drug</Category_SocialDrug>
+  <Category_HardDrug>Hard Drug</Category_HardDrug>
+  <Category_Ammo>Ammo</Category_Ammo>
+  <CategoryFilterTooltip>Filter by item category</CategoryFilterTooltip>
+
+  <!-- Preview Save Confirmation -->
+  <ConfirmSaveBeforePreview>You have unsaved changes. Save before preview?</ConfirmSaveBeforePreview>
+  <AutoSaveBeforePreview>Auto-save before preview</AutoSaveBeforePreview>
+  <AutoSaveBeforePreviewTooltip>When enabled, auto-save before preview without prompt</AutoSaveBeforePreviewTooltip>
+
+  <!-- Clear Buttons -->
+  <ClearStatuses>Clear Statuses</ClearStatuses>
+  <ClearInventory>Clear Inventory</ClearInventory>
+  <ClearStatusesTooltip>Clear all status effects for this pawn kind</ClearStatusesTooltip>
+  <ClearInventoryTooltip>Clear all items for this pawn kind</ClearInventoryTooltip>
+  <ConfirmClearStatuses>Are you sure you want to clear all status effects?</ConfirmClearStatuses>
+  <ConfirmClearInventory>Are you sure you want to clear all items?</ConfirmClearInventory>
+
+  <!-- Item Pool -->
+  <QuickAddPool>Quick Add</QuickAddPool>
+  <Pool_AnyFood>Any Food</Pool_AnyFood>
+  <Pool_AnyMeal>Any Meal</Pool_AnyMeal>
+  <Pool_AnyRawFood>Any Raw Food</Pool_AnyRawFood>
+  <Pool_AnyMeat>Any Meat</Pool_AnyMeat>
+  <Pool_AnyVegetable>Any Vegetable</Pool_AnyVegetable>
+  <Pool_AnyMedicine>Any Medicine</Pool_AnyMedicine>
+  <Pool_AnySocialDrug>Any Social Drug</Pool_AnySocialDrug>
+  <Pool_AnyHardDrug>Any Hard Drug</Pool_AnyHardDrug>
+  <QuickAddPoolTooltip>Quickly add an item pool</QuickAddPoolTooltip>
+  <EditPoolContents>Edit Pool Contents</EditPoolContents>
+
+  <!-- Hediff Pool -->
+  <QuickAddHediffPool>Quick Status Pool</QuickAddHediffPool>
+  <QuickAddHediffPoolTooltip>Quickly add a status pool (randomly select from specified type)</QuickAddHediffPoolTooltip>
+  <HediffPool_Tag>Pool</HediffPool_Tag>
+  <HediffPool_AnyDebuff>Any Debuff</HediffPool_AnyDebuff>
+  <HediffPool_AnyDrugHigh>Any Drug High</HediffPool_AnyDrugHigh>
+  <HediffPool_AnyAddiction>Any Addiction</HediffPool_AnyAddiction>
+  <HediffPool_AnyImplant>Any Implant</HediffPool_AnyImplant>
+  <HediffPool_AnyIllness>Any Illness</HediffPool_AnyIllness>
+  <HediffPool_AnyBuff>Any Buff</HediffPool_AnyBuff>
+
+  <!-- Apply to Others Dialogs -->
+  <ApplyHediffsToOthersTooltip>Apply current hediffs to other kinds in this faction</ApplyHediffsToOthersTooltip>
+  <ApplyItemsToOthersTooltip>Apply current inventory items to other kinds in this faction</ApplyItemsToOthersTooltip>
+  <ApplyHediffsToOthersTitle>Apply Hediffs to Other Kinds</ApplyHediffsToOthersTitle>
+  <ApplyItemsToOthersTitle>Apply Items to Other Kinds</ApplyItemsToOthersTitle>
+  <ApplyHediffsConfirm>Apply hediffs to {0} selected kinds?</ApplyHediffsConfirm>
+  <ApplyItemsConfirm>Apply items to {0} selected kinds?</ApplyItemsConfirm>
+  <HediffsApplied>Applied hediffs to {0} kinds.</HediffsApplied>
+  <ItemsApplied>Applied items to {0} kinds.</ItemsApplied>
+  <NoOtherKindsInFaction>No other kinds in this faction.</NoOtherKindsInFaction>
+
+  <!-- Inventory Limit Warnings -->
+  <InventoryItemCountLimit>Item count exceeds limit (max {0})</InventoryItemCountLimit>
+  <InvalidItem>Invalid item</InvalidItem>
+  <MassWarning>Mass warning: {0}/{1} kg</MassWarning>
+  <BulkWarning>Bulk warning: {0}/{1}</BulkWarning>
+  <MassCriticalWarning>Critical overweight: {0}/{1} kg - May cause inability to move!</MassCriticalWarning>
+  <BulkCriticalWarning>Critical overbulk: {0}/{1} - May cause inability to move!</BulkCriticalWarning>
+  <InventoryOverweightWarning>Warning: Inventory critically overweight, pawn may be unable to move!</InventoryOverweightWarning>
+
+  <!-- Hediff Critical Warnings -->
+  <HediffWarningType_Consciousness>Consciousness</HediffWarningType_Consciousness>
+  <HediffWarningType_Moving>Moving</HediffWarningType_Moving>
+  <HediffWarningType_Manipulation>Manipulation</HediffWarningType_Manipulation>
+  <HediffWarning_ConsciousnessZero>Will cause pawn to lose consciousness and be unable to act</HediffWarning_ConsciousnessZero>
+  <HediffWarning_ConsciousnessLow>Will severely reduce pawn consciousness</HediffWarning_ConsciousnessLow>
+  <HediffWarning_MovingZero>Will cause pawn to be unable to move</HediffWarning_MovingZero>
+  <HediffWarning_MovingLow>Will severely reduce pawn moving capability</HediffWarning_MovingLow>
+  <HediffWarning_ManipulationZero>Will cause pawn to be unable to manipulate items</HediffWarning_ManipulationZero>
+  <HediffWarning_ManipulationLow>Will severely reduce pawn manipulation capability</HediffWarning_ManipulationLow>
+
 </LanguageData>

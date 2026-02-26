@@ -41,31 +41,26 @@ namespace FactionGearCustomizer
         /// </summary>
         private float CalculateWindowHeight()
         {
-            float height = Padding * 2; // 上下边距
+            float height = Padding * 2;
             
-            // 标题高度
             height += 30f;
             
-            // 基础属性区域
-            height += 80f;
+            height += CalculateBasicStatsHeight();
             
-            // 装备区域
             int equipmentCount = pawn?.equipment?.AllEquipmentListForReading?.Count ?? 0;
             if (equipmentCount > 0)
             {
-                height += SectionGap + 25f; // 标题 + 间距
+                height += SectionGap + 25f;
                 height += equipmentCount * RowHeight;
             }
             
-            // 服装区域
             int apparelCount = pawn?.apparel?.WornApparel?.Count ?? 0;
             if (apparelCount > 0)
             {
-                height += SectionGap + 25f; // 标题 + 间距
+                height += SectionGap + 25f;
                 height += apparelCount * RowHeight;
             }
             
-            // 库存区域
             int inventoryCount = pawn?.inventory?.innerContainer?.Count ?? 0;
             if (inventoryCount > 0)
             {
@@ -73,10 +68,8 @@ namespace FactionGearCustomizer
                 height += inventoryCount * RowHeight;
             }
             
-            // 底部统计
-            height += SectionGap + 40f;
+            height += SectionGap + CalculateBottomStatsHeight();
             
-            // 限制在最小和最大高度之间
             return Mathf.Clamp(height, MinWindowHeight, MaxWindowHeight);
         }
         
@@ -137,34 +130,47 @@ namespace FactionGearCustomizer
         {
             float height = 0f;
             
-            // 基础属性
-            height += 80f;
+            height += CalculateBasicStatsHeight();
             
-            // 装备
             int equipmentCount = pawn?.equipment?.AllEquipmentListForReading?.Count ?? 0;
             if (equipmentCount > 0)
             {
                 height += SectionGap + 25f + equipmentCount * RowHeight;
             }
             
-            // 服装
             int apparelCount = pawn?.apparel?.WornApparel?.Count ?? 0;
             if (apparelCount > 0)
             {
                 height += SectionGap + 25f + apparelCount * RowHeight;
             }
             
-            // 库存
             int inventoryCount = pawn?.inventory?.innerContainer?.Count ?? 0;
             if (inventoryCount > 0)
             {
                 height += SectionGap + 25f + inventoryCount * RowHeight;
             }
             
-            // 底部统计
-            height += SectionGap + 40f;
+            height += SectionGap + CalculateBottomStatsHeight();
             
             return height;
+        }
+        
+        private float CalculateBasicStatsHeight()
+        {
+            float height = 0f;
+            if (pawn?.inventory != null)
+            {
+                height += RowHeight;
+            }
+            height += RowHeight + 5f;
+            height += RowHeight;
+            height += RowHeight * 3;
+            return height;
+        }
+        
+        private float CalculateBottomStatsHeight()
+        {
+            return 5f + RowHeight + 5f;
         }
         
         /// <summary>
@@ -340,7 +346,7 @@ namespace FactionGearCustomizer
                 GUI.color = Color.white;
             }
             
-            return curY + RowHeight;
+            return curY + RowHeight + 5f;
         }
         
         /// <summary>

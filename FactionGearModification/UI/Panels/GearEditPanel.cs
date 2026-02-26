@@ -187,22 +187,7 @@ namespace FactionGearCustomizer.UI.Panels
             }
             if (Widgets.ButtonText(previewButtonRect, LanguageManager.Get("Preview"), true, false, inGame))
             {
-                if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName))
-                {
-                    var fDef = DefDatabase<FactionDef>.GetNamedSilentFail(EditorSession.SelectedFactionDefName);
-                    if (fDef != null)
-                    {
-                        if (Find.FactionManager.FirstFactionOfDef(fDef) != null)
-                        {
-                            var kinds = FactionGearEditor.GetFactionKinds(fDef);
-                            Find.WindowStack.Add(new FactionGearPreviewWindow(kinds, fDef));
-                        }
-                        else
-                        {
-                            Messages.Message(LanguageManager.Get("CannotPreviewFactionNotPresent"), MessageTypeDefOf.RejectInput, false);
-                        }
-                    }
-                }
+                HandlePreviewButtonClick();
             }
             TooltipHandler.TipRegion(previewButtonRect, inGame ? LanguageManager.Get("PreviewAllKindsTooltip") : LanguageManager.Get("PreviewInGameOnlyTooltip"));
             GUI.color = prevColor;
@@ -640,11 +625,12 @@ namespace FactionGearCustomizer.UI.Panels
             kindData.armors.Clear();
             kindData.apparel.Clear();
             kindData.others.Clear();
-            
+
             kindData.SpecificApparel?.Clear();
             kindData.SpecificWeapons?.Clear();
             kindData.ForcedHediffs?.Clear();
-            
+            kindData.InventoryItems?.Clear();
+
             kindData.isModified = true;
             FactionGearEditor.MarkDirty();
         }
@@ -755,7 +741,7 @@ namespace FactionGearCustomizer.UI.Panels
             if (ui.ButtonText(LanguageManager.Get("AddNewApparel")))
             {
                 if (kindData.SpecificApparel == null) kindData.SpecificApparel = new List<SpecRequirementEdit>();
-                Find.WindowStack.Add(new Dialog_ApparelPicker(kindData.SpecificApparel));
+                Find.WindowStack.Add(new Dialog_ApparelPicker(kindData.SpecificApparel, kindData));
             }
             if (!kindData.SpecificApparel.NullOrEmpty())
             {
@@ -765,9 +751,11 @@ namespace FactionGearCustomizer.UI.Panels
                     int index = i;
                     ApparelCardUI.Draw(ui, item, index, () => 
                     {
+                        UndoManager.RecordState(kindData);
                         kindData.SpecificApparel.RemoveAt(index);
+                        kindData.isModified = true;
                         FactionGearEditor.MarkDirty();
-                    }, false);
+                    }, false, kindData);
                 }
             }
         }
@@ -802,10 +790,12 @@ namespace FactionGearCustomizer.UI.Panels
                     ApparelCardUI.Draw(ui, item, index, () =>
                     {
                         var weaponDef = kindData.SpecificWeapons[index]?.Thing;
+                        UndoManager.RecordState(kindData);
                         kindData.SpecificWeapons.RemoveAt(index);
                         TryRemoveCEAmmoForWeapon(kindData, weaponDef);
+                        kindData.isModified = true;
                         FactionGearEditor.MarkDirty();
-                    }, true);
+                    }, true, kindData);
                 }
             }
         }
@@ -813,11 +803,35 @@ namespace FactionGearCustomizer.UI.Panels
         private static void DrawAdvancedHediffs(Listing_Standard ui, KindGearData kindData)
         {
             WidgetsUtils.Label(ui, $"<b>{LanguageManager.Get("ForcedHediffs")}</b>");
-            if (ui.ButtonText(LanguageManager.Get("AddNewHediff")))
+            Rect buttonRow = ui.GetRect(28f);
+            Rect addButtonRect = new Rect(buttonRow.x, buttonRow.y, buttonRow.width - 175f, buttonRow.height);
+            Rect quickRect = new Rect(buttonRow.x + buttonRow.width - 165f, buttonRow.y, 85f, buttonRow.height);
+            Rect clearButtonRect = new Rect(buttonRow.xMax - 75f, buttonRow.y, 75f, buttonRow.height);
+            
+            if (Widgets.ButtonText(addButtonRect, LanguageManager.Get("AddNewHediff")))
             {
+                UndoManager.RecordState(kindData);
                 if (kindData.ForcedHediffs == null) kindData.ForcedHediffs = new List<ForcedHediff>();
                 Find.WindowStack.Add(new Dialog_HediffPicker(kindData.ForcedHediffs));
             }
+            if (Widgets.ButtonText(quickRect, LanguageManager.Get("QuickAddPool")))
+            {
+                ShowQuickHediffPoolMenu(kindData);
+            }
+            TooltipHandler.TipRegion(quickRect, LanguageManager.Get("QuickAddHediffPoolTooltip"));
+            
+            if (Widgets.ButtonText(clearButtonRect, LanguageManager.Get("Clear"), true, false, !kindData.ForcedHediffs.NullOrEmpty()))
+            {
+                if (kindData.ForcedHediffs != null)
+                {
+                    UndoManager.RecordState(kindData);
+                    kindData.ForcedHediffs.Clear();
+                    kindData.isModified = true;
+                    FactionGearEditor.MarkDirty();
+                }
+            }
+            TooltipHandler.TipRegion(clearButtonRect, LanguageManager.Get("ClearStatusesTooltip"));
+            
             if (!kindData.ForcedHediffs.NullOrEmpty())
             {
                 for (int i = 0; i < kindData.ForcedHediffs.Count; i++)
@@ -826,31 +840,93 @@ namespace FactionGearCustomizer.UI.Panels
                     int index = i;
                     HediffCardUI.Draw(ui, item, index, () =>
                     {
+                        UndoManager.RecordState(kindData);
                         kindData.ForcedHediffs.RemoveAt(index);
+                        kindData.isModified = true;
                         FactionGearEditor.MarkDirty();
-                    });
+                    }, kindData);
                 }
             }
+        }
+
+        private static void ShowQuickHediffPoolMenu(KindGearData kindData)
+        {
+            List<FloatMenuOption> options = new List<FloatMenuOption>();
+            
+            options.Add(new FloatMenuOption(LanguageManager.Get("HediffPool_AnyDebuff"), () => AddHediffPool(kindData, HediffPoolType.AnyDebuff)));
+            options.Add(new FloatMenuOption(LanguageManager.Get("HediffPool_AnyDrugHigh"), () => AddHediffPool(kindData, HediffPoolType.AnyDrugHigh)));
+            options.Add(new FloatMenuOption(LanguageManager.Get("HediffPool_AnyAddiction"), () => AddHediffPool(kindData, HediffPoolType.AnyAddiction)));
+            options.Add(new FloatMenuOption(LanguageManager.Get("HediffPool_AnyImplant"), () => AddHediffPool(kindData, HediffPoolType.AnyImplant)));
+            options.Add(new FloatMenuOption(LanguageManager.Get("HediffPool_AnyIllness"), () => AddHediffPool(kindData, HediffPoolType.AnyIllness)));
+            options.Add(new FloatMenuOption(LanguageManager.Get("HediffPool_AnyBuff"), () => AddHediffPool(kindData, HediffPoolType.AnyBuff)));
+            
+            Find.WindowStack.Add(new FloatMenu(options));
+        }
+
+        private static void AddHediffPool(KindGearData kindData, HediffPoolType poolType)
+        {
+            if (kindData.ForcedHediffs == null) kindData.ForcedHediffs = new List<ForcedHediff>();
+            
+            var poolDef = new ForcedHediff()
+            {
+                HediffDef = null,
+                PoolType = poolType,
+                chance = 1f,
+                maxPartsRange = new IntRange(1, 1),
+                severityRange = new FloatRange(0.5f, 1f)
+            };
+            
+            kindData.ForcedHediffs.Add(poolDef);
+            UndoManager.RecordState(kindData);
+            FactionGearEditor.MarkDirty();
+        }
+
+        private static void AddItemPool(KindGearData kindData, ItemPoolType poolType)
+        {
+            if (kindData.InventoryItems == null) kindData.InventoryItems = new List<SpecRequirementEdit>();
+            kindData.InventoryItems.Add(new SpecRequirementEdit()
+            {
+                PoolType = poolType,
+                SelectionMode = ApparelSelectionMode.AlwaysTake,
+                SelectionChance = 1f,
+                CountRange = new IntRange(1, 1)
+            });
+            UndoManager.RecordState(kindData);
+            FactionGearEditor.MarkDirty();
         }
 
         private static void DrawAdvancedItems(Listing_Standard ui, KindGearData kindData)
         {
             WidgetsUtils.Label(ui, $"<b>{LanguageManager.Get("InventoryItems")}</b>");
-            Rect rowRect = ui.GetRect(28f);
-            Rect pickerRect = new Rect(rowRect.x, rowRect.y, rowRect.width - 110f, rowRect.height);
-            Rect quickRect = new Rect(rowRect.xMax - 100f, rowRect.y, 100f, rowRect.height);
+            Rect buttonRow = ui.GetRect(28f);
+            Rect addButtonRect = new Rect(buttonRow.x, buttonRow.y, buttonRow.width - 175f, buttonRow.height);
+            Rect quickRect = new Rect(buttonRow.x + buttonRow.width - 165f, buttonRow.y, 85f, buttonRow.height);
+            Rect clearButtonRect = new Rect(buttonRow.xMax - 75f, buttonRow.y, 75f, buttonRow.height);
             
-            if (Widgets.ButtonText(pickerRect, LanguageManager.Get("AddNewItem")))
+            if (Widgets.ButtonText(addButtonRect, LanguageManager.Get("AddNewItem")))
             {
+                UndoManager.RecordState(kindData);
                 if (kindData.InventoryItems == null) kindData.InventoryItems = new List<SpecRequirementEdit>();
                 Find.WindowStack.Add(new Dialog_InventoryItemPicker(kindData.InventoryItems));
             }
-            if (Widgets.ButtonText(quickRect, LanguageManager.Get("QuickAdd")))
+            if (Widgets.ButtonText(quickRect, LanguageManager.Get("QuickAddPool")))
             {
-                if (kindData.InventoryItems == null) kindData.InventoryItems = new List<SpecRequirementEdit>();
-                kindData.InventoryItems.Add(new SpecRequirementEdit() { Thing = ThingDefOf.MealSimple });
-                FactionGearEditor.MarkDirty();
+                ShowQuickItemPoolMenu(kindData);
             }
+            TooltipHandler.TipRegion(quickRect, LanguageManager.Get("QuickAddPoolTooltip"));
+            
+            if (Widgets.ButtonText(clearButtonRect, LanguageManager.Get("Clear"), true, false, !kindData.InventoryItems.NullOrEmpty()))
+            {
+                if (kindData.InventoryItems != null)
+                {
+                    UndoManager.RecordState(kindData);
+                    kindData.InventoryItems.Clear();
+                    kindData.isModified = true;
+                    FactionGearEditor.MarkDirty();
+                }
+            }
+            TooltipHandler.TipRegion(clearButtonRect, LanguageManager.Get("ClearInventoryTooltip"));
+            
             if (!kindData.InventoryItems.NullOrEmpty())
             {
                 for (int i = 0; i < kindData.InventoryItems.Count; i++)
@@ -859,11 +935,27 @@ namespace FactionGearCustomizer.UI.Panels
                     int index = i;
                     ItemCardUI.Draw(ui, item, index, () =>
                     {
+                        UndoManager.RecordState(kindData);
                         kindData.InventoryItems.RemoveAt(index);
+                        kindData.isModified = true;
                         FactionGearEditor.MarkDirty();
                     });
                 }
             }
+        }
+
+        private static void ShowQuickItemPoolMenu(KindGearData kindData)
+        {
+            List<FloatMenuOption> options = new List<FloatMenuOption>();
+            options.Add(new FloatMenuOption(LanguageManager.Get("Pool_AnyFood"), () => AddItemPool(kindData, ItemPoolType.AnyFood)));
+            options.Add(new FloatMenuOption(LanguageManager.Get("Pool_AnyMeal"), () => AddItemPool(kindData, ItemPoolType.AnyMeal)));
+            options.Add(new FloatMenuOption(LanguageManager.Get("Pool_AnyRawFood"), () => AddItemPool(kindData, ItemPoolType.AnyRawFood)));
+            options.Add(new FloatMenuOption(LanguageManager.Get("Pool_AnyMeat"), () => AddItemPool(kindData, ItemPoolType.AnyMeat)));
+            options.Add(new FloatMenuOption(LanguageManager.Get("Pool_AnyVegetable"), () => AddItemPool(kindData, ItemPoolType.AnyVegetable)));
+            options.Add(new FloatMenuOption(LanguageManager.Get("Pool_AnyMedicine"), () => AddItemPool(kindData, ItemPoolType.AnyMedicine)));
+            options.Add(new FloatMenuOption(LanguageManager.Get("Pool_AnySocialDrug"), () => AddItemPool(kindData, ItemPoolType.AnySocialDrug)));
+            options.Add(new FloatMenuOption(LanguageManager.Get("Pool_AnyHardDrug"), () => AddItemPool(kindData, ItemPoolType.AnyHardDrug)));
+            Find.WindowStack.Add(new FloatMenu(options));
         }
 
         private static void DrawOverrideEnum<T>(Listing_Standard ui, string label, T? currentValue, Action<T?> setValue, Func<T, string> labelFormatter = null) where T : struct
@@ -1510,6 +1602,55 @@ namespace FactionGearCustomizer.UI.Panels
             if (ammoDef == null) return;
 
             kindData.InventoryItems.RemoveAll(x => x?.Thing == ammoDef);
+        }
+
+        private static void HandlePreviewButtonClick()
+        {
+            if (string.IsNullOrEmpty(EditorSession.SelectedFactionDefName))
+                return;
+
+            var fDef = DefDatabase<FactionDef>.GetNamedSilentFail(EditorSession.SelectedFactionDefName);
+            if (fDef == null)
+                return;
+
+            if (Find.FactionManager.FirstFactionOfDef(fDef) == null)
+            {
+                Messages.Message(LanguageManager.Get("CannotPreviewFactionNotPresent"), MessageTypeDefOf.RejectInput, false);
+                return;
+            }
+
+            var kinds = FactionGearEditor.GetFactionKinds(fDef);
+
+            if (FactionGearEditor.IsDirty && !FactionGearCustomizerMod.Settings.autoSaveBeforePreview)
+            {
+                var dialog = Dialog_ConfirmWithCheckbox.CreateWithAutoSaveOption(
+                    LanguageManager.Get("ConfirmSaveBeforePreview"),
+                    LanguageManager.Get("AutoSaveBeforePreview"),
+                    onSaveAndConfirm: () =>
+                    {
+                        FactionGearEditor.SaveChanges();
+                        Find.WindowStack.Add(new FactionGearPreviewWindow(kinds, fDef));
+                    },
+                    onConfirmOnly: () =>
+                    {
+                        Find.WindowStack.Add(new FactionGearPreviewWindow(kinds, fDef));
+                    },
+                    onCheckboxChanged: (isChecked) =>
+                    {
+                        FactionGearCustomizerMod.Settings.autoSaveBeforePreview = isChecked;
+                        FactionGearCustomizerMod.Settings.Write();
+                    }
+                );
+                Find.WindowStack.Add(dialog);
+            }
+            else
+            {
+                if (FactionGearEditor.IsDirty && FactionGearCustomizerMod.Settings.autoSaveBeforePreview)
+                {
+                    FactionGearEditor.SaveChanges();
+                }
+                Find.WindowStack.Add(new FactionGearPreviewWindow(kinds, fDef));
+            }
         }
     }
 }

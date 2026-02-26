@@ -175,22 +175,18 @@ namespace FactionGearCustomizer.UI.Panels
             Listing_Standard listing = new Listing_Standard();
             listing.Begin(rect);
 
-            // Search
+            // Search - 参考 ThingPickerFilterBar 的实现方式
             Rect searchRect = listing.GetRect(24f);
+            Rect inputRect = searchRect;
 
-            // 为清除按钮预留空间
-            float clearBtnWidth = 24f;
-            Rect searchInputRect = new Rect(searchRect.x, searchRect.y, searchRect.width - clearBtnWidth - 2f, searchRect.height);
-            Rect clearButtonRect = new Rect(searchRect.xMax - clearBtnWidth, searchRect.y + 2f, clearBtnWidth, 20f);
-
-            string newSearchText = Widgets.TextField(searchInputRect, EditorSession.SearchText);
+            string newSearchText = Widgets.TextField(inputRect, EditorSession.SearchText ?? "");
             if (string.IsNullOrEmpty(newSearchText))
             {
                 var anchor = Text.Anchor;
                 var color = GUI.color;
                 Text.Anchor = TextAnchor.MiddleLeft;
                 GUI.color = new Color(0.6f, 0.6f, 0.6f, 1f);
-                Widgets.Label(new Rect(searchInputRect.x + 5f, searchInputRect.y, searchInputRect.width - 10f, searchInputRect.height), LanguageManager.Get("Search") + "...");
+                Widgets.Label(new Rect(inputRect.x + 5f, inputRect.y, inputRect.width - 30f, inputRect.height), LanguageManager.Get("Search") + "...");
                 GUI.color = color;
                 Text.Anchor = anchor;
             }
@@ -200,16 +196,14 @@ namespace FactionGearCustomizer.UI.Panels
                 EditorSession.SearchText = newSearchText;
             }
 
-            // 绘制清除按钮
+            // 绘制清除按钮 - 与 ThingPickerFilterBar 保持一致
             if (!string.IsNullOrEmpty(EditorSession.SearchText))
             {
-                GUI.color = new Color(0.7f, 0.7f, 0.7f, 1f);
-                if (Widgets.ButtonText(clearButtonRect, "×", false))
+                Rect clearButtonRect = new Rect(inputRect.xMax - 22f, inputRect.y + 4f, 16f, 16f);
+                if (Widgets.ButtonImage(clearButtonRect, TexButton.CloseXSmall))
                 {
                     EditorSession.SearchText = "";
-                    GUI.FocusControl(null);
                 }
-                GUI.color = Color.white;
                 TooltipHandler.TipRegion(clearButtonRect, LanguageManager.Get("ClearSearch"));
             }
 

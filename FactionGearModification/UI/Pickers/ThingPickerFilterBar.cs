@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FactionGearCustomizer.UI;
+using FactionGearCustomizer.UI.Utils;
 using FactionGearModification.UI;
 using RimWorld;
 using UnityEngine;
@@ -15,9 +16,11 @@ namespace FactionGearCustomizer.UI.Pickers
         public List<string> AllAmmoSets;
         public bool ShowAmmoFilter;
         public bool ShowRangeDamage;
+        public bool ShowCategoryFilter;
         public List<string> SortOptions;
         public int IdSeed;
         public Action OnChanged;
+        public PickerSearchDebouncer SearchDebouncer;
     }
 
     public static class ThingPickerFilterBar
@@ -36,6 +39,11 @@ namespace FactionGearCustomizer.UI.Pickers
             listing.Gap(4f);
             DrawFilterRow(listing, state, cfg);
             listing.Gap(4f);
+            if (cfg.ShowCategoryFilter)
+            {
+                DrawCategoryRow(listing, state, cfg);
+                listing.Gap(4f);
+            }
             DrawSortRow(listing, state, cfg);
             listing.Gap(4f);
             DrawRanges(listing, state, cfg);
@@ -47,6 +55,7 @@ namespace FactionGearCustomizer.UI.Pickers
         private static float GetHeight(ThingPickerFilterBarConfig cfg)
         {
             float rows = 4f;
+            if (cfg.ShowCategoryFilter) rows += 1f;
             if (cfg.ShowRangeDamage) rows += 2f;
             return rows * 24f + 24f;
         }
@@ -56,33 +65,116 @@ namespace FactionGearCustomizer.UI.Pickers
             Rect searchRect = listing.GetRect(24f);
             Rect inputRect = searchRect;
 
-            string next = Widgets.TextField(inputRect, state.SearchText ?? "");
+            string currentText = state.SearchText ?? "";
+            string next = Widgets.TextField(inputRect, currentText);
             if (string.IsNullOrEmpty(next))
             {
                 var anchor = Text.Anchor;
                 var color = GUI.color;
                 Text.Anchor = TextAnchor.MiddleLeft;
                 GUI.color = new Color(0.6f, 0.6f, 0.6f, 1f);
-                Widgets.Label(new Rect(inputRect.x + 5f, inputRect.y, inputRect.width - 5f, inputRect.height), LanguageManager.Get("Search") + "...");
+                Widgets.Label(new Rect(inputRect.x + 5f, inputRect.y, inputRect.width - 30f, inputRect.height), LanguageManager.Get("Search") + "...");
                 GUI.color = color;
                 Text.Anchor = anchor;
             }
 
-            if (next != state.SearchText)
+            if (next != currentText)
             {
                 state.SearchText = next;
-                cfg.OnChanged?.Invoke();
+                if (cfg.SearchDebouncer != null)
+                {
+                    cfg.SearchDebouncer.SetSearchText(next);
+                }
+                else
+                {
+                    cfg.OnChanged?.Invoke();
+                }
             }
 
             if (!string.IsNullOrEmpty(state.SearchText))
             {
-                Rect clearButtonRect = new Rect(inputRect.xMax - 18f, inputRect.y + 2f, 16f, 16f);
-                if (Widgets.ButtonImage(clearButtonRect, Widgets.CheckboxOffTex))
+                Rect clearButtonRect = new Rect(inputRect.xMax - 22f, inputRect.y + 4f, 16f, 16f);
+                if (Widgets.ButtonImage(clearButtonRect, TexButton.CloseXSmall))
                 {
                     state.SearchText = "";
+                    if (cfg.SearchDebouncer != null)
+                    {
+                        cfg.SearchDebouncer.SetSearchText("");
+                    }
                     cfg.OnChanged?.Invoke();
                 }
                 TooltipHandler.TipRegion(clearButtonRect, LanguageManager.Get("ClearSearch"));
+            }
+        }
+
+        private static void DrawCategoryRow(Listing_Standard listing, ThingPickerFilterState state, ThingPickerFilterBarConfig cfg)
+        {
+            Rect rowRect = listing.GetRect(28f);
+            
+            var categories = new[] { 
+                (ItemCategoryFilter?)null, 
+                ItemCategoryFilter.Food, 
+                ItemCategoryFilter.Medicine, 
+                ItemCategoryFilter.SocialDrug, 
+                ItemCategoryFilter.HardDrug, 
+                ItemCategoryFilter.Ammo 
+            };
+            
+            var labels = new[] {
+                LanguageManager.Get("CategoryAll"),
+                LanguageManager.Get("Category_Food"),
+                LanguageManager.Get("Category_Medicine"),
+                LanguageManager.Get("Category_SocialDrug"),
+                LanguageManager.Get("Category_HardDrug"),
+                LanguageManager.Get("Category_Ammo")
+            };
+            
+            float buttonWidth = (rowRect.width - (categories.Length - 1) * 4f) / categories.Length;
+            float x = rowRect.x;
+            
+            for (int i = 0; i < categories.Length; i++)
+            {
+                Rect btnRect = new Rect(x, rowRect.y, buttonWidth, rowRect.height);
+                bool isSelected = state.SelectedCategory == categories[i];
+                
+                Color bgColor = isSelected ? new Color(0.3f, 0.5f, 0.3f) : new Color(0.2f, 0.2f, 0.22f);
+                Widgets.DrawBoxSolid(btnRect, bgColor);
+                
+                if (isSelected)
+                {
+                    GUI.color = Color.green;
+                    Widgets.DrawBox(btnRect, 1);
+                    GUI.color = Color.white;
+                }
+                else
+                {
+                    GUI.color = new Color(0.4f, 0.4f, 0.45f);
+                    Widgets.DrawBox(btnRect, 1);
+                    GUI.color = Color.white;
+                }
+                
+                Text.Anchor = TextAnchor.MiddleCenter;
+                Color textColor = isSelected ? Color.white : new Color(0.8f, 0.8f, 0.8f);
+                GUI.color = textColor;
+                Widgets.Label(btnRect, labels[i]);
+                GUI.color = Color.white;
+                Text.Anchor = TextAnchor.UpperLeft;
+                
+                if (Widgets.ButtonInvisible(btnRect))
+                {
+                    if (state.SelectedCategory == categories[i])
+                    {
+                        state.SelectedCategory = null;
+                    }
+                    else
+                    {
+                        state.SelectedCategory = categories[i];
+                    }
+                    cfg.OnChanged?.Invoke();
+                }
+                
+                TooltipHandler.TipRegion(btnRect, labels[i]);
+                x += buttonWidth + 4f;
             }
         }
 

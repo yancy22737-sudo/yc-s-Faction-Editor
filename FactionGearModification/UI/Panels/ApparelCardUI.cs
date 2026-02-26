@@ -37,7 +37,7 @@ namespace FactionGearCustomizer.UI.Panels
             return height;
         }
 
-        public static void Draw(Listing_Standard ui, SpecRequirementEdit item, int index, Action onRemove, bool isWeaponList)
+        public static void Draw(Listing_Standard ui, SpecRequirementEdit item, int index, Action onRemove, bool isWeaponList, KindGearData kindData = null)
         {
             float cardHeight = GetCardHeight(item);
             Rect area = ui.GetRect(cardHeight);
@@ -45,8 +45,8 @@ namespace FactionGearCustomizer.UI.Panels
             DrawCardBackground(area);
             area = area.ContractedBy(6f);
 
-            DrawHeader(area, item, onRemove, isWeaponList);
-            DrawContent(area, item, index);
+            DrawHeader(area, item, onRemove, isWeaponList, kindData);
+            DrawContent(area, item, index, kindData);
             
             ui.Gap(8f);
         }
@@ -54,15 +54,12 @@ namespace FactionGearCustomizer.UI.Panels
         private static void DrawCardBackground(Rect area)
         {
             Widgets.DrawBoxSolid(area, ContentBgColor);
-            GUI.DrawTexture(area, BaseContent.WhiteTex);
             GUI.color = BorderColor;
-            GUI.DrawTexture(area, BaseContent.WhiteTex);
+            Widgets.DrawBox(area, 1);
             GUI.color = Color.white;
-            Rect innerBorder = area.ContractedBy(1f);
-            Widgets.DrawBoxSolid(innerBorder, ContentBgColor);
         }
 
-        private static void DrawHeader(Rect area, SpecRequirementEdit item, Action onRemove, bool isWeaponList)
+        private static void DrawHeader(Rect area, SpecRequirementEdit item, Action onRemove, bool isWeaponList, KindGearData kindData)
         {
             Rect headerRect = new Rect(area.x, area.y + 2f, area.width, 28f);
             Widgets.DrawBoxSolid(headerRect, HeaderBgColor);
@@ -85,6 +82,11 @@ namespace FactionGearCustomizer.UI.Panels
                 {
                     Find.WindowStack.Add(new Dialog_WeaponPicker(def =>
                     {
+                        if (kindData != null)
+                        {
+                            UndoManager.RecordState(kindData);
+                            kindData.isModified = true;
+                        }
                         item.Thing = def;
                         FactionGearEditor.MarkDirty();
                     }));
@@ -93,6 +95,11 @@ namespace FactionGearCustomizer.UI.Panels
                 {
                     Find.WindowStack.Add(new Dialog_ApparelPicker(def =>
                     {
+                        if (kindData != null)
+                        {
+                            UndoManager.RecordState(kindData);
+                            kindData.isModified = true;
+                        }
                         item.Thing = def;
                         FactionGearEditor.MarkDirty();
                     }));
@@ -107,7 +114,7 @@ namespace FactionGearCustomizer.UI.Panels
             }
         }
 
-        private static void DrawContent(Rect area, SpecRequirementEdit item, int index)
+        private static void DrawContent(Rect area, SpecRequirementEdit item, int index, KindGearData kindData)
         {
             float contentY = area.y + 36f;
             float rowHeight = 24f;
@@ -117,28 +124,42 @@ namespace FactionGearCustomizer.UI.Panels
             if (item.Thing != null && item.Thing.MadeFromStuff)
             {
                 Rect matRect = new Rect(area.x, contentY, area.width, rowHeight);
-                DrawMaterialSelector(matRect, item);
+                DrawMaterialSelector(matRect, item, kindData);
                 contentY += rowHeight + gap;
             }
 
             // Row 2: Quality & Biocode
             Rect qualRect = new Rect(area.x, contentY, area.width * 0.6f, rowHeight);
-            DrawQualitySelector(qualRect, item);
+            DrawQualitySelector(qualRect, item, kindData);
 
             Rect bioRect = new Rect(area.x + area.width * 0.62f, contentY, area.width * 0.38f, rowHeight);
+            bool oldBiocode = item.Biocode;
             Widgets.CheckboxLabeled(bioRect, LanguageManager.Get("Biocode"), ref item.Biocode);
+            if (item.Biocode != oldBiocode && kindData != null)
+            {
+                UndoManager.RecordState(kindData);
+                kindData.isModified = true;
+                FactionGearEditor.MarkDirty();
+            }
             contentY += rowHeight + gap;
 
             // Row 3: Selection Mode
             Rect modeRect = new Rect(area.x, contentY, area.width, rowHeight);
-            DrawModeSelector(modeRect, item);
+            DrawModeSelector(modeRect, item, kindData);
             contentY += rowHeight + gap;
 
             // Row 4: Chance Slider
             if (item.SelectionMode != ApparelSelectionMode.AlwaysTake)
             {
                 Rect chanceRect = new Rect(area.x, contentY, area.width, rowHeight);
+                float oldChance = item.SelectionChance;
                 item.SelectionChance = Widgets.HorizontalSlider(chanceRect, item.SelectionChance, 0f, 1f, true, LanguageManager.Get("Chance") + ": " + item.SelectionChance.ToString("P0"));
+                if (Math.Abs(item.SelectionChance - oldChance) > 0.001f && kindData != null)
+                {
+                    UndoManager.RecordState(kindData);
+                    kindData.isModified = true;
+                    FactionGearEditor.MarkDirty();
+                }
                 
                 if (Mouse.IsOver(chanceRect))
                 {
@@ -147,19 +168,38 @@ namespace FactionGearCustomizer.UI.Panels
             }
         }
 
-        private static void DrawMaterialSelector(Rect rect, SpecRequirementEdit item)
+        private static void DrawMaterialSelector(Rect rect, SpecRequirementEdit item, KindGearData kindData)
         {
             string label = item.Material == null ? LanguageManager.Get("RandomDefault") : LanguageManager.Get("MaterialSelect", item.Material.LabelCap);
             if (Widgets.ButtonText(rect, label))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
-                options.Add(new FloatMenuOption(LanguageManager.Get("RandomDefault"), () => { item.Material = null; FactionGearEditor.MarkDirty(); }));
+                options.Add(new FloatMenuOption(LanguageManager.Get("RandomDefault"), () => 
+                { 
+                    if (kindData != null)
+                    {
+                        UndoManager.RecordState(kindData);
+                        kindData.isModified = true;
+                    }
+                    item.Material = null; 
+                    FactionGearEditor.MarkDirty(); 
+                }));
                 
                 if (item.Thing != null && item.Thing.MadeFromStuff)
                 {
                     foreach (var stuff in GenStuff.AllowedStuffsFor(item.Thing))
                     {
-                        options.Add(new FloatMenuOption(stuff.LabelCap, () => { item.Material = stuff; FactionGearEditor.MarkDirty(); }));
+                        ThingDef capturedStuff = stuff;
+                        options.Add(new FloatMenuOption(stuff.LabelCap, () => 
+                        { 
+                            if (kindData != null)
+                            {
+                                UndoManager.RecordState(kindData);
+                                kindData.isModified = true;
+                            }
+                            item.Material = capturedStuff; 
+                            FactionGearEditor.MarkDirty(); 
+                        }));
                     }
                 }
                 Find.WindowStack.Add(new FloatMenu(options));
@@ -181,22 +221,41 @@ namespace FactionGearCustomizer.UI.Panels
             }
         }
 
-        private static void DrawQualitySelector(Rect rect, SpecRequirementEdit item)
+        private static void DrawQualitySelector(Rect rect, SpecRequirementEdit item, KindGearData kindData)
         {
             string label = item.Quality.HasValue ? LanguageManager.Get("QualitySelect", GetQualityLabel(item.Quality.Value)) : LanguageManager.Get("QualitySelect", LanguageManager.Get("Default"));
             if (Widgets.ButtonText(rect, label))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
-                options.Add(new FloatMenuOption(LanguageManager.Get("Default"), () => { item.Quality = null; FactionGearEditor.MarkDirty(); }));
+                options.Add(new FloatMenuOption(LanguageManager.Get("Default"), () => 
+                { 
+                    if (kindData != null)
+                    {
+                        UndoManager.RecordState(kindData);
+                        kindData.isModified = true;
+                    }
+                    item.Quality = null; 
+                    FactionGearEditor.MarkDirty(); 
+                }));
                 foreach (QualityCategory q in Enum.GetValues(typeof(QualityCategory)))
                 {
-                    options.Add(new FloatMenuOption(GetQualityLabel(q), () => { item.Quality = q; FactionGearEditor.MarkDirty(); }));
+                    QualityCategory capturedQ = q;
+                    options.Add(new FloatMenuOption(GetQualityLabel(q), () => 
+                    { 
+                        if (kindData != null)
+                        {
+                            UndoManager.RecordState(kindData);
+                            kindData.isModified = true;
+                        }
+                        item.Quality = capturedQ; 
+                        FactionGearEditor.MarkDirty(); 
+                    }));
                 }
                 Find.WindowStack.Add(new FloatMenu(options));
             }
         }
 
-        private static void DrawModeSelector(Rect rect, SpecRequirementEdit item)
+        private static void DrawModeSelector(Rect rect, SpecRequirementEdit item, KindGearData kindData)
         {
             string label = LanguageManager.Get("SelectionMode", item.SelectionMode.ToString());
             if (Widgets.ButtonText(rect, label))
@@ -204,7 +263,17 @@ namespace FactionGearCustomizer.UI.Panels
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
                 foreach (ApparelSelectionMode m in Enum.GetValues(typeof(ApparelSelectionMode)))
                 {
-                    options.Add(new FloatMenuOption(m.ToString(), () => { item.SelectionMode = m; FactionGearEditor.MarkDirty(); }));
+                    ApparelSelectionMode capturedM = m;
+                    options.Add(new FloatMenuOption(m.ToString(), () => 
+                    { 
+                        if (kindData != null)
+                        {
+                            UndoManager.RecordState(kindData);
+                            kindData.isModified = true;
+                        }
+                        item.SelectionMode = capturedM; 
+                        FactionGearEditor.MarkDirty(); 
+                    }));
                 }
                 Find.WindowStack.Add(new FloatMenu(options));
             }

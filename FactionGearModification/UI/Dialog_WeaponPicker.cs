@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FactionGearCustomizer.Compat;
 using FactionGearCustomizer.UI.Pickers;
+using FactionGearCustomizer.UI.Utils;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -33,7 +34,11 @@ namespace FactionGearCustomizer.UI
         private float defaultChance = 1f;
         private bool skipExisting = true;
 
+        private PickerSearchDebouncer searchDebouncer;
+        private string lastSearchText = "";
+
         private const float RowHeight = 28f;
+        private const float SearchDebounceDelay = 0.25f;
 
         public override Vector2 InitialSize => new Vector2(820f, 780f);
 
@@ -60,11 +65,17 @@ namespace FactionGearCustomizer.UI
             draggable = true;
             resizeable = true;
             filterState = PickerSession.Weapons;
+            
+            searchDebouncer = new PickerSearchDebouncer(SearchDebounceDelay, OnSearchDebounced);
+            
+            ThingDefCache.Initialize();
             BuildCandidates();
         }
 
         public override void DoWindowContents(Rect inRect)
         {
+            searchDebouncer.Update();
+            
             float y = 0f;
 
             Text.Font = GameFont.Medium;
@@ -81,7 +92,8 @@ namespace FactionGearCustomizer.UI
                 ShowRangeDamage = true,
                 SortOptions = GetSortOptions(),
                 IdSeed = GetHashCode(),
-                OnChanged = OnFilterChanged
+                OnChanged = OnFilterChanged,
+                SearchDebouncer = searchDebouncer
             });
 
             if (multiSelect) DrawDefaultsRow(inRect, ref y);
@@ -204,8 +216,9 @@ namespace FactionGearCustomizer.UI
 
         private void DrawRow(Rect rowRect, ThingDef def)
         {
-            string modName = FactionGearManager.GetModSource(def);
-            string tip = $"{def.LabelCap}\n{def.defName}\n{modName}";
+            var cacheEntry = ThingDefCache.Get(def);
+            string modName = cacheEntry?.ModSource ?? "";
+            string tip = $"{cacheEntry?.LabelCap}\n{cacheEntry?.DefName}\n{modName}";
             TooltipHandler.TipRegion(rowRect, tip);
 
             Rect inner = rowRect.ContractedBy(4f, 2f);
@@ -239,7 +252,8 @@ namespace FactionGearCustomizer.UI
             Rect rightRect = labelRect.RightPartPixels(210f);
             Rect leftRect = new Rect(labelRect.x, labelRect.y, labelRect.width - 210f, labelRect.height);
 
-            Widgets.Label(leftRect, def.LabelCap.ToString());
+            string label = cacheEntry?.LabelCap ?? def.defName;
+            Widgets.Label(leftRect, label);
 
             Text.Anchor = TextAnchor.MiddleRight;
             GUI.color = Color.gray;
@@ -304,6 +318,12 @@ namespace FactionGearCustomizer.UI
         private void AddSelectedToTarget()
         {
             if (targetList == null || selected.Count == 0) return;
+
+            if (kindData != null)
+            {
+                UndoManager.RecordState(kindData);
+                kindData.isModified = true;
+            }
 
             if (existingDefNames == null)
             {
@@ -398,6 +418,12 @@ namespace FactionGearCustomizer.UI
             filterDirty = true;
         }
 
+        private void OnSearchDebounced(string searchText)
+        {
+            lastSearchText = searchText ?? "";
+            filterDirty = true;
+        }
+
         private void EnsureFilterUpToDate()
         {
             if (!filterDirty) return;
@@ -474,19 +500,11 @@ namespace FactionGearCustomizer.UI
                 return range >= filterState.Range.min && range <= filterState.Range.max && dmg >= filterState.Damage.min && dmg <= filterState.Damage.max;
             });
 
-            string term = (filterState.SearchText ?? "").Trim();
+            string term = lastSearchText.Trim();
             if (!string.IsNullOrEmpty(term))
             {
                 string lower = term.ToLowerInvariant();
-                items = items.Where(def =>
-                {
-                    if (def == null) return false;
-                    string mod = FactionGearManager.GetModSource(def) ?? "";
-                    if ((def.LabelCap.ToString() ?? "").ToLowerInvariant().Contains(lower)) return true;
-                    if ((def.defName ?? "").ToLowerInvariant().Contains(lower)) return true;
-                    if (mod.ToLowerInvariant().Contains(lower)) return true;
-                    return false;
-                });
+                items = items.Where(def => ThingDefCache.MatchesSearch(def, lower));
             }
 
             return Sort(items).ToList();
@@ -497,13 +515,13 @@ namespace FactionGearCustomizer.UI
             switch (filterState.SortField)
             {
                 case "Name":
-                    return filterState.SortAscending ? items.OrderBy(t => t.LabelCap.ToString() ?? t.defName) : items.OrderByDescending(t => t.LabelCap.ToString() ?? t.defName);
+                    return filterState.SortAscending ? items.OrderBy(t => ThingDefCache.Get(t)?.LabelCap ?? t.defName) : items.OrderByDescending(t => ThingDefCache.Get(t)?.LabelCap ?? t.defName);
                 case "MarketValue":
                     return filterState.SortAscending ? items.OrderBy(t => t.BaseMarketValue) : items.OrderByDescending(t => t.BaseMarketValue);
                 case "TechLevel":
                     return filterState.SortAscending ? items.OrderBy(t => (int)t.techLevel) : items.OrderByDescending(t => (int)t.techLevel);
                 case "ModSource":
-                    return filterState.SortAscending ? items.OrderBy(t => FactionGearManager.GetModSource(t)) : items.OrderByDescending(t => FactionGearManager.GetModSource(t));
+                    return filterState.SortAscending ? items.OrderBy(t => ThingDefCache.Get(t)?.ModSource ?? "") : items.OrderByDescending(t => ThingDefCache.Get(t)?.ModSource ?? "");
                 case "Range":
                     return SortBy(items, FactionGearManager.GetWeaponRange);
                 case "Accuracy":
@@ -513,7 +531,7 @@ namespace FactionGearCustomizer.UI
                 case "DPS":
                     return SortBy(items, FactionGearManager.CalculateWeaponDPS);
                 default:
-                    return filterState.SortAscending ? items.OrderBy(t => t.LabelCap.ToString() ?? t.defName) : items.OrderByDescending(t => t.LabelCap.ToString() ?? t.defName);
+                    return filterState.SortAscending ? items.OrderBy(t => ThingDefCache.Get(t)?.LabelCap ?? t.defName) : items.OrderByDescending(t => ThingDefCache.Get(t)?.LabelCap ?? t.defName);
             }
         }
 
@@ -530,6 +548,12 @@ namespace FactionGearCustomizer.UI
             int pool = (int)mode - (int)ApparelSelectionMode.FromPool1 + 1;
             if (pool >= 1 && pool <= 4) return LanguageManager.Get("SelectionModeFromPool", pool);
             return mode.ToString();
+        }
+
+        public override void PreClose()
+        {
+            base.PreClose();
+            searchDebouncer?.ForceExecute();
         }
     }
 }

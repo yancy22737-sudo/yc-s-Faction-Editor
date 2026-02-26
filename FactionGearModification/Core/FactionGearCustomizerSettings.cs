@@ -43,6 +43,9 @@ namespace FactionGearCustomizer
         // [New] Suppress delete group confirmation
         public bool suppressDeleteGroupConfirmation = false;
 
+        // [New] Auto save before preview
+        public bool autoSaveBeforePreview = false;
+
         // [New] Current active preset name
         public string currentPresetName = null;
 
@@ -57,6 +60,7 @@ namespace FactionGearCustomizer
             Scribe_Values.Look(ref ShowInMainTab, "ShowInMainTab", true);
             Scribe_Values.Look(ref ShowHiddenFactions, "ShowHiddenFactions", false);
             Scribe_Values.Look(ref suppressDeleteGroupConfirmation, "suppressDeleteGroupConfirmation", false);
+            Scribe_Values.Look(ref autoSaveBeforePreview, "autoSaveBeforePreview", false);
             Scribe_Collections.Look(ref dismissedDialogs, "dismissedDialogs", LookMode.Value);
             if (dismissedDialogs == null) dismissedDialogs = new HashSet<string>();
             Scribe_Values.Look(ref currentPresetName, "currentPresetName", null);

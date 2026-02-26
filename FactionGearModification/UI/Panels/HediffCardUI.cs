@@ -4,6 +4,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 using FactionGearModification.UI;
+using FactionGearCustomizer.Validation;
 
 namespace FactionGearCustomizer.UI.Panels
 {
@@ -14,34 +15,47 @@ namespace FactionGearCustomizer.UI.Panels
         private static readonly Color BorderColor = new Color(0.35f, 0.35f, 0.4f);
         private static readonly Color RemoveButtonColor = new Color(0.8f, 0.25f, 0.2f);
         private static readonly Color InfoBgColor = new Color(0.08f, 0.08f, 0.1f);
+        private static readonly Color PoolTagColor = new Color(0.4f, 0.7f, 1f);
+
+        private const float HeaderHeight = 28f;
+        private const float HeaderPadding = 2f;
+        private const float RowHeight = 26f;
+        private const float RowGap = 4f;
+        private const float InfoSectionHeight = 50f;
+        private const float BottomPadding = 12f;
+        private const float CardPadding = 6f;
 
         public static float GetCardHeight(ForcedHediff item)
         {
-            float height = 36f;
-            float rowHeight = 26f;
-            float gap = 4f;
-
-            height += rowHeight + gap;
-
-            height += rowHeight + gap;
-
-            height += 50f + gap;
-
-            height += 12f;
-
-            return height;
+            if (item.IsPool)
+            {
+                return HeaderPadding + HeaderHeight + RowGap + RowHeight + BottomPadding + CardPadding * 2;
+            }
+            
+            return HeaderPadding + HeaderHeight + RowGap + 
+                   RowHeight + RowGap + 
+                   RowHeight + RowGap + 
+                   InfoSectionHeight + BottomPadding + CardPadding * 2;
         }
 
-        public static void Draw(Listing_Standard ui, ForcedHediff item, int index, System.Action onRemove)
+        public static void Draw(Listing_Standard ui, ForcedHediff item, int index, System.Action onRemove, KindGearData kindData = null)
         {
             float cardHeight = GetCardHeight(item);
             Rect area = ui.GetRect(cardHeight);
             DrawCardBackground(area);
             area = area.ContractedBy(6f);
 
-            DrawHeader(area, item, index, onRemove);
-            DrawContent(area, item, index);
-            DrawInfoSection(area, item);
+            if (item.IsPool)
+            {
+                DrawPoolHeader(area, item, onRemove);
+                DrawPoolContent(area, item, kindData);
+            }
+            else
+            {
+                DrawHeader(area, item, index, onRemove);
+                DrawContent(area, item, index, kindData);
+                DrawInfoSection(area, item);
+            }
             
             ui.Gap(8f);
         }
@@ -49,27 +63,60 @@ namespace FactionGearCustomizer.UI.Panels
         private static void DrawCardBackground(Rect area)
         {
             Widgets.DrawBoxSolid(area, ContentBgColor);
-            GUI.DrawTexture(area, BaseContent.WhiteTex);
             GUI.color = BorderColor;
-            GUI.DrawTexture(area, BaseContent.WhiteTex);
+            Widgets.DrawBox(area, 1);
             GUI.color = Color.white;
-            Rect innerBorder = area.ContractedBy(1f);
-            Widgets.DrawBoxSolid(innerBorder, ContentBgColor);
         }
 
         private static void DrawHeader(Rect area, ForcedHediff item, int index, System.Action onRemove)
         {
-            Rect headerRect = new Rect(area.x, area.y + 2f, area.width, 28f);
+            Rect headerRect = new Rect(area.x, area.y + HeaderPadding, area.width, HeaderHeight);
             Widgets.DrawBoxSolid(headerRect, HeaderBgColor);
 
             Rect iconRect = new Rect(headerRect.x + 6f, headerRect.y + 4f, 20f, 20f);
             Widgets.DrawBoxSolid(iconRect, new Color(0.3f, 0.3f, 0.35f));
 
-            Rect titleRect = new Rect(iconRect.xMax + 8f, headerRect.y, headerRect.width - 100f, headerRect.height);
+            float rightReserve = 95f;
+            Rect titleRect = new Rect(iconRect.xMax + 8f, headerRect.y, headerRect.width - rightReserve, headerRect.height);
             string titleText = item.HediffDef?.LabelCap ?? LanguageManager.Get("SelectHediff");
             Widgets.Label(titleRect, titleText);
 
-            // Remove Button
+            float warningStartX = titleRect.xMax + 4f;
+            float warningMaxWidth = headerRect.xMax - rightReserve - warningStartX - 4f;
+
+            if (item.HediffDef != null)
+            {
+                FloatRange severityRange = item.severityRange;
+                if (severityRange == default)
+                    severityRange = new FloatRange(0.5f, 1f);
+                    
+                var warnings = HediffWarningChecker.CheckSingleHediffWithSeverity(item.HediffDef, severityRange);
+                if (warnings.Count > 0)
+                {
+                    float iconSize = 16f;
+                    float spacing = 2f;
+                    float currentX = warningStartX;
+                    int maxWarnings = Mathf.FloorToInt(warningMaxWidth / (iconSize + spacing));
+                    int warningCount = Mathf.Min(warnings.Count, maxWarnings);
+                    
+                    for (int i = 0; i < warningCount; i++)
+                    {
+                        var warning = warnings[i];
+                        Rect warningRect = new Rect(currentX, headerRect.y + 6f, iconSize, iconSize);
+                        HediffWarningUI.DrawWarningIcon(warningRect, warning);
+                        currentX += iconSize + spacing;
+                    }
+                    
+                    if (warnings.Count > maxWarnings)
+                    {
+                        Rect moreRect = new Rect(currentX, headerRect.y + 6f, iconSize, iconSize);
+                        GUI.color = new Color(0.7f, 0.7f, 0.7f);
+                        Widgets.Label(moreRect, $"+{warnings.Count - maxWarnings}");
+                        GUI.color = Color.white;
+                    }
+                }
+            }
+
             Rect removeRect = new Rect(headerRect.xMax - 24f, headerRect.y + (headerRect.height - 24f) / 2f, 24f, 24f);
             if (Widgets.ButtonImage(removeRect, TexButton.Delete, Color.white, GenUI.SubtleMouseoverColor))
             {
@@ -77,6 +124,73 @@ namespace FactionGearCustomizer.UI.Panels
             }
 
             DrawTypeTag(headerRect, item.HediffDef);
+        }
+
+        private static void DrawPoolHeader(Rect area, ForcedHediff item, System.Action onRemove)
+        {
+            Rect headerRect = new Rect(area.x, area.y + HeaderPadding, area.width, HeaderHeight);
+            Widgets.DrawBoxSolid(headerRect, HeaderBgColor);
+
+            Rect iconRect = new Rect(headerRect.x + 6f, headerRect.y + 4f, 20f, 20f);
+            Widgets.DrawBoxSolid(iconRect, new Color(0.3f, 0.3f, 0.35f));
+
+            Rect titleRect = new Rect(iconRect.xMax + 8f, headerRect.y, headerRect.width - 100f, headerRect.height);
+            string titleText = item.GetDisplayLabel();
+            Widgets.Label(titleRect, titleText);
+
+            Rect removeRect = new Rect(headerRect.xMax - 24f, headerRect.y + (headerRect.height - 24f) / 2f, 24f, 24f);
+            if (Widgets.ButtonImage(removeRect, TexButton.Delete, Color.white, GenUI.SubtleMouseoverColor))
+            {
+                onRemove?.Invoke();
+            }
+
+            DrawPoolTag(headerRect);
+        }
+
+        private static void DrawPoolTag(Rect headerRect)
+        {
+            string tagText = LanguageManager.Get("HediffPool_Tag").ToUpper();
+            Rect tagRect = new Rect(headerRect.xMax - 24f - 55f, headerRect.y + 4f, 50f, 20f);
+            Widgets.DrawBoxSolid(tagRect, PoolTagColor * 0.2f);
+            Widgets.DrawBox(tagRect, 1);
+            Rect tagLabelRect = tagRect.ContractedBy(2f);
+            Widgets.Label(tagLabelRect, tagText);
+        }
+
+        private static void DrawPoolContent(Rect area, ForcedHediff item, KindGearData kindData)
+        {
+            float contentY = area.y + HeaderPadding + HeaderHeight + RowGap;
+
+            Rect chanceLabelRect = new Rect(area.x, contentY, area.width * 0.15f, RowHeight);
+            Widgets.Label(chanceLabelRect, LanguageManager.Get("Chance") + ":");
+            Rect chanceSliderRect = new Rect(area.x + area.width * 0.16f, contentY + 4f, area.width * 0.40f, RowHeight - 8f);
+            
+            float oldChance = item.chance;
+            float newChance = Widgets.HorizontalSlider(chanceSliderRect, item.chance, 0f, 1f, true, $"{(item.chance * 100):F0}%");
+            if (newChance != oldChance && kindData != null)
+            {
+                UndoManager.RecordState(kindData);
+                item.chance = newChance;
+                kindData.isModified = true;
+                FactionGearEditor.MarkDirty();
+            }
+
+            Rect partsRect = new Rect(area.x + area.width * 0.60f, contentY, area.width * 0.15f, RowHeight);
+            Widgets.Label(partsRect, LanguageManager.Get("MaxParts") + ":");
+            IntRange partsRange = item.maxPartsRange;
+            if (partsRange == default(IntRange))
+            {
+                partsRange = new IntRange(1, 3);
+                item.maxPartsRange = partsRange;
+            }
+            IntRange oldPartsRange = item.maxPartsRange;
+            WidgetsUtils.IntRange(new Rect(area.x + area.width * 0.75f, contentY, area.width * 0.25f, RowHeight), item.GetHashCode() ^ 12340, ref item.maxPartsRange, 1, 10);
+            if ((oldPartsRange.min != item.maxPartsRange.min || oldPartsRange.max != item.maxPartsRange.max) && kindData != null)
+            {
+                UndoManager.RecordState(kindData);
+                kindData.isModified = true;
+                FactionGearEditor.MarkDirty();
+            }
         }
 
         private static string GetHediffTypeLabel(HediffDef def)
@@ -114,7 +228,6 @@ namespace FactionGearCustomizer.UI.Panels
 
             if (!string.IsNullOrEmpty(tagText))
             {
-                // Move tag to the left of the delete button
                 Rect tagRect = new Rect(headerRect.xMax - 24f - 69f, headerRect.y + 4f, 65f, 20f);
                 Widgets.DrawBoxSolid(tagRect, tagColor * 0.2f);
                 Widgets.DrawBox(tagRect, 1);
@@ -123,59 +236,81 @@ namespace FactionGearCustomizer.UI.Panels
             }
         }
 
-        private static void DrawContent(Rect area, ForcedHediff item, int index)
+        private static void DrawContent(Rect area, ForcedHediff item, int index, KindGearData kindData)
         {
-            float contentY = area.y + 34f;
-            float rowHeight = 26f;
+            float contentY = area.y + HeaderPadding + HeaderHeight + RowGap;
 
-            Rect selectRect = new Rect(area.x, contentY, area.width * 0.58f, rowHeight);
+            Rect selectRect = new Rect(area.x, contentY, area.width * 0.55f, RowHeight);
             if (Widgets.ButtonText(selectRect, item.HediffDef?.LabelCap ?? LanguageManager.Get("SelectHediff")))
             {
                 Find.WindowStack.Add(new Dialog_HediffPicker(def =>
                 {
+                    if (kindData != null)
+                    {
+                        UndoManager.RecordState(kindData);
+                        kindData.isModified = true;
+                    }
                     item.HediffDef = def;
                     FactionGearEditor.MarkDirty();
                 }));
             }
 
-            Rect chanceLabelRect = new Rect(area.x + area.width * 0.60f, contentY, area.width * 0.15f, rowHeight);
+            Rect chanceLabelRect = new Rect(area.x + area.width * 0.57f, contentY, area.width * 0.13f, RowHeight);
             Widgets.Label(chanceLabelRect, LanguageManager.Get("Chance") + ":");
-            Rect chanceSliderRect = new Rect(area.x + area.width * 0.75f, contentY + 4f, area.width * 0.25f, rowHeight - 8f);
+            Rect chanceSliderRect = new Rect(area.x + area.width * 0.70f, contentY + 4f, area.width * 0.30f, RowHeight - 8f);
+            
+            float oldChance = item.chance;
             float newChance = Widgets.HorizontalSlider(chanceSliderRect, item.chance, 0f, 1f, true, $"{(item.chance * 100):F0}%");
-            item.chance = newChance;
-
-            if (Mouse.IsOver(chanceSliderRect))
+            if (newChance != oldChance && kindData != null)
             {
-                Widgets.DrawBoxSolid(chanceSliderRect.ExpandedBy(4f), new Color(1f, 1f, 1f, 0.05f));
+                UndoManager.RecordState(kindData);
+                item.chance = newChance;
+                kindData.isModified = true;
+                FactionGearEditor.MarkDirty();
             }
 
-            float partsY = contentY + rowHeight + 4f;
-            Rect partsRect = new Rect(area.x, partsY, area.width * 0.35f, rowHeight);
-            Widgets.Label(partsRect, LanguageManager.Get("MaxParts") + ":");
+            float partsY = contentY + RowHeight + RowGap;
+            Rect partsLabelRect = new Rect(area.x, partsY, area.width * 0.15f, RowHeight);
+            Widgets.Label(partsLabelRect, LanguageManager.Get("MaxParts") + ":");
+            
             IntRange partsRange = item.maxPartsRange;
             if (partsRange == default(IntRange))
             {
                 partsRange = new IntRange(1, 3);
                 item.maxPartsRange = partsRange;
             }
-            WidgetsUtils.IntRange(new Rect(area.x + area.width * 0.28f, partsY, area.width * 0.30f, rowHeight), item.GetHashCode() ^ 12340, ref item.maxPartsRange, 1, 10);
+            IntRange oldPartsRange = item.maxPartsRange;
+            WidgetsUtils.IntRange(new Rect(area.x + area.width * 0.16f, partsY, area.width * 0.32f, RowHeight), item.GetHashCode() ^ 12340, ref item.maxPartsRange, 1, 10);
+            if ((oldPartsRange.min != item.maxPartsRange.min || oldPartsRange.max != item.maxPartsRange.max) && kindData != null)
+            {
+                UndoManager.RecordState(kindData);
+                kindData.isModified = true;
+                FactionGearEditor.MarkDirty();
+            }
 
-            Rect severityLabelRect = new Rect(area.x + area.width * 0.62f, partsY, area.width * 0.15f, rowHeight);
+            Rect severityLabelRect = new Rect(area.x + area.width * 0.50f, partsY, area.width * 0.15f, RowHeight);
             Widgets.Label(severityLabelRect, LanguageManager.Get("Severity") + ":");
-            Rect severitySliderRect = new Rect(area.x + area.width * 0.77f, partsY + 4f, area.width * 0.23f, rowHeight - 8f);
+            Rect severitySliderRect = new Rect(area.x + area.width * 0.65f, partsY, area.width * 0.35f, RowHeight);
             if (item.severityRange == default)
             {
                 item.severityRange = new FloatRange(0.5f, 1f);
             }
+            FloatRange oldSeverity = item.severityRange;
             FloatRange newSeverity = item.severityRange;
             WidgetsUtils.FloatRange(severitySliderRect, item.GetHashCode() ^ 12341, ref newSeverity, 0.01f, 1f);
-            item.severityRange = newSeverity;
+            if ((oldSeverity.min != newSeverity.min || oldSeverity.max != newSeverity.max) && kindData != null)
+            {
+                UndoManager.RecordState(kindData);
+                item.severityRange = newSeverity;
+                kindData.isModified = true;
+                FactionGearEditor.MarkDirty();
+            }
         }
 
         private static void DrawInfoSection(Rect area, ForcedHediff item)
         {
-            float infoY = area.y + 94f;
-            Rect infoRect = new Rect(area.x, infoY, area.width, 50f);
+            float infoY = area.y + HeaderPadding + HeaderHeight + RowGap + RowHeight + RowGap + RowHeight + RowGap;
+            Rect infoRect = new Rect(area.x, infoY, area.width, InfoSectionHeight);
             Widgets.DrawBoxSolid(infoRect, InfoBgColor);
             Widgets.DrawBox(infoRect, 1);
 
@@ -206,50 +341,6 @@ namespace FactionGearCustomizer.UI.Panels
                 Rect placeholderRect = infoRect.ContractedBy(6f);
                 Widgets.Label(placeholderRect, LanguageManager.Get("SelectHediffToViewDetails"));
             }
-        }
-
-        private static void ShowHediffSelectionMenu(ForcedHediff item)
-        {
-            List<FloatMenuOption> options = new List<FloatMenuOption>();
-
-            var hediffGroups = DefDatabase<HediffDef>.AllDefs
-                .Where(h => h.isBad || h.makesSickThought || h.countsAsAddedPartOrImplant)
-                .OrderBy(d => d.label)
-                .GroupBy(d => GetHediffCategory(d));
-
-            foreach (var group in hediffGroups)
-            {
-                options.Add(new FloatMenuOption(group.Key, null));
-
-                foreach (var def in group)
-                {
-                    string label = "  " + def.LabelCap;
-                    options.Add(new FloatMenuOption(label, () =>
-                    {
-                        item.HediffDef = def;
-                        FactionGearEditor.MarkDirty();
-                    }));
-                }
-            }
-
-            Find.WindowStack.Add(new FloatMenu(options));
-        }
-
-        private static string GetHediffCategory(HediffDef def)
-        {
-            if (def.countsAsAddedPartOrImplant) return LanguageManager.Get("HediffType_Implant");
-            if (def.isBad && def.defName.Contains("Missing")) return LanguageManager.Get("HediffType_Missing");
-            if (def.isBad) return LanguageManager.Get("HediffType_Debuff");
-            if (def.makesSickThought) return LanguageManager.Get("HediffType_Illness");
-            return LanguageManager.Get("HediffType_Other");
-        }
-
-        private static Color GetHediffCategoryColor(HediffDef def)
-        {
-            if (def.countsAsAddedPartOrImplant) return new Color(0.5f, 0.8f, 1f);
-            if (def.isBad) return new Color(1f, 0.6f, 0.5f);
-            if (def.makesSickThought) return new Color(1f, 0.9f, 0.5f);
-            return Color.gray;
         }
     }
 }

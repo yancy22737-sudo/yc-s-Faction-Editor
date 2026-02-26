@@ -28,6 +28,8 @@ namespace FactionGearCustomizer
         private int totalToGenerate = 0;
         private int generatedCount = 0;
         private const int BATCH_SIZE = 1;
+        
+        private Pawn pendingInfoPawn = null;
 
 
 
@@ -282,6 +284,12 @@ namespace FactionGearCustomizer
             }
 
             Widgets.EndScrollView();
+            
+            if (pendingInfoPawn != null)
+            {
+                Find.WindowStack.Add(new Dialog_PawnGearInfo(pendingInfoPawn));
+                pendingInfoPawn = null;
+            }
         }
 
         private void DrawPawnCard(Rect rect, PawnKindDef k)
@@ -366,7 +374,7 @@ namespace FactionGearCustomizer
                 Rect infoButtonRect = new Rect(rect.xMax - 30f, rect.y + 30f, 26f, 26f);
                 if (Widgets.InfoCardButton(infoButtonRect.x, infoButtonRect.y, p))
                 {
-                    Find.WindowStack.Add(new Dialog_PawnGearInfo(p));
+                    pendingInfoPawn = p;
                 }
                 
                 // 提示点击可以查看详情

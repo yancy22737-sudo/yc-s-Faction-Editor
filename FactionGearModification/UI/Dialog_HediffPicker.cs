@@ -11,6 +11,7 @@ namespace FactionGearCustomizer.UI
     {
         private readonly Action<HediffDef> onPickSingle;
         private readonly List<ForcedHediff> targetList;
+        private readonly KindGearData kindData;
         private readonly bool multiSelect;
 
         private List<HediffDef> allCandidates = new List<HediffDef>();
@@ -30,9 +31,10 @@ namespace FactionGearCustomizer.UI
 
         public override Vector2 InitialSize => new Vector2(720f, 760f);
 
-        public Dialog_HediffPicker(List<ForcedHediff> targetList)
+        public Dialog_HediffPicker(List<ForcedHediff> targetList, KindGearData kindData = null)
         {
             this.targetList = targetList;
+            this.kindData = kindData;
             multiSelect = true;
             InitCommon();
         }
@@ -300,6 +302,13 @@ namespace FactionGearCustomizer.UI
         private void AddSelectedToTarget()
         {
             if (targetList == null || selected.Count == 0) return;
+
+            // Record undo state before adding
+            if (kindData != null)
+            {
+                UndoManager.RecordState(kindData);
+                kindData.isModified = true;
+            }
 
             if (existingDefNames == null)
             {

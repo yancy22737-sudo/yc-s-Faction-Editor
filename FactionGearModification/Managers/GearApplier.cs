@@ -86,7 +86,7 @@ namespace FactionGearCustomizer
             return true;
         }
 
-            private static void ApplyInventory(Pawn pawn, KindGearData kindData)
+        private static void ApplyInventory(Pawn pawn, KindGearData kindData)
         {
             if (kindData.InventoryItems.NullOrEmpty() && !kindData.ForceOnlySelected) return;
 
@@ -97,49 +97,46 @@ namespace FactionGearCustomizer
 
             if (kindData.InventoryItems.NullOrEmpty()) return;
 
-            ApplyInventoryOnce(pawn, kindData);
-
-            ScheduleDelayedInventoryApply(pawn, kindData, 3);
+            // 预先计算所有要生成的物品及其数量，避免多次调用导致数量叠加
+            var itemsToGenerate = CalculateItemsToGenerate(kindData.InventoryItems);
+            ApplyInventoryItems(pawn, kindData, itemsToGenerate);
         }
 
-        private static void ScheduleDelayedInventoryApply(Pawn pawn, KindGearData kindData, int remainingAttempts)
+        private static List<(SpecRequirementEdit spec, ThingDef thingDef, int count)> CalculateItemsToGenerate(List<SpecRequirementEdit> inventoryItems)
         {
-            if (remainingAttempts <= 0) return;
+            var result = new List<(SpecRequirementEdit spec, ThingDef thingDef, int count)>();
 
-            LongEventHandler.ExecuteWhenFinished(() =>
-            {
-                ApplyInventoryOnce(pawn, kindData);
-                ScheduleDelayedInventoryApply(pawn, kindData, remainingAttempts - 1);
-            });
-        }
-
-        private static void ApplyInventoryOnce(Pawn pawn, KindGearData kindData)
-        {
-            if (pawn == null || pawn.inventory == null || pawn.inventory.innerContainer == null) return;
-
-            foreach (var item in GetWhatToGive(kindData.InventoryItems, pawn))
+            foreach (var item in GetWhatToGive(inventoryItems, null))
             {
                 if (item.Thing == null) continue;
-
-                if (IsSpecialItem(item.Thing))
-                {
-                    continue;
-                }
+                if (IsSpecialItem(item.Thing)) continue;
 
                 int count = item.CountRange.RandomInRange;
                 if (count <= 0) count = 1;
 
-                int currentCount = pawn.inventory.innerContainer.Where(t => t.def == item.Thing).Sum(t => t.stackCount);
+                result.Add((item, item.Thing, count));
+            }
+
+            return result;
+        }
+
+        private static void ApplyInventoryItems(Pawn pawn, KindGearData kindData, List<(SpecRequirementEdit spec, ThingDef thingDef, int count)> itemsToGenerate)
+        {
+            if (pawn == null || pawn.inventory == null || pawn.inventory.innerContainer == null) return;
+
+            foreach (var (spec, thingDef, count) in itemsToGenerate)
+            {
+                int currentCount = pawn.inventory.innerContainer.Where(t => t.def == thingDef).Sum(t => t.stackCount);
                 if (currentCount >= count) continue;
 
                 int toAdd = count - currentCount;
                 if (toAdd <= 0) continue;
 
-                if (item.Thing.stackLimit == 1)
+                if (thingDef.stackLimit == 1)
                 {
                     for (int i = 0; i < toAdd; i++)
                     {
-                        var created = GenerateItem(pawn, item, kindData);
+                        var created = GenerateItem(pawn, spec, kindData);
                         if (created != null && created.holdingOwner == null)
                         {
                             pawn.inventory.innerContainer.TryAdd(created, true);
@@ -148,7 +145,7 @@ namespace FactionGearCustomizer
                 }
                 else
                 {
-                    var created = GenerateItem(pawn, item, kindData);
+                    var created = GenerateItem(pawn, spec, kindData);
                     if (created != null && created.holdingOwner == null)
                     {
                         created.stackCount = toAdd;
@@ -195,81 +192,292 @@ namespace FactionGearCustomizer
 
             foreach (var forcedHediff in kindData.ForcedHediffs)
             {
-                if (forcedHediff.HediffDef == null) continue;
                 if (!Rand.Chance(forcedHediff.chance)) continue;
 
-                if (IsSpecialHediffNeedingNoPart(forcedHediff.HediffDef))
+                if (forcedHediff.IsPool)
                 {
-                    if (pawn.health.hediffSet.HasHediff(forcedHediff.HediffDef)) continue;
-                    
-                    try
-                    {
-                        Hediff hediff = pawn.health.AddHediff(forcedHediff.HediffDef);
-                        
-                        if (hediff != null)
-                        {
-                            ApplyHediffSeverity(hediff, forcedHediff);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Warning($"[FactionGearCustomizer] Failed to apply special hediff {forcedHediff.HediffDef.defName}: {ex.Message}");
-                    }
+                    ApplyHediffFromPool(pawn, forcedHediff);
                     continue;
                 }
 
-                int count = forcedHediff.maxParts > 0 ? forcedHediff.maxParts : forcedHediff.maxPartsRange.RandomInRange;
-                if (count <= 0) count = 1;
+                if (forcedHediff.HediffDef == null) continue;
 
-                List<BodyPartRecord> partsToHit = new List<BodyPartRecord>();
-                if (!forcedHediff.parts.NullOrEmpty())
+                ApplySingleHediff(pawn, forcedHediff);
+            }
+        }
+
+        private static void ApplySingleHediff(Pawn pawn, ForcedHediff forcedHediff)
+        {
+            HediffDef def = forcedHediff.HediffDef;
+            
+            if (HediffNeedsBodyPart(def))
+            {
+                ApplyHediffWithPart(pawn, forcedHediff);
+            }
+            else
+            {
+                ApplyHediffWithoutPart(pawn, forcedHediff);
+            }
+        }
+
+        private static bool HediffNeedsBodyPart(HediffDef def)
+        {
+            if (def == null) return false;
+            
+            if (def.countsAsAddedPartOrImplant) return true;
+            
+            if (def.hediffClass == typeof(Hediff_AddedPart)) return true;
+            
+            if (def.hediffClass == typeof(Hediff_MissingPart)) return true;
+            
+            if (def.defName.Contains("Missing")) return true;
+            
+            return false;
+        }
+
+        private static void ApplyHediffWithoutPart(Pawn pawn, ForcedHediff forcedHediff)
+        {
+            HediffDef def = forcedHediff.HediffDef;
+            
+            if (pawn.health.hediffSet.HasHediff(def)) return;
+            
+            try
+            {
+                Hediff hediff = HediffMaker.MakeHediff(def, pawn);
+                ApplyHediffSeverity(hediff, forcedHediff);
+                pawn.health.AddHediff(hediff);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning($"[FactionGearCustomizer] Failed to apply hediff {def.defName} without part: {ex.Message}. Trying with a body part...");
+                
+                try
                 {
-                     foreach (var partDef in forcedHediff.parts)
-                     {
-                         partsToHit.AddRange(pawn.RaceProps.body.GetPartsWithDef(partDef));
-                     }
+                    var fallbackPart = pawn.health.hediffSet.GetNotMissingParts().FirstOrDefault();
+                    if (fallbackPart != null)
+                    {
+                        Hediff hediff = HediffMaker.MakeHediff(def, pawn, fallbackPart);
+                        ApplyHediffSeverity(hediff, forcedHediff);
+                        pawn.health.AddHediff(hediff);
+                    }
+                }
+                catch (Exception ex2)
+                {
+                    Log.Warning($"[FactionGearCustomizer] Also failed with fallback body part: {ex2.Message}");
+                }
+            }
+        }
+
+        private static void ApplyHediffWithPart(Pawn pawn, ForcedHediff forcedHediff)
+        {
+            HediffDef def = forcedHediff.HediffDef;
+            
+            int count = forcedHediff.maxParts > 0 ? forcedHediff.maxParts : forcedHediff.maxPartsRange.RandomInRange;
+            if (count <= 0) count = 1;
+
+            List<BodyPartRecord> userSpecifiedParts = GetUserSpecifiedBodyParts(pawn, forcedHediff);
+            
+            if (userSpecifiedParts.NullOrEmpty())
+            {
+                List<BodyPartRecord> validParts = GetValidBodyPartsForHediff(pawn, def);
+                
+                if (validParts.NullOrEmpty())
+                {
+                    Log.Warning($"[FactionGearCustomizer] Cannot find valid body parts for hediff {def.defName} on pawn {pawn.Name.ToStringShort}");
+                    return;
                 }
                 
-                if (partsToHit.Count == 0 && !forcedHediff.parts.NullOrEmpty()) continue;
-
-                for (int i = 0; i < count; i++)
+                for (int i = 0; i < count && validParts.Count > 0; i++)
                 {
-                    BodyPartRecord part = partsToHit.NullOrEmpty() ? null : partsToHit.RandomElement();
-                    if (pawn.health.hediffSet.HasHediff(forcedHediff.HediffDef, part)) continue;
+                    if (pawn.health.hediffSet.GetHediffCount(def) >= count) break;
+                    
+                    BodyPartRecord part = validParts.RandomElement();
+                    validParts.Remove(part);
+                    
+                    if (pawn.health.hediffSet.HasHediff(def, part)) continue;
                     
                     try
                     {
-                        Hediff hediff = pawn.health.AddHediff(forcedHediff.HediffDef, part);
-                        
-                        if (hediff != null)
-                        {
-                            ApplyHediffSeverity(hediff, forcedHediff);
-                        }
+                        Hediff hediff = HediffMaker.MakeHediff(def, pawn, part);
+                        ApplyHediffSeverity(hediff, forcedHediff);
+                        pawn.health.AddHediff(hediff);
                     }
                     catch (Exception ex)
                     {
-                        Log.Warning($"[FactionGearCustomizer] Failed to apply hediff {forcedHediff.HediffDef.defName} to part: {ex.Message}");
+                        Log.Warning($"[FactionGearCustomizer] Failed to apply hediff {def.defName} to part {part.Label}: {ex.Message}");
+                    }
+                }
+            }
+            else
+            {
+                count = Mathf.Min(count, userSpecifiedParts.Count);
+                
+                for (int i = 0; i < count && userSpecifiedParts.Count > 0; i++)
+                {
+                    BodyPartRecord part = userSpecifiedParts.RandomElement();
+                    userSpecifiedParts.Remove(part);
+                    
+                    if (pawn.health.hediffSet.HasHediff(def, part)) continue;
+                    
+                    try
+                    {
+                        Hediff hediff = HediffMaker.MakeHediff(def, pawn, part);
+                        ApplyHediffSeverity(hediff, forcedHediff);
+                        pawn.health.AddHediff(hediff);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warning($"[FactionGearCustomizer] Failed to apply hediff {def.defName} to part {part.Label}: {ex.Message}");
                     }
                 }
             }
         }
 
-        private static bool IsSpecialHediffNeedingNoPart(HediffDef def)
+        private static List<BodyPartRecord> GetUserSpecifiedBodyParts(Pawn pawn, ForcedHediff forcedHediff)
         {
-            if (def == null) return false;
-            if (def.defName.ToLower().Contains("high")) return true;
-            if (def.hediffClass == typeof(Hediff_High)) return true;
-            if (!def.isBad && def.defName.ToLower().Contains("addiction")) return true;
-            if (!def.isBad && def.defName.ToLower().Contains("tolerance")) return true;
-            return false;
+            List<BodyPartRecord> result = new List<BodyPartRecord>();
+            
+            if (!forcedHediff.parts.NullOrEmpty())
+            {
+                foreach (var partDef in forcedHediff.parts)
+                {
+                    var parts = pawn.RaceProps.body.GetPartsWithDef(partDef)
+                        .Where(p => !pawn.health.hediffSet.PartIsMissing(p))
+                        .ToList();
+                    result.AddRange(parts);
+                }
+            }
+            
+            return result;
+        }
+
+        private static List<BodyPartRecord> GetValidBodyPartsForHediff(Pawn pawn, HediffDef def)
+        {
+            List<BodyPartRecord> result = new List<BodyPartRecord>();
+            
+            if (pawn?.RaceProps?.body == null || def == null) return result;
+            
+            IEnumerable<BodyPartRecord> allParts = pawn.RaceProps.body.AllParts
+                .Where(p => !pawn.health.hediffSet.PartIsMissing(p));
+            
+            foreach (BodyPartRecord part in allParts)
+            {
+                try
+                {
+                    if (def.countsAsAddedPartOrImplant || def.hediffClass == typeof(Hediff_AddedPart))
+                    {
+                        if (part.def != null && part.def.IsSolid(part, pawn.health.hediffSet.hediffs))
+                            continue;
+                    }
+                    
+                    if (!pawn.health.hediffSet.HasHediff(def, part))
+                    {
+                        result.Add(part);
+                    }
+                }
+                catch
+                {
+                }
+            }
+            
+            return result;
+        }
+
+        private static void ApplyHediffFromPool(Pawn pawn, ForcedHediff poolHediff)
+        {
+            HediffDef selectedDef = GetRandomHediffFromPool(poolHediff.PoolType);
+            if (selectedDef == null) return;
+
+            var tempForcedHediff = new ForcedHediff
+            {
+                HediffDef = selectedDef,
+                chance = 1f,
+                maxParts = poolHediff.maxParts,
+                maxPartsRange = poolHediff.maxPartsRange,
+                severityRange = poolHediff.severityRange,
+                parts = poolHediff.parts
+            };
+
+            ApplySingleHediff(pawn, tempForcedHediff);
+        }
+
+        private static HediffDef GetRandomHediffFromPool(HediffPoolType poolType)
+        {
+            List<HediffDef> candidates = new List<HediffDef>();
+
+            switch (poolType)
+            {
+                case HediffPoolType.AnyDebuff:
+                    candidates = DefDatabase<HediffDef>.AllDefsListForReading
+                        .Where(def => def.isBad && !def.makesSickThought && !def.countsAsAddedPartOrImplant && !def.defName.Contains("Missing"))
+                        .ToList();
+                    break;
+
+                case HediffPoolType.AnyDrugHigh:
+                    candidates = DefDatabase<HediffDef>.AllDefsListForReading
+                        .Where(def => def.hediffClass == typeof(Hediff_High) || def.defName.ToLower().Contains("high"))
+                        .ToList();
+                    break;
+
+                case HediffPoolType.AnyAddiction:
+                    candidates = DefDatabase<HediffDef>.AllDefsListForReading
+                        .Where(def => !def.isBad && (def.defName.ToLower().Contains("addiction") || def.defName.ToLower().Contains("tolerance")))
+                        .ToList();
+                    break;
+
+                case HediffPoolType.AnyImplant:
+                    candidates = DefDatabase<HediffDef>.AllDefsListForReading
+                        .Where(def => def.countsAsAddedPartOrImplant)
+                        .ToList();
+                    break;
+
+                case HediffPoolType.AnyIllness:
+                    candidates = DefDatabase<HediffDef>.AllDefsListForReading
+                        .Where(def => def.makesSickThought)
+                        .ToList();
+                    break;
+
+                case HediffPoolType.AnyBuff:
+                    candidates = DefDatabase<HediffDef>.AllDefsListForReading
+                        .Where(def => !def.isBad && 
+                                     !def.defName.ToLower().Contains("addiction") && 
+                                     !def.defName.ToLower().Contains("tolerance") && 
+                                     def.hediffClass != typeof(Hediff_High) &&
+                                     !def.countsAsAddedPartOrImplant &&
+                                     def.hediffClass != typeof(Hediff_AddedPart) &&
+                                     def.hediffClass != typeof(Hediff_MissingPart))
+                        .ToList();
+                    break;
+            }
+
+            return candidates.NullOrEmpty() ? null : candidates.RandomElement();
         }
 
         private static void ApplyHediffSeverity(Hediff hediff, ForcedHediff forcedHediff)
         {
-            if (forcedHediff.severityRange != default(FloatRange))
+            if (forcedHediff.severityRange == default(FloatRange)) return;
+            
+            float severity = forcedHediff.severityRange.RandomInRange;
+            
+            if (hediff.def == null) return;
+            
+            if (hediff.def.lethalSeverity > 0f)
             {
-                hediff.Severity = forcedHediff.severityRange.RandomInRange;
+                severity = Mathf.Min(severity, hediff.def.lethalSeverity * 0.95f);
             }
+            
+            if (!hediff.def.stages.NullOrEmpty())
+            {
+                float maxStageSeverity = hediff.def.stages.Max(s => s.minSeverity);
+                if (maxStageSeverity > 0f && severity > maxStageSeverity)
+                {
+                    severity = Mathf.Min(severity, maxStageSeverity);
+                }
+            }
+            
+            if (severity < 0f) severity = 0f;
+            
+            hediff.Severity = severity;
         }
 
         private static void ApplyWeapons(Pawn pawn, KindGearData kindData)
@@ -869,6 +1077,162 @@ namespace FactionGearCustomizer
             return thing;
         }
 
+        private static SpecRequirementEdit GeneratePoolItem(SpecRequirementEdit itemPool, Pawn pawn)
+        {
+            ThingDef thingDef = null;
+            switch (itemPool.PoolType)
+            {
+                case ItemPoolType.AnyFood:
+                    thingDef = GetRandomFoodItem();
+                    break;
+                case ItemPoolType.AnyMeal:
+                    thingDef = GetRandomMealItem();
+                    break;
+                case ItemPoolType.AnyRawFood:
+                    thingDef = GetRandomRawFoodItem();
+                    break;
+                case ItemPoolType.AnyMeat:
+                    thingDef = GetRandomMeatItem();
+                    break;
+                case ItemPoolType.AnyVegetable:
+                    thingDef = GetRandomVegetableItem();
+                    break;
+                case ItemPoolType.AnyMedicine:
+                    thingDef = GetRandomMedicineItem();
+                    break;
+                case ItemPoolType.AnySocialDrug:
+                    thingDef = GetRandomSocialDrugItem();
+                    break;
+                case ItemPoolType.AnyHardDrug:
+                    thingDef = GetRandomHardDrugItem();
+                    break;
+            }
+
+            if (thingDef == null) return null;
+
+            // Create a new SpecRequirementEdit with the generated item
+            var result = new SpecRequirementEdit
+            {
+                Thing = thingDef,
+                SelectionMode = itemPool.SelectionMode,
+                SelectionChance = itemPool.SelectionChance,
+                weight = itemPool.weight,
+                CountRange = itemPool.CountRange,
+                PoolType = itemPool.PoolType
+            };
+
+            return result;
+        }
+
+        private static ThingDef GetRandomFoodItem()
+        {
+            var foodDefs = DefDatabase<ThingDef>.AllDefsListForReading
+                .Where(def => def.IsIngestible
+                    && def.IsNutritionGivingIngestible
+                    && !def.IsDrug
+                    && !def.IsMedicine
+                    && !def.IsPlant
+                    && def.category == ThingCategory.Item)
+                .ToList();
+
+            return foodDefs.NullOrEmpty() ? null : foodDefs.RandomElement();
+        }
+
+        private static ThingDef GetRandomMealItem()
+        {
+            var mealDefs = DefDatabase<ThingDef>.AllDefsListForReading
+                .Where(def => def.IsIngestible
+                    && def.IsNutritionGivingIngestible
+                    && !def.IsDrug
+                    && !def.IsMedicine
+                    && !def.IsPlant
+                    && def.category == ThingCategory.Item
+                    && def.IsProcessedFood)
+                .ToList();
+
+            return mealDefs.NullOrEmpty() ? null : mealDefs.RandomElement();
+        }
+
+        private static ThingDef GetRandomRawFoodItem()
+        {
+            var rawDefs = DefDatabase<ThingDef>.AllDefsListForReading
+                .Where(def => def.IsIngestible
+                    && def.IsNutritionGivingIngestible
+                    && !def.IsDrug
+                    && !def.IsMedicine
+                    && !def.IsPlant
+                    && def.category == ThingCategory.Item
+                    && !def.IsProcessedFood
+                    && !def.IsMeat
+                    && !def.IsAnimalProduct)
+                .ToList();
+
+            return rawDefs.NullOrEmpty() ? null : rawDefs.RandomElement();
+        }
+
+        private static ThingDef GetRandomMeatItem()
+        {
+            var meatDefs = DefDatabase<ThingDef>.AllDefsListForReading
+                .Where(def => def.IsIngestible
+                    && def.IsNutritionGivingIngestible
+                    && !def.IsDrug
+                    && !def.IsMedicine
+                    && !def.IsPlant
+                    && def.category == ThingCategory.Item
+                    && def.IsMeat)
+                .ToList();
+
+            return meatDefs.NullOrEmpty() ? null : meatDefs.RandomElement();
+        }
+
+        private static ThingDef GetRandomVegetableItem()
+        {
+            var vegDefs = DefDatabase<ThingDef>.AllDefsListForReading
+                .Where(def => def.IsIngestible
+                    && def.IsNutritionGivingIngestible
+                    && !def.IsDrug
+                    && !def.IsMedicine
+                    && !def.IsPlant
+                    && def.category == ThingCategory.Item
+                    && (def.IsFungus || def.defName.ToLower().Contains("vegetable") || def.defName.ToLower().Contains("mushroom")))
+                .ToList();
+
+            return vegDefs.NullOrEmpty() ? null : vegDefs.RandomElement();
+        }
+
+        private static ThingDef GetRandomMedicineItem()
+        {
+            var medicineDefs = DefDatabase<ThingDef>.AllDefsListForReading
+                .Where(def => def.IsMedicine)
+                .ToList();
+
+            return medicineDefs.NullOrEmpty() ? null : medicineDefs.RandomElement();
+        }
+
+        private static ThingDef GetRandomSocialDrugItem()
+        {
+            var socialDrugDefs = DefDatabase<ThingDef>.AllDefsListForReading
+                .Where(def => def.IsDrug)
+                .Select(def => new { Def = def, DrugProps = def.GetCompProperties<CompProperties_Drug>() })
+                .Where(x => x.DrugProps != null && x.DrugProps.addictiveness < 0.1f)
+                .Select(x => x.Def)
+                .ToList();
+
+            return socialDrugDefs.NullOrEmpty() ? null : socialDrugDefs.RandomElement();
+        }
+
+        private static ThingDef GetRandomHardDrugItem()
+        {
+            var hardDrugDefs = DefDatabase<ThingDef>.AllDefsListForReading
+                .Where(def => def.IsDrug)
+                .Select(def => new { Def = def, DrugProps = def.GetCompProperties<CompProperties_Drug>() })
+                .Where(x => x.DrugProps != null && x.DrugProps.addictiveness >= 0.1f)
+                .Select(x => x.Def)
+                .ToList();
+
+            return hardDrugDefs.NullOrEmpty() ? null : hardDrugDefs.RandomElement();
+        }
+
         private static IEnumerable<SpecRequirementEdit> GetWhatToGive(List<SpecRequirementEdit> allSpecs, Pawn pawn)
         {
             var always = allSpecs.Where(x => x.SelectionMode == ApparelSelectionMode.AlwaysTake).ToList();
@@ -877,6 +1241,7 @@ namespace FactionGearCustomizer
             var pool2 = allSpecs.Where(x => x.SelectionMode == ApparelSelectionMode.FromPool2).ToList();
             var pool3 = allSpecs.Where(x => x.SelectionMode == ApparelSelectionMode.FromPool3).ToList();
             var pool4 = allSpecs.Where(x => x.SelectionMode == ApparelSelectionMode.FromPool4).ToList();
+            var itemPools = allSpecs.Where(x => x.PoolType != ItemPoolType.None).ToList();
 
             foreach (var item in always) yield return item;
 
@@ -895,6 +1260,22 @@ namespace FactionGearCustomizer
 
             selected = PickFromPool(pool4, pawn);
             if (selected != null) yield return selected;
+
+            foreach (var itemPool in itemPools)
+            {
+                // 物品池的处理：如果是 AlwaysTake 模式，总是生成；否则根据 SelectionChance 概率生成
+                bool shouldGenerate = itemPool.SelectionMode == ApparelSelectionMode.AlwaysTake
+                    || Rand.Chance(itemPool.SelectionChance);
+
+                if (shouldGenerate)
+                {
+                    var poolItem = GeneratePoolItem(itemPool, pawn);
+                    if (poolItem != null)
+                    {
+                        yield return poolItem;
+                    }
+                }
+            }
         }
 
         private static SpecRequirementEdit PickFromPool(List<SpecRequirementEdit> pool, Pawn pawn)

@@ -56,7 +56,7 @@
 | `GearItem.cs` | 装备物品类，表示一个可穿戴或使用的物品，含权重（weight）属性 |
 | `KindGearData.cs` | 兵种装备数据类，存储单个兵种（PawnKindDef）的所有装备配置 |
 | `SpecRequirementEdit.cs` | 高级需求编辑类，用于精确指定特定物品、材质、品质等 |
-| `ForcedHediff.cs` | 强制健康状态类，定义兵种必须携带的健康状态（如Scaria） |
+| `ForcedHediff.cs` | 强制健康状态类，定义兵种必须携带的健康状态（如Scaria），支持状态池类型（HediffPoolType）|
 
 ---
 
@@ -98,7 +98,10 @@ UI/
 │   ├── FactionListPanel.cs   # 阵营列表面板
 │   ├── KindListPanel.cs      # 兵种列表面板
 │   ├── GearEditPanel.cs      # 装备编辑面板（Simple/Advanced模式）
-│   └── ItemLibraryPanel.cs   # 物品库面板（筛选、排序、搜索）
+│   ├── ItemLibraryPanel.cs   # 物品库面板（筛选、排序、搜索）
+│   ├── HediffCardUI.cs       # 状态卡片UI（统一物品栏卡片风格，支持状态池显示）
+│   ├── ItemCardUI.cs         # 物品卡片UI（物品栏风格）
+│   └── ApparelCardUI.cs      # 服装/武器卡片UI
 ├── Pickers/                   # 可复用的选择器/筛选器组件
 │   └── ThingPickerFilterBar.cs # ThingDef 选择器筛选条（搜索/Mod/Tech/排序/范围）
 ├── State/                    # UI状态管理
