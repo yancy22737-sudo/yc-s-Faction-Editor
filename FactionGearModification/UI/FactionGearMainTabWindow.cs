@@ -2,6 +2,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 using FactionGearCustomizer;
+using FactionGearCustomizer.UI.Panels;
 
 namespace FactionGearCustomizer.UI
 {
@@ -65,6 +66,21 @@ namespace FactionGearCustomizer.UI
 
         public override void DoWindowContents(Rect inRect)
         {
+            // Handle Ctrl+S shortcut for saving
+            if (Event.current.type == EventType.KeyDown && Event.current.control && Event.current.keyCode == KeyCode.S)
+            {
+                if (NoPresetPanel.HasActivePreset())
+                {
+                    FactionGearEditor.SaveChanges();
+                    Event.current.Use();
+                }
+                else
+                {
+                    Messages.Message(LanguageManager.Get("NoPresetCannotSave"), MessageTypeDefOf.RejectInput, false);
+                    Event.current.Use();
+                }
+            }
+
             float padding = 4f; // Reduced padding
             float topBarHeight = 36f; // Height for the top bar
 
@@ -74,12 +90,12 @@ namespace FactionGearCustomizer.UI
 
             // Draw Editor Content
             Rect contentRect = new Rect(
-                inRect.x + padding, 
+                inRect.x + padding,
                 inRect.y + padding + topBarHeight + 4f, // Add spacing below top bar
-                inRect.width - padding * 2, 
+                inRect.width - padding * 2,
                 inRect.height - padding * 2 - topBarHeight - 4f
             );
-            
+
             FactionGearEditor.DrawEditor(contentRect);
         }
     }

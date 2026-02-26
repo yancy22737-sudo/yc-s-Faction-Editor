@@ -53,8 +53,6 @@ namespace FactionGearCustomizer.UI
                     Log.Warning($"[FactionGearCustomizer] Failed to switch to World tab: {ex.Message}");
                 }
             }
-
-            CloseOtherModWindows();
         }
 
         public override void PreClose()
@@ -166,22 +164,6 @@ namespace FactionGearCustomizer.UI
                 
                 // Show message
                 Messages.Message(LanguageManager.Get("SettlementCreated", settlement.Name), MessageTypeDefOf.PositiveEvent, false);
-            }
-        }
-
-        private void CloseOtherModWindows()
-        {
-            if (Find.WindowStack?.Windows == null) return;
-
-            var windows = Find.WindowStack.Windows;
-            var asm = GetType().Assembly;
-            for (int i = windows.Count - 1; i >= 0; i--)
-            {
-                var w = windows[i];
-                if (w == null || w == this) continue;
-                if (w.GetType().Assembly != asm) continue;
-                // 强制立即关闭，而不是延迟关闭
-                Find.WindowStack.TryRemove(w, false);
             }
         }
     }

@@ -90,9 +90,28 @@ namespace FactionGearCustomizer.UI
                 {
                     if (Current.Game != null && Find.World != null && factionToSpawn != null)
                     {
+                        // Close other windows from this mod before opening the spawn window
+                        CloseAllWindowsFromThisMod();
                         Find.WindowStack.Add(new FactionSpawnWindow(factionToSpawn));
                     }
                 });
+            }
+        }
+
+        private void CloseAllWindowsFromThisMod()
+        {
+            if (Find.WindowStack?.Windows == null) return;
+
+            var windows = Find.WindowStack.Windows;
+            var asm = GetType().Assembly;
+            for (int i = windows.Count - 1; i >= 0; i--)
+            {
+                var w = windows[i];
+                if (w == null) continue;
+                if (w.GetType().Assembly == asm)
+                {
+                    Find.WindowStack.TryRemove(w, false);
+                }
             }
         }
     }

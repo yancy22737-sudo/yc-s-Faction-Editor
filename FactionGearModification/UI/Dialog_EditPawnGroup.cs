@@ -213,27 +213,7 @@ namespace FactionGearCustomizer.UI
 
                 Widgets.Label(new Rect(row.x + 5f, row.y, 250f, 24f), kindLabel);
 
-                string factionLabel = "-";
-                if (kind != null)
-                {
-                    // 尝试从defaultFactionType字段获取派系信息
-                    if (defaultFactionTypeField != null)
-                    {
-                        var faction = defaultFactionTypeField.GetValue(kind) as FactionDef;
-                        if (faction != null) factionLabel = faction.LabelCap;
-                    }
-                    
-                    // 如果没有获取到派系信息，尝试从当前编辑的派系获取
-                    if (factionLabel == "-" && factionDef != null)
-                    {
-                        // 检查该兵种是否属于当前派系
-                        var factionKinds = FactionGearEditor.GetFactionKinds(factionDef);
-                        if (factionKinds != null && factionKinds.Any(k => k.defName == kind.defName))
-                        {
-                            factionLabel = factionDef.LabelCap;
-                        }
-                    }
-                }
+                string factionLabel = GetFactionLabelForKind(kind);
                 Widgets.Label(new Rect(row.x + 260f, row.y, 140f, 24f), factionLabel);
 
                 Widgets.Label(new Rect(row.x + 410f, row.y, 60f, 24f), LanguageManager.Get("Weight") + ":");
@@ -273,6 +253,85 @@ namespace FactionGearCustomizer.UI
             }
 
             return groupData?.kindDefName ?? LanguageManager.Get("Group");
+        }
+
+        private string GetFactionLabelForKind(PawnKindDef kind)
+        {
+            if (kind == null) return "-";
+
+            // 1. 尝试从 defaultFactionType 字段获取
+            if (defaultFactionTypeField != null)
+            {
+                var faction = defaultFactionTypeField.GetValue(kind) as FactionDef;
+                if (faction != null) return faction.LabelCap;
+            }
+
+            // 2. 如果当前有指定派系，检查兵种是否属于该派系
+            if (factionDef != null)
+            {
+                var factionKinds = FactionGearEditor.GetFactionKinds(factionDef);
+                if (factionKinds != null && factionKinds.Any(k => k.defName == kind.defName))
+                {
+                    return factionDef.LabelCap;
+                }
+            }
+
+            // 3. 尝试从所有派系中查找该兵种所属的派系
+            foreach (var faction in DefDatabase<FactionDef>.AllDefsListForReading)
+            {
+                if (faction.pawnGroupMakers != null)
+                {
+                    foreach (var pgm in faction.pawnGroupMakers)
+                    {
+                        // 检查 options
+                        if (pgm.options != null)
+                        {
+                            foreach (var opt in pgm.options)
+                            {
+                                if (opt.kind != null && opt.kind.defName == kind.defName)
+                                {
+                                    return faction.LabelCap;
+                                }
+                            }
+                        }
+                        // 检查 traders
+                        if (pgm.traders != null)
+                        {
+                            foreach (var opt in pgm.traders)
+                            {
+                                if (opt.kind != null && opt.kind.defName == kind.defName)
+                                {
+                                    return faction.LabelCap;
+                                }
+                            }
+                        }
+                        // 检查 carriers
+                        if (pgm.carriers != null)
+                        {
+                            foreach (var opt in pgm.carriers)
+                            {
+                                if (opt.kind != null && opt.kind.defName == kind.defName)
+                                {
+                                    return faction.LabelCap;
+                                }
+                            }
+                        }
+                        // 检查 guards
+                        if (pgm.guards != null)
+                        {
+                            foreach (var opt in pgm.guards)
+                            {
+                                if (opt.kind != null && opt.kind.defName == kind.defName)
+                                {
+                                    return faction.LabelCap;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return "-";
         }
 
         private static bool LooksMissingTranslation(string label)

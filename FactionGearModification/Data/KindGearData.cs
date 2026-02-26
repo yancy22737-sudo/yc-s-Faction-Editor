@@ -39,6 +39,7 @@ namespace FactionGearCustomizer
         public QualityCategory? ItemQuality = null;
         public QualityCategory? ForcedWeaponQuality = null;
         public float? BiocodeWeaponChance = null;
+        public float? BiocodeApparelChance = null;
         public float? TechHediffChance = null;
         public int? TechHediffsMaxAmount = null;
         public FloatRange? ApparelMoney = null;
@@ -85,6 +86,7 @@ namespace FactionGearCustomizer
             Scribe_Values.Look(ref ItemQuality, "itemQuality");
             Scribe_Values.Look(ref ForcedWeaponQuality, "forcedWeaponQuality");
             Scribe_Values.Look(ref BiocodeWeaponChance, "biocodeWeaponChance");
+            Scribe_Values.Look(ref BiocodeApparelChance, "biocodeApparelChance");
             Scribe_Values.Look(ref TechHediffChance, "techHediffChance");
             Scribe_Values.Look(ref TechHediffsMaxAmount, "techHediffsMaxAmount");
             Scribe_Values.Look(ref ApparelMoney, "apparelMoney");
@@ -168,6 +170,7 @@ namespace FactionGearCustomizer
             ItemQuality = null;
             ForcedWeaponQuality = null;
             BiocodeWeaponChance = null;
+            BiocodeApparelChance = null;
             TechHediffChance = null;
             TechHediffsMaxAmount = null;
             ApparelMoney = null;
@@ -207,6 +210,7 @@ namespace FactionGearCustomizer
                 ItemQuality = this.ItemQuality,
                 ForcedWeaponQuality = this.ForcedWeaponQuality,
                 BiocodeWeaponChance = this.BiocodeWeaponChance,
+                BiocodeApparelChance = this.BiocodeApparelChance,
                 TechHediffChance = this.TechHediffChance,
                 TechHediffsMaxAmount = this.TechHediffsMaxAmount,
                 ApparelMoney = this.ApparelMoney,
@@ -335,6 +339,7 @@ namespace FactionGearCustomizer
             this.ItemQuality = source.ItemQuality;
             this.ForcedWeaponQuality = source.ForcedWeaponQuality;
             this.BiocodeWeaponChance = source.BiocodeWeaponChance;
+            this.BiocodeApparelChance = source.BiocodeApparelChance;
             this.TechHediffChance = source.TechHediffChance;
             this.TechHediffsMaxAmount = source.TechHediffsMaxAmount;
             this.ApparelMoney = source.ApparelMoney;

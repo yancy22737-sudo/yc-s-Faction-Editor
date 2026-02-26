@@ -177,20 +177,34 @@ namespace FactionGearCustomizer.UI
                 UpdateList();
             }
 
-            // Row 2: Mod Filter
+            // Row 2: Mod Filter and Race Filter
             float row2Y = toggleY + 30f;
-            Rect modRect = new Rect(0, row2Y, inRect.width / 2, rowHeight);
+            Rect modRect = new Rect(0, row2Y, inRect.width / 2 - 5f, rowHeight);
             string modLabel = modFilter == null ? LanguageManager.Get("ModAll") : modFilter.Name;
             if (Widgets.ButtonText(modRect, "Mod: " + modLabel))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
                 options.Add(new FloatMenuOption(LanguageManager.Get("ModAll"), () => { modFilter = null; UpdateList(); }));
-                
+
                 var mods = allKinds.Select(k => k.modContentPack).Where(m => m != null).Distinct().OrderBy(m => m.Name);
                 foreach (var mod in mods)
                 {
                     options.Add(new FloatMenuOption(mod.Name, () => { modFilter = mod; UpdateList(); }));
                 }
+                Find.WindowStack.Add(new FloatMenu(options));
+            }
+
+            // Category Filter (Race Filter replaced with Category Filter)
+            Rect raceRect = new Rect(inRect.width / 2 + 5f, row2Y, inRect.width / 2 - 5f, rowHeight);
+            string categoryFilterLabel = GetCategoryLabel(categoryFilter);
+            if (Widgets.ButtonText(raceRect, LanguageManager.Get("Category") + ": " + categoryFilterLabel))
+            {
+                List<FloatMenuOption> options = new List<FloatMenuOption>();
+                options.Add(new FloatMenuOption(GetCategoryLabel(PawnKindCategory.All), () => { categoryFilter = PawnKindCategory.All; UpdateList(); }));
+                options.Add(new FloatMenuOption(GetCategoryLabel(PawnKindCategory.Humanlike), () => { categoryFilter = PawnKindCategory.Humanlike; UpdateList(); }));
+                options.Add(new FloatMenuOption(GetCategoryLabel(PawnKindCategory.Animal), () => { categoryFilter = PawnKindCategory.Animal; UpdateList(); }));
+                options.Add(new FloatMenuOption(GetCategoryLabel(PawnKindCategory.Mechanoid), () => { categoryFilter = PawnKindCategory.Mechanoid; UpdateList(); }));
+                options.Add(new FloatMenuOption(GetCategoryLabel(PawnKindCategory.Other), () => { categoryFilter = PawnKindCategory.Other; UpdateList(); }));
                 Find.WindowStack.Add(new FloatMenu(options));
             }
 
@@ -284,8 +298,8 @@ namespace FactionGearCustomizer.UI
                 rowX = 215f;
 
                 // Race
-                string raceLabel = kind.race?.LabelCap ?? LanguageManager.Get("Unknown");
-                Widgets.Label(new Rect(rowX, y, 100f, 28f), raceLabel);
+                string kindRaceLabel = kind.race?.LabelCap ?? LanguageManager.Get("Unknown");
+                Widgets.Label(new Rect(rowX, y, 100f, 28f), kindRaceLabel);
                 rowX += 110f;
 
                 // Faction

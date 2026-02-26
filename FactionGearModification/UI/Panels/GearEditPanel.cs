@@ -297,6 +297,12 @@ namespace FactionGearCustomizer.UI.Panels
 
         private static void DrawSimpleMode(Rect innerRect)
         {
+            if (string.IsNullOrEmpty(EditorSession.SelectedFactionDefName) || string.IsNullOrEmpty(EditorSession.SelectedKindDefName))
+            {
+                Widgets.Label(innerRect, LanguageManager.Get("SelectAKindDefFirst"));
+                return;
+            }
+
             List<GearItem> gearItemsToDraw = new List<GearItem>();
             KindGearData currentKindData = null;
             if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName) && !string.IsNullOrEmpty(EditorSession.SelectedKindDefName))
@@ -733,9 +739,22 @@ namespace FactionGearCustomizer.UI.Panels
         private static void DrawAdvancedApparel(Listing_Standard ui, KindGearData kindData)
         {
             DrawEmbeddedGearList(ui, kindData, GearCategory.Apparel, GearCategory.Armors);
-            
+
+            // Biocode Chance for Apparel
+            float biocodeChance = kindData.BiocodeApparelChance ?? 0f;
+            float oldBiocode = biocodeChance;
+            WidgetsUtils.Label(ui, $"{LanguageManager.Get("BiocodeApparelChance")}: {biocodeChance:P0}");
+            biocodeChance = ui.Slider(biocodeChance, 0f, 1f);
+            if (Math.Abs(biocodeChance - oldBiocode) > 0.001f)
+            {
+                UndoManager.RecordState(kindData);
+                kindData.BiocodeApparelChance = biocodeChance;
+                kindData.isModified = true;
+                FactionGearEditor.MarkDirty();
+            }
+
             // Moved ForceNaked and ForceOnlySelected to General tab
-            
+
             ui.GapLine();
             WidgetsUtils.Label(ui, $"<b>{LanguageManager.Get("SpecificApparelAdvanced")}</b>");
             if (ui.ButtonText(LanguageManager.Get("AddNewApparel")))
@@ -749,7 +768,7 @@ namespace FactionGearCustomizer.UI.Panels
                 {
                     var item = kindData.SpecificApparel[i];
                     int index = i;
-                    ApparelCardUI.Draw(ui, item, index, () => 
+                    ApparelCardUI.Draw(ui, item, index, () =>
                     {
                         UndoManager.RecordState(kindData);
                         kindData.SpecificApparel.RemoveAt(index);

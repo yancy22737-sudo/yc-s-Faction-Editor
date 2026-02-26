@@ -8,7 +8,7 @@
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
-    <Version>1.1.64</Version>
+    <Version>1.1.65</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -101,4 +101,3 @@
   </ItemGroup>
 
 </Project>
-

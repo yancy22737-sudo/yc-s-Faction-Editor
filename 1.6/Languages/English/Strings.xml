@@ -82,6 +82,7 @@
   <TechLevelLimit>Tech Level Limit</TechLevelLimit>
   <ForcedWeaponQuality>Weapon Quality</ForcedWeaponQuality>
   <BiocodeChance>Biocode Chance</BiocodeChance>
+  <BiocodeApparelChance>Apparel Biocode Chance</BiocodeApparelChance>
   <Biocode>Biocode</Biocode>
   <ForceNaked>Force Naked</ForceNaked>
   <ForceOnlySelected>Force Only Selected</ForceOnlySelected>
@@ -321,7 +322,7 @@ Applying this preset may cause missing items or errors. Continue?</MissingModsWa
   <ResetMenuTooltip>Open reset menu: reset filters, current kind, current faction, or all settings.</ResetMenuTooltip>
   <Changelog>Changelog</Changelog>
   <FactionEdit>Faction Edit</FactionEdit>
-  <FactionEditTooltip>Edit faction name, icon, color and other static data.</FactionEditTooltip>
+  <FactionEditTooltip>Edit factions, edit pawn groups [Adding new pawn kind], add settlements, adjust xenotype chances.</FactionEditTooltip>
   <Settings>Settings</Settings>
   <PawnKinds>Pawn Kinds</PawnKinds>
   <FactionName>Faction Name</FactionName>
@@ -367,6 +368,7 @@ Applying this preset may cause missing items or errors. Continue?</MissingModsWa
   <SortByPower>Sort by Power</SortByPower>
   <PawnKind>Pawn Kind</PawnKind>
   <Race>Race</Race>
+  <RaceAll>All Races</RaceAll>
   <Power>Power</Power>
   <Points>Points</Points>
   <Unknown>Unknown</Unknown>
@@ -511,7 +513,6 @@ Warnings:
   <NameColor>Name Color</NameColor>
   <NameColorTooltip>Display color for faction member names.</NameColorTooltip>
   <RimTalkLinkage>RimTalk Integration</RimTalkLinkage>
-  <WikiTab_Terminology>Terminology</WikiTab_Terminology>
   <NameCannotBeEmpty>Name cannot be empty</NameCannotBeEmpty>
   <NameTooShort>Name too short</NameTooShort>
   <NameTooLong>Name too long (max 100 chars)</NameTooLong>
@@ -572,586 +573,250 @@ You can change this later in Mod Settings.</FGC_FirstTimePrompt_Description>
   <WikiTab_Notes>Notes</WikiTab_Notes>
 
   <!-- Wiki Content -->
-  <Wiki_Principles_Content>[Core Principles]
+  <Wiki_Principles_Content>[How does this mod work?]
 
-This mod intercepts the PawnGenerator.GeneratePawn method using Harmony Postfix patches, intervening immediately after the game generates a pawn to apply custom gear configurations.
+Simply put: After you configure the mod, when the game generates new characters (enemies, caravans, defenders, etc.), the mod quietly replaces their original gear with your custom gear.
 
-[Technical Implementation]
+[When does it take effect?]
+• New enemy raids
+• New caravans arriving
+• Settlement defenders refreshing
+• Reinforcements, visitors, etc.
 
-• Interception Timing: Harmony Postfix triggers immediately after the vanilla GeneratePawn method completes
-• Override Logic: The mod clears vanilla-generated gear and applies custom configurations
-• Scope: Only affects newly generated pawns (new raids, caravans, reinforcements, settlement defenders)
-• Data Persistence: All configurations are saved in the game component, separate per save file
+⚠️ Note: Characters already on the map will NOT change!
 
-[Gear Tag System]
+[Simple Mode vs Advanced Mode]
 
-Each pawn kind has gear tags that determine which items can be used. Gear tags control what equipment a pawn kind can access from the item library.
+📍 Simple Mode:
+Adjust equipment probabilities using sliders, as easy as adjusting volume.
+Good for: Quickly adjusting faction gear style without worrying about details.
 
-• Simple Mode: Adjust weights for different categories (weapons/armor/clothing) to influence randomization
-• Advanced Mode: Directly specify items, bypassing random pools
-• Weight Mechanics: RimWorld weights are "selection weights" not "guaranteed picks" - higher weight means higher probability but not 100%
+📍 Advanced Mode:
+Directly specify what characters must wear and use.
+Good for: Precise control, like "All soldiers must wear power armor".
 
-[Budget Limits]
+[What is Budget?]
 
-Each pawn kind has preset apparel and weapon budgets. The system decides whether to generate equipment based on these budgets.
+Each pawn kind has a "budget". Equipment exceeding the budget won't be generated.
 
-• Default Behavior: Equipment exceeding budget is skipped
-• ForceIgnore Option: Ignores budget limits, forcing all configured gear (may create "god-tier" characters)
-• Recommendation: Keep budget limits for normal gameplay, enable ForceIgnore for creative mode or high difficulty
+Example: A tribal warrior with 500 silver budget won't get an 800 silver weapon.
 
-[Body Part Conflicts]
+Want full customization? Increase the budget, or enable the "Force Ignore" option.
 
-RimWorld's apparel system is based on body part coverage - only one item can occupy a body part.
+[Be careful with Force Options!]
+• Force Ignore: Ignores budget, may create overpowered characters, breaking game balance
+• Force Only Selected: Remove all vanilla gear, must ensure you have complete equipment configured
 
-• Detection: Uses ApparelUtility.HasPartsToWear to check if body parts are occupied
-• Typical Conflict: Two bulletproof vests cannot be worn simultaneously
-• Solution: Enable ForceIgnore to attempt forced override of conflicting gear
+[Adjust Item Generation Probability]
+• Weight: Equipment probability, click specific item to see slider, adjust to desired probability.
 
-[Advanced Mode Details]
+[What are Item Pools?]
 
-Advanced mode provides fine-grained control:
+Put multiple items into a pool, randomly draw one when generating.
+Benefit: Different enemy equipment each time, more challenging.
 
-1. Specific Items
-   Abandon random pools and directly specify equipment. The system strictly follows configuration, unaffected by randomness.
+There are 4 pools you can configure separately, draw probability determined by weights.</Wiki_Principles_Content>
+  <Wiki_Terminology_Content>[Core Concepts You Must Know]
 
-2. Material Override
-   Force equipment to use specific materials: steel, plasteel, devilstrand, etc. Leave empty for game defaults.
+🎭 PawnKind
+The "classes" in the game: Pirate Gunner, Tribal Warrior, Empire Knight, etc.
+Each pawn kind has its own equipment preferences and stats.
 
-3. Quality Override
-   Set equipment quality range from awful to legendary. Quality directly affects stats and value.
+🏴 Faction
+A force composed of multiple pawn kinds: Pirates, Tribals, Empire, Caravans, etc.
+A faction has many pawn kinds.
 
-4. Style Override
-   Supports Ideology DLC style overrides, allowing specific religious/ideological apparel styles.
+🔧 Group
+Every faction generates units with a "group", such as "Combat", "Trader", "Settlement", etc.
+A faction has many groups. You can add different pawn kinds or mechanoids to groups.
 
-5. Selection Mode
-   • AlwaysTake: Equipment always appears on the character
-   • RandomChance: Randomly decides based on set probability
-   • FromPool: Randomly selects one from specified item pools
+💰 Budget
+How much silver each pawn kind can spend on equipment. Exceed the budget? Won't be generated.
 
-6. Forced Hediffs
-   Add health states to generated units: bionic limbs, implants, drugs, diseases, etc.
+🎲 Selection Mode
+• AlwaysTake: Always equipped
+• RandomChance: Based on luck
+• FromPool: Randomly draw one
 
-7. Item Pool System
-   Group items into 4 different pools, each with independent weights. The system randomly draws from pools based on weights.</Wiki_Principles_Content>
-  <Wiki_Terminology_Content>[Core Concepts]
+🛡️ Force Options
+• Force Ignore: Ignore budget, force equip
+• Force Naked: Strip first, then equip your selections
+• Force Only Selected: Remove all vanilla gear
 
-PawnKind
-Definition: A pawn kind definition describing a character type (e.g., pirate gunner, tribal warrior).
-Explanation: Think of it as a "class" or "template" - each PawnKind determines base stats, equipment preferences, skill levels, etc.
+🔧 Item Properties
+• Material: Steel, cloth, plasteel, etc. Affects stats
+• Quality: Awful → Legendary, affects stats and price
 
-Faction
-Definition: A faction composed of multiple pawn kinds.
-Explanation: Various forces in the game like pirates, tribals, empire, player colony. Each has diplomatic relations, tech level, and pawn composition.
+💊 Hediff (Health State)
+Can force add states to characters: bionic limbs, drugs, diseases, etc.
+Use: All archotech cyborgs!
 
-[Gear Related Terms]
-
-Gear Tag
-Definition: Tags marking which items can be used by which pawn kinds.
-Explanation: Like product category tags - "military", "tribal", "noble", etc. Pawn kinds use tags to determine available equipment.
-
-ApparelMoney (Apparel Budget)
-Definition: Maximum silver value a pawn kind can spend on apparel when generating.
-Explanation: The character's "shopping budget" - equipment exceeding budget won't be purchased/generated.
-
-WeaponMoney (Weapon Budget)
-Definition: Maximum silver value a pawn kind can spend on weapons when generating.
-Explanation: Same as above, but specifically for weapons.
-
-[Selection Mode Terms]
-
-Selection Mode
-Definition: Rules determining how equipment is selected.
-
-• AlwaysTake
-  Definition: Equipment always appears on the character.
-  Explanation: 100% generation, no randomness.
-
-• RandomChance
-  Definition: Randomly decides based on set probability.
-  Explanation: Like rolling dice - 50% probability is like flipping a coin.
-
-• FromPool
-  Definition: Randomly selects one from specified item pools (Pool 1-4).
-  Explanation: Drawing from a preset "lottery pool".
-
-[Advanced Settings Terms]
-
-Force Ignore
-Definition: Forcefully ignore budget limits and body part conflicts.
-Explanation: Ignore all rules, forcefully equip all configured gear. May create "god-tier" characters but could cause issues.
-
-Force Naked
-Definition: Strip all apparel when generating.
-Explanation: Generate the character naked, then only equip what you specify.
-
-Force Only Selected
-Definition: All vanilla/existing gear is stripped before applying custom gear.
-Explanation: Strip first, then equip your specified gear - prevents vanilla/custom mixing.
-
-Biocode
-Definition: Biocoded weapons bound to specific characters.
-Explanation: Weapons have a "DNA lock" - only specific characters can use them, others get mood penalties.
-
-[Item Property Terms]
-
-Material
-Definition: The material used to craft equipment.
-Common Materials: Cloth, leather, steel, plasteel, uranium, devilstrand, gold, etc.
-Effect: Material determines protection value, durability, weight, and appearance.
-
-Quality
-Definition: Equipment quality level.
-Range: Awful → Poor → Normal → Good → Excellent → Masterwork → Legendary
-Effect: Quality directly affects equipment stats and market value. Legendary can be 2-3x better than awful.
-
-Stuff
-Definition: Material items that can be used to craft equipment.
-Explanation: Cloth for clothing, metal plates for armor, etc.
-
-[Health State Terms]
-
-Hediff
-Definition: Any health-related state on a character.
-Categories:
-• Implants: Bionic limbs, organ replacements
-• Drugs: Addictions, tolerances
-• Diseases: Infections, plagues, cancer
-• Injuries: Cuts, burns, bruises
-• Other: Pregnancy, age-related degeneration
-
-Severity
-Definition: Hediff intensity level.
-Effect: Disease severity determines symptom severity, drug severity determines effect strength.
-
-[Pawn Group Terms]
-
-PawnGroupKind
-Definition: Determines the purpose of this group in the game.
-
-• Combat: For raids, sieges, and combat scenarios
-• Trader: For caravan generation, must include traders
-• Settlement: For faction settlement defenders
-• Peaceful: For peaceful visitors, travelers
-
-Commonality
-Definition: Relative probability of this group being selected.
-Explanation: Higher weight means this group appears more frequently.
-
-Points
-Definition: Limits the maximum combat power of this group.
-Explanation: Controls group strength - higher points allow stronger characters.
-
-[Other Terms]
-
-DefName
-Definition: Unique identifier used internally by the game.
-Explanation: Like an ID number - each Def has a unique string like "Pirate", "TribalWarrior".
-
-TechLevel
-Definition: Technology level of items or factions.
-Levels: Primitive → Medieval → Industrial → Spacer → Ultra
-Effect: Determines which equipment can be used - high-tech gear won't appear in low-tech factions.
-
-Xenotype
-Definition: Genetically modified human subspecies introduced by Biotech DLC.
-Examples: Sanguophages, pigmen, mole people. Each xenotype has unique genetic traits.</Wiki_Terminology_Content>
-  <Wiki_Workflow_Content>[Quick Start]
-
-This chapter guides you from zero to using this mod, covering the complete workflow from creating presets to exporting and sharing.
-
-[Step 1: Create Preset]
-
-Presets are the basic container for saving configurations. All gear configurations must be saved in a preset.
-
-Steps:
-1. Open Mod Settings (Main Menu → Options → Mod Settings → Faction Gear Customizer)
-2. Click "Preset Manager" button
-3. Click "Create New Preset"
-4. Enter preset name (e.g., "My Custom Config")
-5. Optional: Add description for future reference
-
-Tip: It's recommended to create a "Backup Preset" on first use to save vanilla settings for recovery.
-
-[Step 2: Select Faction]
-
-The left list shows all available factions.
-
-• Faction Categories: Human factions, animal factions, mechanoid factions, others
-• Color Coding: Gray means the faction doesn't exist in current game
-• Search: Use search box to quickly locate factions
-
-Action: Click faction name to expand and view all pawn kinds under that faction.
-
-[Step 3: Select Pawn Kind]
-
-The pawn kind list shows all PawnKinds under the selected faction.
-
-• Icon: Shows the pawn kind's default appearance
-• Name: Display name of the pawn kind
-• DefName: Internal identifier
-
-Action: Click pawn kind name to enter the editing interface.
-
-[Step 4: Configure Gear - Simple Mode]
-
-Simple mode is suitable for quick adjustments through the weight system.
-
-Interface:
-• Weapons: Ranged weapons, melee weapons
-• Armor: Helmets, bulletproof vests, etc.
-• Clothing: Shirts, pants, jackets, etc.
-• Others: Accessories, belts, etc.
-
-Steps:
-1. Click "Add" button to open item picker
-2. Check items you want this pawn kind to use
-3. Adjust slider to set weight (0-100)
-4. Higher weight means higher selection probability
-
-Budget Settings:
-• Drag budget slider to adjust total budget
-• Low budget may prevent some gear from generating
-• Set reasonably based on faction tech level
-
-[Step 5: Configure Gear - Advanced Mode]
-
-Advanced mode provides fine control for specific needs.
-
-Switch: Click "Simple/Advanced" button at top
-
-Advanced Mode Features:
-
-1. Specify Items
-   • Click "Add Weapon" or "Add Apparel"
-   • Search and select specific items in the picker
-   • Can add multiple items to form a list
-
-2. Set Item Properties
-   Click edit icon next to item:
-   • Material: Force specific material (empty for random)
-   • Quality: Set quality range (e.g., Good-Excellent)
-   • Selection Mode: AlwaysTake/RandomChance/FromPool
-
-3. Configure Item Pools
-   • Pool 1-4: Four independent item pools
-   • Each pool can contain multiple items
-   • Set pool weights to affect draw probability
-
-4. Add Hediffs
-   • Click "Add Forced Hediff"
-   • Select Hediff to add (e.g., bionic leg, drugs)
-   • Set Severity
-   • Set Chance
-
-5. Advanced Options
-   • ForceNaked: Generate naked
-   • ForceOnlySelected: Only use specified gear
-   • ForceIgnore: Ignore budget and conflict limits
-
-[Step 6: Live Preview]
-
-Preview lets you see modification effects before saving.
-
-Steps:
-1. Click "Preview" button to open preview window
-2. Window shows generated character appearance and gear list
-3. Click "Rebuild" to refresh preview
-4. Adjust seed value to see different random results
-
-Note: Preview is only available in-game, limited functionality in main menu.
-
-[Step 7: Batch Operations]
-
-Batch apply quickly applies current config to multiple pawn kinds.
-
-Steps:
-1. Click "Batch Apply" button
-2. Select target pawn kinds in popup window
-3. Can "Select All" or check individually
-4. Click confirm to apply
-
-Use Cases:
-• Unify uniform style across entire faction
-• Quickly configure similar pawn kinds
-
-[Step 8: Save Changes]
-
-All modifications must be saved to take effect.
-
-Steps:
-1. Click "Save Changes to Current Game" button
-2. Changes take effect immediately, no restart needed
-3. Newly generated characters will use new config
-
-Important:
-• Modifications only affect newly generated characters
-• Existing characters are not affected
-• Preview before saving to confirm effects
-
-[Step 9: Preset Management]
-
-Presets can be exported for sharing or imported for use.
-
-Export Preset:
-1. Select preset to share in Preset Manager
-2. Click "Export" button
-3. Preset data copied to clipboard
-4. Send string to friends or post to community
-
-Import Preset:
-1. Click "Import from Clipboard"
-2. Paste preset string
-3. Confirm import
-
-Notes:
-• Imported presets may depend on specific mods
-• Missing mods will show some items as missing
-• Check compatibility after import
-
-[Step 10: Faction Group Editing (Advanced)]
-
-Faction groups determine how factions generate various unit combinations in-game.
-
-Access:
-1. Select faction then click "Pawn Groups" tab
-2. View all group configurations for that faction
-
-Group Types:
-• Combat: Combat groups for raids
-• Trader: Caravan groups, must include traders
+🏘️ Group Types (Select pawn types to spawn here)
+• Combat: Enemies that attack you / Allies that support you
+• Trader: Caravans for trading
 • Settlement: Settlement defenders
 • Peaceful: Peaceful visitors
 
-Edit Points:
-• Commonality: Higher weight means more frequent appearance
-• Points: Controls group strength
-• Options: General combatants
-• Traders/Carriers/Guards: Specific roles
+⚙️ Tech Level
+Primitive → Medieval → Industrial → Spacer → Ultra
+High-tech equipment won't work for low-tech factions
 
-Warnings:
-• Deleting all Combat groups prevents raid generation
-• Trader groups without traders fail to generate caravans
+🦠 Xenotype
+Only available with Biotech DLC: Sanguophages, pigmen, mole people, and other genetically modified humans.
+Can set probabilities for different xenotypes in each faction.</Wiki_Terminology_Content>
+  <Wiki_Workflow_Content>[Quick Start - Workflow]
 
-[Complete Workflow Example]
 
-Scenario: Make all empire soldiers wear red power armor
+1. Want to quickly adjust faction gear? Follow these steps!
+• Create Preset
+Click "Preset Manager" → New → Name it (e.g., "Enhanced Tribals")
+• Select Faction and Pawn Kind
+Left side: Select faction (Pirates/Tribals/Empire...)
+Middle: Select pawn kind (Gunner/Warrior/Knight...)
+• Configure Gear
+Simple Mode: Drag sliders to adjust equipment probabilities
+Advanced Mode: Click "Add" to select specific equipment
+• Save and Apply
+Click Save! Then wait for new enemies to arrive, see the effect!
 
-1. Create preset "Empire Red Legion"
-2. Select "Empire" faction
-3. Select "Empire Soldier" pawn kind
-4. Switch to Advanced Mode
-6. Set selection mode to AlwaysTake
-7. Click Batch Apply, select all empire combat pawn kinds
-8. Preview to confirm effect
-9. Save changes
-10. Export preset to share with friends</Wiki_Workflow_Content>
-  <Wiki_Notes_Content>[Important Notes]
+Tip: Try Simple Mode first, Advanced Mode gives precise control over each item.
 
-This chapter covers essential information for using this mod, including effect mechanisms, compatibility, common issues and solutions.
 
-[Modification Effect Mechanism]
+2. Want to adjust faction group generated pawn kinds? (Add Animals/Mechanoids/Non-Faction Members)
+• Click Edit Faction
+Click "Edit Faction" → Dropdown find the group to adjust (e.g., "Combat #1")
+• Select Pawn Kinds
+Middle: Select pawn kinds to remove/add (Warriors/Animals/Mechanoids...)
+• Edit Group
+Adjust the group's pawn kinds/count/weights, etc.
+• Save and Apply
+Click Save! Then wait for new enemies to arrive, see the group effect!
 
-When Effects Apply:
-• Modifications take effect immediately after saving, no restart needed
-• Only affects newly generated characters (new raids, caravans, settlement defenders, etc.)
-• Existing characters on the map are not affected
-• Units already generated in ongoing events won't change
 
-When Effects Don't Apply:
-• Existing characters and animals
-• Player colony starting characters (unless regenerated)
-• Some special event units (depends on event implementation)
+[Advanced Play]
 
-How to Verify:
-• Use preview function to see generation results
-• Wait for new raids/caravans and observe gear
-• Use dev mode to force spawn for testing
+1. Random but Themed (Item Pools)
+Different enemy equipment each time?
+• Advanced Mode → Click "Item Pool"
+• Pool1 put in multiple weapons
+• Set weights (higher = more likely to be selected)
+• Randomly draws one when generating
 
-[Preset Management Notes]
+2. All Cyborgs
+Want enemies to be all mechanically enhanced?
+• Advanced Mode → "Add Forced Hediff"
+• Select "Bionic Leg", "Bionic Arm", etc.
+• Set 100% probability
 
-Preset Purpose:
-• Presets are configuration containers, all modifications saved in active preset
-• Switching presets loads different configuration sets
-• Presets don't affect each other
+3. Batch Apply
+Want one configuration for all pawn kinds in a faction?
+• Configure one pawn kind
+• Right-click → Copy
+• Select other pawn kinds → Right-click → Paste
+• Done!
 
-Important Reminders:
-• Deleting presets won't rollback changes already saved to game
-• Applied configurations continue working even if preset is deleted
-• To restore vanilla, must manually reset or load "vanilla" preset
-• Regularly export presets for backup
+4. Live Preview
+Not sure about the effect?
+Click "Preview" button, see generation results directly!
+Adjust until satisfied.
 
-Save Independence:
-• Each save file independently stores configurations
-• Configurations don't auto-sync when switching saves
-• Prompt to select preset when first entering a save
+5. Export Preset to Share
+Configured something good to share with friends?
+• Preset Manager → Export
+• Copy the generated string
+• Send to friends
+• Friends can import and use
 
-[Common Issues and Solutions]
+[Practice]
 
-Issue 1: Gear not generating as expected
-Possible Causes:
-• Budget limits: Equipment value exceeds pawn kind budget
-• Body part conflicts: Body parts occupied by other gear
-• Tech limits: Equipment tech level higher than faction
-• Race restrictions: Some races can't wear specific gear
+Task: Add Powerful Mechanoid Boss to Faction
+Configuration:
+• Top Left - Faction Edit
+• Dropdown find Faction Group Edit
+• Select specific group type, such as (Combat #1)
+• Add Mechanoids.
 
-Solutions:
-• Enable ForceIgnore option
-• Check and adjust budget settings
-• Confirm equipment matches pawn kind tech level
-• Check race apparel compatibility
+Task: Strengthen Tribal Forces
+Goal: Make tribal enemies wear better equipment
+Configuration:
+• Increase budget (tribals are originally poor)
+• Simple Mode: Increase ranged and melee weights
+• Or Advanced Mode: Directly add iron swords, leather armor
 
-Issue 2: Some items can't be selected
-Possible Causes:
-• Item disabled by other mods
-• Item requires specific DLC (Ideology, Biotech)
-• Item tech level too high
-• Item is quest/event exclusive
+Task: Create Elite Enemies
+Goal: A faction with all legendary equipment
+Configuration:
+• Advanced Mode: Set each item to "Legendary" quality
+• Enable "Force Ignore"
+• Enable "Force Only Selected"
+• Add strongest equipment</Wiki_Workflow_Content>
+  <Wiki_Notes_Content>[Must Know!]
 
-Solutions:
-• Check mod load order
-• Confirm required DLCs are installed
-• Use search to confirm item exists
+⏰ Save! Save!
+• Save takes effect immediately, no game restart needed
+• Only affects newly spawned enemies/caravans/defenders
+• Enemies already on the map won't change!
 
-Issue 3: Game lag or crashes
-Possible Causes:
-• Large number of items causing complex generation calculations
-• Conflicts with other gear modification mods
-• Circular references or invalid configurations
+Want to know the effect? Click "Preview" button, see directly!
 
-Solutions:
-• Reduce number of items per pawn kind
-• Check mod compatibility
-• Reset configuration and troubleshoot step by step
+[Common Issues]
 
-[Advanced Options Warnings]
+If gear modifications don't take effect,
+please check:
 
-ForceIgnore:
-• Completely ignores budget limits
-• Attempts to force override body part conflicts
-• May create "god-tier" characters, breaking game balance
-• Recommended only for creative mode or testing
+- Whether it conforms to [Budget] limits
+- Whether successfully saved to [Preset]
+- Whether [Force Ignore] is enabled
+- Whether [Force Only Selected] is enabled
 
-ForceNaked:
-• Strips all vanilla apparel
-• If subsequent config is incomplete, character may actually be naked
-• Ensure sufficient alternative gear is configured
+If pawn collapses after spawning,
+please check:
 
-ForceOnlySelected:
-• Removes all vanilla gear
-• If custom list is empty, character will have no gear
-• Recommended to enable for full control
+- Whether carried items exceed reasonable [Mass/Bulk]
+- Whether severe [Debuff] was added in the Hediff menu
+
+🔧 Can't select items?
+• Requires specific DLC
+• Is it disabled by other mods
+• Tech level too high
+
+🔧 Compatibility with xxx mod?
+• Place that incompatible mod after this mod in load order.
+
+[Force Options Warning]
+
+⚠️ Force Ignore: May create "god-tier" enemies, game becomes too easy
+⚠️ Force Naked: Remember to configure enough clothes, otherwise truly naked
+⚠️ Force Only Selected: Make sure your custom list has items first!
+
+[Backup!]
+
+• First use export a vanilla preset
+• Major modifications export a backup
+• Test before sharing with friends
 
 [Compatibility]
 
-Fully Compatible:
-• Combat Extended (CE): Ammo system works normally
-• Humanoid Alien Races: Alien race gear works normally
-• Vanilla Expanded series: All VE items available
-• Ideology DLC: Style system fully supported
-• Biotech DLC: Genes and xenotype system supported
+✅ These mods tested for compatibility:
+• Combat Extended (CE)
+• Vanilla Expanded series
+• Ideology DLC
+• Biotech DLC
 
-Known Limitations:
-• Some mods that completely overhaul gear systems may conflict
-• Dynamic gear generation mods may produce unexpected results
-• Mods that modify PawnKindDef may overwrite each other
+⚠️ Mod load order:
+Harmony → Large Mods → This Mod → Small Patches
 
-Recommended Mod Load Order:
-1. Harmony
-2. Core
-3. Other large mods (e.g., CE)
-4. Faction Gear Customizer
-5. Small patch mods
+[Questions?]
+  Contact me:
 
-[Performance Optimization]
-
-Avoid Performance Issues:
-• Keep pawn kind gear lists reasonable (suggest &lt;50 items)
-• Avoid complex rules for large numbers of pawn kinds simultaneously
-• Use item pools instead of specifying each item individually
-• Regularly clean up unused presets
-
-Large Mod Pack Users:
-• First load may take longer to build cache
-• Item picker may have brief delay when opening
-• Previewing large numbers of pawn kinds may lag
-
-[Backup and Recovery]
-
-Recommended Backup Strategy:
-1. Export "vanilla config" preset before first use
-2. Export current preset before major modifications
-3. Regularly backup entire save files
-4. Test compatibility before sharing presets
-
-Recovery Methods:
-• Load backup preset
-• Reset specific faction/pawn kind
-• Complete reset of all configurations
-
-[Multiplayer and Sharing]
-
-Sharing Presets:
-• Exported preset strings contain all configurations
-• Recipients need same mod environment
-• Recommend sharing mod list together
-
-Multiplayer:
-• Host configuration determines generation rules
-• Clients don't need this mod (host only)
-• Ensure all players use same configuration version
-
-[Developer and Debugging]
-
-Dev Mode Features:
-• Force spawn specific pawn kinds for testing
-• View detailed generation logs
-• Modify configurations in real-time and observe effects
-
-Debugging Tips:
-• Use preview function for quick verification
-• Gradually increase complexity to troubleshoot
-• Check game logs for error information
-
-[Best Practices]
-
-Beginner Recommendations:
-1. Start with simple mode, familiarize with weight system
-2. Modify single pawn kind first, observe effects
-3. Create backup preset before large-scale modifications
-4. Preview frequently to verify configuration
-
-Advanced Tips:
-1. Use item pools to create random but themed configurations
-2. Combine Hediffs to create unique pawn kinds (e.g., all bionic)
-3. Use batch apply to quickly unify faction style
-4. Create different presets for different game stages
-
-Creative Playstyles:
-• "Iron Legion" - All power armor
-• "Special Forces" - All carrying specific weapons
-• "Future Warriors" - All bionic enhanced
-
-[Technical Support]
-
-Troubleshooting Steps:
-1. Confirm mod is latest version
-2. Check if required mods are missing
-3. Try resetting configuration to see if issue disappears
-4. Check game logs for error information
-5. Submit issue report on Steam Workshop or GitHub
-
-[Help Channels]
-
-Click links below for help or to report issues:
-
-• Steam Workshop Page
+• Steam Workshop
 https://steamcommunity.com/sharedfiles/filedetails/?id=3670833973
 
-• GitHub Repository
+• GitHub
 https://github.com/yancy22737-sudo/FactionGearCustomizer
 
-• QQ Group (Player and Tech Discussion)
-Group: 984338429</Wiki_Notes_Content>
+• QQ Group
+984338429</Wiki_Notes_Content>
 
   <!-- Missing Keys Added -->
   <ItemQualityTooltip>Override the quality of all items equipped by this pawn kind.</ItemQualityTooltip>

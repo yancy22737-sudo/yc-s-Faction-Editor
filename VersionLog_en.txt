@@ -1,8 +1,39 @@
+v1.3.0
+- Add: Preview button now shows unsaved changes confirmation dialog - when there are unsaved changes, a confirmation dialog will ask whether to save
+- Add: Preview dialog adds auto-save toggle - when "Auto-save before preview" is checked, subsequent previews will auto-save without asking
+
+v1.2.9
+- Fix: Redesign Inventory application mechanism - remove complex recovery mechanism, use simple multi-delay application strategy to ensure items are correctly retained
+- Fix: Simplify ApplyInventory logic - ApplyInventoryOnce() handles single application, ScheduleDelayedInventoryApply() handles 3 consecutive delayed applications to avoid race conditions
+
+v1.2.8
+- Fix: Thoroughly fix Inventory recovery mechanism - add InventoryItemState to track expected quantities, GetItemCountInInventory calculates current quantity, only re-add when missing to avoid "Tried to add ... to ThingOwner but this item is already here" warnings
+- Fix: Optimize recovery logic - only continue to next round of recovery when items are actually restored to avoid unnecessary delayed execution
+
+v1.2.7
+- Fix: ForceOnlySelected mode now also clears pawn's original Hediffs - only keeps user-configured ones (keeps Mech-prefixed mechanical hediffs)
+
+v1.2.6
+- Fix: ForceOnlySelected mode now clears pawn's default inventory items - only keeps user-configured items
+
 v1.2.5
+- Fix: Fix infinite loop issue caused by Inventory recovery mechanism - add recovery limit (max 3 times) to avoid performance issues and infinite retries
 - Fix: Item count slider now uses item's stackLimit as max value instead of fixed 50
 - Add: CE ammo items use magazine size × 10 as max value for better compatibility
 - Fix: Item pool count slider max value changed from 500 to 100
 - Add: CECompat.GetSuggestedMaxCount() for intelligent count limit detection
+
+v1.2.4
+- Fix: Fix Hediff picker missing positive buff options like DrugHighs - IsCandidate now allows all Hediffs, add DrugHighs and Buffs categories
+- Fix: Fix "Try to restore null body part" error - for special Hediffs like DrugHighs, don't specify BodyPart, add exception handling
+- Fix: Implement more thorough Inventory item recovery mechanism - not only validates but also automatically re-adds items removed by game logic (medicine, food, etc.)
+- Add: Add InventoryRestoreData class and related recovery logic to ensure configured items are correctly retained
+
+v1.2.3
+- Fix: Fix ForcedHediff not applying DrugHigh effect - now correctly uses severityRange to set Hediff severity
+- Fix: Enhance Inventory item adding robustness - add special item filtering, add logging, implement delayed validation mechanism
+- Fix: Prevent selecting and adding corpses (Corpse) in Inventory picker - to avoid errors
+- Add: Add Inventory item validation mechanism - use LongEventHandler to validate item existence in next frame for debugging
 
 v1.2.2
 - Fix: Fix Wiki language settings not taking effect (Wiki language keys added to Language directory)
@@ -13,141 +44,261 @@ v1.2.1
 - Add: Add WikiWindow.cs implementation for Wiki window UI.
 - Add: Add multi-language support (English/Chinese) for Wiki content.
 
+v1.1.67
+- Optimize: Optimize item card UI height calculation in Advanced mode - dynamically calculate height based on actual content to reduce whitespace.
+- Optimize: ItemCardUI, ApparelCardUI, HediffCardUI add GetCardHeight static method for dynamic height calculation.
+- Fix: Delete incorrect GameComponents.xml file (GameComponentDef is not a valid Def type).
+- Add: Add Patch_GameComponent.cs, use Harmony Patch to correctly register FactionGearGameComponent.
+
+v1.1.66
+- Add: Add new feature: detect when no preset is currently active and automatically clear all config files to avoid residual config affecting new games.
+
+v1.1.65
+- Fix: Fix manual add settlement not closing other Mod windows - actively close other Mod windows before opening settlement placement window.
+- Fix: Fix second "Select on World Map" button not closing other Mod windows.
+- Change: Change "Tech Budget" to "Tech Limit", use vanilla TechLevel enum (Animal/Primitive/Medieval/Industrial/Spacer/Ultratech/Archotech).
+- Add: Tech Limit defaults to reading faction's default TechLevel, can manually select different level to restrict items above that level.
+- Add: New language key: TechLevelLimit.
+
 v1.1.64
 - Add: Add validation for xenotype chances total - prevents saving when sum exceeds 100% and shows user a warning message.
 - Add: New language key: XenotypeChancesExceed100.
+
+v1.1.63
+- Fix: Fix issue where previously modified faction data was still visible after "Reset All". Now clears all cache and session state after reset to ensure UI refreshes correctly.
+
+v1.1.62
+- Add: Add faction deletion feature in faction edit menu, can safely remove faction and its settlements, includes confirmation dialog.
+- Add: New language keys: DeleteFactionTitle, DeleteFactionWarning, TargetFaction, SettlementsToRemove, PawnsToRemove, OtherEffects, FactionRelationsRemoved, ActiveQuestsAffected, DeleteFaction, DangerZone, NoFactionInstanceToDelete, FactionDeleted, FactionDeleteFailed, SelectFactionInstanceToDelete, SelectInstance, Next, Settlements, UnknownLocation.
+
+v1.1.61
+- Add: Add player relation settings in faction edit menu, allows player to set relation with faction as Ally/Neutral/Hostile.
+- Add: New language keys: PlayerRelationSettings, RelationAlly, RelationNeutral, RelationHostile, RelationCurrent, RelationDefault.
+
+v1.1.60
+- Optimize: Preview window multi-preview mode changed to frame-by-frame Pawn generation to avoid lag when opening.
+- Optimize: Hediff card control IDs changed to object-based generation to reduce control ID conflict risk.
+- Refactor: Refactor faction list building logic, eliminate duplicate code and unify filtering/display rules.
+- Optimize: Add EditorSession.ResetSession to auto-reset session state when game state changes.
+
+v1.1.59
+- Optimize: Optimize FactionGearManager.LoadDefaultPresets to use Lazy Loading, only loads faction detailed data when user clicks on a faction, improving startup performance.
+- Fix: Enhance exception handling in GearApplier.ApplyCustomGear (try-catch) to prevent Patch injection point errors from interrupting Pawn generation.
+- Update: Remove FactionGearManager.GetModGroup related functionality and references to simplify code.
+
+v1.1.58
+- Update: Rename "Apparel Color" to "Name Color" and add related description tooltip.
+- Add: Add "RimTalk Integration" button in Advanced settings (not yet open, shows as "In Development").
+
+v1.1.57
+- Fix: Fix "Select on Map" feature causing NullReferenceException due to calling old method. Now uses new FactionSpawnWindow logic.
+
+v1.1.56
+- Build: Release build.
+
+v1.1.55
+- Fix: Fixed TopBar not showing in MainTabWindow.
+
+v1.1.54
+- Add: Add "Select on Map" settlement feature (FactionSpawnWindow), reference WorldEdit implementation, supports continuous clicking on world map to generate settlements.
+- Update: Replace original WorldTargeter selection method with more intuitive non-modal window interaction.
+
+v1.1.53
+- Fix: Fix NullReferenceException that could occur when switching World tab in FactionSpawnManager, add null check and auto-fix logic for MainButtonDefOf.World.TabWindow.
+
+v1.1.52
+- Fix: Fix issue where World Tab couldn't switch in FactionSpawnManager.BeginTargetingForSettlement, add fallback mechanism (try using Inspect window as placeholder to prevent null reference).
+- Fix: Fix potential NullReferenceException in FactionSpawnManager.BeginTargetingForSettlement, add detailed debug logging and null checks.
+- Fix: Fix potential compile error in Dialog_PawnKindPicker when accessing defaultFactionType property.
+- Update: FactionEditWindow removes tab design, change to single-page long scroll layout,，集中展示设置、兵种列表和群组列表。
+
+v1.1.51
+- Update: In preview UI, mouse hover for 1 second before showing hover info card (equipment panel) to avoid frequent popups when moving mouse quickly.
 
 v1.1.50
 - Fix: Fix duplicated options rendering in the out-of-game editor caused by incorrectly ignoring duplicates.
 - Update: Enter the editor directly from Mod Options; the Open Editor button is no longer needed.
 - Update: The bottom main button now opens a non-fullscreen editor window.
+
 v1.1.49
 - Fix: Fix UI crash in Advanced mode when adding weapons due to a missing message type (NullReferenceException).
 - Fix: Harden default weapon add logic with safety checks to avoid issues when "Gun_AssaultRifle" is missing.
+
 v1.1.48
 - Fix: Fix duplicated Reset buttons in the main UI and the edit panel.
 - Add: Add CE ammo caliber filter (ItemLibrary), allowing filtering ranged weapons by caliber.
 - Fix: Adjust mod load order to ensure it loads after Combat Extended.
+
 v1.1.47
 - Fix: Fix UI crash when loading presets if language file loading fails (NullReferenceException).
 - Fix: Restore logic where clicking the MainTab opens the editor directly instead of showing a fullscreen settings window.
+
 v1.1.46
 - Add: Add Inventory support, allowing configuration of any items such as medicine, food, tools, etc.
 - Add: Add Combat Extended (CE) compatibility: auto-add weapon ammo; show item Bulk and Mass.
 - Add: Support configuring stack count range (Count Range).
+
 v1.1.45
 - Update: Change the bottom button UI from fullscreen Tab mode to a standard Mod settings popup window for better UX.
 - Add: Add FactionGearSettingsWindow implementing a standard settings window (pause game, centered, close confirmation, etc.).
+
 v1.1.44
 - Fix: Remove non-standard manual scroll wheel handling in KindListPanel to fix scrollbar drag issues.
+
 v1.1.43
 - Fix: Delete Patch_ModSettingsTitleIcon.cs, which misidentified the main UI as a target and forced drawing title/icon, leaving an unremovable title bar.
+
 v1.1.42
 - Fix: Force optionalTitle to empty in PreOpen to prevent RimWorld from drawing the native window title and close button.
+
 v1.1.41
 - Fix: Further force the main UI WindowOnGUI draw region to start at (0,0) to resolve top whitespace from windowRect offsets in some cases; also reduce content margins.
+
 v1.1.40
 - Fix: Completely remove the top blank area by taking over drawing with a rewritten WindowOnGUI.
 - Fix: Remove duplicated title text in Mod settings UI and optimize TopBarPanel layout.
+
 v1.1.39
 - Build: Release build.
+
 v1.1.38
 - Fix: Handle top whitespace with highest priority: remove the custom TopBar in the main UI and restore RimWorld's native title bar; move Save/Preset/Reset buttons to the top of the editor panel to avoid consuming extra top height.
+
 v1.1.37
 - Fix: Completely remove the native title bar and top whitespace of the main UI window: take over WindowOnGUI for FactionGearMainTabWindow, bypass GUI.Window's fixed title bar height, and draw via BeginGroup + custom contents.
+
 v1.1.36
 - Fix: Improve robustness of duplicate-title suppression: set the patch to Priority.Last and also intercept Window.InnerWindowOnGUI to reduce chances of being overridden by other mods.
+
 v1.1.35
 - Fix: Fully fix duplicated title in the main UI by intercepting Window.WindowOnGUI via Harmony and forcibly disabling the default title drawing for FactionGearMainTabWindow.
+
 v1.1.34
 - Fix: Improve title hiding logic for FactionGearMainTabWindow by forcing optionalTitle to a blank space in PreOpen, PostOpen, and DoWindowContents to eliminate duplicated titles.
+
 v1.1.33
 - Fix: Disable default title drawing for FactionGearMainTabWindow to resolve the "huge duplicated title" at the top of the main UI.
+
 v1.1.32
 - Fix: Fully fix duplicated title by overriding the Title property so the native title isn't drawn.
+
 v1.1.31
 - Fix: Fix duplicated title that could appear for FactionGearMainTabWindow in some cases.
 - Optimize: Rewrite WindowOnGUI and clear optionalTitle before drawing to keep the UI clean.
+
 v1.1.30
 - Update: Restore the "FactionGearCustomizer" title in the main UI top bar with a compact single-line layout to remove extra top whitespace.
+
 v1.1.29
 - Update: Optimize main UI top bar layout, shorten button text, fix UI overlap, and remove extra top whitespace.
+
 v1.1.28
 - Update: Remove "Faction Gear Customizer" title text from the main UI top to improve space usage.
+
 v1.1.27
 - Refactor: Refactor UI structure and extract the top toolbar into the TopBarPanel component to improve modularity.
+
 v1.1.26
 - Fix: Fix logo coordinate system bug that caused it to fly to the screen corner.
 - Update: In the main UI title row, move the logo to the right of the title and remove extra top padding.
+
 v1.1.25
 - Fix: Adjust title area drawing in settings window so the logo and title are on the same line.
+
 v1.1.24
-- Update: Optimize faction settings UI by placing the faction icon and name on the same line.
+- Optimize: Optimize faction settings UI by placing the faction icon and name on the same line.
+
 v1.1.23
 - Update: Remove duplicated title text in the Mod settings UI and optimize layout.
+
 v1.1.22
 - Fix: Fix issue where randomly generated settlements could spawn in the ocean (invalid terrain).
+
 v1.1.21
 - Update: Maintenance build.
+
 v1.1.20
 - Fix: Fix missing logo in Mod options UI; logo now displays.
+
 v1.1.19
 - Update: Maintenance build.
+
 v1.1.18
 - Update: Change the bottom button icon: stop using the vanilla faction icon and use a custom icon instead.
 - Update: Add an icon to the Mod settings list (modIconPath).
 - Update: Simplify the mod description and note that Chinese translation is included.
+
 v1.1.17
 - Update: Adjust editor UI layout: move average value and average weight info to the bottom and fix clipping issues.
 - Fix: Fix PresetManagerWindow compile error by resolving inner class references.
+
 v1.1.16
 - Update: Remove log messages that might pop up during game initialization to avoid disturbing users.
 - Optimize: Improve logging when icons or language files are missing; no longer pop up warning windows.
+
 v1.1.15
 - Fix: Fix faction edit menu top tabs (Settings/PawnKinds) not clickable; adjust tab draw position so they appear correctly inside the window contents area.
+
 v1.1.14
 - Update: Change default sorting to descending by Market Value.
 - Update: Set the default value filter range to the maximum coverage.
+
 v1.1.14
 - Fix: Fix activation logic in MainButtonWorker_FactionGear: use Find.MainTabsRoot.ToggleTab(def) instead of manually WindowStack.Add, preventing a NullReferenceException when MainTabWindow.def is not assigned.
+- Fix: Add iconPath to MainButtonDef to fix missing main UI button icon.
+
 v1.1.13
 - Fix: Fix MissingMethodException crash in RimWorld 1.5/1.6 due to GetDamageAmount API removal in FactionGearManager.GetWeaponDamage.
 - Fix: Add iconPath to MainButtonDef to fix missing main UI button icon.
+
 v1.1.12
 - Fix: Fix some headgear and wearable relics not showing in the item library. Root cause: cache filtering required all apparel to have apparel.layers, which excluded items without layers (e.g. VE Hats, Rags).
 - Fix: Improve cache filtering so apparel.layers can be null or empty and still be categorized correctly.
+
 v1.1.11
 - Optimize: Refactor FactionGearEditor.cs by splitting DrawTopBar into smaller methods to improve maintainability.
 - Optimize: Simplify caching logic by removing redundant local cache fields and delegating to FactionGearManager.
 - Optimize: Extract FloatMenu option building into a dedicated method BuildResetMenuOptions.
+
 v1.1.10
 - Add: Clicking the top-right version number opens the version log window, showing update history and a "Give me a like" button linking to the Steam Workshop page.
+
 v1.1.9
 - Fix: Fix NullReferenceException when opening FactionEditWindow; add stronger null checks.
+
 v1.1.8
 - Fix: When no preset is active, clicking Save/Apply now automatically navigates to the create preset screen and prompts the user to create a preset.
+
 v1.1.7
 - Update: Maintenance build.
+
 v1.1.6
 - Fix: Fix "In-Game" option being checked but faction name list not auto-refreshing after entering a game. Now it auto-refreshes when entering a game from the main menu.
+
 v1.1.5
 - Update: Automatically check the "In-Game" button after entering a game (default to using in-game faction names).
+
 v1.1.4
 - Add: Add Faction Edit feature, allowing editing faction name, icon, and color.
 - Add: Add FactionDefManager to handle runtime Def modifications.
 - Add: Preset system supports saving faction static data modifications.
+
 v1.1.3
 - Add: Add Language folder containing full English and Simplified Chinese translations.
 - Add: Add LanguageManager supporting automatic game language detection.
+
 v1.1.2
 - Fix: Fix crash in main menu or world generation: Pawn_ApparelTracker.Wear threw "Could not find player faction".
+
 v1.1.2
 - Fix: Fix Budget slider not triggering save and undo history.
 - Fix: Fix Force Ignore stripping all pawn equipment incorrectly; it now only lifts restrictions and does not forcibly unequip everything.
 - Fix: Improve Simple Mode budget check logic for clearer behavior.
+
 v1.1.1
 - Fix: Fix gear application logic; enable multi-select gear mode by default to support configuring multiple items in a single list.
 - Add: Add custom gear budget check to ensure Budget restrictions apply when Force Ignore is off.
+
 v1.1.0
 - Add: Add Advanced editor mode with Simple/Advanced mode switching.
 - Add: Advanced mode provides precise gear control (specific items, materials, quality, etc.).
@@ -158,40 +309,53 @@ v1.1.0
 - Update: Expand the editor UI to improve user experience.
 - Update: Improve preset import/export.
 - Fix: Fix gear application logic; refactor GearApplier to ensure custom gear takes effect correctly.
+
 v1.0.29
 - Update: Layer Preview is hidden by default; optimize layout and add a "waist" row for clearer belt display.
 - Update: Layer Preview now checks the others list (e.g. belts) and no longer misses them.
 - Fix: Improve SpecRequirementEdit loading to prevent red errors when ThingDef is missing (e.g. after uninstalling a mod).
 - Fix: Improve ForcedHediff loading to prevent red errors when HediffDef is missing.
 - Fix: Improve KindGearData loading for ApparelRequired/TechRequired to prevent failures when Defs are missing.
+
 v1.0.28
 - Fix: Fix NullReferenceException in GenerateSimpleItem when ThingDef or KindGearData is null.
 - Fix: Fix errors when trying to drop gear while the pawn is not spawned on the map.
 - Fix: Add defensive checks for things that require Stuff to prevent generation failures when Stuff is null.
+
 v1.0.27
 - Fix: Fix PresetManagerWindow crash due to System.MissingMethodException: Method not found: UnityEngine.Rect Verse.Listing_Standard.Label(string,single,string).
 - Update: Replace Listing_Standard.Label calls in PresetManagerWindow with Widgets.Label to improve cross-version compatibility.
+
 v1.0.26
 - Fix: Fix game crash caused by HediffDef load failure (add ExposeData exception handling).
+
 v1.0.22
 - Update: Optimize Hediff card UI layout: increase card height and add a detailed info section.
 - Add: HediffCardUI adds Severity range control.
+- Fix: Fix PresetManagerWindow missing WidgetsUtils reference.
+- Fix: Fix WidgetsUtils PortraitsCache type lookup compatibility issue.
+
 v1.0.7
 - Fix: Fix FactionGearPreviewWindow not working (PortraitsCache/DrawBox compatibility fixes).
 - Update: WidgetsUtils adds PortraitsCache.Get/SetDirty and DrawWindowBackground compatibility wrappers.
+
 v1.0.6
 - Fix: Fix PresetManagerWindow crash on older RimWorld versions (Widgets.DrawBox/DrawMenuSection signature mismatch).
 - Update: WidgetsUtils adds DrawBox and DrawMenuSection compatibility wrappers.
+
 v1.0.5
 - Fix: Fix crash caused by missing Widgets.FloatRange call in GearEditPanel.cs.
 - Update: Add WidgetsUtils.IntRange wrapper to prevent potential compatibility issues in HediffCardUI.
+
 v1.0.4
 - Fix: Fix System.MissingMethodException: Method not found: void Verse.Widgets.FloatRange.
 - Update: Improve WidgetsUtils.FloatRange compatibility: add exception handling and a fallback UI (dual sliders) to avoid crashing when reflection fails.
 - Update: WidgetsUtils adds a smart FloatRange wrapper that auto-adapts to different parameter signatures across versions.
+
 v1.0.3
 - Fix: Fix System.MissingMethodException: Method not found: UnityEngine.Rect Verse.Listing_Standard.Label.
 - Update: Add WidgetsUtils.Label wrapper to handle Listing_Standard.Label signature differences across versions.
+
 v1.0.2
 - Fix: Fix System.MissingMethodException: Method not found: void Verse.Widgets.DrawTextureFitted.
 - Add: Add WidgetsUtils helper class, wrapping UI drawing methods for better compatibility.
