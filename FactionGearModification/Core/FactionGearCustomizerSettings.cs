@@ -52,6 +52,12 @@ namespace FactionGearCustomizer
         // [New] 上一个存档的唯一标识符，用于检测存档切换
         public string previousSaveIdentifier = null;
 
+        // [New] Enable debug logging
+        public bool enableDebugLog = false;
+
+        // [Phase 2] 剧本配置 - 用于游戏开始前配置派系
+        public ScenarioFactionConfig scenarioFactionConfig;
+
         public override void ExposeData()
         {
             base.ExposeData();
@@ -61,10 +67,14 @@ namespace FactionGearCustomizer
             Scribe_Values.Look(ref ShowHiddenFactions, "ShowHiddenFactions", false);
             Scribe_Values.Look(ref suppressDeleteGroupConfirmation, "suppressDeleteGroupConfirmation", false);
             Scribe_Values.Look(ref autoSaveBeforePreview, "autoSaveBeforePreview", false);
+            Scribe_Values.Look(ref enableDebugLog, "enableDebugLog", false);
             Scribe_Collections.Look(ref dismissedDialogs, "dismissedDialogs", LookMode.Value);
             if (dismissedDialogs == null) dismissedDialogs = new HashSet<string>();
             Scribe_Values.Look(ref currentPresetName, "currentPresetName", null);
             Scribe_Values.Look(ref previousSaveIdentifier, "previousSaveIdentifier", null);
+            Scribe_Deep.Look(ref scenarioFactionConfig, "scenarioFactionConfig");
+            if (scenarioFactionConfig == null)
+                scenarioFactionConfig = new ScenarioFactionConfig();
             
             // Scribe_Collections.Look(ref customFactions, "customFactions", LookMode.Deep);
             // if (customFactions == null) customFactions = new List<CustomFactionData>();
@@ -126,8 +136,6 @@ namespace FactionGearCustomizer
             }
             
             currentPresetName = null;
-            
-            FactionGearManager.LoadDefaultPresets();
             Write();
 
             // 清除所有缓存和会话状态，确保UI正确刷新
@@ -176,6 +184,7 @@ namespace FactionGearCustomizer
             copy.version = this.version;
             copy.forceIgnoreRestrictions = this.forceIgnoreRestrictions;
             copy.ShowInMainTab = this.ShowInMainTab;
+            copy.enableDebugLog = this.enableDebugLog;
             foreach (var faction in this.factionGearData)
             {
                 copy.factionGearData.Add(faction.DeepCopy());
@@ -194,6 +203,7 @@ namespace FactionGearCustomizer
             this.version = source.version;
             this.forceIgnoreRestrictions = source.forceIgnoreRestrictions;
             this.ShowInMainTab = source.ShowInMainTab;
+            this.enableDebugLog = source.enableDebugLog;
             this.factionGearData.Clear();
             foreach (var faction in source.factionGearData)
             {

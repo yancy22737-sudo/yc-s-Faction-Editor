@@ -8,12 +8,12 @@ namespace FactionGearCustomizer
     public enum HediffPoolType
     {
         None,
-        AnyDebuff,
         AnyDrugHigh,
         AnyAddiction,
         AnyImplant,
-        AnyIllness,
-        AnyBuff
+        AnyBuff,
+        AnyDebuff,
+        AnyIllness
     }
 
     public class ForcedHediff : IExposable
@@ -96,11 +96,9 @@ namespace FactionGearCustomizer
         {
             switch (type)
             {
-                case HediffPoolType.AnyDebuff: return LanguageManager.Get("HediffPool_AnyDebuff");
                 case HediffPoolType.AnyDrugHigh: return LanguageManager.Get("HediffPool_AnyDrugHigh");
                 case HediffPoolType.AnyAddiction: return LanguageManager.Get("HediffPool_AnyAddiction");
                 case HediffPoolType.AnyImplant: return LanguageManager.Get("HediffPool_AnyImplant");
-                case HediffPoolType.AnyIllness: return LanguageManager.Get("HediffPool_AnyIllness");
                 case HediffPoolType.AnyBuff: return LanguageManager.Get("HediffPool_AnyBuff");
                 default: return "Unknown Pool";
             }

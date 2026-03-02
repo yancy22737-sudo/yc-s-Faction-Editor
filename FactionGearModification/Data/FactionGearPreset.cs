@@ -106,6 +106,15 @@ namespace FactionGearCustomizer
                     newFactionData.XenotypeChances = faction.XenotypeChances != null ? new Dictionary<string, float>(faction.XenotypeChances) : null;
                     newFactionData.PlayerRelationOverride = faction.PlayerRelationOverride;
 
+                    // 保存 groupMakers
+                    if (faction.groupMakers != null)
+                    {
+                        foreach (var group in faction.groupMakers)
+                        {
+                            newFactionData.groupMakers.Add(group.DeepCopy());
+                        }
+                    }
+
                     // 保存所有兵种或只保存修改过的兵种
                     if (saveAll)
                     {

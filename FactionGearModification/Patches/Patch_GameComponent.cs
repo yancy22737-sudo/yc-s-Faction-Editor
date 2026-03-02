@@ -3,6 +3,7 @@ using RimWorld;
 using Verse;
 using FactionGearCustomizer.Core;
 using System.Reflection;
+using FactionGearCustomizer.Utils;
 
 namespace FactionGearCustomizer.Patches
 {
@@ -46,7 +47,7 @@ namespace FactionGearCustomizer.Patches
             var component = __instance.GetComponent<FactionGearGameComponent>();
             if (component != null)
             {
-                Log.Message("[FactionGearCustomizer] FactionGearGameComponent initialized.");
+                LogUtils.DebugLog("FactionGearGameComponent initialized.");
             }
         }
     }

@@ -9,6 +9,7 @@ using FactionGearCustomizer.UI.Panels;
 using FactionGearCustomizer.Compat;
 using FactionGearCustomizer.Managers;
 using FactionGearCustomizer.UI;
+using FactionGearCustomizer.Utils;
 
 namespace FactionGearCustomizer
 {
@@ -163,7 +164,7 @@ namespace FactionGearCustomizer
             
             EditorSession.NeedCalculateBounds = true;
             CalculateBounds();
-            Log.Message("[FactionGearCustomizer] Settings changes discarded.");
+            LogUtils.DebugLog("Settings changes discarded.");
         }
 
         public static void SaveChanges()
@@ -184,7 +185,7 @@ namespace FactionGearCustomizer
             FactionGearCustomizerMod.Settings.Write();
             IsDirty = false;
             backupSettings = null; 
-            Log.Message("[FactionGearCustomizer] Settings saved successfully.");
+            LogUtils.Info("Settings saved successfully.");
         }
 
         /// <summary>
@@ -195,7 +196,7 @@ namespace FactionGearCustomizer
             var gameComponent = FactionGearGameComponent.Instance;
             if (gameComponent == null)
             {
-                Log.Message("[FactionGearCustomizer] No active game, skipping save sync.");
+                LogUtils.DebugLog("No active game, skipping save sync.");
                 return;
             }
 
@@ -203,7 +204,7 @@ namespace FactionGearCustomizer
             if (!gameComponent.useCustomSettings)
             {
                 gameComponent.useCustomSettings = true;
-                Log.Message("[FactionGearCustomizer] Enabled custom settings for current save.");
+                LogUtils.DebugLog("Enabled custom settings for current save.");
             }
 
             // 同步当前预设名称
@@ -219,7 +220,7 @@ namespace FactionGearCustomizer
                 gameComponent.savedFactionGearData.Add(cloned);
             }
 
-            Log.Message($"[FactionGearCustomizer] Synced global settings to save. Faction count: {gameComponent.savedFactionGearData.Count}");
+            LogUtils.DebugLog($"Synced global settings to save. Faction count: {gameComponent.savedFactionGearData.Count}");
 
             // 立即应用设置到游戏
             FactionDefManager.ApplyAllSettings();
@@ -634,7 +635,7 @@ namespace FactionGearCustomizer
             EditorSession.NeedCalculateBounds = true;
             CalculateBounds();
             
-            Log.Message("[FactionGearCustomizer] All caches refreshed.");
+            LogUtils.Info("All caches refreshed.");
         }
 
         public static void Cleanup()
@@ -644,6 +645,44 @@ namespace FactionGearCustomizer
             EditorSession.CachedAllWeapons = null;
             EditorSession.CachedFilteredItems = null;
             EditorSession.CachedModSources = null;
+        }
+
+        private static System.Reflection.FieldInfo factionLeaderField;
+
+        /// <summary>
+        /// 检查兵种是否被标记为派系领袖
+        /// </summary>
+        /// <param name="kindDef">兵种定义</param>
+        /// <returns>如果是派系领袖返回 true，否则返回 false</returns>
+        public static bool IsFactionLeader(PawnKindDef kindDef)
+        {
+            if (kindDef == null) return false;
+
+            if (factionLeaderField == null)
+            {
+                factionLeaderField = typeof(PawnKindDef).GetField("factionLeader", 
+                    System.Reflection.BindingFlags.Public | 
+                    System.Reflection.BindingFlags.Instance | 
+                    System.Reflection.BindingFlags.NonPublic);
+            }
+
+            if (factionLeaderField != null)
+            {
+                try
+                {
+                    var value = factionLeaderField.GetValue(kindDef);
+                    if (value is bool boolValue)
+                    {
+                        return boolValue;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning($"[FactionGearCustomizer] Failed to get factionLeader field for {kindDef.defName}: {ex.Message}");
+                }
+            }
+
+            return false;
         }
 
 

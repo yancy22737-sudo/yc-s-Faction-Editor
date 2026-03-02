@@ -27,6 +27,10 @@ namespace FactionGearCustomizer.UI
         {
             base.PreOpen();
             this.optionalTitle = "";
+            
+            // 【修复】检查并清理残留数据
+            FactionGearCustomizerMod.CheckAndCleanupResidualData();
+            
             FactionGearEditor.InitializeWorkingSettings(true);
         }
 
@@ -55,22 +59,44 @@ namespace FactionGearCustomizer.UI
                 ));
             }
             FactionGearEditor.Cleanup();
+
+            // 如果从创建世界界面打开，关闭时重置标记
+            if (Dialogs.Dialog_FactionEditorLite.IsOpenedFromWorldCreation)
+            {
+                Dialogs.Dialog_FactionEditorLite.ResetWorldCreationFlag();
+            }
         }
 
         public override void DoWindowContents(Rect inRect)
         {
+            // 检查是否在游戏中
+            bool inGame = Current.Game != null;
+            
             // Draw Custom Header (Title)
             float headerHeight = 30f;
             Rect headerRect = new Rect(inRect.x, inRect.y, inRect.width, headerHeight);
             DrawCustomHeader(headerRect);
 
+            // 如果不在游戏中，显示提示
+            if (!inGame)
+            {
+                Rect warningRect = new Rect(inRect.x, inRect.y + headerHeight + 5f, inRect.width, 25f);
+                GUI.color = new Color(1f, 0.8f, 0.3f);
+                Text.Anchor = TextAnchor.MiddleCenter;
+                Widgets.Label(warningRect, LanguageManager.Get("P2_NotInGameWarning"));
+                Text.Anchor = TextAnchor.UpperLeft;
+                GUI.color = Color.white;
+            }
+
             // Draw Top Bar (Toolbar)
             float topBarHeight = 40f;
-            Rect topBarRect = new Rect(inRect.x, inRect.y + headerHeight, inRect.width, topBarHeight);
+            float topBarY = inRect.y + headerHeight + (inGame ? 0f : 30f);
+            Rect topBarRect = new Rect(inRect.x, topBarY, inRect.width, topBarHeight);
             TopBarPanel.Draw(topBarRect);
 
             // Draw Editor Content below Header and TopBar
-            Rect contentRect = new Rect(inRect.x + 10f, inRect.y + headerHeight + topBarHeight + 10f, inRect.width - 20f, inRect.height - headerHeight - topBarHeight - 20f);
+            float contentY = topBarY + topBarHeight + 10f;
+            Rect contentRect = new Rect(inRect.x + 10f, contentY, inRect.width - 20f, inRect.yMax - contentY - 10f);
             FactionGearEditor.DrawEditor(contentRect);
         }
 

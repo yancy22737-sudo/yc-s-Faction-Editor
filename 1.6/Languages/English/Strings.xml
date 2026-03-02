@@ -35,6 +35,7 @@
   <SelectHediff>Select Hediff</SelectHediff>
   <Show>Show</Show>
   <Hide>Hide</Hide>
+  <Disabled>Disabled</Disabled>
   <All>All</All>
   <None>None</None>
   <Invert>Invert</Invert>
@@ -132,6 +133,7 @@
   <PresetApplied>Preset applied successfully to current game!</PresetApplied>
   <ApplyPresetFailed>Failed to apply preset. Check logs for details.</ApplyPresetFailed>
   <PresetDeleted>Preset deleted.</PresetDeleted>
+  <PresetCleared>Preset data cleared.</PresetCleared>
   <PresetExportedToClipboard>Preset "{0}" exported to clipboard!</PresetExportedToClipboard>
   <ImportFailedInvalidData>Import failed: Invalid preset data in clipboard!</ImportFailedInvalidData>
   <ImportFailed>Import failed: {0}</ImportFailed>
@@ -199,6 +201,8 @@ Recommended: Enable for full control.</ForceOnlySelectedTooltip>
   <AdvancedOptionsTooltip>Advanced Options</AdvancedOptionsTooltip>
   <ShowHiddenFactions>Show Hidden/Non-human Factions</ShowHiddenFactions>
   <ShowInMainTab>Show Main Button</ShowInMainTab>
+  <EnableDebugLog>Enable Debug Log</EnableDebugLog>
+  <EnableDebugLogTooltip>When enabled, detailed debug log messages will be output during gameplay for troubleshooting. Recommended to enable only when needed to avoid large log files.</EnableDebugLogTooltip>
   <ForceIgnore>Force Ignore</ForceIgnore>
   <ForceIgnoreTooltip>Force remove conflicting apparel/weapons and ignore budget limits. Pawns will attempt to equip all possible items from config list, allowing you to bypass restrictions and always create god-tier units.</ForceIgnoreTooltip>
   <ForceIgnoreGlobal>Global Force Ignore</ForceIgnoreGlobal>
@@ -266,7 +270,9 @@ Applying this preset may cause missing items or errors. Continue?</MissingModsWa
   <MissingModsWarningRiskIt>Yes (Risk it)</MissingModsWarningRiskIt>
   <MissingModsWarningCancel>No (Cancel)</MissingModsWarningCancel>
   <DeletePresetConfirm>Permanently delete preset "{0}"?</DeletePresetConfirm>
+  <ClearPresetConfirm>Clear all data from preset "{0}"?</ClearPresetConfirm>
   <ExportTooltip>Copy preset to clipboard for sharing.</ExportTooltip>
+  <ClearPresetTooltip>Clear all preset data but keep the preset itself.</ClearPresetTooltip>
   <DeletePresetTooltip>Delete this preset (deletes preset record only, won't auto-rollback saved changes).</DeletePresetTooltip>
   <SavePresetMetadataTooltip>Save only current preset's name/description (won't update gear content).</SavePresetMetadataTooltip>
   <CreatePresetTooltip>Create new preset and save current settings as initial content.</CreatePresetTooltip>
@@ -341,13 +347,26 @@ Applying this preset may cause missing items or errors. Continue?</MissingModsWa
   <Browse>Browse</Browse>
   <IconPathPlaceholder>Enter texture path (e.g. World/WorldObjects/Expanding/Town)</IconPathPlaceholder>
   <OnlyAvailableInGame>Only available in-game.</OnlyAvailableInGame>
+  <FactionEditDisabledInLiteMode>Faction editing is not available in world creation. Please access the full editor through Mod Settings after entering the game.</FactionEditDisabledInLiteMode>
+  <NewFactionDisabledInLiteMode>Adding factions is not available in world creation. Please access the full editor through Mod Settings after entering the game.</NewFactionDisabledInLiteMode>
+  <FiltersDisabledInLiteMode>Item filters are not available in world creation. Please access the full editor through Mod Settings after entering the game.</FiltersDisabledInLiteMode>
   <AdvancedModeTooltip>Advanced mode: provides finer editing control (specific items/special requirements). Simple mode only edits basic gear pools.</AdvancedModeTooltip>
   <ClearAllGearTooltip>Clear all custom gear configuration for current kind. Shows confirmation and can be undone.</ClearAllGearTooltip>
   <FactionInfoCardTooltip>View this faction's Def info card.</FactionInfoCardTooltip>
   <DefName>DefName</DefName>
   <XenotypeChances>Xenotype Chances (Biotech)</XenotypeChances>
+  <DisableXenotypeChances>Disable Xenotype Chance Control</DisableXenotypeChances>
   <AddXenotype>Add Xenotype</AddXenotype>
   <AllXenotypesAdded>All xenotypes added.</AllXenotypesAdded>
+  <KindXenotypeSettings>Kind Xenotype Settings</KindXenotypeSettings>
+  <KindXenotypeTooltip>Set independent xenotype spawn chances for this pawn kind, overriding faction-level settings.</KindXenotypeTooltip>
+  <XenoButtonLabel>Xeno</XenoButtonLabel>
+  <ForcedXenotype>Forced Xenotype</ForcedXenotype>
+  <ForcedXenotypeTooltip>Force this pawn kind to only spawn with this xenotype, ignoring chance settings.</ForcedXenotypeTooltip>
+  <SelectXenotype>Select Xenotype</SelectXenotype>
+  <ClearForcedXenotype>Clear Forced Xenotype</ClearForcedXenotype>
+  <Total>Total</Total>
+  <XenotypeChancesExceed100>Xenotype chances cannot exceed 100%</XenotypeChancesExceed100>
   <BatchApply>Batch Apply</BatchApply>
   <BatchApplyTooltip>Open batch apply window to apply current config to selected kinds.</BatchApplyTooltip>
   <BatchApplyTitle>Batch Apply Config</BatchApplyTitle>
@@ -374,7 +393,11 @@ Applying this preset may cause missing items or errors. Continue?</MissingModsWa
   <Race>Race</Race>
   <RaceAll>All Races</RaceAll>
   <Power>Power</Power>
+  <FactionLeader>Faction Leader</FactionLeader>
   <Points>Points</Points>
+  <RaidPoints>Raid Points</RaidPoints>
+  <PointsOverrideTooltip>Override this pawn's raid points. Leave empty to use default combat power.</PointsOverrideTooltip>
+  <PointsOverrideFieldTooltip>Enter custom points, or leave empty to use default. Set to 0 to clear override.</PointsOverrideFieldTooltip>
   <Unknown>Unknown</Unknown>
   <Category_All>All</Category_All>
   <Category_Humanlike>Humanlike</Category_Humanlike>
@@ -514,8 +537,8 @@ Warnings:
   <NoPawn>No Pawn</NoPawn>
   <CopiedKindGearMessage>Copied kind gear!</CopiedKindGearMessage>
   <UnknownFaction>Unknown Faction</UnknownFaction>
-  <NameColor>Name Color</NameColor>
-  <NameColorTooltip>Display color for faction member names.</NameColorTooltip>
+  <NameColor>Apparel Color</NameColor>
+  <NameColorTooltip>Display color for Apparel.</NameColorTooltip>
   <RimTalkLinkage>RimTalk Integration</RimTalkLinkage>
   <NameCannotBeEmpty>Name cannot be empty</NameCannotBeEmpty>
   <NameTooShort>Name too short</NameTooShort>
@@ -919,5 +942,77 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <HediffWarning_MovingLow>Will severely reduce pawn moving capability</HediffWarning_MovingLow>
   <HediffWarning_ManipulationZero>Will cause pawn to be unable to manipulate items</HediffWarning_ManipulationZero>
   <HediffWarning_ManipulationLow>Will severely reduce pawn manipulation capability</HediffWarning_ManipulationLow>
+
+  <!-- Faction Export Feature -->
+  <yFE_ExportFactions>Export Factions</yFE_ExportFactions>
+  <yFE_ExportFactions_Title>Export Factions to Preset</yFE_ExportFactions_Title>
+  <yFE_TargetPreset>Target Preset</yFE_TargetPreset>
+  <yFE_ExportToNewPreset>Create New Preset...</yFE_ExportToNewPreset>
+  <yFE_ExportToExistingPreset>Select Existing Preset</yFE_ExportToExistingPreset>
+  <yFE_ConflictResolution>Conflict Resolution</yFE_ConflictResolution>
+  <yFE_ExportConflict_Skip>Skip existing factions</yFE_ExportConflict_Skip>
+  <yFE_ExportConflict_Overwrite>Overwrite existing factions</yFE_ExportConflict_Overwrite>
+  <yFE_ExportConflict_Merge>Merge kind data</yFE_ExportConflict_Merge>
+  <yFE_ExportSuccess>Successfully exported {0} factions to preset "{1}"</yFE_ExportSuccess>
+  <yFE_ExportNoSelection>Please select factions to export first</yFE_ExportNoSelection>
+  <yFE_ExportFailed>Export failed</yFE_ExportFailed>
+  <yFE_Kinds_Label>kinds</yFE_Kinds_Label>
+  <yFE_Factions_Label>factions</yFE_Factions_Label>
+  <yFE_SelectAll>Select All</yFE_SelectAll>
+  <yFE_DeselectAll>Deselect All</yFE_DeselectAll>
+  <yFE_PresetName>Preset Name</yFE_PresetName>
+  <yFE_PresetDescription>Preset Description</yFE_PresetDescription>
+
+  <!-- Phase 2: Scenario Creation UI -->
+  <P2_FactionEditorButton>Faction Editor</P2_FactionEditorButton>
+  <P2_FactionEditorLite_Title>Select Faction Preset</P2_FactionEditorLite_Title>
+  <P2_SelectPreset>Select Preset:</P2_SelectPreset>
+  <P2_SelectedFactions>Selected Factions:</P2_SelectedFactions>
+  <P2_SelectPresetHint>Please select a preset first</P2_SelectPresetHint>
+  <P2_Kinds_Label>kinds</P2_Kinds_Label>
+  <P2_ApplyPreset>Apply Preset</P2_ApplyPreset>
+  <P2_ConfigApplied>Applied preset "{0}" to game</P2_ConfigApplied>
+  <P2_SelectFactions>Select Factions</P2_SelectFactions>
+  <P2_FactionDetails>Faction Details</P2_FactionDetails>
+  <P2_SelectFactionHint>Click a faction to view details</P2_SelectFactionHint>
+  <P2_KindList>Included Kinds</P2_KindList>
+  <P2_ApplyMode>Apply Mode</P2_ApplyMode>
+  <P2_ModeAdd>Add</P2_ModeAdd>
+  <P2_ModeOverwrite>Overwrite</P2_ModeOverwrite>
+  <P2_ApplyToWorld>Apply to World</P2_ApplyToWorld>
+  <P2_NoWorldComponent>Error: Cannot find world faction component</P2_NoWorldComponent>
+  <P2_AppliedToWorld>Successfully applied {0} factions to world ({1} mode)</P2_AppliedToWorld>
+  <P2_NoNewFactionsToAdd>No new factions to add (all selected factions already exist)</P2_NoNewFactionsToAdd>
+  <P2_ResetDefault>Reset Default</P2_ResetDefault>
+  <P2_OpenSettings>Settings</P2_OpenSettings>
+  <P2_ResetSuccess>Faction data reset to default</P2_ResetSuccess>
+  <P2_NotInGameWarning>[Note] Not currently in game, some features (e.g., apply to save) are unavailable</P2_NotInGameWarning>
+  
+  <!-- Turret/Mechanoid Weapon Filter -->
+  <HideTurretMechanoidWeaponsTooltip>Hide turret and mechanoid weapons from the item library</HideTurretMechanoidWeaponsTooltip>
+
+  <!-- Hediff Validation Messages -->
+  <Validation_HediffNull>Hediff is null</Validation_HediffNull>
+  <Validation_InvalidPoolType>Invalid pool type</Validation_InvalidPoolType>
+  <Validation_HediffDefNull>HediffDef is null</Validation_HediffDefNull>
+  <Validation_HediffDefNotFound>HediffDef '{0}' not found</Validation_HediffDefNotFound>
+  <Validation_HediffDefResolved>HediffDef '{0}' resolved</Validation_HediffDefResolved>
+  <Validation_InvalidChance>Chance out of range, clamped to 0-1</Validation_InvalidChance>
+  <Validation_NoHediffClass>Hediff '{0}' has no hediffClass</Validation_NoHediffClass>
+  <Validation_LethalHediff>Hediff '{0}' has lethal severity {1:F1}, use with caution!</Validation_LethalHediff>
+  <Validation_NegativeMaxParts>Negative maxParts, set to 0</Validation_NegativeMaxParts>
+  <Validation_NegativeMaxPartsRange>Negative min in maxPartsRange, set to 0</Validation_NegativeMaxPartsRange>
+  <Validation_InvalidMaxPartsRange>Invalid maxPartsRange, swapped min and max</Validation_InvalidMaxPartsRange>
+  <Validation_ExcessiveMaxParts>maxPartsRange too large (&gt;10), clamped to 10</Validation_ExcessiveMaxParts>
+  <Validation_NegativeSeverityMin>Negative severity min, set to 0</Validation_NegativeSeverityMin>
+  <Validation_ExcessiveSeverityMax>Severity max too large (&gt;1), clamped to 1</Validation_ExcessiveSeverityMax>
+  <Validation_InvalidSeverityRange>Invalid severity range, swapped min and max</Validation_InvalidSeverityRange>
+  <Validation_BodyPartNotFound>Body part '{0}' not found, removed</Validation_BodyPartNotFound>
+  <Validation_PawnNull>Pawn is null</Validation_PawnNull>
+  <Validation_PawnHealthNull>Pawn health or hediffSet is null</Validation_PawnHealthNull>
+  <Validation_PawnBodyNull>Pawn raceProps or body is null</Validation_PawnBodyNull>
+  <Validation_NoAvailableParts>No available body parts for hediff '{0}'</Validation_NoAvailableParts>
+  <Validation_InsufficientParts>Insufficient available parts for hediff '{0}': requested {1}, available {2}</Validation_InsufficientParts>
+  <Validation_TooManyImplantsForPart>Too many implants for part '{0}': {1} requested, max allowed {2}</Validation_TooManyImplantsForPart>
 
 </LanguageData>

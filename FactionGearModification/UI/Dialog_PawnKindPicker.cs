@@ -25,6 +25,9 @@ namespace FactionGearCustomizer.UI
         private ModContentPack modFilter = null;
         private static System.Reflection.FieldInfo defaultFactionTypeField;
 
+        // 新增：交易者过滤模式
+        private TraderFilterMode traderFilterMode = TraderFilterMode.All;
+
         private enum PawnKindCategory
         {
             All,
@@ -34,15 +37,26 @@ namespace FactionGearCustomizer.UI
             Other
         }
 
+        /// <summary>
+        /// 交易者过滤模式
+        /// </summary>
+        public enum TraderFilterMode
+        {
+            All,           // 显示所有
+            TradersOnly,   // 只显示交易者
+            NonTraders     // 只显示非交易者
+        }
+
         public override Vector2 InitialSize => new Vector2(800f, 700f);
 
         private HashSet<string> excludeKindDefNames = null;
 
-        public Dialog_PawnKindPicker(Action<List<PawnKindDef>> onSelect, FactionDef faction = null, HashSet<string> excludeKinds = null)
+        public Dialog_PawnKindPicker(Action<List<PawnKindDef>> onSelect, FactionDef faction = null, HashSet<string> excludeKinds = null, TraderFilterMode traderFilter = TraderFilterMode.All)
         {
             this.onSelect = onSelect;
             this.factionDef = faction;
             this.excludeKindDefNames = excludeKinds;
+            this.traderFilterMode = traderFilter;
             this.doCloseX = true;
             this.closeOnClickedOutside = true;
             this.allKinds = DefDatabase<PawnKindDef>.AllDefsListForReading?.ToList() ?? new List<PawnKindDef>();
@@ -65,6 +79,38 @@ namespace FactionGearCustomizer.UI
             return PawnKindCategory.Other;
         }
 
+        /// <summary>
+        /// 检查 PawnKindDef 是否是有效的交易者
+        /// </summary>
+        private bool IsValidTrader(PawnKindDef kind)
+        {
+            if (kind == null) return false;
+
+            // 检查是否是 Trader 类型的 PawnKind（通过 defName 判断）
+            if (kind.defName.Contains("Trader"))
+                return true;
+
+            // 检查是否有 trader 标签
+            if (kind.trader)
+                return true;
+
+            // 检查是否是特定派系领袖类型（某些领袖也是交易者）
+            if (kind.defName.Contains("Leader"))
+                return true;
+
+            // 检查 race 是否是人类类型（非动物）
+            // 动物（如雪牛）不应该出现在 traders 列表中
+            if (kind.race != null)
+            {
+                // 如果是动物（有 trainability 或特定标签），则不是有效交易者
+                if (kind.race.race != null && kind.race.race.Animal)
+                    return false;
+            }
+
+            // 默认允许其他情况（可能是自定义交易者）
+            return true;
+        }
+
         private string GetCategoryLabel(PawnKindCategory cat)
         {
             return LanguageManager.Get("Category_" + cat.ToString());
@@ -78,6 +124,16 @@ namespace FactionGearCustomizer.UI
             if (excludeKindDefNames != null && excludeKindDefNames.Count > 0)
             {
                 source = source.Where(k => !excludeKindDefNames.Contains(k.defName));
+            }
+
+            // 应用交易者过滤
+            if (traderFilterMode == TraderFilterMode.TradersOnly)
+            {
+                source = source.Where(IsValidTrader);
+            }
+            else if (traderFilterMode == TraderFilterMode.NonTraders)
+            {
+                source = source.Where(k => !IsValidTrader(k));
             }
 
             // 优化：当过滤派系单位时，使用缓存避免重复计算
@@ -231,12 +287,15 @@ namespace FactionGearCustomizer.UI
             Widgets.Label(new Rect(curX, headerRect.y, 150f, 24f), LanguageManager.Get("Factions"));
             curX += 160f;
 
-            // Power (60)
-            Widgets.Label(new Rect(curX, headerRect.y, 60f, 24f), LanguageManager.Get("Power"));
-            curX += 70f;
+            // Leader (70) - 添加旗帜图标，增加宽度以完整显示文字
+            Rect leaderHeaderRect = new Rect(curX, headerRect.y, 70f, 24f);
+            GUI.color = new Color(1f, 0.84f, 0f); // 金色
+            Widgets.Label(leaderHeaderRect, "⚑ " + LanguageManager.Get("FactionLeader"));
+            GUI.color = Color.gray;
+            curX += 80f;
             
-            // Points (60)
-            Widgets.Label(new Rect(curX, headerRect.y, 60f, 24f), LanguageManager.Get("Points"));
+            // Raid Points (袭击点数)
+            Widgets.Label(new Rect(curX, headerRect.y, 80f, 24f), LanguageManager.Get("RaidPoints"));
             
             GUI.color = Color.white;
             Widgets.DrawLineHorizontal(0, headerY + 24f, inRect.width);
@@ -246,7 +305,11 @@ namespace FactionGearCustomizer.UI
             float confirmButtonHeight = 40f;
             float listRowHeight = 28f;
             Rect outRect = new Rect(0, topY, inRect.width, inRect.height - topY - confirmButtonHeight - 10f);
-            Rect viewRect = new Rect(0, 0, outRect.width - 16f, filteredList.Count * listRowHeight);
+            // Clamp viewRect height to avoid Unity GUI rendering limitations (~3700 items limit)
+            const float MaxViewRectHeight = 100000f;
+            float totalContentHeight = filteredList.Count * listRowHeight;
+            float clampedViewHeight = Mathf.Min(totalContentHeight, MaxViewRectHeight);
+            Rect viewRect = new Rect(0, 0, outRect.width - 16f, clampedViewHeight);
 
             // 优化：使用可见性检查，只渲染可见区域的项目
             float viewTop = scroll.y;
@@ -266,6 +329,15 @@ namespace FactionGearCustomizer.UI
                 }
 
                 Rect row = new Rect(0, y, viewRect.width, listRowHeight);
+
+                // 为派系领袖添加背景高亮
+                if (FactionGearEditor.IsFactionLeader(kind))
+                {
+                    Rect highlightRect = new Rect(row.x, row.y, row.width, row.height);
+                    GUI.color = new Color(1f, 0.84f, 0f, 0.15f); // 金色半透明背景
+                    Widgets.DrawBoxSolid(highlightRect, GUI.color);
+                    GUI.color = Color.white;
+                }
 
                 if (Mouse.IsOver(row)) Widgets.DrawHighlight(row);
 
@@ -307,12 +379,28 @@ namespace FactionGearCustomizer.UI
                 Widgets.Label(new Rect(rowX, y, 150f, 28f), factionLabel);
                 rowX += 160f;
 
-                // Combat Power
-                Widgets.Label(new Rect(rowX, y, 60f, 28f), kind.combatPower.ToString("F0"));
-                rowX += 70f;
+                // Faction Leader
+                bool isLeader = FactionGearEditor.IsFactionLeader(kind);
+                Rect leaderRect = new Rect(rowX, y, 70f, 28f);
+                if (isLeader)
+                {
+                    GUI.color = new Color(1f, 0.8f, 0f); // 更亮的黄色
+                    Text.Anchor = TextAnchor.MiddleCenter;
+                    Widgets.Label(leaderRect, LanguageManager.Get("Yes"));
+                    Text.Anchor = TextAnchor.UpperLeft;
+                }
+                else
+                {
+                    GUI.color = Color.gray;
+                    Text.Anchor = TextAnchor.MiddleCenter;
+                    Widgets.Label(leaderRect, "-");
+                    Text.Anchor = TextAnchor.UpperLeft;
+                }
+                GUI.color = Color.white;
+                rowX += 80f;
 
-                // Points Cost
-                Widgets.Label(new Rect(rowX, y, 60f, 28f), kind.combatPower.ToString("F0"));
+                // Raid Points (袭击点数)
+                Widgets.Label(new Rect(rowX, y, 80f, 28f), kind.combatPower.ToString("F0"));
 
                 y += listRowHeight;
             }

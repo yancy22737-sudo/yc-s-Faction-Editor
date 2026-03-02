@@ -17,6 +17,12 @@ namespace FactionGearCustomizer
                 // Apply Faction/Kind Def changes on startup
                 FactionDefManager.ApplyAllSettings();
                 
+                // 运行 factionLeader 字段测试
+                Debug_FactionLeaderTest.RunTest();
+                
+                // 运行假体应用功能测试
+                Debug_HediffApplicationTest.RunTest();
+                
                 // FactionGearCustomizerMod.UpdateMainButtonVisibility();
             }
             catch (System.Exception ex)

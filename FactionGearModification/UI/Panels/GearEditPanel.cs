@@ -646,11 +646,41 @@ namespace FactionGearCustomizer.UI.Panels
             UndoManager.RecordState(kindData);
             switch (category)
             {
-                case GearCategory.Weapons: kindData.weapons.Clear(); break;
-                case GearCategory.MeleeWeapons: kindData.meleeWeapons.Clear(); break;
-                case GearCategory.Armors: kindData.armors.Clear(); break;
-                case GearCategory.Apparel: kindData.apparel.Clear(); break;
-                case GearCategory.Others: kindData.others.Clear(); break;
+                case GearCategory.Weapons:
+                    kindData.weapons.Clear();
+                    if (!kindData.SpecificWeapons.NullOrEmpty())
+                    {
+                        kindData.SpecificWeapons.RemoveAll(x => x.Thing != null && x.Thing.IsRangedWeapon);
+                    }
+                    break;
+                case GearCategory.MeleeWeapons:
+                    kindData.meleeWeapons.Clear();
+                    if (!kindData.SpecificWeapons.NullOrEmpty())
+                    {
+                        kindData.SpecificWeapons.RemoveAll(x => x.Thing != null && x.Thing.IsMeleeWeapon);
+                    }
+                    break;
+                case GearCategory.Armors:
+                    kindData.armors.Clear();
+                    if (!kindData.SpecificApparel.NullOrEmpty())
+                    {
+                        kindData.SpecificApparel.RemoveAll(x => x.Thing != null && IsArmor(x.Thing));
+                    }
+                    break;
+                case GearCategory.Apparel:
+                    kindData.apparel.Clear();
+                    if (!kindData.SpecificApparel.NullOrEmpty())
+                    {
+                        kindData.SpecificApparel.RemoveAll(x => x.Thing != null && IsApparel(x.Thing));
+                    }
+                    break;
+                case GearCategory.Others:
+                    kindData.others.Clear();
+                    if (!kindData.SpecificApparel.NullOrEmpty())
+                    {
+                        kindData.SpecificApparel.RemoveAll(x => x.Thing != null && IsBelt(x.Thing));
+                    }
+                    break;
             }
             kindData.isModified = true;
             FactionGearEditor.MarkDirty();
@@ -872,12 +902,10 @@ namespace FactionGearCustomizer.UI.Panels
         {
             List<FloatMenuOption> options = new List<FloatMenuOption>();
             
-            options.Add(new FloatMenuOption(LanguageManager.Get("HediffPool_AnyDebuff"), () => AddHediffPool(kindData, HediffPoolType.AnyDebuff)));
             options.Add(new FloatMenuOption(LanguageManager.Get("HediffPool_AnyDrugHigh"), () => AddHediffPool(kindData, HediffPoolType.AnyDrugHigh)));
             options.Add(new FloatMenuOption(LanguageManager.Get("HediffPool_AnyAddiction"), () => AddHediffPool(kindData, HediffPoolType.AnyAddiction)));
             options.Add(new FloatMenuOption(LanguageManager.Get("HediffPool_AnyImplant"), () => AddHediffPool(kindData, HediffPoolType.AnyImplant)));
-            options.Add(new FloatMenuOption(LanguageManager.Get("HediffPool_AnyIllness"), () => AddHediffPool(kindData, HediffPoolType.AnyIllness)));
-            options.Add(new FloatMenuOption(LanguageManager.Get("HediffPool_AnyBuff"), () => AddHediffPool(kindData, HediffPoolType.AnyBuff)));
+            // Note: HediffPool_AnyBuff option removed from UI but preserved for save compatibility
             
             Find.WindowStack.Add(new FloatMenu(options));
         }
@@ -1284,7 +1312,42 @@ namespace FactionGearCustomizer.UI.Panels
                     ui.Gap(2f);
                 }
             }
-            else
+
+            List<SpecRequirementEdit> advancedItems = new List<SpecRequirementEdit>();
+            if (EditorSession.SelectedCategory == GearCategory.Weapons && !kindData.SpecificWeapons.NullOrEmpty())
+            {
+                advancedItems.AddRange(kindData.SpecificWeapons.Where(x => x.Thing != null && x.Thing.IsRangedWeapon));
+            }
+            else if (EditorSession.SelectedCategory == GearCategory.MeleeWeapons && !kindData.SpecificWeapons.NullOrEmpty())
+            {
+                advancedItems.AddRange(kindData.SpecificWeapons.Where(x => x.Thing != null && x.Thing.IsMeleeWeapon));
+            }
+            else if (EditorSession.SelectedCategory == GearCategory.Others && !kindData.SpecificApparel.NullOrEmpty())
+            {
+                advancedItems.AddRange(kindData.SpecificApparel.Where(x => x.Thing != null && IsBelt(x.Thing)));
+            }
+            else if (EditorSession.SelectedCategory == GearCategory.Armors && !kindData.SpecificApparel.NullOrEmpty())
+            {
+                advancedItems.AddRange(kindData.SpecificApparel.Where(x => x.Thing != null && IsArmor(x.Thing)));
+            }
+            else if (EditorSession.SelectedCategory == GearCategory.Apparel && !kindData.SpecificApparel.NullOrEmpty())
+            {
+                advancedItems.AddRange(kindData.SpecificApparel.Where(x => x.Thing != null && IsApparel(x.Thing)));
+            }
+
+            if (advancedItems.Any())
+            {
+                if (gearItems.Any()) ui.GapLine();
+                WidgetsUtils.Label(ui, $"<b>{LanguageManager.Get("AdvancedSpecificItems")}</b>");
+                foreach (var advItem in advancedItems)
+                {
+                    bool isAdvExpanded = (advItem == EditorSession.ExpandedSpecItem);
+                    Rect rowRect = ui.GetRect(isAdvExpanded ? 56f : 28f);
+                    DrawAdvancedItemSimple(rowRect, advItem, kindData);
+                    ui.Gap(2f);
+                }
+            }
+            else if (!gearItems.Any())
             {
                 WidgetsUtils.Label(ui, LanguageManager.Get("NoItemsInThisCategory"));
             }

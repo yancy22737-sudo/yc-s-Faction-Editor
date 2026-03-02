@@ -35,6 +35,7 @@
   <SelectHediff>选择状态</SelectHediff>
   <Show>显示</Show>
   <Hide>隐藏</Hide>
+  <Disabled>已禁用</Disabled>
   <All>全部</All>
   <None>清除</None>
   <Invert>反选</Invert>
@@ -110,7 +111,7 @@
   <SettingsSaved>设置保存成功！</SettingsSaved>
   <SettingsDiscarded>设置更改已放弃。</SettingsDiscarded>
   <PresetUpdated>预设 "{0}" 已更新。</PresetUpdated>
-  <PresetSaved>设置保存成功。</PresetSaved>
+  <PresetSaved>预设保存成功。</PresetSaved>
   <TipCreatePreset>提示：请创建一个预设来安全备份您的努力！</TipCreatePreset>
   <CannotPreviewFactionNotPresent>无法预览：当前游戏中不存在该派系。</CannotPreviewFactionNotPresent>
   <AppliedToAllKinds>已将当前装备应用到该派系的所有兵种！</AppliedToAllKinds>
@@ -132,6 +133,7 @@
   <PresetApplied>预设已成功应用到当前游戏！</PresetApplied>
   <ApplyPresetFailed>应用预设失败, 请查看日志详情。</ApplyPresetFailed>
   <PresetDeleted>预设已删除。</PresetDeleted>
+  <PresetCleared>预设数据已清空。</PresetCleared>
   <PresetExportedToClipboard>预设 "{0}" 已导出到剪贴板！</PresetExportedToClipboard>
   <ImportFailedInvalidData>导入失败：剪贴板中的预设数据无效！</ImportFailedInvalidData>
   <ImportFailed>导入失败：{0}</ImportFailed>
@@ -159,7 +161,7 @@
   <RedoTooltip>重做 (Ctrl+Y)</RedoTooltip>
   <PreviewAllKindsTooltip>预览此派系的所有兵种</PreviewAllKindsTooltip>
   <PreviewInGameOnlyTooltip>仅游戏中可用</PreviewInGameOnlyTooltip>
-  <ApplyToOthersTooltip>将当前装备应用到该派系的所有其他兵种</ApplyToOthersTooltip>
+  <ApplyToOthersTooltip>将当前装备应用到派系内其他兵种</ApplyToOthersTooltip>
   <ClearCategoryTooltip>清除当前分类中的所有物品。</ClearCategoryTooltip>
   <ForceNakedTooltip>如果启用, 应用装备时会移除该兵种的所有衣物, 使其保持裸体。
 
@@ -199,6 +201,8 @@
   <AdvancedOptionsTooltip>高级选项</AdvancedOptionsTooltip>
   <ShowHiddenFactions>显示隐藏/非人类派系</ShowHiddenFactions>
   <ShowInMainTab>显示底部主按钮</ShowInMainTab>
+  <EnableDebugLog>启用调试日志</EnableDebugLog>
+  <EnableDebugLogTooltip>启用后将在游戏中输出详细的调试日志信息，用于排查问题。建议仅在需要调试时开启，以避免日志文件过大。</EnableDebugLogTooltip>
   <ForceIgnore>强制忽略</ForceIgnore>
   <ForceIgnoreTooltip>强制移除冲突的服装/武器并忽略预算限制。单位将尝试装备配置列表中的所有可能物品, 允许您忽略限制并始终创建神级单位。</ForceIgnoreTooltip>
   <ForceIgnoreGlobal>全局强制忽略</ForceIgnoreGlobal>
@@ -230,8 +234,8 @@
   <Management><b>管理：</b></Management>
   <SaveNameDesc>保存名称/描述</SaveNameDesc>
   <UpdateFromGame>从游戏更新</UpdateFromGame>
-  <PresetUpdatedFromGameSettings>预设已从游戏设置更新。</PresetUpdatedFromGameSettings>
-  <OverwritePresetConfirm>确定要使用当前设置覆盖预设 "{0}" 吗？</OverwritePresetConfirm>
+  <LoadPresetConfirmTitle>覆盖预设 "{0}" 用当前游戏设置？</LoadPresetConfirmTitle>
+  <LoadPresetConfirmMessage>覆盖此预设的装备数据用当前游戏内配置？</LoadPresetConfirmMessage>
   <UpdateFromGameTooltip>用当前游戏内配置覆盖此预设的装备数据。</UpdateFromGameTooltip>
   <RequiredMods>所需Mod</RequiredMods>
   <FactionPreview>派系预览</FactionPreview>
@@ -252,7 +256,7 @@
   <LoadPreset>加载预设</LoadPreset>
   <LoadPresetTooltip>将此预设应用到您的游戏。</LoadPresetTooltip>
   <LoadPresetConfirmTitle>加载预设</LoadPresetConfirmTitle>
-  <LoadPresetConfirmMessage>是否在应用预设前清除当前自定义装备？
+  <LoadPresetConfirmMessage>应用预设前清除当前自定义装备？
 
 是：覆盖全部( 推荐) 
 否：与当前设置合并</LoadPresetConfirmMessage>
@@ -267,7 +271,9 @@
   <MissingModsWarningRiskIt>是( 冒险继续) </MissingModsWarningRiskIt>
   <MissingModsWarningCancel>否( 取消) </MissingModsWarningCancel>
   <DeletePresetConfirm>确定要永久删除预设 "{0}" 吗？</DeletePresetConfirm>
+  <ClearPresetConfirm>确定要清空预设 "{0}" 的所有数据吗？</ClearPresetConfirm>
   <ExportTooltip>复制预设到剪贴板以分享。</ExportTooltip>
+  <ClearPresetTooltip>清空预设的所有数据，但保留预设本身。</ClearPresetTooltip>
   <DeletePresetTooltip>删除该预设( 仅删除预设记录, 不会自动回滚已保存到游戏的改动) 。</DeletePresetTooltip>
   <SavePresetMetadataTooltip>仅保存当前预设的名称/描述( 不更新装备内容) 。</SavePresetMetadataTooltip>
   <CreatePresetTooltip>创建新预设, 并将当前设置保存为初始内容。</CreatePresetTooltip>
@@ -286,7 +292,7 @@
   <FilterByAmmoTooltip>按弹药口径筛选( 多选) </FilterByAmmoTooltip>
   <AmmoCountSelected>口径: 已选 {0} 个</AmmoCountSelected>
   <TechAll>科技: 全部</TechAll>
-  <FilterByTechLevelTooltip>按科技等级筛选。科技等级取自物品/武器的 TechLevel, 用于区分原始/中世纪/工业/尖端等阶段。</FilterByTechLevelTooltip>
+  <FilterByTechLevelTooltip>按科技等级筛选。科技等级取自物品/武器的 TechLevel, 用于区分原始/中世纪/工业/太空/超凡等阶段。</FilterByTechLevelTooltip>
   <SortBy>排序: {0}</SortBy>
   <SortAscending>升序</SortAscending>
   <SortDescending>降序</SortDescending>
@@ -342,13 +348,26 @@
   <Browse>浏览</Browse>
   <IconPathPlaceholder>输入纹理路径 (例如: World/WorldObjects/Expanding/Town)</IconPathPlaceholder>
   <OnlyAvailableInGame>仅在游戏中可用。</OnlyAvailableInGame>
+  <FactionEditDisabledInLiteMode>在创建世界界面中，派系编辑功能不可用。请进入游戏后通过Mod设置访问完整编辑器。</FactionEditDisabledInLiteMode>
+  <NewFactionDisabledInLiteMode>在创建世界界面中，添加派系功能不可用。请进入游戏后通过Mod设置访问完整编辑器。</NewFactionDisabledInLiteMode>
+  <FiltersDisabledInLiteMode>在创建世界界面中，物品筛选器不可用。请进入游戏后通过Mod设置访问完整编辑器。</FiltersDisabledInLiteMode>
   <AdvancedModeTooltip>高级模式：提供更细粒度的编辑项( 例如指定物品/特殊需求) 。简单模式仅编辑基础装备池。</AdvancedModeTooltip>
   <ClearAllGearTooltip>清空当前兵种的全部自定义装备配置。此操作会弹出确认框, 并可通过撤销恢复。</ClearAllGearTooltip>
   <FactionInfoCardTooltip>查看该派系的 Def 信息卡。</FactionInfoCardTooltip>
   <DefName>DefName</DefName>
   <XenotypeChances>异种人概率 (Biotech)</XenotypeChances>
+  <DisableXenotypeChances>禁用异种人概率控制</DisableXenotypeChances>
   <AddXenotype>添加异种人</AddXenotype>
   <AllXenotypesAdded>已添加所有异种人。</AllXenotypesAdded>
+  <KindXenotypeSettings>兵种异种设置</KindXenotypeSettings>
+  <KindXenotypeTooltip>为当前兵种设置独立的异种生成概率，可覆盖派系统一设置。</KindXenotypeTooltip>
+  <XenoButtonLabel>异种</XenoButtonLabel>
+  <ForcedXenotype>强制异种</ForcedXenotype>
+  <ForcedXenotypeTooltip>强制指定该兵种只能生成此异种，忽略概率设置。</ForcedXenotypeTooltip>
+  <SelectXenotype>选择异种人</SelectXenotype>
+  <ClearForcedXenotype>清除强制异种</ClearForcedXenotype>
+  <Total>总计</Total>
+  <XenotypeChancesExceed100>异种人概率总和不能超过 100%</XenotypeChancesExceed100>
   <BatchApply>批量应用</BatchApply>
   <BatchApplyTooltip>打开批量应用窗口, 将当前配置应用到选定的兵种。</BatchApplyTooltip>
   <BatchApplyTitle>批量应用配置</BatchApplyTitle>
@@ -374,9 +393,12 @@
   <PawnKind>兵种</PawnKind>
   <Race>种族</Race>
   <RaceAll>全部种族</RaceAll>
-  <Category>类别</Category>
   <Power>战力</Power>
+  <FactionLeader>派系领袖</FactionLeader>
   <Points>点数</Points>
+  <RaidPoints>袭击点数</RaidPoints>
+  <PointsOverrideTooltip>自定义该兵种的袭击点数。留空则使用默认战斗力量值。</PointsOverrideTooltip>
+  <PointsOverrideFieldTooltip>输入自定义点数，或留空以使用默认值。设置为 0 可清除自定义值。</PointsOverrideFieldTooltip>
   <Unknown>未知</Unknown>
   <Category_All>所有</Category_All>
   <Category_Humanlike>人类</Category_Humanlike>
@@ -461,7 +483,7 @@
 - 删除所有 Combat 群组会导致派系无法发动袭击。
 - Trader 群组若无 Traders 配置会导致商队生成失败。</PawnGroupGuideContent>
   <ConfirmCreateSettlement>派系已建立, 是否立即选址建立基地？
-  
+
   ( 缺少定居点将无法在游戏中显示新派系) </ConfirmCreateSettlement>
   <PawnGroupKind_Combat>战斗</PawnGroupKind_Combat>
   <PawnGroupKind_Trader>商队</PawnGroupKind_Trader>
@@ -512,8 +534,8 @@
   <NoPawn>无角色</NoPawn>
   <CopiedKindGearMessage>已复制兵种装备！</CopiedKindGearMessage>
   <UnknownFaction>未知派系</UnknownFaction>
-  <NameColor>名称颜色</NameColor>
-  <NameColorTooltip>派系成员名称的显示颜色。</NameColorTooltip>
+  <NameColor>外观颜色</NameColor>
+  <NameColorTooltip>派系成员外观服饰的颜色。</NameColorTooltip>
   <RimTalkLinkage>RimTalk联动</RimTalkLinkage>
   <RimTalkUnderDev>开发中</RimTalkUnderDev>
   <NameCannotBeEmpty>名称不能为空</NameCannotBeEmpty>
@@ -556,7 +578,9 @@
 
   <!-- 首次进入存档提示 -->
   <FGC_FirstTimePrompt_Title>选择派系装备预设</FGC_FirstTimePrompt_Title>
-  <FGC_FirstTimePrompt_Description>检测到您有已保存的派系装备预设。您想要在当前存档中使用哪个预设？\n\n您也可以稍后在Mod设置中更改。</FGC_FirstTimePrompt_Description>
+  <FGC_FirstTimePrompt_Description>检测到您有已保存的派系装备预设。您想要在当前存档中使用哪个预设？
+
+您也可以稍后在Mod设置中更改。</FGC_FirstTimePrompt_Description>
   <FGC_FirstTimePrompt_VanillaOption>使用原版设置( 不推荐修改) </FGC_FirstTimePrompt_VanillaOption>
   <FGC_FirstTimePrompt_UseVanilla>使用原版</FGC_FirstTimePrompt_UseVanilla>
   <FGC_FirstTimePrompt_ApplyPreset>应用预设</FGC_FirstTimePrompt_ApplyPreset>
@@ -696,20 +720,20 @@ Biotech DLC才有, 血族、猪人、鼹鼠人等基因改造人。
 [进阶玩法]
 
 1. 随机但有主题(物品池) 
- 每次敌人来装备都不同？
+  每次敌人来装备都不同？
 • 高级模式 → 点"物品池"
 • Pool1放入多件武器
 • 设置权重( 越高越容易抽中) 
 • 生成时随机抽一件
 
 2.全员仿生人
- 想敌人都是机械改造？
+  想敌人都是机械改造？
 • 高级模式 → "添加强制状态"
 • 选"仿生腿部"、"仿生手臂"等
 • 设置100%概率
 
 3.批量应用
- 想一套配置给派系所有兵种用？
+  想一套配置给派系所有兵种用？
 • 配好一个兵种
 • 右键 → 复制
 • 选其他兵种 → 右键 → 粘贴
@@ -721,7 +745,7 @@ Biotech DLC才有, 血族、猪人、鼹鼠人等基因改造人。
 • 不满意就调整, 直到满意为止。
 
 5.预设导出分享
- 配好了想分享给朋友？
+  配好了想分享给朋友？
 • 预设管理 → 导出
 • 复制生成的字符串
 • 发给朋友
@@ -749,9 +773,7 @@ Biotech DLC才有, 血族、猪人、鼹鼠人等基因改造人。
 • 高级模式：每件装备设"传奇"品质
 • 开启"强制忽略"
 • 开启"仅从装备池选择"
-• 添加最强力的装备
-
-</Wiki_Workflow_Content>
+• 添加最强力的装备</Wiki_Workflow_Content>
   <Wiki_Notes_Content>[一定要知道！]
 
 ⏰ 保存！保存！
@@ -917,5 +939,77 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <HediffWarning_MovingLow>将严重降低角色移动能力</HediffWarning_MovingLow>
   <HediffWarning_ManipulationZero>将导致角色无法操作物品</HediffWarning_ManipulationZero>
   <HediffWarning_ManipulationLow>将严重降低角色操作能力</HediffWarning_ManipulationLow>
+
+  <!-- 派系导出功能 -->
+  <yFE_ExportFactions>导出派系</yFE_ExportFactions>
+  <yFE_ExportFactions_Title>导出派系到预设</yFE_ExportFactions_Title>
+  <yFE_TargetPreset>目标预设</yFE_TargetPreset>
+  <yFE_ExportToNewPreset>新建预设...</yFE_ExportToNewPreset>
+  <yFE_ExportToExistingPreset>选择现有预设</yFE_ExportToExistingPreset>
+  <yFE_ConflictResolution>冲突处理</yFE_ConflictResolution>
+  <yFE_ExportConflict_Skip>跳过已存在的派系</yFE_ExportConflict_Skip>
+  <yFE_ExportConflict_Overwrite>覆盖已存在的派系</yFE_ExportConflict_Overwrite>
+  <yFE_ExportConflict_Merge>合并兵种数据</yFE_ExportConflict_Merge>
+  <yFE_ExportSuccess>成功导出 {0} 个派系到预设"{1}"</yFE_ExportSuccess>
+  <yFE_ExportNoSelection>请先选择要导出的派系</yFE_ExportNoSelection>
+  <yFE_ExportFailed>导出失败</yFE_ExportFailed>
+  <yFE_Kinds_Label>个兵种</yFE_Kinds_Label>
+  <yFE_Factions_Label>个派系</yFE_Factions_Label>
+  <yFE_SelectAll>全选</yFE_SelectAll>
+  <yFE_DeselectAll>取消全选</yFE_DeselectAll>
+  <yFE_PresetName>预设名称</yFE_PresetName>
+  <yFE_PresetDescription>预设描述</yFE_PresetDescription>
+
+  <!-- Phase 2: 剧本创建界面 -->
+  <P2_FactionEditorButton>派系编辑器</P2_FactionEditorButton>
+  <P2_FactionEditorLite_Title>选择派系预设</P2_FactionEditorLite_Title>
+  <P2_SelectPreset>选择预设:</P2_SelectPreset>
+  <P2_SelectedFactions>已选择的派系:</P2_SelectedFactions>
+  <P2_SelectPresetHint>请先选择一个预设</P2_SelectPresetHint>
+  <P2_Kinds_Label>个兵种</P2_Kinds_Label>
+  <P2_ApplyPreset>应用预设</P2_ApplyPreset>
+  <P2_ConfigApplied>已应用预设 "{0}" 到游戏</P2_ConfigApplied>
+  <P2_SelectFactions>选择派系</P2_SelectFactions>
+  <P2_FactionDetails>派系详情</P2_FactionDetails>
+  <P2_SelectFactionHint>点击派系查看详情</P2_SelectFactionHint>
+  <P2_KindList>包含兵种</P2_KindList>
+  <P2_ApplyMode>应用模式</P2_ApplyMode>
+  <P2_ModeAdd>加入</P2_ModeAdd>
+  <P2_ModeOverwrite>覆盖</P2_ModeOverwrite>
+  <P2_ApplyToWorld>应用到世界</P2_ApplyToWorld>
+  <P2_NoWorldComponent>错误：无法找到世界派系组件</P2_NoWorldComponent>
+  <P2_AppliedToWorld>已成功应用 {0} 个派系到世界（{1}模式）</P2_AppliedToWorld>
+  <P2_NoNewFactionsToAdd>没有新的派系可添加（所有选中的派系已存在）</P2_NoNewFactionsToAdd>
+  <P2_ResetDefault>恢复默认</P2_ResetDefault>
+  <P2_OpenSettings>设置</P2_OpenSettings>
+  <P2_ResetSuccess>已恢复默认派系数据</P2_ResetSuccess>
+  <P2_NotInGameWarning>[提示] 当前不在游戏中，某些功能（如应用到存档）不可用</P2_NotInGameWarning>
+  
+  <!-- 炮塔/机械族武器过滤 -->
+  <HideTurretMechanoidWeaponsTooltip>隐藏物品库中的炮塔和机械族武器</HideTurretMechanoidWeaponsTooltip>
+
+  <!-- 状态验证消息 -->
+  <Validation_HediffNull>状态为 null</Validation_HediffNull>
+  <Validation_InvalidPoolType>无效的池类型</Validation_InvalidPoolType>
+  <Validation_HediffDefNull>状态定义为 null</Validation_HediffDefNull>
+  <Validation_HediffDefNotFound>未找到状态定义 '{0}'</Validation_HediffDefNotFound>
+  <Validation_HediffDefResolved>已解析状态定义 '{0}'</Validation_HediffDefResolved>
+  <Validation_InvalidChance>概率超出范围，已限制在 0-1 之间</Validation_InvalidChance>
+  <Validation_NoHediffClass>状态 '{0}' 没有 hediffClass</Validation_NoHediffClass>
+  <Validation_LethalHediff>状态 '{0}' 具有致命严重度 {1:F1}，请小心使用！</Validation_LethalHediff>
+  <Validation_NegativeMaxParts>最大部件数为负，已设置为 0</Validation_NegativeMaxParts>
+  <Validation_NegativeMaxPartsRange>最大部件范围最小值为负，已设置为 0</Validation_NegativeMaxPartsRange>
+  <Validation_InvalidMaxPartsRange>无效的最大部件范围，已交换最小值和最大值</Validation_InvalidMaxPartsRange>
+  <Validation_ExcessiveMaxParts>最大部件范围太大 (&gt;10)，已限制为 10</Validation_ExcessiveMaxParts>
+  <Validation_NegativeSeverityMin>严重度最小值为负，已设置为 0</Validation_NegativeSeverityMin>
+  <Validation_ExcessiveSeverityMax>严重度最大值太大 (&gt;1)，已限制为 1</Validation_ExcessiveSeverityMax>
+  <Validation_InvalidSeverityRange>无效的严重度范围，已交换最小值和最大值</Validation_InvalidSeverityRange>
+  <Validation_BodyPartNotFound>未找到身体部位 '{0}'，已移除</Validation_BodyPartNotFound>
+  <Validation_PawnNull>角色为 null</Validation_PawnNull>
+  <Validation_PawnHealthNull>角色健康或状态集合为 null</Validation_PawnHealthNull>
+  <Validation_PawnBodyNull>角色种族属性或身体为 null</Validation_PawnBodyNull>
+  <Validation_NoAvailableParts>状态 '{0}' 没有可用的身体部位</Validation_NoAvailableParts>
+  <Validation_InsufficientParts>状态 '{0}' 可用部位不足：请求 {1} 个，可用 {2} 个</Validation_InsufficientParts>
+  <Validation_TooManyImplantsForPart>部位 '{0}' 的植入物过多：请求 {1} 个，最大允许 {2} 个</Validation_TooManyImplantsForPart>
 
 </LanguageData>

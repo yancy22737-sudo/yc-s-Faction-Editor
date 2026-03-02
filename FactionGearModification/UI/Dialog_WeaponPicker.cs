@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FactionGearCustomizer.Compat;
+using FactionGearCustomizer.Compat.AmmoProviders;
 using FactionGearCustomizer.UI.Pickers;
 using FactionGearCustomizer.UI.Utils;
 using RimWorld;
@@ -34,11 +35,9 @@ namespace FactionGearCustomizer.UI
         private float defaultChance = 1f;
         private bool skipExisting = true;
 
-        private PickerSearchDebouncer searchDebouncer;
-        private string lastSearchText = "";
-
         private const float RowHeight = 28f;
         private const float SearchDebounceDelay = 0.25f;
+        private PickerSearchDebouncer searchDebouncer;
 
         public override Vector2 InitialSize => new Vector2(820f, 780f);
 
@@ -66,7 +65,10 @@ namespace FactionGearCustomizer.UI
             resizeable = true;
             filterState = PickerSession.Weapons;
             
-            searchDebouncer = new PickerSearchDebouncer(SearchDebounceDelay, OnSearchDebounced);
+            searchDebouncer = new PickerSearchDebouncer(SearchDebounceDelay, searchText =>
+            {
+                filterDirty = true;
+            });
             
             ThingDefCache.Initialize();
             BuildCandidates();
@@ -83,7 +85,6 @@ namespace FactionGearCustomizer.UI
             Text.Font = GameFont.Small;
             y += 40f;
 
-            EnsureFilterUpToDate();
             y = ThingPickerFilterBar.Draw(inRect, y, filterState, new ThingPickerFilterBarConfig
             {
                 AllMods = allMods,
@@ -96,6 +97,8 @@ namespace FactionGearCustomizer.UI
                 SearchDebouncer = searchDebouncer
             });
 
+            EnsureFilterUpToDate();
+            
             if (multiSelect) DrawDefaultsRow(inRect, ref y);
             if (multiSelect) DrawSelectionRow(inRect, ref y);
 
@@ -191,9 +194,15 @@ namespace FactionGearCustomizer.UI
             y += 34f;
         }
 
+        // Maximum viewRect height to avoid Unity GUI limitations (~3700 items limit)
+        private const float MaxViewRectHeight = 100000f;
+
         private void DrawList(Rect listRect)
         {
-            Rect viewRect = new Rect(0f, 0f, listRect.width - 16f, filteredCandidates.Count * RowHeight);
+            float totalContentHeight = filteredCandidates.Count * RowHeight;
+            // Clamp viewRect height to avoid Unity GUI rendering limitations
+            float clampedViewHeight = Mathf.Min(totalContentHeight, MaxViewRectHeight);
+            Rect viewRect = new Rect(0f, 0f, listRect.width - 16f, clampedViewHeight);
             Widgets.BeginScrollView(listRect, ref scrollPos, viewRect);
 
             int first = Mathf.Max(0, Mathf.FloorToInt(scrollPos.y / RowHeight) - 1);
@@ -365,22 +374,8 @@ namespace FactionGearCustomizer.UI
 
         private void TryAutoAddCEAmmo(ThingDef weaponDef)
         {
-            if (!CECompat.IsCEActive) return;
-            if (kindData == null) return;
-            if (weaponDef == null) return;
-            if (!weaponDef.IsRangedWeapon) return;
-
-            var ammo = CECompat.GetDefaultAmmoFor(weaponDef);
-            if (ammo == null) return;
-
-            if (kindData.InventoryItems == null) kindData.InventoryItems = new List<SpecRequirementEdit>();
-            if (kindData.InventoryItems.Any(x => x?.Thing == ammo)) return;
-            kindData.InventoryItems.Add(new SpecRequirementEdit
-            {
-                Thing = ammo,
-                CountRange = new IntRange(60, 120),
-                SelectionMode = ApparelSelectionMode.AlwaysTake
-            });
+            // 使用新的 AmmoProviderManager 统一处理
+            AmmoProviderManager.TryAutoAddAmmo(weaponDef, kindData?.InventoryItems);
         }
 
         private void BuildCandidates()
@@ -393,15 +388,9 @@ namespace FactionGearCustomizer.UI
             allMods = allCandidates.Select(FactionGearManager.GetModSource).Distinct().OrderBy(x => x).ToList();
             filterState.SyncAvailableMods(allMods);
 
-            if (CECompat.IsCEActive)
-            {
-                allAmmoSets = CECompat.GetAllAmmoSetLabels(allCandidates);
-                filterState.SyncAvailableAmmoSets(allAmmoSets);
-            }
-            else
-            {
-                allAmmoSets = new List<string>();
-            }
+            // 使用新的 AmmoProviderManager 统一处理弹药筛选器
+            allAmmoSets = AmmoProviderManager.GetAllAmmoSetLabels(allCandidates);
+            filterState.SyncAvailableAmmoSets(allAmmoSets);
 
             if (multiSelect && targetList != null)
             {
@@ -415,12 +404,6 @@ namespace FactionGearCustomizer.UI
         private void OnFilterChanged()
         {
             scrollPos = Vector2.zero;
-            filterDirty = true;
-        }
-
-        private void OnSearchDebounced(string searchText)
-        {
-            lastSearchText = searchText ?? "";
             filterDirty = true;
         }
 
@@ -500,7 +483,7 @@ namespace FactionGearCustomizer.UI
                 return range >= filterState.Range.min && range <= filterState.Range.max && dmg >= filterState.Damage.min && dmg <= filterState.Damage.max;
             });
 
-            string term = lastSearchText.Trim();
+            string term = (filterState.SearchText ?? "").Trim();
             if (!string.IsNullOrEmpty(term))
             {
                 string lower = term.ToLowerInvariant();

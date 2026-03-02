@@ -3,6 +3,7 @@ using System.Linq;
 using RimWorld;
 using Verse;
 using FactionGearCustomizer.Managers;
+using FactionGearCustomizer.Utils;
 
 namespace FactionGearCustomizer.Core
 {
@@ -64,7 +65,7 @@ namespace FactionGearCustomizer.Core
                 activePresetName = null;
                 useCustomSettings = false;
                 savedFactionGearData.Clear();
-                Log.Message("[FactionGearCustomizer] Restored vanilla settings for this save.");
+                LogUtils.Info("Restored vanilla settings for this save.");
                 
                 // 【修复】先重置所有派系Def到原版状态
                 foreach (var factionDef in DefDatabase<FactionDef>.AllDefs)
@@ -206,6 +207,17 @@ namespace FactionGearCustomizer.Core
                     return null;
                 return Current.Game.GetComponent<FactionGearGameComponent>();
             }
+        }
+
+        /// <summary>
+        /// 重置所有派系数据（用于新游戏或重置）
+        /// </summary>
+        public void ResetFactionData()
+        {
+            savedFactionGearData.Clear();
+            activePresetName = null;
+            useCustomSettings = false;
+            LogUtils.Info("Faction data reset.");
         }
 
         /// <summary>

@@ -1,3 +1,23 @@
+v1.4.1
+- Added ability to edit xenotype for individual pawns.
+- Fixed an issue that made the search bar in the item library unusable.
+- Fixed the problem where Any Hediff would cause pawns to collapse.
+- Fixed an issue with the 3700 item limit when adding items.
+- Improved user experience.
+
+v1.4.0
+- Fix: Fix error when destroying Pawn in preview window - clear worn apparel before destroying to avoid destroying non-destroyable items (e.g., Cybernetic Mod implants)
+- Fix: Fix destroy error when closing PresetManagerWindow preview
+- Fix: Fix destroy error when closing Dialog_PawnGroupGenerationPreview preview
+- Fix: Fix source data being cleared after batch apply - create deep copy before passing to batch apply dialog to avoid shared reference causing accidental data modification
+- Fix: Fix missing group data in preset export merge mode
+- Fix: Fix incomplete group data after preset export overwrite mode
+- Fix: Fix error when applying hediff with non-existent body part - add null checks and exception handling
+- Fix: Fix hediff selector specified body parts not existing on some pawns
+- Add: Export faction now supports getting data from preset - when a preset is selected in preset manager, export will get faction data from that preset
+- Add: Auto-load target preset after successful export - if current active preset is the export target, it will auto-apply after successful export
+- Add: Add Clear Preset button in Preset Manager - clears all preset data but keeps the preset itself
+
 v1.3.0
 - Add: Preview button now shows unsaved changes confirmation dialog - when there are unsaved changes, a confirmation dialog will ask whether to save
 - Add: Preview dialog adds auto-save toggle - when "Auto-save before preview" is checked, subsequent previews will auto-save without asking

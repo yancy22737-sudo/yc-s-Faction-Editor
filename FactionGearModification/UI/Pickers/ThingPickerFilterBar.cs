@@ -63,21 +63,18 @@ namespace FactionGearCustomizer.UI.Pickers
         private static void DrawSearch(Listing_Standard listing, ThingPickerFilterState state, ThingPickerFilterBarConfig cfg)
         {
             Rect searchRect = listing.GetRect(24f);
-            Rect inputRect = searchRect;
-
+            
+            Text.Anchor = TextAnchor.MiddleLeft;
+            Rect labelRect = new Rect(searchRect.x, searchRect.y, 60f, searchRect.height);
+            Widgets.Label(labelRect, LanguageManager.Get("Search") + ":");
+            Text.Anchor = TextAnchor.UpperLeft;
+            
+            Rect inputRect = new Rect(searchRect.x + 65f, searchRect.y, searchRect.width - 90f, searchRect.height);
+            
+            GUI.SetNextControlName("SearchField");
             string currentText = state.SearchText ?? "";
             string next = Widgets.TextField(inputRect, currentText);
-            if (string.IsNullOrEmpty(next))
-            {
-                var anchor = Text.Anchor;
-                var color = GUI.color;
-                Text.Anchor = TextAnchor.MiddleLeft;
-                GUI.color = new Color(0.6f, 0.6f, 0.6f, 1f);
-                Widgets.Label(new Rect(inputRect.x + 5f, inputRect.y, inputRect.width - 30f, inputRect.height), LanguageManager.Get("Search") + "...");
-                GUI.color = color;
-                Text.Anchor = anchor;
-            }
-
+            
             if (next != currentText)
             {
                 state.SearchText = next;
@@ -93,7 +90,7 @@ namespace FactionGearCustomizer.UI.Pickers
 
             if (!string.IsNullOrEmpty(state.SearchText))
             {
-                Rect clearButtonRect = new Rect(inputRect.xMax - 22f, inputRect.y + 4f, 16f, 16f);
+                Rect clearButtonRect = new Rect(inputRect.xMax + 5f, inputRect.y + 4f, 16f, 16f);
                 if (Widgets.ButtonImage(clearButtonRect, TexButton.CloseXSmall))
                 {
                     state.SearchText = "";

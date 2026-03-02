@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using RimWorld;
 using Verse;
+using FactionGearCustomizer.Utils;
 
 namespace FactionGearCustomizer
 {
@@ -24,7 +25,7 @@ namespace FactionGearCustomizer
                 Scribe.saver.FinalizeSaving();
                 
                 string xml = File.ReadAllText(path);
-                Log.Message("[FactionGearCustomizer] Preset exported successfully.");
+                LogUtils.DebugLog("Preset exported successfully.");
                 return Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(xml));
             }
             catch (System.Exception e)
@@ -63,7 +64,7 @@ namespace FactionGearCustomizer
                     }
                 }
 
-                Log.Message("[FactionGearCustomizer] Preset imported successfully.");
+                LogUtils.DebugLog("Preset imported successfully.");
                 return preset;
             }
             catch

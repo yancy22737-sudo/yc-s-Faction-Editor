@@ -5,33 +5,28 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 using FactionGearCustomizer;
+using FactionGearCustomizer.UI.Panels;
+using FactionGearCustomizer.Managers;
+using FactionGearCustomizer.Utils;
 
 namespace FactionGearCustomizer.UI.Panels
 {
+    [StaticConstructorOnStartup]
     public static class TopBarPanel
     {
         private static Texture2D logo;
-        private static bool logoLoaded;
+
+        static TopBarPanel()
+        {
+            logo = ContentFinder<Texture2D>.Get("UI/Logo", false);
+        }
 
         public static void Draw(Rect inRect)
         {
-            if (!logoLoaded)
-            {
-                logo = ContentFinder<Texture2D>.Get("UI/Logo", false);
-                logoLoaded = true;
-            }
 
-            // Define areas
-            // We'll use a single row layout.
-            // Left: Logo, Title
-            // Center/Right: Actions
-            
             float iconSize = 28f;
             float gap = 10f;
             
-            // --- Logo & Title ---
-            // 注意：标题 "yc的派系编辑器" 由 RimWorld 的 Mod 设置系统通过 SettingsCategory() 自动绘制
-            // 禁止在此手动绘制标题，否则会导致标题重叠显示
             Rect logoRect = new Rect(inRect.x, inRect.y + (inRect.height - iconSize) / 2f, iconSize, iconSize);
             if (logo != null)
             {
@@ -41,36 +36,29 @@ namespace FactionGearCustomizer.UI.Panels
                 GUI.color = oldColor;
             }
 
-            // --- Right Side Actions ---
-            // Combined:
-            // [Logo] [Title] | [FactionEdit] [Github] [Version] | [Spacer] | [Save] [Presets] [Utility] [Reset]
-            
             float currentX = logoRect.xMax + gap * 2;
             
-            // Draw Left-Side Buttons (FactionEdit, Github, Version)
             currentX = DrawInfoButtons(currentX, inRect.y, inRect.height);
             
-            // Draw Right-Side Buttons (Save, Presets, etc)
-            // We'll draw these aligned to the right edge
             DrawActionButtons(inRect, currentX);
         }
 
         private static float DrawInfoButtons(float startX, float y, float height)
         {
             float currentX = startX;
-            float gap = 8f; // Reduced gap
+            float gap = 8f;
             float buttonHeight = 24f;
             float buttonY = y + (height - buttonHeight) / 2f;
 
-            // Faction Edit Button
             string factionEditLabel = LanguageManager.Get("FactionEdit");
             Vector2 factionEditSize = Text.CalcSize(factionEditLabel);
-            Rect factionEditRect = new Rect(currentX, buttonY, factionEditSize.x + 10f, buttonHeight); // Reduced padding
-            
-            bool inGame = Current.Game != null;
-            if (!inGame) GUI.color = Color.gray;
+            Rect factionEditRect = new Rect(currentX, buttonY, factionEditSize.x + 10f, buttonHeight);
 
-            if (Widgets.ButtonText(factionEditRect, factionEditLabel, true, false, inGame))
+            bool inGame = Current.Game != null;
+            bool canEditFaction = inGame && !Dialogs.Dialog_FactionEditorLite.IsOpenedFromWorldCreation;
+            if (!canEditFaction) GUI.color = Color.gray;
+
+            if (Widgets.ButtonText(factionEditRect, factionEditLabel, true, false, canEditFaction))
             {
                 if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName))
                 {
@@ -85,21 +73,24 @@ namespace FactionGearCustomizer.UI.Panels
                     }
                 }
             }
-            
+
             if (!inGame)
             {
                 TooltipHandler.TipRegion(factionEditRect, LanguageManager.Get("OnlyAvailableInGame"));
+            }
+            else if (Dialogs.Dialog_FactionEditorLite.IsOpenedFromWorldCreation)
+            {
+                TooltipHandler.TipRegion(factionEditRect, LanguageManager.Get("FactionEditDisabledInLiteMode"));
             }
             else
             {
                 TooltipHandler.TipRegion(factionEditRect, LanguageManager.Get("FactionEditTooltip"));
             }
-            
+
             GUI.color = Color.white;
             
             currentX = factionEditRect.xMax + gap;
 
-            // Github
             string githubLink = "GitHub";
             Vector2 githubSize = Text.CalcSize(githubLink);
             Rect githubRect = new Rect(currentX, buttonY, githubSize.x + 10f, buttonHeight);
@@ -114,8 +105,6 @@ namespace FactionGearCustomizer.UI.Panels
             
             currentX = githubRect.xMax + gap;
 
-            // Version
-            // Simplified version label to save space
             string versionLabel = ModVersion.Current;
             Vector2 verSize = Text.CalcSize(versionLabel);
             Rect verRect = new Rect(currentX, buttonY, verSize.x + 10f, buttonHeight);
@@ -132,7 +121,6 @@ namespace FactionGearCustomizer.UI.Panels
 
             currentX = verRect.xMax + gap;
 
-            // Wiki Button
             string wikiLabel = "?";
             Vector2 wikiSize = Text.CalcSize(wikiLabel);
             Rect wikiRect = new Rect(currentX, buttonY, wikiSize.x + 14f, buttonHeight);
@@ -150,21 +138,11 @@ namespace FactionGearCustomizer.UI.Panels
 
         private static void DrawActionButtons(Rect containerRect, float minX)
         {
-            // We use a WidgetRow but we want it right-aligned. 
-            // Since we don't know exact width, we can estimate or draw from right to left manually.
-            // Or we can just start at a safe distance if we assume screen is wide enough.
-            // But to be safe and clean, let's use a fixed width for the right area or calculate it.
-            
-            // Let's use a WidgetRow starting at roughly the center or enough space for the buttons.
-            // Actually, let's just place them manually from right to left.
-            
             float buttonHeight = 24f;
             float buttonY = containerRect.y + (containerRect.height - buttonHeight) / 2f;
-            float gap = 8f; // Reduced gap
-            float currentX = containerRect.xMax - 5f; // Reduced padding from right edge
+            float gap = 8f;
+            float currentX = containerRect.xMax - 5f;
 
-            // 1. Reset Menu (Rightmost)
-            // Simplified label: "Reset v"
             string resetLabel = $"{LanguageManager.Get("Reset")} v";
             float resetWidth = Text.CalcSize(resetLabel).x + 12f;
             Rect resetRect = new Rect(currentX - resetWidth, buttonY, resetWidth, buttonHeight);
@@ -176,9 +154,6 @@ namespace FactionGearCustomizer.UI.Panels
             TooltipHandler.TipRegion(resetRect, LanguageManager.Get("ResetMenuTooltip"));
             currentX = resetRect.x - gap;
 
-
-
-            // 2.5 Options
             string optionsLabel = LanguageManager.Get("Options");
             float optionsWidth = Text.CalcSize(optionsLabel).x + 12f;
             Rect optionsRect = new Rect(currentX - optionsWidth, buttonY, optionsWidth, buttonHeight);
@@ -187,7 +162,6 @@ namespace FactionGearCustomizer.UI.Panels
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
                 
-                // Force Ignore Restrictions
                 bool forceIgnore = FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
                 string forceIgnoreLabel = $"{(forceIgnore ? "✔ " : "")}{LanguageManager.Get("ForceIgnore")}";
                 options.Add(new FloatMenuOption(forceIgnoreLabel, () => {
@@ -196,7 +170,6 @@ namespace FactionGearCustomizer.UI.Panels
                     FactionGearEditor.MarkDirty();
                 }));
                 
-                // Show Hidden Factions
                 string showHiddenLabel = $"{(FactionGearCustomizerMod.Settings.ShowHiddenFactions ? "✔ " : "")}{LanguageManager.Get("ShowHiddenFactions")}";
                 options.Add(new FloatMenuOption(showHiddenLabel, () => {
                     FactionGearCustomizerMod.Settings.ShowHiddenFactions = !FactionGearCustomizerMod.Settings.ShowHiddenFactions;
@@ -225,13 +198,19 @@ namespace FactionGearCustomizer.UI.Panels
                         }
                     }
                 }));
+
+                string debugLogLabel = $"{(FactionGearCustomizerMod.Settings.enableDebugLog ? "✔ " : "")}{LanguageManager.Get("EnableDebugLog")}";
+                options.Add(new FloatMenuOption(debugLogLabel, () => {
+                    FactionGearCustomizerMod.Settings.enableDebugLog = !FactionGearCustomizerMod.Settings.enableDebugLog;
+                    FactionGearCustomizerMod.Settings.Write();
+                    FactionGearCustomizer.Utils.LogUtils.Info(debugLogLabel);
+                }));
                 
                 Find.WindowStack.Add(new FloatMenu(options));
             }
             TooltipHandler.TipRegion(optionsRect, LanguageManager.Get("AdvancedOptionsTooltip"));
             currentX = optionsRect.x - gap;
 
-            // 3. Manage Presets
             string presetsLabel = LanguageManager.Get("Presets");
             float presetsWidth = Text.CalcSize(presetsLabel).x + 12f;
             Rect presetsRect = new Rect(currentX - presetsWidth, buttonY, presetsWidth, buttonHeight);
@@ -245,7 +224,6 @@ namespace FactionGearCustomizer.UI.Panels
             GUI.color = Color.white;
             currentX = presetsRect.x - gap;
 
-            // 4. Save Button
             string saveLabel = LanguageManager.Get("Save");
             float saveWidth = Text.CalcSize(saveLabel).x + 12f;
             Rect saveRect = new Rect(currentX - saveWidth, buttonY, saveWidth, buttonHeight);
@@ -267,7 +245,6 @@ namespace FactionGearCustomizer.UI.Panels
             
             currentX = saveRect.x - gap;
 
-            // 5. Refresh Button (Left of Save)
             string refreshLabel = LanguageManager.Get("Refresh");
             float refreshWidth = Text.CalcSize(refreshLabel).x + 12f;
             Rect refreshRect = new Rect(currentX - refreshWidth, buttonY, refreshWidth, buttonHeight);
@@ -282,7 +259,6 @@ namespace FactionGearCustomizer.UI.Panels
             GUI.color = Color.white;
             currentX = refreshRect.x - gap;
 
-            // 6. Active Preset Label (Left of Refresh)
             string currentPresetName = FactionGearCustomizerMod.Settings.currentPresetName;
             string labelText;
             if (string.IsNullOrEmpty(currentPresetName))
@@ -303,7 +279,6 @@ namespace FactionGearCustomizer.UI.Panels
             {
                 Rect labelRect = new Rect(minX, buttonY, availableWidth, buttonHeight);
                 
-                // 使用省略号截断过长的文本
                 Text.Anchor = TextAnchor.MiddleLeft;
                 Widgets.Label(labelRect, labelText.Truncate(labelRect.width));
                 Text.Anchor = TextAnchor.UpperLeft;
@@ -322,7 +297,6 @@ namespace FactionGearCustomizer.UI.Panels
         {
             if (string.IsNullOrEmpty(FactionGearCustomizerMod.Settings.currentPresetName))
             {
-                // No preset active - open preset manager and show message
                 Find.WindowStack.Add(new PresetManagerWindow());
                 Messages.Message(LanguageManager.Get("NoPresetCannotSave"), MessageTypeDefOf.NegativeEvent);
             }
@@ -341,6 +315,9 @@ namespace FactionGearCustomizer.UI.Panels
                 new FloatMenuOption(LanguageManager.Get("ResetCurrentKind"), () => {
                     if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName) && !string.IsNullOrEmpty(EditorSession.SelectedKindDefName))
                     {
+                        // 【关键修复】首先执行完整的深度清理
+                        FactionGearCustomizerMod.PerformDeepCleanup("ResetCurrentKind");
+                        
                         var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
                         var kindData = factionData.GetOrCreateKindData(EditorSession.SelectedKindDefName);
                         kindData.ResetToDefault();
@@ -351,6 +328,9 @@ namespace FactionGearCustomizer.UI.Panels
                 new FloatMenuOption(LanguageManager.Get("LoadDefaultFaction"), () => {
                     if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName))
                     {
+                        // 【关键修复】首先执行完整的深度清理
+                        FactionGearCustomizerMod.PerformDeepCleanup("LoadDefaultFaction");
+                        
                         FactionGearManager.LoadDefaultPresets(EditorSession.SelectedFactionDefName);
                         FactionGearEditor.MarkDirty();
                     }
@@ -358,15 +338,22 @@ namespace FactionGearCustomizer.UI.Panels
                 new FloatMenuOption(LanguageManager.Get("ResetCurrentFaction"), () => {
                     if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName))
                     {
+                        // 【关键修复】首先执行完整的深度清理
+                        FactionGearCustomizerMod.PerformDeepCleanup("ResetCurrentFaction");
+                        
                         var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
                         factionData.ResetToDefault();
                         FactionGearEditor.MarkDirty();
-                        Log.Message($"[FactionGearCustomizer] Reset faction settings to default: {EditorSession.SelectedFactionDefName}");
+                        LogUtils.DebugLog($"Reset faction settings to default: {EditorSession.SelectedFactionDefName}");
                     }
                 }),
                 new FloatMenuOption(LanguageManager.Get("ResetEVERYTHING"), () => {
+                    // 【深度清理】执行完整的深度清理流程
+                    FactionGearCustomizerMod.PerformDeepCleanup("ResetEVERYTHING");
+                    
+                    // 重置设置
                     FactionGearCustomizerMod.Settings.ResetToDefault();
-                    FactionGearEditor.RefreshAllCaches();
+                    
                     FactionGearEditor.MarkDirty();
                 }, MenuOptionPriority.High, null, null, 0f, null, null, true, 0)
             };

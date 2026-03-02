@@ -62,6 +62,16 @@ namespace FactionGearCustomizer
         public List<ForcedHediff> ForcedHediffs = null;
         public bool? ForceIgnoreRestrictions = null;
 
+        // Xenotype Settings (Biotech DLC)
+        // Key: XenotypeDefName, Value: Chance (0.0 - 1.0)
+        public Dictionary<string, float> XenotypeChances = new Dictionary<string, float>();
+        
+        // Disable Xenotype Chances Control (overrides faction-level xenotype settings)
+        public bool DisableXenotypeChances = false;
+        
+        // Force specific xenotype (ignores chances, forces this xenotype)
+        public string ForcedXenotype = null;
+
         public KindGearData() { }
 
         public KindGearData(string kindDefName)
@@ -147,6 +157,12 @@ namespace FactionGearCustomizer
             Scribe_Collections.Look(ref InventoryItems, "inventoryItems", LookMode.Deep);
             Scribe_Collections.Look(ref ForcedHediffs, "forcedHediffs", LookMode.Deep);
 
+            // Xenotype Settings
+            Scribe_Collections.Look(ref XenotypeChances, "xenotypeChances", LookMode.Value, LookMode.Value);
+            if (XenotypeChances == null) XenotypeChances = new Dictionary<string, float>();
+            Scribe_Values.Look(ref DisableXenotypeChances, "disableXenotypeChances", false);
+            Scribe_Values.Look(ref ForcedXenotype, "forcedXenotype");
+
             if (weapons == null) weapons = new List<GearItem>();
             if (meleeWeapons == null) meleeWeapons = new List<GearItem>();
             if (armors == null) armors = new List<GearItem>();
@@ -225,6 +241,11 @@ namespace FactionGearCustomizer
             SpecificWeapons = null;
             InventoryItems = null;
             ForcedHediffs = null;
+            
+            // Xenotype Settings
+            XenotypeChances?.Clear();
+            DisableXenotypeChances = false;
+            ForcedXenotype = null;
         }
 
         public KindGearData DeepCopy()
@@ -253,6 +274,17 @@ namespace FactionGearCustomizer
                 WeaponMoney = this.WeaponMoney,
                 ApparelColor = this.ApparelColor
             };
+
+            // Xenotype Settings - Deep Copy
+            if (this.XenotypeChances != null)
+            {
+                foreach (var kvp in this.XenotypeChances)
+                {
+                    copy.XenotypeChances[kvp.Key] = kvp.Value;
+                }
+            }
+            copy.DisableXenotypeChances = this.DisableXenotypeChances;
+            copy.ForcedXenotype = this.ForcedXenotype;
 
             if (this.TechHediffTags != null) copy.TechHediffTags = new List<string>(this.TechHediffTags);
             if (this.TechHediffDisallowedTags != null) copy.TechHediffDisallowedTags = new List<string>(this.TechHediffDisallowedTags);
@@ -360,6 +392,9 @@ namespace FactionGearCustomizer
 
         public void CopyFrom(KindGearData source)
         {
+            // Prevent self-copy which would cause data loss
+            if (ReferenceEquals(this, source)) return;
+            
             this.isModified = source.isModified;
             // Note: Label is NOT copied during batch apply to preserve target kind's name
             this.weapons = source.weapons?.Select(g => g != null ? new GearItem(g.thingDefName, g.weight) : null).Where(g => g != null).ToList() ?? new List<GearItem>();
@@ -381,6 +416,19 @@ namespace FactionGearCustomizer
             this.TechLevelLimit = source.TechLevelLimit;
             this.WeaponMoney = source.WeaponMoney;
             this.ApparelColor = source.ApparelColor;
+
+            // Xenotype Settings - Copy
+            if (source.XenotypeChances != null)
+            {
+                this.XenotypeChances = new Dictionary<string, float>();
+                foreach (var kvp in source.XenotypeChances)
+                {
+                    this.XenotypeChances[kvp.Key] = kvp.Value;
+                }
+            }
+            else this.XenotypeChances = null;
+            this.DisableXenotypeChances = source.DisableXenotypeChances;
+            this.ForcedXenotype = source.ForcedXenotype;
 
             this.TechHediffTags = source.TechHediffTags == null ? null : new List<string>(source.TechHediffTags);
             this.TechHediffDisallowedTags = source.TechHediffDisallowedTags == null ? null : new List<string>(source.TechHediffDisallowedTags);

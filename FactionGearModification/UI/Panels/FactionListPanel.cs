@@ -20,6 +20,18 @@ namespace FactionGearCustomizer.UI.Panels
         {
             dirtyCache = true;
         }
+        
+        /// <summary>
+        /// 【修复】彻底清理派系列表缓存
+        /// 在返回主菜单时调用，防止数据残留
+        /// </summary>
+        public static void ClearCache()
+        {
+            cachedFactionList = null;
+            dirtyCache = true;
+            lastProgramState = ProgramState.Entry;
+            lastFactionCount = -1;
+        }
 
         public static void Draw(Rect rect)
         {
@@ -49,29 +61,36 @@ namespace FactionGearCustomizer.UI.Panels
             
             // New Faction Button (only available in game) - Draw first to reserve space
             bool inGame = Current.Game != null;
-            
+            // 从创建世界界面打开时，禁用添加派系按钮
+            bool canAddFaction = inGame && !UI.Dialogs.Dialog_FactionEditorLite.IsOpenedFromWorldCreation;
+
             string newFactionLabel = LanguageManager.Get("NewFaction");
             Text.Font = GameFont.Small;
             Vector2 newFactionSize = Text.CalcSize(newFactionLabel);
             float btnWidth = Mathf.Max(newFactionSize.x + 10f, 40f); // Minimum width 40f
             Rect newFactionRect = new Rect(innerRect.xMax - btnWidth, innerRect.y + 3f, btnWidth, 24f);
-            
-            if (!inGame)
+
+            if (!canAddFaction)
             {
                 GUI.color = Color.gray;
             }
-            
-            if (Widgets.ButtonText(newFactionRect, newFactionLabel, true, false, inGame))
+
+            if (Widgets.ButtonText(newFactionRect, newFactionLabel, true, false, canAddFaction))
             {
-                if (inGame)
+                if (canAddFaction)
                 {
                     Find.WindowStack.Add(new Dialog_CreateInstance());
                 }
             }
-            
+
             if (!inGame)
             {
                 TooltipHandler.TipRegion(newFactionRect, LanguageManager.Get("OnlyAvailableInGame"));
+                GUI.color = Color.white;
+            }
+            else if (UI.Dialogs.Dialog_FactionEditorLite.IsOpenedFromWorldCreation)
+            {
+                TooltipHandler.TipRegion(newFactionRect, LanguageManager.Get("NewFactionDisabledInLiteMode"));
                 GUI.color = Color.white;
             }
             else

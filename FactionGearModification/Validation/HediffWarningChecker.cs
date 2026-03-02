@@ -239,19 +239,15 @@ namespace FactionGearCustomizer.Validation
         }
     }
 
+    [StaticConstructorOnStartup]
     public static class HediffWarningUI
     {
         private static Texture2D _warningIcon;
-        private static Texture2D WarningIcon
+        private static Texture2D WarningIcon => _warningIcon;
+
+        static HediffWarningUI()
         {
-            get
-            {
-                if (_warningIcon == null)
-                {
-                    _warningIcon = ContentFinder<Texture2D>.Get("UI/Designators/Cancel", true);
-                }
-                return _warningIcon;
-            }
+            _warningIcon = ContentFinder<Texture2D>.Get("UI/Designators/Cancel", true);
         }
 
         public static void DrawWarningIcon(Rect rect, HediffWarningChecker.HediffWarning warning)

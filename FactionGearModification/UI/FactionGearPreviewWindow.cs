@@ -79,7 +79,11 @@ namespace FactionGearCustomizer
             // Clear existing
             foreach (var p in previewPawns.Values)
             {
-                if (p != null && !p.Destroyed) p.Destroy();
+                if (p != null && !p.Destroyed)
+                {
+                    SafeClearApparel(p);
+                    p.Destroy();
+                }
             }
             previewPawns.Clear();
             previewErrors.Clear();
@@ -150,7 +154,11 @@ namespace FactionGearCustomizer
             errorMessage = null;
             if (previewPawn != null)
             {
-                if (!previewPawn.Destroyed) previewPawn.Destroy();
+                if (!previewPawn.Destroyed)
+                {
+                    SafeClearApparel(previewPawn);
+                    previewPawn.Destroy();
+                }
                 previewPawn = null;
             }
 
@@ -217,7 +225,23 @@ namespace FactionGearCustomizer
                 false, // allowFood
                 false // allowAddictions
             );
-            return PawnGenerator.GeneratePawn(request);
+            
+            Pawn pawn = PawnGenerator.GeneratePawn(request);
+            
+            // 应用自定义装备（包括 Hediff）
+            if (pawn != null && faction != null)
+            {
+                try
+                {
+                    GearApplier.ApplyCustomGear(pawn, faction);
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning($"[FactionGearCustomizer] Error applying custom gear in preview: {ex.Message}");
+                }
+            }
+            
+            return pawn;
         }
 
         public override void DoWindowContents(Rect inRect)
@@ -518,6 +542,8 @@ namespace FactionGearCustomizer
             {
                 if (previewPawn != null && !previewPawn.Destroyed)
                 {
+                    // 安全地移除服装，跳过不可销毁的物品
+                    SafeClearApparel(previewPawn);
                     previewPawn.Destroy();
                     previewPawn = null;
                 }
@@ -526,7 +552,12 @@ namespace FactionGearCustomizer
                 {
                     foreach (var p in previewPawns.Values)
                     {
-                        if (p != null && !p.Destroyed) p.Destroy();
+                        if (p != null && !p.Destroyed)
+                        {
+                            // 安全地移除服装，跳过不可销毁的物品
+                            SafeClearApparel(p);
+                            p.Destroy();
+                        }
                     }
                     previewPawns.Clear();
                 }
@@ -534,6 +565,40 @@ namespace FactionGearCustomizer
             catch (Exception ex)
             {
                 Log.Warning($"[FactionGearCustomizer] Error destroying preview pawn: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 安全地清空服装，跳过不可销毁的物品
+        /// </summary>
+        private void SafeClearApparel(Pawn pawn)
+        {
+            if (pawn?.apparel?.WornApparel == null) return;
+
+            var apparelList = pawn.apparel.WornApparel.ToList();
+            foreach (var apparel in apparelList)
+            {
+                if (apparel == null) continue;
+
+                try
+                {
+                    // 对于不可销毁的物品，只移除不销毁
+                    if (apparel.def != null && !apparel.def.destroyable)
+                    {
+                        pawn.apparel.Remove(apparel);
+                        continue;
+                    }
+
+                    pawn.apparel.Remove(apparel);
+                    if (!apparel.Destroyed)
+                    {
+                        apparel.Destroy();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning($"[FactionGearCustomizer] Failed to destroy apparel in preview: {ex.Message}");
+                }
             }
         }
     }

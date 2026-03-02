@@ -6,6 +6,7 @@ using UnityEngine;
 using Verse;
 using FactionGearCustomizer.UI.Panels;
 using FactionGearCustomizer;
+using FactionGearCustomizer.Compat.AmmoProviders;
 
 namespace FactionGearCustomizer.UI
 {
@@ -83,13 +84,13 @@ namespace FactionGearCustomizer.UI
             DrawGeneralSettings(new Rect(0, curY, sectionWidth, 120f));
             curY += 130f;
 
-            curY = DrawPawnListSection(new Rect(0, curY, sectionWidth, 0), groupData.options, "GroupOptions", ref optionsScrollPos, curY);
+            curY = DrawPawnListSection(new Rect(0, curY, sectionWidth, 0), groupData.options, "GroupOptions", ref optionsScrollPos, curY, false);
 
-            curY = DrawPawnListSection(new Rect(0, curY, sectionWidth, 0), groupData.traders, "Traders", ref tradersScrollPos, curY);
+            curY = DrawPawnListSection(new Rect(0, curY, sectionWidth, 0), groupData.traders, "Traders", ref tradersScrollPos, curY, true);
 
-            curY = DrawPawnListSection(new Rect(0, curY, sectionWidth, 0), groupData.carriers, "Carriers", ref carriersScrollPos, curY);
+            curY = DrawPawnListSection(new Rect(0, curY, sectionWidth, 0), groupData.carriers, "Carriers", ref carriersScrollPos, curY, false);
 
-            curY = DrawPawnListSection(new Rect(0, curY, sectionWidth, 0), groupData.guards, "Guards", ref guardsScrollPos, curY);
+            curY = DrawPawnListSection(new Rect(0, curY, sectionWidth, 0), groupData.guards, "Guards", ref guardsScrollPos, curY, false);
 
             Widgets.EndScrollView();
 
@@ -121,7 +122,7 @@ namespace FactionGearCustomizer.UI
         private float CalculatePawnListHeight(List<PawnGenOptionData> list)
         {
             float headerHeight = 40f;
-            float listItemHeight = 28f;
+            float listItemHeight = 54f;
             float contentHeight = headerHeight + Math.Max(list.Count * listItemHeight, 80f);
             return contentHeight;
         }
@@ -170,7 +171,7 @@ namespace FactionGearCustomizer.UI
             listing.End();
         }
 
-        private float DrawPawnListSection(Rect rect, List<PawnGenOptionData> list, string labelKey, ref Vector2 listScrollPos, float curY)
+        private float DrawPawnListSection(Rect rect, List<PawnGenOptionData> list, string labelKey, ref Vector2 listScrollPos, float curY, bool isTradersSection)
         {
             float height = CalculatePawnListHeight(list);
             Rect sectionRect = new Rect(rect.x, curY, rect.width, height);
@@ -180,17 +181,22 @@ namespace FactionGearCustomizer.UI
 
             if (Widgets.ButtonText(new Rect(headerRect.xMax - 125f, headerRect.y, 120f, 24f), LanguageManager.Get("AddPawn")))
             {
+                // 如果是 traders 部分，只显示有效的交易者
+                var traderFilter = isTradersSection
+                    ? Dialog_PawnKindPicker.TraderFilterMode.TradersOnly
+                    : Dialog_PawnKindPicker.TraderFilterMode.All;
+
                 Find.WindowStack.Add(new Dialog_PawnKindPicker((kinds) => {
                     UndoManager.RecordState(groupData);
                     foreach (var kind in kinds)
                     {
                         list.Add(new PawnGenOptionData { kindDefName = kind.defName, selectionWeight = 10f });
                     }
-                }, factionDef));
+                }, factionDef, null, traderFilter));
             }
 
             Rect listOutRect = new Rect(sectionRect.x + 5f, sectionRect.y + 35f, sectionRect.width - 10f, sectionRect.height - 40f);
-            float listHeight = list.Count * 28f;
+            float listHeight = list.Count * 32f;
             Rect viewRect = new Rect(0, 0, listOutRect.width - 16f, listHeight);
 
             Widgets.BeginScrollView(listOutRect, ref listScrollPos, viewRect);
@@ -199,41 +205,77 @@ namespace FactionGearCustomizer.UI
             for (int i = 0; i < list.Count; i++)
             {
                 var opt = list[i];
-                Rect row = new Rect(0, y, viewRect.width, 24f);
+                Rect row = new Rect(0, y, viewRect.width, 50f);
 
                 if (i % 2 == 1) Widgets.DrawAltRect(row);
                 if (Mouse.IsOver(row)) Widgets.DrawHighlight(row);
 
                 PawnKindDef kind = DefDatabase<PawnKindDef>.GetNamedSilentFail(opt.kindDefName);
                 string kindLabel = kind?.LabelCap ?? opt.kindDefName;
-                if (kind != null)
+                float displayPoints = opt.GetEffectivePoints();
+                float basePoints = kind?.combatPower ?? 0f;
+                if (opt.pointsOverride.HasValue)
                 {
-                     kindLabel += $" ({kind.combatPower})";
+                    kindLabel += $" ({displayPoints:F0})";
+                }
+                else if (kind != null)
+                {
+                     kindLabel += $" ({basePoints})";
                 }
 
-                Widgets.Label(new Rect(row.x + 5f, row.y, 250f, 24f), kindLabel);
+                Widgets.Label(new Rect(row.x + 5f, row.y + 2f, 250f, 24f), kindLabel);
 
                 string factionLabel = GetFactionLabelForKind(kind);
-                Widgets.Label(new Rect(row.x + 260f, row.y, 140f, 24f), factionLabel);
+                Widgets.Label(new Rect(row.x + 260f, row.y + 2f, 140f, 24f), factionLabel);
 
-                Widgets.Label(new Rect(row.x + 410f, row.y, 60f, 24f), LanguageManager.Get("Weight") + ":");
+                Widgets.Label(new Rect(row.x + 410f, row.y + 2f, 60f, 24f), LanguageManager.Get("Weight") + ":");
                 string buffer = opt.selectionWeight.ToString();
                 float newWeight = opt.selectionWeight;
-                Widgets.TextFieldNumeric(new Rect(row.x + 470f, row.y, 60f, 24f), ref newWeight, ref buffer);
+                Widgets.TextFieldNumeric(new Rect(row.x + 470f, row.y + 2f, 60f, 24f), ref newWeight, ref buffer);
                 if (Math.Abs(newWeight - opt.selectionWeight) > 0.001f)
                 {
                     UndoManager.RecordState(groupData);
                     opt.selectionWeight = newWeight;
                 }
 
-                if (Widgets.ButtonText(new Rect(row.x + 540f, row.y, 50f, 24f), LanguageManager.Get("Delete")))
+                Rect pointsLabelRect = new Rect(row.x + 540f, row.y + 2f, 60f, 24f);
+                Widgets.Label(pointsLabelRect, LanguageManager.Get("Points") + ":");
+                TooltipHandler.TipRegion(pointsLabelRect, LanguageManager.Get("PointsOverrideTooltip"));
+                
+                float tempPoints = opt.pointsOverride ?? 0f;
+                string pointsBuffer = (tempPoints > 0f || opt.pointsOverride == 0f) ? tempPoints.ToString() : "";
+                Rect pointsFieldRect = new Rect(row.x + 600f, row.y + 2f, 60f, 24f);
+                Widgets.TextFieldNumeric(pointsFieldRect, ref tempPoints, ref pointsBuffer);
+                TooltipHandler.TipRegion(pointsFieldRect, LanguageManager.Get("PointsOverrideFieldTooltip"));
+                
+                if (string.IsNullOrWhiteSpace(pointsBuffer))
+                {
+                    if (opt.pointsOverride.HasValue)
+                    {
+                        UndoManager.RecordState(groupData);
+                        opt.pointsOverride = null;
+                    }
+                }
+                else
+                {
+                    float newPointsValue = tempPoints > 0f ? tempPoints : 0f;
+                    if (!opt.pointsOverride.HasValue || Math.Abs(newPointsValue - opt.pointsOverride.Value) > 0.001f)
+                    {
+                        UndoManager.RecordState(groupData);
+                        opt.pointsOverride = newPointsValue > 0f ? newPointsValue : (float?)null;
+                    }
+                }
+
+                if (Widgets.ButtonText(new Rect(row.x + 670f, row.y + 2f, 50f, 24f), LanguageManager.Get("Delete")))
                 {
                     UndoManager.RecordState(groupData);
                     list.RemoveAt(i);
                     i--;
                 }
 
-                y += 28f;
+                Text.Font = GameFont.Small;
+
+                y += 40f;
             }
 
             Widgets.EndScrollView();

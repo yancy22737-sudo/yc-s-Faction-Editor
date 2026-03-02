@@ -207,6 +207,7 @@ namespace FactionGearCustomizer.Validation
         {
             switch (poolType)
             {
+                case ItemPoolType.AnyFood:
                 case ItemPoolType.AnyMeal:
                     return 0.4f;
                 case ItemPoolType.AnyMedicine:
@@ -227,6 +228,7 @@ namespace FactionGearCustomizer.Validation
         {
             switch (poolType)
             {
+                case ItemPoolType.AnyFood:
                 case ItemPoolType.AnyMeal:
                     return 1.5f;
                 case ItemPoolType.AnyMedicine:

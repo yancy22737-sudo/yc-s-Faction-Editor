@@ -6,6 +6,8 @@ using UnityEngine;
 using Verse;
 using FactionGearModification.UI;
 using FactionGearCustomizer.Core;
+using FactionGearCustomizer.Managers;
+using FactionGearCustomizer.Utils;
 
 namespace FactionGearCustomizer
 {
@@ -74,8 +76,8 @@ namespace FactionGearCustomizer
             Widgets.Label(new Rect(innerRect.x, innerRect.y, innerRect.width, 24f), LanguageManager.Get("SavedPresets"));
             presetSearchText = DrawTextFieldWithPlaceholder(new Rect(innerRect.x, innerRect.y + 24f, innerRect.width, 24f), presetSearchText, LanguageManager.Get("SearchPresets") + "...");
             
-            // 2. 列表区域动态高�?
-            float bottomAreaHeight = 95f;
+            // 2. 列表区域动态高度
+            float bottomAreaHeight = 153f;
             Rect listOutRect = new Rect(innerRect.x, innerRect.y + 55f, innerRect.width, innerRect.height - 55f - bottomAreaHeight);
             
             // 3. 执行搜索过滤
@@ -111,6 +113,9 @@ namespace FactionGearCustomizer
                 if (Widgets.ButtonInvisible(rowRect))
                 {
                     selectedPreset = preset;
+                    selectedPreviewFactionData = null;
+                    selectedPreviewKindData = null;
+                    lastPreviewPreset = null;
                 }
                 y += 30f;
             }
@@ -127,14 +132,28 @@ namespace FactionGearCustomizer
                 ImportPreset();
             }
             TooltipHandler.TipRegion(importRect, LanguageManager.Get("ImportFromClipboardTooltip"));
+
+            // Export Factions Button
+            Rect exportFactionsRect = new Rect(innerRect.x, bottomY + 34f, innerRect.width, 24f);
+            bool inGameForExport = Current.Game != null;
+            if (!inGameForExport) GUI.color = Color.gray;
+            if (Widgets.ButtonText(exportFactionsRect, LanguageManager.Get("yFE_ExportFactions"), true, false, inGameForExport))
+            {
+                Find.WindowStack.Add(new UI.Dialogs.Dialog_ExportFactionToPreset(selectedPreset));
+            }
+            if (!inGameForExport)
+            {
+                TooltipHandler.TipRegion(exportFactionsRect, LanguageManager.Get("OnlyAvailableInGame"));
+            }
+            GUI.color = Color.white;
             
-            Widgets.DrawLineHorizontal(innerRect.x, bottomY + 34f, innerRect.width);
+            Widgets.DrawLineHorizontal(innerRect.x, bottomY + 63f, innerRect.width);
 
             // Create New Section
-            Widgets.Label(new Rect(innerRect.x, bottomY + 40f, innerRect.width, 20f), LanguageManager.Get("CreateNew") + ":");
-            newPresetName = DrawTextFieldWithPlaceholder(new Rect(innerRect.x, bottomY + 62f, innerRect.width - 65f, 24f), newPresetName, LanguageManager.Get("Name") + "...");
+            Widgets.Label(new Rect(innerRect.x, bottomY + 69f, innerRect.width, 20f), LanguageManager.Get("CreateNew") + ":");
+            newPresetName = DrawTextFieldWithPlaceholder(new Rect(innerRect.x, bottomY + 91f, innerRect.width - 65f, 24f), newPresetName, LanguageManager.Get("Name") + "...");
             
-            Rect addPresetRect = new Rect(innerRect.xMax - 60f, bottomY + 62f, 60f, 24f);
+            Rect addPresetRect = new Rect(innerRect.xMax - 60f, bottomY + 91f, 60f, 24f);
             if (Widgets.ButtonText(addPresetRect, LanguageManager.Get("Add")))
             {
                 CreateNewPreset();
@@ -231,7 +250,7 @@ namespace FactionGearCustomizer
 
             // Bottom Actions
             Rect bottomRect = new Rect(innerRect.x, innerRect.yMax - 30f, innerRect.width, 30f);
-            float btnWidth = (bottomRect.width - 10f) / 3f;
+            float btnWidth = (bottomRect.width - 15f) / 4f;
             
             if (Widgets.ButtonText(new Rect(bottomRect.x, bottomRect.y, btnWidth, 30f), LanguageManager.Get("LoadPreset"))) ApplyPreset();
             TooltipHandler.TipRegion(new Rect(bottomRect.x, bottomRect.y, btnWidth, 30f), LanguageManager.Get("LoadPresetTooltip"));
@@ -239,8 +258,14 @@ namespace FactionGearCustomizer
             if (Widgets.ButtonText(new Rect(bottomRect.x + btnWidth + 5f, bottomRect.y, btnWidth, 30f), LanguageManager.Get("Export"))) ExportPreset();
             TooltipHandler.TipRegion(new Rect(bottomRect.x + btnWidth + 5f, bottomRect.y, btnWidth, 30f), LanguageManager.Get("ExportTooltip"));
             
+            if (Widgets.ButtonText(new Rect(bottomRect.x + (btnWidth + 5f) * 2, bottomRect.y, btnWidth, 30f), LanguageManager.Get("Clear")))
+            {
+                ClearPresetData();
+            }
+            TooltipHandler.TipRegion(new Rect(bottomRect.x + (btnWidth + 5f) * 2, bottomRect.y, btnWidth, 30f), LanguageManager.Get("ClearPresetTooltip"));
+            
             GUI.color = new Color(1f, 0.5f, 0.5f);
-            Rect deletePresetRect = new Rect(bottomRect.x + (btnWidth + 5f) * 2, bottomRect.y, btnWidth, 30f);
+            Rect deletePresetRect = new Rect(bottomRect.x + (btnWidth + 5f) * 3, bottomRect.y, btnWidth, 30f);
             if (Widgets.ButtonText(deletePresetRect, LanguageManager.Get("Delete"))) DeletePreset();
             GUI.color = Color.white;
             TooltipHandler.TipRegion(deletePresetRect, LanguageManager.Get("DeletePresetTooltip"));
@@ -259,6 +284,9 @@ namespace FactionGearCustomizer
                     LanguageManager.Get("PresetAlreadyExists").Replace("{0}", finalName),
                     LanguageManager.Get("Overwrite"), delegate
                     {
+                        // 【关键修复】首先执行完整的深度清理，确保预设保存的是干净的原始数据
+                        FactionGearCustomizerMod.PerformDeepCleanup("CreateNewPreset_Overwrite");
+                        
                         // 覆盖现有预设
                         existingPreset.SaveFromCurrentSettings(FactionGearCustomizerMod.Settings.factionGearData);
                         existingPreset.description = newPresetDescription;
@@ -272,6 +300,9 @@ namespace FactionGearCustomizer
             }
             else
             {
+                // 【关键修复】首先执行完整的深度清理，确保新预设保存的是干净的原始数据
+                FactionGearCustomizerMod.PerformDeepCleanup("CreateNewPreset_New");
+                
                 // 创建新预设 - 自动从当前游戏设置保存所有派系数据
                 var newPreset = new FactionGearPreset();
                 newPreset.name = finalName;
@@ -354,6 +385,10 @@ namespace FactionGearCustomizer
 
             try
             {
+                // 【关键修复】首先执行完整的深度清理，恢复DefDatabase到原始状态
+                // 这是解决"切换预设时数据残留"问题的核心
+                FactionGearCustomizerMod.PerformDeepCleanup("ExecuteApplyPreset");
+                
                 // 【修复】优先使用 GameComponent 管理存档级别的数据
                 var gameComponent = FactionGearGameComponent.Instance;
                 if (gameComponent != null)
@@ -430,10 +465,34 @@ namespace FactionGearCustomizer
             }
         }
 
+        private void ClearPresetData()
+        {
+            if (selectedPreset != null)
+            {
+                Find.WindowStack.Add(new Dialog_MessageBox(
+                    LanguageManager.Get("ClearPresetConfirm").Replace("{0}", selectedPreset.name),
+                    LanguageManager.Get("Clear"), delegate
+                    {
+                        // 【深度清理】执行完整的深度清理流程（不重置预设名称，因为只是清理数据）
+                        FactionGearCustomizerMod.PerformDeepCleanup("ClearPresetData", false);
+                        
+                        selectedPreset.factionGearData.Clear();
+                        selectedPreset.requiredMods.Clear();
+                        FactionGearCustomizerMod.Settings.UpdatePreset(selectedPreset);
+                        
+                        Notify(LanguageManager.Get("PresetCleared"));
+                    },
+                    LanguageManager.Get("Cancel"), null, null, true));
+            }
+        }
+
         private void SaveFromCurrentSettings()
         {
             if (selectedPreset != null)
             {
+                // 【深度清理】执行完整的深度清理流程，确保预设保存的是干净的原始数据（不重置预设名称）
+                FactionGearCustomizerMod.PerformDeepCleanup("SaveFromCurrentSettings", false);
+                
                 selectedPreset.SaveFromCurrentSettings(FactionGearCustomizerMod.Settings.factionGearData);
                 FactionGearCustomizerMod.Settings.UpdatePreset(selectedPreset);
             }
@@ -451,17 +510,17 @@ namespace FactionGearCustomizer
                     {
                         // 复制到剪贴板
                         GUIUtility.systemCopyBuffer = base64Content;
-                        Log.Message("[FactionGearCustomizer] Preset exported to clipboard!");
+                        LogUtils.DebugLog("Preset exported to clipboard!");
                         Notify(LanguageManager.Get("PresetExportedToClipboard").Replace("{0}", selectedPreset.name));
                     }
                     else
                     {
-                        Log.Message("[FactionGearCustomizer] Export failed!");
+                        LogUtils.DebugLog("Export failed!");
                     }
                 }
                 catch (System.Exception e)
                 {
-                    Log.Message("[FactionGearCustomizer] Export failed: " + e.Message);
+                    LogUtils.DebugLog("Export failed: " + e.Message);
                 }
             }
         }
@@ -474,7 +533,7 @@ namespace FactionGearCustomizer
                 string base64Content = GUIUtility.systemCopyBuffer;
                 if (string.IsNullOrEmpty(base64Content))
                 {
-                    Log.Message("[FactionGearCustomizer] " + LanguageManager.Get("ClipboardIsEmpty"));
+                    LogUtils.DebugLog("Clipboard is empty");
                     Notify(LanguageManager.Get("ClipboardIsEmpty"));
                     return;
                 }
@@ -497,18 +556,18 @@ namespace FactionGearCustomizer
                     // 添加到预设列�?
                     FactionGearCustomizerMod.Settings.AddPreset(newPreset);
                     selectedPreset = newPreset;
-                    Log.Message("[FactionGearCustomizer] Preset imported successfully!");
+                    LogUtils.DebugLog("Preset imported successfully!");
                     Notify(LanguageManager.Get("PresetImportedFromClipboard").Replace("{0}", newPreset.name));
                 }
                 else
                 {
-                    Log.Message("[FactionGearCustomizer] Import failed: Invalid preset data!");
+                    LogUtils.DebugLog("Import failed: Invalid preset data!");
                     Notify(LanguageManager.Get("ImportFailedInvalidData"));
                 }
             }
             catch (System.Exception e)
             {
-                Log.Message("[FactionGearCustomizer] Import failed: " + e.Message);
+                LogUtils.DebugLog("Import failed: " + e.Message);
                 Notify(LanguageManager.Get("ImportFailed").Replace("{0}", e.Message));
             }
         }
@@ -683,6 +742,10 @@ namespace FactionGearCustomizer
         {
             if (previewPawn != null && !previewPawn.Destroyed)
             {
+                if (previewPawn.apparel != null)
+                {
+                    previewPawn.apparel.WornApparel.Clear();
+                }
                 previewPawn.Destroy();
                 previewPawn = null;
             }
@@ -847,6 +910,10 @@ namespace FactionGearCustomizer
             base.PreClose();
             if (previewPawn != null && !previewPawn.Destroyed)
             {
+                if (previewPawn.apparel != null)
+                {
+                    previewPawn.apparel.WornApparel.Clear();
+                }
                 previewPawn.Destroy();
                 previewPawn = null;
             }

@@ -32,12 +32,10 @@ namespace FactionGearCustomizer.UI
         private ApparelSelectionMode defaultMode = ApparelSelectionMode.AlwaysTake;
         private float defaultChance = 1f;
         private bool skipExisting = true;
-
-        private PickerSearchDebouncer searchDebouncer;
-        private string lastSearchText = "";
  
         private const float RowHeight = 28f;
         private const float SearchDebounceDelay = 0.25f;
+        private PickerSearchDebouncer searchDebouncer;
  
         public override Vector2 InitialSize => new Vector2(780f, 760f);
 
@@ -65,7 +63,10 @@ namespace FactionGearCustomizer.UI
             resizeable = true;
             filterState = PickerSession.Inventory;
             
-            searchDebouncer = new PickerSearchDebouncer(SearchDebounceDelay, OnSearchDebounced);
+            searchDebouncer = new PickerSearchDebouncer(SearchDebounceDelay, searchText =>
+            {
+                filterDirty = true;
+            });
             
             ThingDefCache.Initialize();
             BuildCandidates();
@@ -82,7 +83,6 @@ namespace FactionGearCustomizer.UI
             Text.Font = GameFont.Small;
             y += 40f;
  
-            EnsureFilterUpToDate();
             y = ThingPickerFilterBar.Draw(inRect, y, filterState, new ThingPickerFilterBarConfig
             {
                 AllMods = allMods,
@@ -95,6 +95,9 @@ namespace FactionGearCustomizer.UI
                 OnChanged = OnFilterChanged,
                 SearchDebouncer = searchDebouncer
             });
+            
+            EnsureFilterUpToDate();
+            
             if (multiSelect) DrawDefaultsRow(inRect, ref y);
             if (multiSelect) DrawSelectionRow(inRect, ref y);
  
@@ -196,9 +199,15 @@ namespace FactionGearCustomizer.UI
             y += 34f;
         }
  
+        // Maximum viewRect height to avoid Unity GUI limitations (~3700 items limit)
+        private const float MaxViewRectHeight = 100000f;
+
         private void DrawList(Rect listRect)
         {
-            Rect viewRect = new Rect(0f, 0f, listRect.width - 16f, filteredCandidates.Count * RowHeight);
+            float totalContentHeight = filteredCandidates.Count * RowHeight;
+            // Clamp viewRect height to avoid Unity GUI rendering limitations
+            float clampedViewHeight = Mathf.Min(totalContentHeight, MaxViewRectHeight);
+            Rect viewRect = new Rect(0f, 0f, listRect.width - 16f, clampedViewHeight);
             Widgets.BeginScrollView(listRect, ref scrollPos, viewRect);
  
             int first = Mathf.Max(0, Mathf.FloorToInt(scrollPos.y / RowHeight) - 1);
@@ -486,12 +495,6 @@ namespace FactionGearCustomizer.UI
             filterDirty = true;
         }
 
-        private void OnSearchDebounced(string searchText)
-        {
-            lastSearchText = searchText ?? "";
-            filterDirty = true;
-        }
-
         private void EnsureFilterUpToDate()
         {
             if (!filterDirty) return;
@@ -540,9 +543,9 @@ namespace FactionGearCustomizer.UI
                 case ItemCategoryFilter.Medicine:
                     return def.IsMedicine;
                 case ItemCategoryFilter.SocialDrug:
-                    return def.IsDrug && def.IsPleasureDrug && !def.IsAddictiveDrug;
+                    return def.IsDrug && !def.IsMedicine && def.ingestible != null && def.ingestible.drugCategory == DrugCategory.Social;
                 case ItemCategoryFilter.HardDrug:
-                    return def.IsDrug && def.IsAddictiveDrug;
+                    return def.IsDrug && !def.IsMedicine && def.ingestible != null && def.ingestible.drugCategory == DrugCategory.Hard;
                 case ItemCategoryFilter.Ammo:
                     return def.IsShell;
                 default:
@@ -572,7 +575,7 @@ namespace FactionGearCustomizer.UI
 
             items = items.Where(d => d.BaseMarketValue >= filterState.MarketValue.min && d.BaseMarketValue <= filterState.MarketValue.max);
 
-            string term = lastSearchText.Trim();
+            string term = (filterState.SearchText ?? "").Trim();
             if (!string.IsNullOrEmpty(term))
             {
                 string lower = term.ToLowerInvariant();

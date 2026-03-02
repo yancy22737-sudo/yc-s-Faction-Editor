@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using FactionGearCustomizer.Core;
 using FactionGearCustomizer.UI;
+using FactionGearCustomizer.Utils;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -50,9 +51,6 @@ namespace FactionGearCustomizer.Managers
             xenotypeChancesField?.SetValue(set, chances);
         }
 
-        /// <summary>
-        /// 清理原始数据缓存，在切换存档或游戏重启时调用
-        /// </summary>
         public static void ClearOriginalDataCache()
         {
             lock (originalDataLock)
@@ -60,13 +58,10 @@ namespace FactionGearCustomizer.Managers
                 originalFactionData.Clear();
                 originalKindLabels.Clear();
                 hasSavedAllOriginalData = false;
-                Log.Message("[FactionGearCustomizer] Original data cache cleared.");
+                LogUtils.DebugLog("Original data cache cleared.");
             }
         }
 
-        /// <summary>
-        /// 保存所有派系和兵种的原始数据（应在游戏启动时调用，在任何修改之前）
-        /// </summary>
         public static void SaveAllOriginalData()
         {
             lock (originalDataLock)
@@ -74,9 +69,8 @@ namespace FactionGearCustomizer.Managers
                 if (hasSavedAllOriginalData)
                     return;
 
-                Log.Message("[FactionGearCustomizer] Saving all original faction data...");
+                LogUtils.DebugLog("Saving all original faction data...");
 
-                // 保存所有派系Def的原始数据
                 foreach (var factionDef in DefDatabase<FactionDef>.AllDefs)
                 {
                     if (factionDef != null && !originalFactionData.ContainsKey(factionDef))
@@ -85,7 +79,6 @@ namespace FactionGearCustomizer.Managers
                     }
                 }
 
-                // 保存所有兵种Def的原始数据
                 foreach (var kindDef in DefDatabase<PawnKindDef>.AllDefs)
                 {
                     if (kindDef != null && !originalKindLabels.ContainsKey(kindDef))
@@ -95,13 +88,10 @@ namespace FactionGearCustomizer.Managers
                 }
 
                 hasSavedAllOriginalData = true;
-                Log.Message($"[FactionGearCustomizer] Saved original data for {originalFactionData.Count} factions and {originalKindLabels.Count} kinds.");
+                LogUtils.DebugLog($"Saved original data for {originalFactionData.Count} factions and {originalKindLabels.Count} kinds.");
             }
         }
 
-        /// <summary>
-        /// 内部方法：保存单个派系的原始数据
-        /// </summary>
         private static void SaveOriginalFactionDataInternal(FactionDef faction)
         {
             if (faction == null) return;
@@ -127,7 +117,6 @@ namespace FactionGearCustomizer.Managers
 
             lock (originalDataLock)
             {
-                // 如果已经保存过所有原始数据，不需要重复保存
                 if (hasSavedAllOriginalData)
                     return;
 
@@ -144,7 +133,6 @@ namespace FactionGearCustomizer.Managers
 
             lock (originalDataLock)
             {
-                // 如果已经保存过所有原始数据，不需要重复保存
                 if (hasSavedAllOriginalData)
                     return;
 
@@ -161,39 +149,28 @@ namespace FactionGearCustomizer.Managers
 
             EnsureOriginalDataSaved(faction);
 
-            // Apply Label
             if (!string.IsNullOrEmpty(data.Label))
             {
                 faction.label = data.Label;
-                // Also update existing world factions
                 if (Current.Game != null && Find.FactionManager != null)
                 {
                     foreach (var f in Find.FactionManager.AllFactions)
                     {
                         if (f.def == faction)
                         {
-                            // Force update the faction name to match the new label
-                            // This ensures that the user's change is immediately visible in-game
-                            // Note: This will rename ALL factions of this Def to the same name if there are multiple.
-                            // But typically FactionDefs like "Empire" or "CivilOutlander" have distinct instances.
-                            // If there are multiple, they will all be named the same, which might be weird.
-                            // But since we edit the DEF, this is expected behavior for "Def Editing".
                             f.Name = data.Label;
                         }
                     }
                 }
             }
 
-            // Apply Description
             if (!string.IsNullOrEmpty(data.Description))
             {
                 faction.description = data.Description;
             }
 
-            // Apply Icon
             if (!string.IsNullOrEmpty(data.IconPath))
             {
-                // Try to load texture first
                 Texture2D newIcon = null;
                 
                 if (data.IconPath.StartsWith("Custom:"))
@@ -217,18 +194,14 @@ namespace FactionGearCustomizer.Managers
                 else
                 {
                     Log.Warning($"[FactionGearCustomizer] Could not load icon at path: {data.IconPath} for faction {faction.defName}. The icon file may have been deleted. Skipping icon application.");
-                    // Clear the invalid IconPath to prevent repeated warnings
                     data.IconPath = null;
                 }
             }
 
-            // Apply Color
             if (data.Color.HasValue)
             {
-                // We set the spectrum to a single color
                 faction.colorSpectrum = new List<Color> { data.Color.Value };
                 
-                // Update existing factions in game
                 if (Current.Game != null && Find.FactionManager != null)
                 {
                     foreach (var f in Find.FactionManager.AllFactions)
@@ -241,29 +214,38 @@ namespace FactionGearCustomizer.Managers
                 }
             }
             
-            // Apply Xenotypes (Biotech)
-            if (ModsConfig.BiotechActive && faction.humanlikeFaction && data.XenotypeChances != null && data.XenotypeChances.Count > 0)
+            if (ModsConfig.BiotechActive && faction.humanlikeFaction)
             {
-                if (faction.xenotypeSet == null) faction.xenotypeSet = new XenotypeSet();
-                
-                // Re-create the list
-                List<XenotypeChance> newChances = new List<XenotypeChance>();
-                
-                foreach (var kvp in data.XenotypeChances)
+                if (data.DisableXenotypeChances)
                 {
-                    XenotypeDef xDef = DefDatabase<XenotypeDef>.GetNamedSilentFail(kvp.Key);
-                    if (xDef != null)
+                    // 禁用异种生成概率：清空异种列表
+                    if (faction.xenotypeSet != null)
                     {
-                        newChances.Add(new XenotypeChance(xDef, kvp.Value));
+                        SetXenotypeChances(faction.xenotypeSet, new List<XenotypeChance>());
                     }
                 }
-                SetXenotypeChances(faction.xenotypeSet, newChances);
+                else if (data.XenotypeChances != null && data.XenotypeChances.Count > 0)
+                {
+                    // 应用自定义异种生成概率
+                    if (faction.xenotypeSet == null) faction.xenotypeSet = new XenotypeSet();
+                    
+                    List<XenotypeChance> newChances = new List<XenotypeChance>();
+                    
+                    foreach (var kvp in data.XenotypeChances)
+                    {
+                        XenotypeDef xDef = DefDatabase<XenotypeDef>.GetNamedSilentFail(kvp.Key);
+                        if (xDef != null)
+                        {
+                            newChances.Add(new XenotypeChance(xDef, kvp.Value));
+                        }
+                    }
+                    SetXenotypeChances(faction.xenotypeSet, newChances);
+                }
             }
 
-            // Apply Pawn Group Makers
             if (data.groupMakers != null && data.groupMakers.Count > 0)
             {
-                Log.Message($"[FactionGearCustomizer] Applying groupMakers for {faction.defName}, count: {data.groupMakers.Count}");
+                LogUtils.DebugLog($"Applying groupMakers for {faction.defName}, count: {data.groupMakers.Count}");
                 
                 if (faction.pawnGroupMakers == null) faction.pawnGroupMakers = new List<PawnGroupMaker>();
                 else faction.pawnGroupMakers.Clear();
@@ -274,7 +256,7 @@ namespace FactionGearCustomizer.Managers
                     if (maker != null)
                     {
                         faction.pawnGroupMakers.Add(maker);
-                        Log.Message($"[FactionGearCustomizer] Added pawnGroupMaker: {gData.kindDefName}");
+                        LogUtils.DebugLog($"Added pawnGroupMaker: {gData.kindDefName}");
                     }
                     else
                     {
@@ -282,42 +264,39 @@ namespace FactionGearCustomizer.Managers
                     }
                 }
                 
-                Log.Message($"[FactionGearCustomizer] Applied {faction.pawnGroupMakers.Count} pawnGroupMakers to faction {faction.defName}");
+                LogUtils.DebugLog($"Applied {faction.pawnGroupMakers.Count} pawnGroupMakers to faction {faction.defName}");
             }
             else
             {
-                Log.Message($"[FactionGearCustomizer] groupMakers is null or empty for faction {faction.defName}, skipping pawnGroupMakers modification");
+                LogUtils.DebugLog($"groupMakers is null or empty for faction {faction.defName}, skipping pawnGroupMakers modification");
             }
 
-            // Apply Player Relation Override
             if (data.PlayerRelationOverride.HasValue && Current.Game != null && Find.FactionManager != null)
             {
-                Log.Message($"[FactionGearCustomizer] Applying PlayerRelationOverride: {data.PlayerRelationOverride.Value} for faction def: {faction.defName}");
+                LogUtils.DebugLog($"Applying PlayerRelationOverride: {data.PlayerRelationOverride.Value} for faction def: {faction.defName}");
                 int count = 0;
                 foreach (var f in Find.FactionManager.AllFactions)
                 {
                     if (f.def == faction && !f.IsPlayer)
                     {
-                        Log.Message($"[FactionGearCustomizer] Found faction instance: {f.Name}");
+                        LogUtils.DebugLog($"Found faction instance: {f.Name}");
                         ApplyFactionRelation(f, data.PlayerRelationOverride.Value);
                         count++;
                     }
                 }
-                Log.Message($"[FactionGearCustomizer] Applied relation to {count} faction instances");
+                LogUtils.DebugLog($"Applied relation to {count} faction instances");
             }
             else
             {
-                Log.Message($"[FactionGearCustomizer] Skipping PlayerRelationOverride. HasValue={data.PlayerRelationOverride.HasValue}, InGame={Current.Game != null}");
+                LogUtils.DebugLog($"Skipping PlayerRelationOverride. HasValue={data.PlayerRelationOverride.HasValue}, InGame={Current.Game != null}");
             }
 
-            // Clear cache if any
             if (cachedDescriptionField != null)
             {
                 cachedDescriptionField.SetValue(faction, null);
             }
         }
 
-        // 缓存反射字段以提高性能
         private static FieldInfo goodwillField;
         private static FieldInfo baseGoodwillField;
         private static FieldInfo kindField;
@@ -343,34 +322,29 @@ namespace FactionGearCustomizer.Managers
             }
         }
 
-        // 缓存更多反射字段用于好感度修复
         private static FieldInfo checkNaturalGoodwillField;
 
         private static void ApplyFactionRelation(Faction faction, FactionRelationKind relationKind)
         {
             if (faction == null || faction.IsPlayer) return;
 
-            // 世界生成阶段玩家派系可能尚未创建，需要检查
             if (Find.FactionManager == null) return;
             Faction playerFaction = Find.FactionManager.OfPlayer;
             if (playerFaction == null) return;
 
-            // 初始化反射字段
             InitializeReflectionFields();
 
-            // Get current goodwill and relation
             float currentGoodwill = faction.PlayerGoodwill;
             FactionRelationKind currentKind = faction.PlayerRelationKind;
 
-            Log.Message($"[FactionGearCustomizer] ApplyFactionRelation: faction={faction.Name}, currentKind={currentKind}, targetKind={relationKind}, currentGoodwill={currentGoodwill}");
+            LogUtils.DebugLog($"ApplyFactionRelation: faction={faction.Name}, currentKind={currentKind}, targetKind={relationKind}, currentGoodwill={currentGoodwill}");
 
             if (currentKind == relationKind)
             {
-                Log.Message($"[FactionGearCustomizer] Relation already set, skipping");
-                return; // Already set
+                LogUtils.DebugLog("Relation already set, skipping");
+                return;
             }
 
-            // Calculate target goodwill based on desired relation
             float targetGoodwill;
             switch (relationKind)
             {
@@ -386,12 +360,10 @@ namespace FactionGearCustomizer.Managers
                     break;
             }
 
-            // Calculate goodwill change needed
             float goodwillChange = targetGoodwill - currentGoodwill;
 
-            Log.Message($"[FactionGearCustomizer] Applying goodwill change: {goodwillChange} (target: {targetGoodwill})");
+            LogUtils.DebugLog($"Applying goodwill change: {goodwillChange} (target: {targetGoodwill})");
 
-            // Apply the change
             if (goodwillChange != 0 || currentKind != relationKind)
             {
                 try
@@ -399,43 +371,35 @@ namespace FactionGearCustomizer.Managers
                     FactionRelation relation = faction.RelationWith(playerFaction);
                     if (relation != null)
                     {
-                        // 使用游戏原生方法应用好感度变化，这样会更稳定
-                        // 先尝试使用 TryAffectGoodwill 方法
                         if (goodwillChange != 0)
                         {
                             faction.TryAffectGoodwillWith(playerFaction, (int)goodwillChange, true, true, null);
                         }
 
-                        // 然后使用反射确保值被正确设置
-                        // Use reflection to set goodwill field (current effective goodwill)
                         if (goodwillField != null)
                         {
                             goodwillField.SetValue(relation, (int)targetGoodwill);
-                            Log.Message($"[FactionGearCustomizer] goodwill set via reflection to: {targetGoodwill}");
+                            LogUtils.DebugLog($"goodwill set via reflection to: {targetGoodwill}");
                         }
 
-                        // Use reflection to set baseGoodwill field (as seen in WorldEdit 2.0)
                         if (baseGoodwillField != null)
                         {
                             baseGoodwillField.SetValue(relation, (int)targetGoodwill);
-                            Log.Message($"[FactionGearCustomizer] baseGoodwill set via reflection to: {targetGoodwill}");
+                            LogUtils.DebugLog($"baseGoodwill set via reflection to: {targetGoodwill}");
                         }
 
-                        // Also set the kind field directly
                         if (kindField != null)
                         {
                             kindField.SetValue(relation, relationKind);
-                            Log.Message($"[FactionGearCustomizer] Relation kind set via reflection to: {relationKind}");
+                            LogUtils.DebugLog($"Relation kind set via reflection to: {relationKind}");
                         }
 
-                        // 关键修复：重置 naturalGoodwillTimer 以防止游戏自动恢复原始好感度
                         if (naturalGoodwillTimerField != null)
                         {
                             naturalGoodwillTimerField.SetValue(faction, 0);
-                            Log.Message($"[FactionGearCustomizer] naturalGoodwillTimer reset to 0");
+                            LogUtils.DebugLog("naturalGoodwillTimer reset to 0");
                         }
 
-                        // 额外修复：禁用自然好感度检查
                         if (checkNaturalGoodwillField == null)
                         {
                             checkNaturalGoodwillField = typeof(Faction).GetField("checkNaturalGoodwill", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -443,12 +407,11 @@ namespace FactionGearCustomizer.Managers
                         if (checkNaturalGoodwillField != null)
                         {
                             checkNaturalGoodwillField.SetValue(faction, false);
-                            Log.Message($"[FactionGearCustomizer] checkNaturalGoodwill set to false");
+                            LogUtils.DebugLog("checkNaturalGoodwill set to false");
                         }
 
-                        // Check if relation kind changed
                         FactionRelationKind newKind = faction.PlayerRelationKind;
-                        Log.Message($"[FactionGearCustomizer] Final goodwill: {faction.PlayerGoodwill}, relation kind: {newKind}");
+                        LogUtils.DebugLog($"Final goodwill: {faction.PlayerGoodwill}, relation kind: {newKind}");
                     }
                 }
                 catch (Exception ex)
@@ -470,10 +433,32 @@ namespace FactionGearCustomizer.Managers
             }
             else
             {
-                // Restore original label if it exists in cache
                 if (originalKindLabels.TryGetValue(kind, out string originalLabel))
                 {
                     kind.label = originalLabel;
+                }
+            }
+            
+            // Xenotype settings are stored in KindGearData and will be applied during Pawn generation via patches
+            // Log the settings for debugging
+            if (ModsConfig.BiotechActive)
+            {
+                string xenoInfo = "";
+                if (data.DisableXenotypeChances)
+                {
+                    xenoInfo += " [Disabled]";
+                }
+                if (!string.IsNullOrEmpty(data.ForcedXenotype))
+                {
+                    xenoInfo += $" [Forced: {data.ForcedXenotype}]";
+                }
+                if (data.XenotypeChances != null && data.XenotypeChances.Count > 0)
+                {
+                    xenoInfo += $" [Chances: {data.XenotypeChances.Count} types]";
+                }
+                if (!string.IsNullOrEmpty(xenoInfo))
+                {
+                    LogUtils.DebugLog($"Kind {kind.defName} xenotype settings: {xenoInfo}");
                 }
             }
         }
@@ -492,7 +477,6 @@ namespace FactionGearCustomizer.Managers
                 factionIconField.SetValue(faction, original.Icon);
             }
             
-            // Reset Xenotypes
             if (ModsConfig.BiotechActive && faction.humanlikeFaction)
             {
                 if (original.XenotypeChances != null)
@@ -500,11 +484,13 @@ namespace FactionGearCustomizer.Managers
                     if (faction.xenotypeSet == null) faction.xenotypeSet = new XenotypeSet();
                     SetXenotypeChances(faction.xenotypeSet, new List<XenotypeChance>(original.XenotypeChances));
                 }
-                // If original was null, we don't necessarily want to set it to null as it might break things if it was created.
-                // But usually if it was null, it means no xenotypes defined.
+                else if (faction.xenotypeSet != null)
+                {
+                    // 恢复原始异种设置（如果原来没有异种设置，则清空）
+                    SetXenotypeChances(faction.xenotypeSet, new List<XenotypeChance>());
+                }
             }
 
-            // Reset Pawn Groups
             if (original.PawnGroupMakers != null)
             {
                 faction.pawnGroupMakers = new List<PawnGroupMaker>(original.PawnGroupMakers);
@@ -514,13 +500,6 @@ namespace FactionGearCustomizer.Managers
             {
                 cachedDescriptionField.SetValue(faction, null);
             }
-
-            // Reset existing factions color?
-            // This is tricky because we don't know which color they picked from the spectrum originally.
-            // But usually they pick a random one. We can leave them as is or re-pick.
-            // For now, let's leave them as is, or maybe re-pick if we want to be thorough.
-            // But re-picking might change it to a different color than before the edit if spectrum had multiple colors.
-            // That's acceptable.
         }
 
         public static void ResetKind(PawnKindDef kind)
@@ -530,27 +509,65 @@ namespace FactionGearCustomizer.Managers
             kind.label = originalKindLabels[kind];
         }
 
+        public static void ResetAllFactions()
+        {
+            lock (originalDataLock)
+            {
+                LogUtils.DebugLog("Resetting all factions to original data...");
+
+                int resetFactionCount = 0;
+                foreach (var factionDef in DefDatabase<FactionDef>.AllDefs)
+                {
+                    if (factionDef != null && originalFactionData.ContainsKey(factionDef))
+                    {
+                        // 【调试日志】记录恢复前后的派系名称
+                        string beforeLabel = factionDef.label;
+                        string originalLabel = originalFactionData[factionDef].Label;
+                        
+                        ResetFaction(factionDef);
+                        resetFactionCount++;
+                        
+                        string afterLabel = factionDef.label;
+                        
+                        // 只在确实有变化时记录日志，避免刷屏
+                        if (beforeLabel != originalLabel)
+                        {
+                            LogUtils.DebugLog($"Reset faction '{factionDef.defName}': '{beforeLabel}' → '{afterLabel}' (original: '{originalLabel}')");
+                        }
+                    }
+                }
+
+                int resetKindCount = 0;
+                foreach (var kindDef in DefDatabase<PawnKindDef>.AllDefs)
+                {
+                    if (kindDef != null && originalKindLabels.ContainsKey(kindDef))
+                    {
+                        ResetKind(kindDef);
+                        resetKindCount++;
+                    }
+                }
+
+                LogUtils.DebugLog($"Reset complete: {resetFactionCount} factions, {resetKindCount} kinds restored.");
+            }
+        }
+
         public static void ApplyAllSettings()
         {
-            // 优先使用存档级别的设置（如果游戏已加载）
             var gameComponent = FactionGearGameComponent.Instance;
             var saveData = gameComponent?.GetActiveFactionGearData();
 
-            // 确定要使用的数据源
             List<FactionGearData> dataSource;
             if (saveData != null)
             {
-                // 使用存档中的设置
                 dataSource = saveData;
-                Log.Message("[FactionGearCustomizer] Applying settings from save game.");
+                LogUtils.Info("Applying settings from save game.");
             }
             else
             {
-                // 使用全局设置（兼容旧存档或主菜单预览）
                 dataSource = FactionGearCustomizerMod.Settings?.factionGearData;
                 if (dataSource != null)
                 {
-                    Log.Message("[FactionGearCustomizer] Applying global settings (no save-specific settings found).");
+                    LogUtils.Info("Applying global settings (no save-specific settings found).");
                 }
             }
 
@@ -578,9 +595,6 @@ namespace FactionGearCustomizer.Managers
             }
         }
 
-        /// <summary>
-        /// 清理所有派系Def的描述缓存，确保UI显示最新内容
-        /// </summary>
         public static void ClearDescriptionCache()
         {
             if (cachedDescriptionField == null) return;
@@ -601,20 +615,15 @@ namespace FactionGearCustomizer.Managers
             }
         }
 
-        /// <summary>
-        /// 获取派系原始的兵种列表（不包含用户在群组中新增的兵种）
-        /// </summary>
         public static List<PawnKindDef> GetOriginalFactionKinds(FactionDef factionDef)
         {
             if (factionDef == null) return new List<PawnKindDef>();
 
-            // 如果已经保存了原始数据，从原始数据中获取
             if (originalFactionData.TryGetValue(factionDef, out var originalData))
             {
                 return ExtractKindsFromPawnGroupMakers(originalData.PawnGroupMakers);
             }
 
-            // 如果没有保存原始数据，保存当前数据并返回
             EnsureOriginalDataSaved(factionDef);
             return ExtractKindsFromPawnGroupMakers(factionDef.pawnGroupMakers);
         }
@@ -627,7 +636,6 @@ namespace FactionGearCustomizer.Managers
             var seenKinds = new HashSet<string>();
             foreach (var pgm in makers)
             {
-                // 从 options 读取
                 if (pgm.options != null)
                 {
                     foreach (var opt in pgm.options)
@@ -640,7 +648,6 @@ namespace FactionGearCustomizer.Managers
                     }
                 }
                 
-                // 从 traders 读取
                 if (pgm.traders != null)
                 {
                     foreach (var opt in pgm.traders)
@@ -653,7 +660,6 @@ namespace FactionGearCustomizer.Managers
                     }
                 }
                 
-                // 从 carriers 读取
                 if (pgm.carriers != null)
                 {
                     foreach (var opt in pgm.carriers)
@@ -666,7 +672,6 @@ namespace FactionGearCustomizer.Managers
                     }
                 }
                 
-                // 从 guards 读取
                 if (pgm.guards != null)
                 {
                     foreach (var opt in pgm.guards)

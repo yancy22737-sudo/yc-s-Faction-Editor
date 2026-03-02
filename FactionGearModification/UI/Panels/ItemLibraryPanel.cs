@@ -6,6 +6,7 @@ using UnityEngine;
 using Verse;
 using FactionGearModification.UI;
 using FactionGearCustomizer.Compat;
+using FactionGearCustomizer.Compat.AmmoProviders;
 
 namespace FactionGearCustomizer.UI.Panels
 {
@@ -23,6 +24,7 @@ namespace FactionGearCustomizer.UI.Panels
             public FloatRange Range { get; set; }
             public FloatRange Damage { get; set; }
             public FloatRange MarketValue { get; set; }
+            public bool HideTurretMechanoidWeapons { get; set; }
         }
         
         private static Dictionary<FilteredItemsCacheKey, List<ThingDef>> filteredItemsCache = new Dictionary<FilteredItemsCacheKey, List<ThingDef>>();
@@ -39,6 +41,19 @@ namespace FactionGearCustomizer.UI.Panels
             Widgets.Label(titleRect, LanguageManager.Get("ItemLibrary"));
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.UpperLeft;
+            
+            // Toggle button for hiding turret/mechanoid weapons
+            Rect toggleButtonRect = new Rect(innerRect.xMax - 80f - 24f - 8f, innerRect.y, 24f, 24f);
+            
+            // Draw toggle button
+            bool oldHideValue = EditorSession.HideTurretMechanoidWeapons;
+            Widgets.Checkbox(toggleButtonRect.position, ref EditorSession.HideTurretMechanoidWeapons, 24f);
+            if (oldHideValue != EditorSession.HideTurretMechanoidWeapons)
+            {
+                filteredItemsCache.Clear();
+                EditorSession.CachedFilteredItems = null;
+            }
+            TooltipHandler.TipRegion(toggleButtonRect, LanguageManager.Get("HideTurretMechanoidWeaponsTooltip"));
             
             Rect addAllButtonRect = new Rect(innerRect.xMax - 80f, innerRect.y, 75f, 22f);
 
@@ -147,7 +162,10 @@ namespace FactionGearCustomizer.UI.Panels
             float gapHeight = 2f;
             float totalHeight = itemsToDraw.Count * (itemHeight + gapHeight);
             totalHeight = Mathf.Max(totalHeight, listOutRect.height);
-            Rect listViewRect = new Rect(0, 0, listOutRect.width - 16f, totalHeight);
+            // Clamp viewRect height to avoid Unity GUI rendering limitations (~3700 items limit)
+            const float MaxViewRectHeight = 100000f;
+            float clampedViewHeight = Mathf.Min(totalHeight, MaxViewRectHeight);
+            Rect listViewRect = new Rect(0, 0, listOutRect.width - 16f, clampedViewHeight);
 
             Widgets.BeginScrollView(listOutRect, ref EditorSession.LibraryScrollPos, listViewRect);
 
@@ -175,45 +193,49 @@ namespace FactionGearCustomizer.UI.Panels
             Listing_Standard listing = new Listing_Standard();
             listing.Begin(rect);
 
-            // Search - 参考 ThingPickerFilterBar 的实现方式
+            // 搜索框 - 参考 ThingPickerFilterBar 的实现
             Rect searchRect = listing.GetRect(24f);
-            Rect inputRect = searchRect;
-
-            string newSearchText = Widgets.TextField(inputRect, EditorSession.SearchText ?? "");
-            if (string.IsNullOrEmpty(newSearchText))
-            {
-                var anchor = Text.Anchor;
-                var color = GUI.color;
-                Text.Anchor = TextAnchor.MiddleLeft;
-                GUI.color = new Color(0.6f, 0.6f, 0.6f, 1f);
-                Widgets.Label(new Rect(inputRect.x + 5f, inputRect.y, inputRect.width - 30f, inputRect.height), LanguageManager.Get("Search") + "...");
-                GUI.color = color;
-                Text.Anchor = anchor;
-            }
-
-            if (newSearchText != EditorSession.SearchText)
+            
+            // 搜索标签
+            Text.Anchor = TextAnchor.MiddleLeft;
+            Rect labelRect = new Rect(searchRect.x, searchRect.y, 60f, searchRect.height);
+            Widgets.Label(labelRect, LanguageManager.Get("Search") + ":");
+            Text.Anchor = TextAnchor.UpperLeft;
+            
+            // 搜索输入框
+            Rect inputRect = new Rect(searchRect.x + 65f, searchRect.y, searchRect.width - 90f, searchRect.height);
+            
+            GUI.SetNextControlName("ItemLibrarySearchField");
+            string currentText = EditorSession.SearchText ?? "";
+            string newSearchText = Widgets.TextField(inputRect, currentText);
+            
+            if (newSearchText != currentText)
             {
                 EditorSession.SearchText = newSearchText;
+                // 清除缓存以刷新搜索结果
+                EditorSession.CachedFilteredItems = null;
             }
 
-            // 绘制清除按钮 - 与 ThingPickerFilterBar 保持一致
+            // 清除按钮
             if (!string.IsNullOrEmpty(EditorSession.SearchText))
             {
-                Rect clearButtonRect = new Rect(inputRect.xMax - 22f, inputRect.y + 4f, 16f, 16f);
+                Rect clearButtonRect = new Rect(inputRect.xMax + 5f, inputRect.y + 4f, 16f, 16f);
                 if (Widgets.ButtonImage(clearButtonRect, TexButton.CloseXSmall))
                 {
                     EditorSession.SearchText = "";
+                    EditorSession.CachedFilteredItems = null;
                 }
                 TooltipHandler.TipRegion(clearButtonRect, LanguageManager.Get("ClearSearch"));
             }
+            GUI.color = Color.white;
 
             listing.Gap(4f);
 
             // Filters
             Rect filterRowRect = listing.GetRect(24f);
-            
+
             bool showAmmo = CECompat.IsCEActive && EditorSession.SelectedCategory == GearCategory.Weapons;
-            
+
             Rect modSourceRect;
             Rect techLevelRect;
             Rect ammoRect = Rect.zero;
@@ -229,7 +251,7 @@ namespace FactionGearCustomizer.UI.Panels
 
             // Mod Source
             if (EditorSession.CachedModSources == null) EditorSession.CachedModSources = FactionGearEditor.GetUniqueModSources();
-            
+
             string modButtonText;
             if (EditorSession.SelectedModSources.Count == 0)
             {
@@ -245,15 +267,16 @@ namespace FactionGearCustomizer.UI.Panels
                 modButtonText = LanguageManager.Get("ModCountSelected", EditorSession.SelectedModSources.Count);
             }
 
-            if (Widgets.ButtonText(modSourceRect, modButtonText))
+            if (Widgets.ButtonText(modSourceRect, modButtonText, true))
             {
                 OpenModFilterMenu();
             }
             TooltipHandler.TipRegion(modSourceRect, LanguageManager.Get("FilterByModTooltip"));
+            GUI.color = Color.white;
 
             // Tech Level
             string techButtonText = !EditorSession.SelectedTechLevel.HasValue ? LanguageManager.Get("TechAll") : ((string)("TechLevel_" + EditorSession.SelectedTechLevel.Value).Translate());
-            if (Widgets.ButtonText(techLevelRect, techButtonText))
+            if (Widgets.ButtonText(techLevelRect, techButtonText, true))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
                 options.Add(new FloatMenuOption(LanguageManager.Get("All"), () => { EditorSession.SelectedTechLevel = null; FactionGearEditor.CalculateBounds(); }));
@@ -265,6 +288,7 @@ namespace FactionGearCustomizer.UI.Panels
                 Find.WindowStack.Add(new FloatMenu(options));
             }
             TooltipHandler.TipRegion(techLevelRect, LanguageManager.Get("FilterByTechLevelTooltip"));
+            GUI.color = Color.white;
 
             if (showAmmo)
             {
@@ -283,11 +307,12 @@ namespace FactionGearCustomizer.UI.Panels
                     ammoButtonText = LanguageManager.Get("AmmoCountSelected", EditorSession.SelectedAmmoSets.Count);
                 }
 
-                if (Widgets.ButtonText(ammoRect, ammoButtonText))
+                if (Widgets.ButtonText(ammoRect, ammoButtonText, true))
                 {
                     OpenAmmoFilterMenu();
                 }
                 TooltipHandler.TipRegion(ammoRect, LanguageManager.Get("FilterByAmmoTooltip"));
+                GUI.color = Color.white;
             }
 
             listing.Gap(4f);
@@ -305,7 +330,7 @@ namespace FactionGearCustomizer.UI.Panels
             if (!dynamicSortOptions.Contains(EditorSession.SortField)) EditorSession.SortField = dynamicSortOptions[0];
 
             string sortFieldLabel = LanguageManager.Get("SortField_" + EditorSession.SortField, EditorSession.SortField);
-            if (Widgets.ButtonText(sortFieldRect, LanguageManager.Get("SortBy", sortFieldLabel)))
+            if (Widgets.ButtonText(sortFieldRect, LanguageManager.Get("SortBy", sortFieldLabel), true))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
                 foreach (string option in dynamicSortOptions)
@@ -316,12 +341,14 @@ namespace FactionGearCustomizer.UI.Panels
                 Find.WindowStack.Add(new FloatMenu(options));
             }
             TooltipHandler.TipRegion(sortFieldRect, LanguageManager.Get("SortFieldTooltip"));
+            GUI.color = Color.white;
 
-            if (Widgets.ButtonText(sortOrderRect, EditorSession.SortAscending ? "^" : "v"))
+            if (Widgets.ButtonText(sortOrderRect, EditorSession.SortAscending ? "^" : "v", true))
             {
                 EditorSession.SortAscending = !EditorSession.SortAscending;
             }
             TooltipHandler.TipRegion(sortOrderRect, EditorSession.SortAscending ? LanguageManager.Get("SortAscending") : LanguageManager.Get("SortDescending"));
+            GUI.color = Color.white;
 
             listing.Gap(4f);
 
@@ -333,6 +360,7 @@ namespace FactionGearCustomizer.UI.Panels
                 DrawRangeFilter(listing, ref EditorSession.RangeFilter, 0f, EditorSession.MaxRange, LanguageManager.Get("Range"), ToStringStyle.FloatOne);
                 DrawRangeFilter(listing, ref EditorSession.DamageFilter, 0f, EditorSession.MaxDamage, LanguageManager.Get("Damage"), ToStringStyle.FloatOne);
             }
+            GUI.color = Color.white;
 
             listing.End();
         }
@@ -415,7 +443,8 @@ namespace FactionGearCustomizer.UI.Panels
                 TechLevel = EditorSession.SelectedTechLevel,
                 Range = EditorSession.RangeFilter,
                 Damage = EditorSession.DamageFilter,
-                MarketValue = EditorSession.MarketValueFilter
+                MarketValue = EditorSession.MarketValueFilter,
+                HideTurretMechanoidWeapons = EditorSession.HideTurretMechanoidWeapons
             };
             
             foreach (var cacheEntry in filteredItemsCache)
@@ -433,7 +462,8 @@ namespace FactionGearCustomizer.UI.Panels
                     Mathf.Approximately(key.Damage.min, cacheKey.Damage.min) &&
                     Mathf.Approximately(key.Damage.max, cacheKey.Damage.max) &&
                     Mathf.Approximately(key.MarketValue.min, cacheKey.MarketValue.min) &&
-                    Mathf.Approximately(key.MarketValue.max, cacheKey.MarketValue.max))
+                    Mathf.Approximately(key.MarketValue.max, cacheKey.MarketValue.max) &&
+                    key.HideTurretMechanoidWeapons == cacheKey.HideTurretMechanoidWeapons)
                 {
                     return cacheEntry.Value;
                 }
@@ -447,6 +477,11 @@ namespace FactionGearCustomizer.UI.Panels
                 case GearCategory.Armors: items = FactionGearEditor.GetCachedAllArmors(); break;
                 case GearCategory.Apparel: items = FactionGearEditor.GetCachedAllApparel(); break;
                 case GearCategory.Others: items = FactionGearEditor.GetCachedAllOthers(); break;
+            }
+            
+            if (EditorSession.HideTurretMechanoidWeapons)
+            {
+                items = items.Where(t => !IsTurretOrMechanoidWeapon(t)).ToList();
             }
 
             if (!string.IsNullOrEmpty(EditorSession.SearchText))
@@ -544,6 +579,68 @@ namespace FactionGearCustomizer.UI.Panels
             if (weaponDef == null) return 0f;
             try { return weaponDef.GetStatValueAbstract(StatDefOf.AccuracyMedium); }
             catch { return 0f; }
+        }
+
+        private static bool IsTurretOrMechanoidWeapon(ThingDef thingDef)
+        {
+            if (thingDef == null) return false;
+            
+            // 直接检查特定 DefName - 确保这些武器被过滤
+            string defName = thingDef.defName;
+            
+            // 电荷类武器 (Charge Weapons)
+            if (defName == "Gun_ChargeBlasterHeavyTurret" ||  // 轻型电荷爆裂炮
+                defName == "Gun_ChargeBlasterLight" ||       // 轻型电荷冲击炮
+                defName.Contains("ChargeBlaster"))           // 其他电荷爆裂炮变体
+            {
+                return true;
+            }
+            
+            // 脉冲射线炮类 (Pulse Rifles)
+            if (defName.Contains("PulseRifle") ||            // 脉冲射线炮
+                defName.Contains("Pulse_Rifle"))             // 脉冲射线炮变体
+            {
+                return true;
+            }
+            
+            // 射线炮类 (Ray Guns)
+            if (defName.Contains("RayGun") ||                // 射线炮
+                defName.Contains("Ray_Gun") ||               // 射线炮变体
+                defName.Contains("AreaRay"))                 // 广域射线炮
+            {
+                return true;
+            }
+            
+            // 地狱球炮和霰弹枪
+            if (defName == "Gun_HellsphereCannon" ||         // 地狱球炮
+                defName == "Gun_Scattergun")                 // 霰弹枪
+            {
+                return true;
+            }
+            
+            // 检查 weaponTags
+            if (thingDef.weaponTags != null)
+            {
+                bool hasTurretTag = thingDef.weaponTags.Any(tag => 
+                    tag == "TurretGun" || 
+                    tag == "Artillery" ||
+                    tag.StartsWith("MechanoidGun") || 
+                    tag.StartsWith("MechGun") ||
+                    tag == "HellsphereCannonGun" ||
+                    tag == "SentryDroneGunShortRange" ||
+                    tag == "SentryDroneGunLongRange" ||
+                    tag == "InfernoCannonGun");
+                
+                if (hasTurretTag) return true;
+            }
+            
+            // 检查 destroyOnDrop 属性 - 炮塔武器通常会在掉落时销毁
+            if (thingDef.destroyOnDrop)
+            {
+                return true;
+            }
+            
+            return false;
         }
 
         private static void DrawItemButton(Rect rect, ThingDef thingDef, bool hasActivePreset)
@@ -719,20 +816,8 @@ namespace FactionGearCustomizer.UI.Panels
         private static void TryAutoAddCEAmmo(KindGearData kindData, ThingDef weaponDef)
         {
             if (kindData == null) return;
-            if (!CECompat.IsCEActive) return;
-            if (weaponDef == null || !weaponDef.IsRangedWeapon) return;
-
-            var ammoDef = CECompat.GetDefaultAmmoFor(weaponDef);
-            if (ammoDef == null) return;
-
-            if (kindData.InventoryItems == null) kindData.InventoryItems = new List<SpecRequirementEdit>();
-            if (kindData.InventoryItems.Any(x => x?.Thing == ammoDef)) return;
-            kindData.InventoryItems.Add(new SpecRequirementEdit()
-            {
-                Thing = ammoDef,
-                CountRange = new IntRange(60, 120),
-                SelectionMode = ApparelSelectionMode.AlwaysTake
-            });
+            // 使用新的 AmmoProviderManager 统一处理
+            AmmoProviderManager.TryAutoAddAmmo(weaponDef, kindData.InventoryItems);
         }
 
         private static void TryRemoveCEAmmoForWeapon(KindGearData kindData, ThingDef weaponDef)

@@ -24,6 +24,9 @@ namespace FactionGearCustomizer.UI.Dialogs
             public string KindDefName;
             public int Count;
             public float Weight;
+            public float? PointsOverride;
+            public float? MinAge;
+            public float? MaxAge;
         }
 
         private readonly PawnGroupMakerData groupData;
@@ -40,11 +43,14 @@ namespace FactionGearCustomizer.UI.Dialogs
 
         private Dictionary<PawnKindDef, Pawn> previewPawns = new Dictionary<PawnKindDef, Pawn>();
         private Dictionary<PawnKindDef, string> previewErrors = new Dictionary<PawnKindDef, string>();
-        private Queue<PawnKindDef> generationQueue = new Queue<PawnKindDef>();
+        private Queue<Entry> generationQueue = new Queue<Entry>();
         private HashSet<PawnKindDef> pendingKinds = new HashSet<PawnKindDef>();
         private const int BATCH_SIZE = 1;
 
         private static System.Reflection.FieldInfo defaultFactionTypeField;
+
+        // 用于检测数据变化的哈希值
+        private int lastDataHash;
 
         public override Vector2 InitialSize => new Vector2(820f, 720f);
 
@@ -69,6 +75,7 @@ namespace FactionGearCustomizer.UI.Dialogs
         public override void PostOpen()
         {
             base.PostOpen();
+            lastDataHash = CalculateDataHash();
             RebuildPreview();
         }
 
@@ -85,6 +92,99 @@ namespace FactionGearCustomizer.UI.Dialogs
             {
                 ProcessGenerationQueue();
             }
+        }
+
+        /// <summary>
+        /// 窗口每次被打开时检查数据变化
+        /// </summary>
+        public override void PreOpen()
+        {
+            base.PreOpen();
+            CheckAndRefreshData();
+        }
+
+        /// <summary>
+        /// 检查数据是否发生变化，如果变化则刷新预览
+        /// </summary>
+        private void CheckAndRefreshData()
+        {
+            if (groupData == null) return;
+
+            int currentHash = CalculateDataHash();
+            if (currentHash != lastDataHash)
+            {
+                lastDataHash = currentHash;
+                RebuildPreview();
+            }
+        }
+
+        /// <summary>
+        /// 计算群组数据的哈希值，用于检测变化
+        /// </summary>
+        private int CalculateDataHash()
+        {
+            if (groupData == null) return 0;
+
+            int hash = 17;
+            hash = hash * 31 + (groupData.kindDefName?.GetHashCode() ?? 0);
+            
+            // 计算 options 的哈希
+            if (groupData.options != null)
+            {
+                foreach (var opt in groupData.options)
+                {
+                    if (opt != null)
+                    {
+                        hash = hash * 31 + (opt.kindDefName?.GetHashCode() ?? 0);
+                        hash = hash * 31 + opt.selectionWeight.GetHashCode();
+                        hash = hash * 31 + (opt.pointsOverride?.GetHashCode() ?? 0);
+                    }
+                }
+            }
+
+            // 计算 traders 的哈希
+            if (groupData.traders != null)
+            {
+                foreach (var opt in groupData.traders)
+                {
+                    if (opt != null)
+                    {
+                        hash = hash * 31 + (opt.kindDefName?.GetHashCode() ?? 0);
+                        hash = hash * 31 + opt.selectionWeight.GetHashCode();
+                        hash = hash * 31 + (opt.pointsOverride?.GetHashCode() ?? 0);
+                    }
+                }
+            }
+
+            // 计算 carriers 的哈希
+            if (groupData.carriers != null)
+            {
+                foreach (var opt in groupData.carriers)
+                {
+                    if (opt != null)
+                    {
+                        hash = hash * 31 + (opt.kindDefName?.GetHashCode() ?? 0);
+                        hash = hash * 31 + opt.selectionWeight.GetHashCode();
+                        hash = hash * 31 + (opt.pointsOverride?.GetHashCode() ?? 0);
+                    }
+                }
+            }
+
+            // 计算 guards 的哈希
+            if (groupData.guards != null)
+            {
+                foreach (var opt in groupData.guards)
+                {
+                    if (opt != null)
+                    {
+                        hash = hash * 31 + (opt.kindDefName?.GetHashCode() ?? 0);
+                        hash = hash * 31 + opt.selectionWeight.GetHashCode();
+                        hash = hash * 31 + (opt.pointsOverride?.GetHashCode() ?? 0);
+                    }
+                }
+            }
+
+            return hash;
         }
 
         public override void DoWindowContents(Rect inRect)
@@ -227,16 +327,44 @@ namespace FactionGearCustomizer.UI.Dialogs
                 }
 
                 string label = GetSafeLabel(e.Kind, e.KindDefName);
-                int combatPower = (int)(e.Kind?.combatPower ?? 0f);
+                int baseCombatPower = (int)(e.Kind?.combatPower ?? 0f);
+                int displayCombatPower = e.PointsOverride.HasValue ? (int)e.PointsOverride.Value : baseCombatPower;
                 string factionLabel = GetDefaultFactionLabel(e.Kind);
+                bool isLeader = FactionGearEditor.IsFactionLeader(e.Kind);
 
                 Rect labelRect = new Rect(x, row.y + 2f, row.width - (x - row.x) - 10f, 24f);
-                Widgets.Label(labelRect, $"{label} x{e.Count}  ({combatPower})");
+                if (e.PointsOverride.HasValue && e.PointsOverride.Value != baseCombatPower)
+                {
+                    Widgets.Label(labelRect, $"{label} x{e.Count}  ({displayCombatPower})");
+                    Text.Font = GameFont.Tiny;
+                    GUI.color = Color.yellow;
+                    Rect overrideRect = new Rect(x + 200f, row.y + 2f, 100f, 24f);
+                    Widgets.Label(overrideRect, $"(原：{baseCombatPower})");
+                    GUI.color = Color.white;
+                    Text.Font = GameFont.Small;
+                }
+                else
+                {
+                    Widgets.Label(labelRect, $"{label} x{e.Count}  ({displayCombatPower})");
+                }
 
                 Rect metaRect = new Rect(x, row.y + 26f, row.width - (x - row.x) - 10f, 22f);
                 Text.Font = GameFont.Tiny;
                 GUI.color = Color.gray;
-                Widgets.Label(metaRect, $"{LanguageManager.Get("Weight")}: {e.Weight:0.##}    {factionLabel}");
+                
+                // 优化派系领袖信息显示
+                System.Text.StringBuilder metaText = new System.Text.StringBuilder();
+                if (isLeader)
+                {
+                    metaText.Append("<color=#FFD700><b>⚑ </b></color>");
+                    metaText.Append($"<color=#FFD700>{LanguageManager.Get("FactionLeader")}: {LanguageManager.Get("Yes")}</color>");
+                    metaText.Append("    ");
+                }
+                metaText.Append($"{LanguageManager.Get("Weight")}: {e.Weight:0.##}");
+                metaText.Append("    ");
+                metaText.Append(factionLabel);
+                
+                Widgets.Label(metaRect, metaText.ToString());
                 GUI.color = Color.white;
                 Text.Font = GameFont.Small;
 
@@ -248,10 +376,15 @@ namespace FactionGearCustomizer.UI.Dialogs
 
         private void OpenKindDefPicker(SectionKind targetSection)
         {
+            // 如果是 Traders 部分，只显示有效的交易者
+            var traderFilter = targetSection == SectionKind.Traders
+                ? Dialog_PawnKindPicker.TraderFilterMode.TradersOnly
+                : Dialog_PawnKindPicker.TraderFilterMode.All;
+
             Find.WindowStack.Add(new Dialog_PawnKindPicker((kinds) =>
             {
                 AddKindDefsToSection(kinds, targetSection);
-            }, factionDef));
+            }, factionDef, null, traderFilter));
         }
 
         private void AddKindDefsToSection(List<PawnKindDef> kinds, SectionKind targetSection)
@@ -399,7 +532,7 @@ namespace FactionGearCustomizer.UI.Dialogs
             if (list == null || list.Count == 0 || draws <= 0)
                 return new List<Entry>();
 
-            List<(PawnKindDef kind, string defName, float weight)> candidates = new List<(PawnKindDef, string, float)>();
+            List<(PawnKindDef kind, string defName, float weight, float? pointsOverride, float? minAge, float? maxAge)> candidates = new List<(PawnKindDef, string, float, float?, float?, float?)>();
             foreach (var d in list)
             {
                 if (d == null) continue;
@@ -407,7 +540,7 @@ namespace FactionGearCustomizer.UI.Dialogs
                 if (string.IsNullOrWhiteSpace(d.kindDefName)) continue;
                 var kind = DefDatabase<PawnKindDef>.GetNamedSilentFail(d.kindDefName);
                 if (kind == null) continue;
-                candidates.Add((kind, d.kindDefName, d.selectionWeight));
+                candidates.Add((kind, d.kindDefName, d.selectionWeight, d.pointsOverride, d.minAge, d.maxAge));
             }
 
             float totalWeight = candidates.Sum(c => c.weight);
@@ -416,6 +549,9 @@ namespace FactionGearCustomizer.UI.Dialogs
 
             Dictionary<PawnKindDef, int> counts = new Dictionary<PawnKindDef, int>();
             Dictionary<PawnKindDef, float> weights = new Dictionary<PawnKindDef, float>();
+            Dictionary<PawnKindDef, float?> pointsOverrides = new Dictionary<PawnKindDef, float?>();
+            Dictionary<PawnKindDef, float?> minAges = new Dictionary<PawnKindDef, float?>();
+            Dictionary<PawnKindDef, float?> maxAges = new Dictionary<PawnKindDef, float?>();
 
             Rand.PushState();
             Rand.Seed = localSeed;
@@ -427,6 +563,9 @@ namespace FactionGearCustomizer.UI.Dialogs
                     float cur = 0f;
                     PawnKindDef chosen = null;
                     float chosenWeight = 0f;
+                    float? chosenPointsOverride = null;
+                    float? chosenMinAge = null;
+                    float? chosenMaxAge = null;
 
                     for (int j = 0; j < candidates.Count; j++)
                     {
@@ -436,6 +575,9 @@ namespace FactionGearCustomizer.UI.Dialogs
                         {
                             chosen = c.kind;
                             chosenWeight = c.weight;
+                            chosenPointsOverride = c.pointsOverride;
+                            chosenMinAge = c.minAge;
+                            chosenMaxAge = c.maxAge;
                             break;
                         }
                     }
@@ -444,6 +586,9 @@ namespace FactionGearCustomizer.UI.Dialogs
                     if (!counts.TryGetValue(chosen, out var v)) v = 0;
                     counts[chosen] = v + 1;
                     if (!weights.ContainsKey(chosen)) weights[chosen] = chosenWeight;
+                    if (!pointsOverrides.ContainsKey(chosen)) pointsOverrides[chosen] = chosenPointsOverride;
+                    if (!minAges.ContainsKey(chosen)) minAges[chosen] = chosenMinAge;
+                    if (!maxAges.ContainsKey(chosen)) maxAges[chosen] = chosenMaxAge;
                 }
             }
             finally
@@ -459,7 +604,10 @@ namespace FactionGearCustomizer.UI.Dialogs
                     Kind = kv.Key,
                     KindDefName = kv.Key.defName,
                     Count = kv.Value,
-                    Weight = weights.TryGetValue(kv.Key, out var w) ? w : 0f
+                    Weight = weights.TryGetValue(kv.Key, out var w) ? w : 0f,
+                    PointsOverride = pointsOverrides.TryGetValue(kv.Key, out var po) ? po : (float?)null,
+                    MinAge = minAges.TryGetValue(kv.Key, out var minA) ? minA : (float?)null,
+                    MaxAge = maxAges.TryGetValue(kv.Key, out var maxA) ? maxA : (float?)null
                 });
             }
 
@@ -474,24 +622,25 @@ namespace FactionGearCustomizer.UI.Dialogs
         {
             DestroyAllPreviewPawns();
 
-            HashSet<PawnKindDef> kinds = new HashSet<PawnKindDef>();
+            // 收集所有条目（包含年龄信息）
+            List<Entry> allEntries = new List<Entry>();
             foreach (var kv in sections)
             {
                 var list = kv.Value;
                 if (list == null) continue;
                 for (int i = 0; i < list.Count; i++)
                 {
-                    var k = list[i]?.Kind;
-                    if (k != null) kinds.Add(k);
+                    var entry = list[i];
+                    if (entry?.Kind != null) allEntries.Add(entry);
                 }
             }
 
             generationQueue.Clear();
             pendingKinds.Clear();
-            foreach (var k in kinds)
+            foreach (var entry in allEntries)
             {
-                generationQueue.Enqueue(k);
-                pendingKinds.Add(k);
+                generationQueue.Enqueue(entry);
+                pendingKinds.Add(entry.Kind);
             }
         }
 
@@ -501,32 +650,34 @@ namespace FactionGearCustomizer.UI.Dialogs
 
             for (int i = 0; i < BATCH_SIZE && generationQueue.Count > 0; i++)
             {
-                var k = generationQueue.Dequeue();
-                pendingKinds.Remove(k);
+                var entry = generationQueue.Dequeue();
+                pendingKinds.Remove(entry.Kind);
                 try
                 {
-                    var pawn = GeneratePawnInternal(k, faction);
+                    var pawn = GeneratePawnInternal(entry, faction);
                     if (pawn != null)
                     {
-                        previewPawns[k] = pawn;
+                        previewPawns[entry.Kind] = pawn;
                         WidgetsUtils.SetPortraitDirty(pawn);
                     }
                     else
                     {
-                        previewErrors[k] = LanguageManager.Get("PreviewFailed_GenFailed");
+                        previewErrors[entry.Kind] = LanguageManager.Get("PreviewFailed_GenFailed");
                     }
                 }
                 catch (Exception ex)
                 {
-                    previewErrors[k] = ex.Message;
-                    Log.Warning($"[FactionGearCustomizer] Error generating pawn preview for {k?.defName}: {ex}");
+                    previewErrors[entry.Kind] = ex.Message;
+                    Log.Warning($"[FactionGearCustomizer] Error generating pawn preview for {entry.Kind?.defName}: {ex}");
                 }
             }
         }
 
-        private Pawn GeneratePawnInternal(PawnKindDef kDef, Faction faction)
+        private Pawn GeneratePawnInternal(Entry entry, Faction faction)
         {
-            if (kDef == null) return null;
+            if (entry?.Kind == null) return null;
+
+            var kDef = entry.Kind;
 
             // 跳过 creepjoiner 类型的 PawnKindDef，因为它们需要特殊的生成逻辑
             if (kDef.race?.defName == "CreepJoiner")
@@ -552,7 +703,34 @@ namespace FactionGearCustomizer.UI.Dialogs
                 false,
                 false
             );
-            return PawnGenerator.GeneratePawn(request);
+
+            // 应用年龄限制
+            if (entry.MinAge.HasValue || entry.MaxAge.HasValue)
+            {
+                float minAge = entry.MinAge ?? 0f;
+                float maxAge = entry.MaxAge ?? 999f;
+                // 在范围内随机选择一个年龄
+                float targetAge = Rand.Range(minAge, maxAge);
+                request.FixedBiologicalAge = targetAge;
+                request.FixedChronologicalAge = targetAge;
+            }
+
+            Pawn pawn = PawnGenerator.GeneratePawn(request);
+
+            // 应用自定义装备（包括 Hediff）
+            if (pawn != null && faction != null)
+            {
+                try
+                {
+                    GearApplier.ApplyCustomGear(pawn, faction);
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning($"[FactionGearCustomizer] Error applying custom gear in preview: {ex.Message}");
+                }
+            }
+
+            return pawn;
         }
 
         private Faction GetFactionOrNull()
@@ -564,12 +742,50 @@ namespace FactionGearCustomizer.UI.Dialogs
         {
             foreach (var p in previewPawns.Values)
             {
-                if (p != null && !p.Destroyed) p.Destroy();
+                if (p != null && !p.Destroyed)
+                {
+                    SafeClearApparel(p);
+                    p.Destroy();
+                }
             }
             previewPawns.Clear();
             previewErrors.Clear();
             generationQueue.Clear();
             pendingKinds.Clear();
+        }
+
+        /// <summary>
+        /// 安全地清空服装，跳过不可销毁的物品
+        /// </summary>
+        private void SafeClearApparel(Pawn pawn)
+        {
+            if (pawn?.apparel?.WornApparel == null) return;
+
+            var apparelList = pawn.apparel.WornApparel.ToList();
+            foreach (var apparel in apparelList)
+            {
+                if (apparel == null) continue;
+
+                try
+                {
+                    // 对于不可销毁的物品，只移除不销毁
+                    if (apparel.def != null && !apparel.def.destroyable)
+                    {
+                        pawn.apparel.Remove(apparel);
+                        continue;
+                    }
+
+                    pawn.apparel.Remove(apparel);
+                    if (!apparel.Destroyed)
+                    {
+                        apparel.Destroy();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning($"[FactionGearCustomizer] Failed to destroy apparel in group preview: {ex.Message}");
+                }
+            }
         }
     }
 }

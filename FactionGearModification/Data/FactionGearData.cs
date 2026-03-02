@@ -21,6 +21,9 @@ namespace FactionGearCustomizer
         // Xenotype Settings (Biotech DLC)
         // Key: XenotypeDefName, Value: Chance (0.0 - 1.0)
         public Dictionary<string, float> XenotypeChances = new Dictionary<string, float>();
+        
+        // Disable Xenotype Chances Control
+        public bool DisableXenotypeChances = false;
 
         // Pawn Group Makers (Raids, Caravans, etc.)
         public List<PawnGroupMakerData> groupMakers = new List<PawnGroupMakerData>();
@@ -52,6 +55,8 @@ namespace FactionGearCustomizer
             
             Scribe_Collections.Look(ref XenotypeChances, "xenotypeChances", LookMode.Value, LookMode.Value);
             if (XenotypeChances == null) XenotypeChances = new Dictionary<string, float>();
+            
+            Scribe_Values.Look(ref DisableXenotypeChances, "disableXenotypeChances", false);
 
             Scribe_Collections.Look(ref groupMakers, "groupMakers", LookMode.Deep);
             if (groupMakers == null) groupMakers = new List<PawnGroupMakerData>();
@@ -108,6 +113,7 @@ namespace FactionGearCustomizer
             IconPath = null;
             Color = null;
             XenotypeChances?.Clear();
+            DisableXenotypeChances = false;
             groupMakers?.Clear();
             PlayerRelationOverride = null;
         }
@@ -170,6 +176,7 @@ namespace FactionGearCustomizer
             copy.IconPath = this.IconPath;
             copy.Color = this.Color;
             copy.PlayerRelationOverride = this.PlayerRelationOverride;
+            copy.DisableXenotypeChances = this.DisableXenotypeChances;
             
             if (this.XenotypeChances != null)
             {

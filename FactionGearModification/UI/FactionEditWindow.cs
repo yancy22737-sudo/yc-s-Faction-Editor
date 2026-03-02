@@ -33,6 +33,7 @@ namespace FactionGearCustomizer.UI
         
         // Biotech Buffers
         private Dictionary<string, float> bufferXenotypes = new Dictionary<string, float>();
+        private bool bufferDisableXenotypeChances;
         private Vector2 xenotypeScrollPosition;
         private Vector2 factionSettingsScrollPosition;
 
@@ -78,6 +79,8 @@ namespace FactionGearCustomizer.UI
             // Initialize Biotech Buffers
             if (ModsConfig.BiotechActive && faction.humanlikeFaction)
             {
+                bufferDisableXenotypeChances = factionData.DisableXenotypeChances;
+                
                 if (factionData.XenotypeChances != null && factionData.XenotypeChances.Count > 0)
                 {
                     bufferXenotypes = new Dictionary<string, float>(factionData.XenotypeChances);
@@ -370,84 +373,101 @@ namespace FactionGearCustomizer.UI
             if (ModsConfig.BiotechActive && factionDef.humanlikeFaction)
             {
                 listing.GapLine();
-                listing.Label($"<b>{LanguageManager.Get("XenotypeChances")}</b>");
                 
-                Rect addBtnRect = listing.GetRect(30f);
-                if (Widgets.ButtonText(new Rect(addBtnRect.width - 150f, addBtnRect.y, 150f, 30f), LanguageManager.Get("AddXenotype")))
+                // Disable Xenotype Chances Toggle
+                Rect toggleRect = listing.GetRect(30f);
+                bool newDisable = bufferDisableXenotypeChances;
+                Widgets.CheckboxLabeled(toggleRect, LanguageManager.Get("DisableXenotypeChances"), ref newDisable);
+                if (newDisable != bufferDisableXenotypeChances)
                 {
-                    List<FloatMenuOption> options = new List<FloatMenuOption>();
-                    var sortedDefs = DefDatabase<XenotypeDef>.AllDefs
-                        .OrderBy(x => x.LabelCap.ToString())
-                        .ToList();
-
-                    foreach (var x in sortedDefs)
-                    {
-                        if (!bufferXenotypes.ContainsKey(x.defName))
-                        {
-                            options.Add(new FloatMenuOption(x.LabelCap, () => {
-                                bufferXenotypes.Add(x.defName, 0.1f);
-                            }));
-                        }
-                    }
-                    if (options.Any()) Find.WindowStack.Add(new FloatMenu(options));
-                    else Messages.Message(LanguageManager.Get("AllXenotypesAdded"), MessageTypeDefOf.RejectInput, false);
+                    bufferDisableXenotypeChances = newDisable;
                 }
                 
-                // List of Xenotypes
-                var sortedKeys = bufferXenotypes.Keys
-                    .Select(k => new { Key = k, Def = DefDatabase<XenotypeDef>.GetNamedSilentFail(k) })
-                    .OrderBy(x => x.Def?.LabelCap.ToString() ?? x.Key)
-                    .Select(x => x.Key)
-                    .ToList();
-
-                // Calculate current total for display
-                float currentTotal = bufferXenotypes.Values.Sum();
-                string totalText = $"{LanguageManager.Get("Total")}: {currentTotal:P0}";
-                GUI.color = currentTotal > 1.0f ? Color.red : Color.green;
-                listing.Label(totalText);
-                GUI.color = Color.white;
-                listing.Gap(5f);
-
-                foreach (var key in sortedKeys)
+                if (!bufferDisableXenotypeChances)
                 {
-                    Rect row = listing.GetRect(30f);
-                    if (row.y % 60f < 30f) Widgets.DrawAltRect(row);
-        
-                    XenotypeDef xDef = DefDatabase<XenotypeDef>.GetNamedSilentFail(key);
-                    string label = xDef?.LabelCap ?? key;
+                    listing.Label($"<b>{LanguageManager.Get("XenotypeChances")}</b>");
                     
-                    // Icon
-                    if (xDef != null)
+                    Rect addBtnRect = listing.GetRect(30f);
+                    if (Widgets.ButtonText(new Rect(addBtnRect.width - 150f, addBtnRect.y, 150f, 30f), LanguageManager.Get("AddXenotype")))
                     {
-                        Rect xIconRect = new Rect(row.x, row.y, 24f, 24f);
-                        Widgets.DrawTextureFitted(xIconRect, xDef.Icon, 1f);
-                    }
+                        List<FloatMenuOption> options = new List<FloatMenuOption>();
+                        var sortedDefs = DefDatabase<XenotypeDef>.AllDefs
+                            .OrderBy(x => x.LabelCap.ToString())
+                            .ToList();
 
-                    Widgets.Label(new Rect(row.x + 30f, row.y + 3f, 150f, 24f), label);
-                    
-                    float val = bufferXenotypes[key];
-                    float newVal = Widgets.HorizontalSlider(new Rect(row.x + 190f, row.y + 5f, 200f, 20f), val, 0f, 1f, true, val.ToString("P0"));
-                    
-                    // Calculate what the total would be with the new value
-                    float otherTotal = currentTotal - val;
-                    float potentialTotal = otherTotal + newVal;
-                    
-                    // Only apply the new value if it doesn't exceed 100%
-                    if (potentialTotal <= 1.0f)
-                    {
-                        bufferXenotypes[key] = newVal;
-                    }
-                    else
-                    {
-                        // Limit to remaining available percentage
-                        float maxAllowed = Math.Max(0f, 1.0f - otherTotal);
-                        bufferXenotypes[key] = maxAllowed;
+                        foreach (var x in sortedDefs)
+                        {
+                            if (!bufferXenotypes.ContainsKey(x.defName))
+                            {
+                                options.Add(new FloatMenuOption(x.LabelCap, () => {
+                                    bufferXenotypes.Add(x.defName, 0.1f);
+                                }));
+                            }
+                        }
+                        if (options.Any()) Find.WindowStack.Add(new FloatMenu(options));
+                        else Messages.Message(LanguageManager.Get("AllXenotypesAdded"), MessageTypeDefOf.RejectInput, false);
                     }
                     
-                    if (Widgets.ButtonText(new Rect(row.x + 400f, row.y, 30f, 24f), "X"))
+                    // List of Xenotypes
+                    var sortedKeys = bufferXenotypes.Keys
+                        .Select(k => new { Key = k, Def = DefDatabase<XenotypeDef>.GetNamedSilentFail(k) })
+                        .OrderBy(x => x.Def?.LabelCap.ToString() ?? x.Key)
+                        .Select(x => x.Key)
+                        .ToList();
+
+                    // Calculate current total for display
+                    float currentTotal = bufferXenotypes.Values.Sum();
+                    string totalText = $"{LanguageManager.Get("Total")}: {currentTotal:P0}";
+                    GUI.color = currentTotal > 1.0f ? Color.red : Color.green;
+                    listing.Label(totalText);
+                    GUI.color = Color.white;
+                    listing.Gap(5f);
+
+                    foreach (var key in sortedKeys)
                     {
-                        bufferXenotypes.Remove(key);
+                        Rect row = listing.GetRect(30f);
+                        if (row.y % 60f < 30f) Widgets.DrawAltRect(row);
+            
+                        XenotypeDef xDef = DefDatabase<XenotypeDef>.GetNamedSilentFail(key);
+                        string label = xDef?.LabelCap ?? key;
+                        
+                        // Icon
+                        if (xDef != null)
+                        {
+                            Rect xIconRect = new Rect(row.x, row.y, 24f, 24f);
+                            Widgets.DrawTextureFitted(xIconRect, xDef.Icon, 1f);
+                        }
+
+                        Widgets.Label(new Rect(row.x + 30f, row.y + 3f, 150f, 24f), label);
+                        
+                        float val = bufferXenotypes[key];
+                        float newVal = Widgets.HorizontalSlider(new Rect(row.x + 190f, row.y + 5f, 200f, 20f), val, 0f, 1f, true, val.ToString("P0"));
+                        
+                        // Calculate what the total would be with the new value
+                        float otherTotal = currentTotal - val;
+                        float potentialTotal = otherTotal + newVal;
+                        
+                        // Only apply the new value if it doesn't exceed 100%
+                        if (potentialTotal <= 1.0f)
+                        {
+                            bufferXenotypes[key] = newVal;
+                        }
+                        else
+                        {
+                            // Limit to remaining available percentage
+                            float maxAllowed = Math.Max(0f, 1.0f - otherTotal);
+                            bufferXenotypes[key] = maxAllowed;
+                        }
+                        
+                        if (Widgets.ButtonText(new Rect(row.x + 400f, row.y, 30f, 24f), "X"))
+                        {
+                            bufferXenotypes.Remove(key);
+                        }
                     }
+                }
+                else
+                {
+                    listing.Label(LanguageManager.Get("Disabled"));
                 }
             }
 
@@ -652,7 +672,7 @@ namespace FactionGearCustomizer.UI
                 GUI.color = Color.white;
 
                 // Edit Box (Custom Label)
-                Rect editRect = new Rect(row.x + row.width * 0.5f, row.y + 5f, row.width * 0.45f, 30f);
+                Rect editRect = new Rect(row.x + row.width * 0.45f, row.y + 5f, row.width * 0.40f, 30f);
                 
                 string currentVal;
                 if (!kindLabelBuffers.TryGetValue(kind.defName, out currentVal))
@@ -675,6 +695,31 @@ namespace FactionGearCustomizer.UI
                 {
                     string sanitized = InputValidator.SanitizeName(newVal);
                     kindLabelBuffers[kind.defName] = sanitized;
+                }
+
+                // Xenotype Edit Button (Biotech DLC)
+                if (ModsConfig.BiotechActive)
+                {
+                    Rect xenoBtnRect = new Rect(row.x + row.width * 0.86f, row.y + 5f, 55f, 30f);
+                    var kindData = factionData.GetKindData(kind.defName);
+                    bool hasXenoSettings = kindData != null &&
+                        (kindData.DisableXenotypeChances ||
+                         (kindData.XenotypeChances != null && kindData.XenotypeChances.Count > 0) ||
+                         !string.IsNullOrEmpty(kindData.ForcedXenotype));
+
+                    if (hasXenoSettings)
+                    {
+                        GUI.color = Color.cyan;
+                    }
+
+                    if (Widgets.ButtonText(xenoBtnRect, LanguageManager.Get("XenoButtonLabel")))
+                    {
+                        var dataToEdit = factionData.GetOrCreateKindData(kind.defName);
+                        Find.WindowStack.Add(new Dialog_KindXenotypeEditor(kind, dataToEdit));
+                    }
+
+                    GUI.color = Color.white;
+                    TooltipHandler.TipRegion(xenoBtnRect, LanguageManager.Get("KindXenotypeTooltip"));
                 }
 
                 y += rowHeight;
@@ -726,26 +771,43 @@ namespace FactionGearCustomizer.UI
             if (ModsConfig.BiotechActive && factionDef.humanlikeFaction)
             {
                 bool xenoModified = false;
-                if (factionData.XenotypeChances == null && bufferXenotypes.Count > 0) xenoModified = true;
-                else if (factionData.XenotypeChances != null)
+                
+                // Handle DisableXenotypeChances
+                if (factionData.DisableXenotypeChances != bufferDisableXenotypeChances)
                 {
-                    if (factionData.XenotypeChances.Count != bufferXenotypes.Count) xenoModified = true;
-                    else
+                    factionData.DisableXenotypeChances = bufferDisableXenotypeChances;
+                    xenoModified = true;
+                }
+                
+                // Handle XenotypeChances (only if not disabled)
+                if (!bufferDisableXenotypeChances)
+                {
+                    if (factionData.XenotypeChances == null && bufferXenotypes.Count > 0) xenoModified = true;
+                    else if (factionData.XenotypeChances != null)
                     {
-                        foreach (var kvp in bufferXenotypes)
+                        if (factionData.XenotypeChances.Count != bufferXenotypes.Count) xenoModified = true;
+                        else
                         {
-                            if (!factionData.XenotypeChances.TryGetValue(kvp.Key, out float val) || Math.Abs(val - kvp.Value) > 0.001f)
+                            foreach (var kvp in bufferXenotypes)
                             {
-                                xenoModified = true;
-                                break;
+                                if (!factionData.XenotypeChances.TryGetValue(kvp.Key, out float val) || Math.Abs(val - kvp.Value) > 0.001f)
+                                {
+                                    xenoModified = true;
+                                    break;
+                                }
                             }
                         }
                     }
-                }
 
+                    if (xenoModified)
+                    {
+                        factionData.XenotypeChances = new Dictionary<string, float>(bufferXenotypes);
+                        factionModified = true;
+                    }
+                }
+                
                 if (xenoModified)
                 {
-                    factionData.XenotypeChances = new Dictionary<string, float>(bufferXenotypes);
                     factionModified = true;
                 }
             }

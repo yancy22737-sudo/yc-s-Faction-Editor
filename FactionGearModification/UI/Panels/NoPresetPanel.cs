@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using Verse;
 using RimWorld;
+using FactionGearCustomizer.Managers;
 
 namespace FactionGearCustomizer.UI.Panels
 {
@@ -85,10 +86,14 @@ namespace FactionGearCustomizer.UI.Panels
                 LanguageManager.Get("ClearAll"), // 使用已有的 "ClearAll" 键
                 delegate
                 {
+                    // 【深度清理】执行完整的深度清理流程
+                    FactionGearCustomizerMod.PerformDeepCleanup("ClearAllConfigs");
+                    
                     // 执行清除所有配置
                     FactionGearCustomizerMod.Settings.ResetToDefault();
-                    FactionGearEditor.RefreshAllCaches();
+                    
                     FactionGearEditor.MarkDirty();
+                    
                     Messages.Message(LanguageManager.Get("SettingsSaved"), MessageTypeDefOf.PositiveEvent, false);
                 },
                 LanguageManager.Get("Cancel"),

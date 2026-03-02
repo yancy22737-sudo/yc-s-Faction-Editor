@@ -5,9 +5,14 @@ using System.Reflection;
 using RimWorld;
 using Verse;
 using HarmonyLib;
+using FactionGearCustomizer.Compat.AmmoProviders;
 
 namespace FactionGearCustomizer.Compat
 {
+    /// <summary>
+    /// CE 兼容性类 - 保留向后兼容性
+    /// 新的代码请使用 AmmoProviderManager
+    /// </summary>
     public static class CECompat
     {
         private static bool? _isCEActive;
@@ -22,6 +27,10 @@ namespace FactionGearCustomizer.Compat
                 return _isCEActive.Value;
             }
         }
+
+        // 委托给新的 AmmoProviderManager 实现
+        private static AmmoProviders.CEAmmoProvider CEProvider => 
+            new AmmoProviders.CEAmmoProvider();
 
         // Cache reflection info
         private static Type _compPropertiesAmmoUserType; // CompProperties_AmmoUser
@@ -91,12 +100,17 @@ namespace FactionGearCustomizer.Compat
 
         public static ThingDef GetDefaultAmmoFor(ThingDef weaponDef)
         {
+            // 优先使用新的 AmmoProviderManager
+            if (AmmoProviderManager.IsActive())
+            {
+                return AmmoProviderManager.GetDefaultAmmo(weaponDef);
+            }
+
+            // 向后兼容：如果新的管理器未激活，使用旧实现
             if (!IsCEActive || weaponDef == null) return null;
             if (_compPropertiesAmmoUserType == null) Init();
             if (_compPropertiesAmmoUserType == null) return null;
 
-            // Find CompProperties_AmmoUser in weaponDef.comps
-            // weaponDef.comps is List<CompProperties>
             CompProperties ammoUserProps = null;
             if (weaponDef.comps != null)
             {
@@ -112,18 +126,13 @@ namespace FactionGearCustomizer.Compat
             
             if (ammoUserProps == null) return null;
 
-            // Get AmmoSet
             var ammoSet = _ammoSetField.GetValue(ammoUserProps);
             if (ammoSet == null) return null;
 
-            // Get AmmoTypes list (List<AmmoLink>)
             var ammoLinks = _ammoTypesField.GetValue(ammoSet) as System.Collections.IList;
             if (ammoLinks == null || ammoLinks.Count == 0) return null;
 
-            // Get first ammo link
             var firstLink = ammoLinks[0];
-            
-            // Get ammo ThingDef
             var ammoDef = _ammoField.GetValue(firstLink) as ThingDef;
             
             return ammoDef;
@@ -144,11 +153,17 @@ namespace FactionGearCustomizer.Compat
 
         public static string GetAmmoSetLabel(ThingDef weaponDef)
         {
+            // 优先使用新的 AmmoProviderManager
+            if (AmmoProviderManager.IsActive())
+            {
+                return AmmoProviderManager.GetAmmoSetLabel(weaponDef);
+            }
+
+            // 向后兼容：旧实现
             if (!IsCEActive || weaponDef == null) return null;
             if (_compPropertiesAmmoUserType == null) Init();
             if (_compPropertiesAmmoUserType == null) return null;
 
-            // Find CompProperties_AmmoUser in weaponDef.comps
             CompProperties ammoUserProps = null;
             if (weaponDef.comps != null)
             {
@@ -164,7 +179,6 @@ namespace FactionGearCustomizer.Compat
             
             if (ammoUserProps == null) return null;
 
-            // Get AmmoSet
             var ammoSet = _ammoSetField.GetValue(ammoUserProps);
             if (ammoSet == null) return null;
 
@@ -173,6 +187,13 @@ namespace FactionGearCustomizer.Compat
 
         public static List<string> GetAllAmmoSetLabels(List<ThingDef> weapons)
         {
+            // 优先使用新的 AmmoProviderManager
+            if (AmmoProviderManager.IsActive())
+            {
+                return AmmoProviderManager.GetAllAmmoSetLabels(weapons);
+            }
+
+            // 向后兼容：旧实现
             if (!IsCEActive || weapons == null) return new List<string>();
             HashSet<string> labels = new HashSet<string>();
             foreach(var w in weapons)

@@ -93,7 +93,11 @@ namespace FactionGearCustomizer
             // List
             Rect listRect = new Rect(inRect.x, y, inRect.width, inRect.height - y - 40f);
             var filtered = GetFilteredKinds().ToList();
-            Rect viewRect = new Rect(0, 0, listRect.width - 16f, filtered.Count * 28f);
+            // Clamp viewRect height to avoid Unity GUI rendering limitations (~3700 items limit)
+            const float MaxViewRectHeight = 100000f;
+            float totalContentHeight = filtered.Count * 28f;
+            float clampedViewHeight = Mathf.Min(totalContentHeight, MaxViewRectHeight);
+            Rect viewRect = new Rect(0, 0, listRect.width - 16f, clampedViewHeight);
             
             Widgets.BeginScrollView(listRect, ref scrollPos, viewRect);
             float curY = 0f;
@@ -158,10 +162,16 @@ namespace FactionGearCustomizer
             var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(factionDef.defName);
             int count = 0;
 
-            // Collect targets for undo
+            // Collect targets for undo (exclude source kind to prevent self-copy)
             List<KindGearData> targets = new List<KindGearData>();
             foreach (var kind in selectedKinds)
             {
+                // Skip the source kind itself
+                if (kind.defName == sourceData.kindDefName)
+                {
+                    continue;
+                }
+                
                 var targetKindData = factionData.GetOrCreateKindData(kind.defName);
                 if (targetKindData != null)
                 {

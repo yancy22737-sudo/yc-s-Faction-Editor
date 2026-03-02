@@ -135,7 +135,7 @@ namespace FactionGearCustomizer
             maker.maxTotalPoints = maxTotalPoints;
 
             maker.options = ConvertToGenOptions(options);
-            maker.traders = ConvertToGenOptions(traders);
+            maker.traders = ConvertToGenOptionsWithValidation(traders, "traders");
             maker.carriers = ConvertToGenOptions(carriers);
             maker.guards = ConvertToGenOptions(guards);
 
@@ -161,6 +161,61 @@ namespace FactionGearCustomizer
             return list;
         }
 
+        /// <summary>
+        /// 转换并验证 PawnGenOption，过滤掉不符合条件的 PawnKind
+        /// </summary>
+        private List<PawnGenOption> ConvertToGenOptionsWithValidation(List<PawnGenOptionData> dataList, string listType)
+        {
+            List<PawnGenOption> list = new List<PawnGenOption>();
+            foreach (var d in dataList)
+            {
+                var opt = d.ToPawnGenOption();
+                if (opt == null) continue;
+
+                // 对于 traders 列表，验证 PawnKind 是否真的是交易者
+                if (listType == "traders" && !IsValidTrader(opt.kind))
+                {
+                    Log.Warning($"[FactionGearCustomizer] PawnGroupMakerData.ToPawnGroupMaker: PawnKind '{opt.kind.defName}' ({opt.kind.label}) is not a valid trader but was found in the traders list. It will be skipped to prevent caravan generation errors.");
+                    continue;
+                }
+
+                list.Add(opt);
+            }
+            return list;
+        }
+
+        /// <summary>
+        /// 检查 PawnKindDef 是否是有效的交易者
+        /// </summary>
+        private bool IsValidTrader(PawnKindDef kind)
+        {
+            if (kind == null) return false;
+
+            // 检查是否是 Trader 类型的 PawnKind（通过 defName 判断）
+            if (kind.defName.Contains("Trader"))
+                return true;
+
+            // 检查是否有 trader 标签
+            if (kind.trader)
+                return true;
+
+            // 检查是否是特定派系领袖类型（某些领袖也是交易者）
+            if (kind.defName.Contains("Leader"))
+                return true;
+
+            // 检查 race 是否是人类类型（非动物）
+            // 动物（如雪牛）不应该出现在 traders 列表中
+            if (kind.race != null)
+            {
+                // 如果是动物（有 trainability 或特定标签），则不是有效交易者
+                if (kind.race.race != null && kind.race.race.Animal)
+                    return false;
+            }
+
+            // 默认允许其他情况（可能是自定义交易者）
+            return true;
+        }
+
         public PawnGroupMakerData DeepCopy()
         {
             var copy = new PawnGroupMakerData();
@@ -182,6 +237,15 @@ namespace FactionGearCustomizer
     {
         public string kindDefName;
         public float selectionWeight;
+        public float? pointsOverride;
+        
+        // 年龄范围控制
+        public float? minAge;
+        public float? maxAge;
+        
+        // AI 特性控制
+        public bool? allowAddictions;
+        public bool? mustBeCapableOfViolence;
 
         public PawnGenOptionData() { }
 
@@ -196,6 +260,11 @@ namespace FactionGearCustomizer
         {
             Scribe_Values.Look(ref kindDefName, "kindDefName");
             Scribe_Values.Look(ref selectionWeight, "selectionWeight");
+            Scribe_Values.Look(ref pointsOverride, "pointsOverride");
+            Scribe_Values.Look(ref minAge, "minAge");
+            Scribe_Values.Look(ref maxAge, "maxAge");
+            Scribe_Values.Look(ref allowAddictions, "allowAddictions");
+            Scribe_Values.Look(ref mustBeCapableOfViolence, "mustBeCapableOfViolence");
         }
 
         public PawnGenOption ToPawnGenOption()
@@ -210,12 +279,28 @@ namespace FactionGearCustomizer
             };
         }
 
+        public float GetEffectivePoints()
+        {
+            if (pointsOverride.HasValue)
+            {
+                return pointsOverride.Value;
+            }
+
+            var kind = DefDatabase<PawnKindDef>.GetNamedSilentFail(kindDefName);
+            return kind?.combatPower ?? 0f;
+        }
+
         public PawnGenOptionData DeepCopy()
         {
             return new PawnGenOptionData
             {
                 kindDefName = this.kindDefName,
-                selectionWeight = this.selectionWeight
+                selectionWeight = this.selectionWeight,
+                pointsOverride = this.pointsOverride,
+                minAge = this.minAge,
+                maxAge = this.maxAge,
+                allowAddictions = this.allowAddictions,
+                mustBeCapableOfViolence = this.mustBeCapableOfViolence
             };
         }
     }

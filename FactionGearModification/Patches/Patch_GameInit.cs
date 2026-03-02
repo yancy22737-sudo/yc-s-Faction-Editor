@@ -1,6 +1,9 @@
+using System.Collections.Generic;
+using System.Linq;
 using FactionGearCustomizer.Core;
 using FactionGearCustomizer.UI.Dialogs;
 using FactionGearCustomizer.Managers;
+using FactionGearCustomizer.Utils;
 using HarmonyLib;
 using RimWorld;
 using Verse;
@@ -66,7 +69,7 @@ namespace FactionGearCustomizer.Patches
             if (string.IsNullOrEmpty(gameComponent.saveUniqueIdentifier))
             {
                 gameComponent.GenerateNewSaveIdentifier();
-                Log.Message($"[FactionGearCustomizer] Generated save identifier: {gameComponent.saveUniqueIdentifier}");
+                LogUtils.DebugLog($"Generated save identifier: {gameComponent.saveUniqueIdentifier}");
             }
         }
 
@@ -82,7 +85,7 @@ namespace FactionGearCustomizer.Patches
             if (string.IsNullOrEmpty(gameComponent.saveUniqueIdentifier))
             {
                 gameComponent.GenerateNewSaveIdentifier();
-                Log.Message($"[FactionGearCustomizer] Generated save identifier during sync: {gameComponent.saveUniqueIdentifier}");
+                LogUtils.DebugLog($"Generated save identifier during sync: {gameComponent.saveUniqueIdentifier}");
             }
 
             // 如果存档有绑定预设，同步预设数据
@@ -113,12 +116,12 @@ namespace FactionGearCustomizer.Patches
                 // 刷新缓存
                 FactionGearEditor.RefreshAllCaches();
 
-                Log.Message($"[FactionGearCustomizer] Synced save settings to global. Preset: {gameComponent.activePresetName}");
+                LogUtils.DebugLog($"Synced save settings to global. Preset: {gameComponent.activePresetName}");
             }
             else
             {
                 // 存档没有自定义设置，保持全局设置不变
-                Log.Message("[FactionGearCustomizer] Save has no custom settings, keeping global settings.");
+                LogUtils.DebugLog("Save has no custom settings, keeping global settings.");
             }
         }
 
@@ -147,14 +150,17 @@ namespace FactionGearCustomizer.Patches
             if (string.IsNullOrEmpty(gameComponent.saveUniqueIdentifier))
             {
                 gameComponent.GenerateNewSaveIdentifier();
-                Log.Message($"[FactionGearCustomizer] Generated new save identifier: {gameComponent.saveUniqueIdentifier}");
+                LogUtils.DebugLog($"Generated new save identifier: {gameComponent.saveUniqueIdentifier}");
             }
 
             // 【修复】无论新存档是否使用自定义设置，都要清理全局设置！
             // 从任意存档退出来再新建存档时，全局设置里肯定有上一个存档的残留
             
-            // 清理原始数据缓存，确保使用真正的原版数据
-            FactionDefManager.ClearOriginalDataCache();
+            // 【关键修复】首先恢复所有FactionDef到原始状态！
+            FactionDefManager.ResetAllFactions();
+            
+            // 【重要】重置游戏组件中的派系数据，防止上次界面修改的残留数据影响新游戏
+            gameComponent.ResetFactionData();
 
             // 重置全局设置
             FactionGearCustomizerMod.Settings.factionGearData.Clear();
@@ -164,17 +170,25 @@ namespace FactionGearCustomizer.Patches
             }
             FactionGearCustomizerMod.Settings.currentPresetName = null;
 
+            // 【关键修复】持久化清理操作
+            FactionGearCustomizerMod.Settings.Write();
+
             // 重置会话状态
             EditorSession.ResetSession();
             UndoManager.Clear();
 
-            // 重新保存原始数据（确保是干净的）
-            FactionDefManager.SaveAllOriginalData();
+            // 【关键修复】不要清理原始数据缓存！
+            // FactionDefManager.ClearOriginalDataCache(); // 这行删除！
+
+            // 【关键修复】也不要重新保存原始数据！
+            // FactionDefManager.SaveAllOriginalData(); // 这行删除！
 
             // 刷新缓存
             FactionGearEditor.RefreshAllCaches();
 
-            Log.Message("[FactionGearCustomizer] Global settings reset for new save.");
+            LogUtils.Info("Global settings reset for new save.");
+            // [Phase 2] 应用剧本配置
+            ApplyScenarioConfigFromSettings();
         }
 
         /// <summary>
@@ -191,7 +205,7 @@ namespace FactionGearCustomizer.Patches
             {
                 if (gameComponent.IsDifferentSave(FactionGearCustomizerMod.Settings.previousSaveIdentifier))
                 {
-                    Log.Message("[FactionGearCustomizer] Save switch detected. Previous: " + 
+                    LogUtils.Info("Save switch detected. Previous: " + 
                         FactionGearCustomizerMod.Settings.previousSaveIdentifier + ", Current: " + gameComponent.saveUniqueIdentifier);
                     
                     // 重置当前修改数据，使其不生效
@@ -212,8 +226,9 @@ namespace FactionGearCustomizer.Patches
         /// </summary>
         private static void ResetCurrentModifications()
         {
-            // 清理原始数据缓存，确保使用真正的原版数据
-            FactionDefManager.ClearOriginalDataCache();
+            // 【关键修复】首先恢复所有被修改的 FactionDef 到原始状态
+            // 必须在清理任何缓存之前执行，因为恢复需要原始数据
+            FactionDefManager.ResetAllFactions();
 
             // 清除全局设置中的数据
             FactionGearCustomizerMod.Settings.factionGearData.Clear();
@@ -223,20 +238,25 @@ namespace FactionGearCustomizer.Patches
             }
             FactionGearCustomizerMod.Settings.currentPresetName = null;
 
+            // 【关键修复】持久化清理操作
+            FactionGearCustomizerMod.Settings.Write();
+
             // 重置编辑器会话
             EditorSession.ResetSession();
             UndoManager.Clear();
 
-            // 恢复所有被修改的 FactionDef 到原始状态
-            RestoreAllFactionDefsToOriginal();
+            // 【关键修复】不要清理原始数据缓存！
+            // 如果清理了原始数据缓存，后续恢复操作就没有数据可用了
+            // FactionDefManager.ClearOriginalDataCache(); // 这行删除！
 
-            // 重新保存原始数据（确保是干净的）
-            FactionDefManager.SaveAllOriginalData();
+            // 【关键修复】也不要重新保存原始数据！
+            // 原始数据只应该在游戏启动时保存一次
+            // FactionDefManager.SaveAllOriginalData(); // 这行删除！
 
-            // 刷新缓存
+            // 刷新UI缓存（不包括原始数据缓存）
             FactionGearEditor.RefreshAllCaches();
 
-            Log.Message("[FactionGearCustomizer] Current modifications reset due to save switch.");
+            LogUtils.Info("Current modifications reset due to save switch.");
         }
 
         /// <summary>
@@ -263,7 +283,7 @@ namespace FactionGearCustomizer.Patches
                         FactionDefManager.ResetKind(kindDef);
                     }
                 }
-                Log.Message("[FactionGearCustomizer] All FactionDefs and PawnKindDefs restored to original state.");
+                LogUtils.Info("All FactionDefs and PawnKindDefs restored to original state.");
             }
             catch (System.Exception ex)
             {
@@ -290,6 +310,157 @@ namespace FactionGearCustomizer.Patches
                 // 延迟一帧显示对话框，确保UI准备就绪
                 Find.WindowStack.Add(new Dialog_FirstTimePresetPrompt());
             }
+        }
+
+        /// <summary>
+        /// 在返回主菜单时清理所有存档相关数据
+        /// 这是修复"从存档返回主菜单后数据残留"问题的关键Patch
+        /// 通过检测主菜单按钮点击事件来触发清理
+        /// </summary>
+        [HarmonyPatch(typeof(MainMenuDrawer), "DoMainMenuControls")]
+        public static class Patch_MainMenuDrawer_DoMainMenuControls
+        {
+            private static bool wasInGame = false;
+            
+            public static void Prefix()
+            {
+                // 检测是否从游戏状态返回到主菜单
+                // 当Current.Game为null且之前在游戏状态时，说明已返回主菜单
+                bool currentlyInGame = Current.Game != null && Current.ProgramState == ProgramState.Playing;
+                
+                if (wasInGame && !currentlyInGame)
+                {
+                    LogUtils.Info("Detected return to main menu, cleaning up save data...");
+                    CleanupOnReturnToMainMenu();
+                }
+                
+                wasInGame = currentlyInGame;
+            }
+        }
+        
+        /// <summary>
+        /// 备选方案：在存档加载前清理数据
+        /// </summary>
+        [HarmonyPatch(typeof(SavedGameLoaderNow), "LoadGameFromSaveFileNow")]
+        public static class Patch_SavedGameLoaderNow_LoadGameFromSaveFileNow_Cleanup
+        {
+            public static void Prefix()
+            {
+                // 如果当前有游戏在运行，说明是切换存档，先清理旧数据
+                if (Current.Game != null && Current.ProgramState == ProgramState.Playing)
+                {
+                    LogUtils.Info("Switching saves, cleaning up previous save data...");
+                    CleanupOnReturnToMainMenu();
+                }
+            }
+        }
+        
+        /// <summary>
+        /// 返回主菜单时清理所有存档相关数据
+        /// </summary>
+        private static void CleanupOnReturnToMainMenu()
+        {
+            try
+            {
+                LogUtils.Info("Starting comprehensive cleanup on return to main menu...");
+                
+                // 【关键修复】首先恢复所有FactionDef到原始状态！
+                // 这是解决"派系名称、颜色等数据残留"问题的核心
+                FactionDefManager.ResetAllFactions();
+                
+                // 【修复】标记需要在返回主菜单后清理数据
+                // 实际的清理会在DoSettingsWindowContents中进行，确保在正确的时机执行
+                FactionGearCustomizerMod.MarkNeedsCleanupAfterReturnToMenu();
+                
+                // 同时立即执行清理（以防设置窗口当前已打开）
+                // 1. 清理全局设置中的存档数据
+                if (FactionGearCustomizerMod.Settings.factionGearData != null)
+                {
+                    FactionGearCustomizerMod.Settings.factionGearData.Clear();
+                }
+                
+                if (FactionGearCustomizerMod.Settings.factionGearDataDict != null)
+                {
+                    FactionGearCustomizerMod.Settings.factionGearDataDict.Clear();
+                }
+                
+                // 重置当前预设名称
+                FactionGearCustomizerMod.Settings.currentPresetName = null;
+                
+                // 【关键修复】调用Write()持久化清理操作，防止RimWorld从配置文件重新加载残留数据
+                FactionGearCustomizerMod.Settings.Write();
+                
+                // 【关键修复】不要清理原始数据缓存！
+                // 如果清理了原始数据缓存，后续恢复操作就没有数据可用了
+                // FactionDefManager.ClearOriginalDataCache(); // 这行删除！
+                
+                // 3. 重置编辑器会话状态
+                EditorSession.ResetSession();
+                
+                // 4. 清理撤销管理器
+                UndoManager.Clear();
+                
+                // 5. 刷新UI缓存
+                FactionGearEditor.RefreshAllCaches();
+                
+                // 6. 重置存档切换提示标志
+                shouldShowSaveSwitchPrompt = false;
+                
+                LogUtils.Info("Save data cleanup completed and persisted.");
+            }
+            catch (System.Exception ex)
+            {
+                Log.Warning($"[FactionGearCustomizer] Error during cleanup: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+/// 从全局设置中应用剧本配置（Phase 2）
+/// </summary>
+private static void ApplyScenarioConfigFromSettings()
+{
+    var settings = FactionGearCustomizerMod.Settings;
+    if (settings.scenarioFactionConfig == null)
+        return;
+
+    var config = settings.scenarioFactionConfig;
+    if (string.IsNullOrEmpty(config.presetName))
+        return;
+
+    var preset = settings.presets?.FirstOrDefault(p => p.name == config.presetName);
+    if (preset == null)
+        return;
+
+    var gameComponent = FactionGearGameComponent.Instance;
+    if (gameComponent == null)
+        return;
+
+    // 筛选指定的派系
+    if (config.selectedFactions != null && config.selectedFactions.Any())
+    {
+        var filteredData = preset.factionGearData
+            .Where(f => config.selectedFactions.Contains(f.factionDefName))
+            .ToList();
+
+        if (filteredData.Any())
+        {
+            gameComponent.savedFactionGearData.Clear();
+            foreach (var faction in filteredData)
+            {
+                var cloned = faction.DeepCopy();
+                cloned.ResolveReferences();
+                gameComponent.savedFactionGearData.Add(cloned);
+            }
+            gameComponent.useCustomSettings = true;
+            gameComponent.activePresetName = preset.name;
+        }
+    }
+
+            // 清除剧本配置
+            settings.scenarioFactionConfig = new ScenarioFactionConfig();
+            settings.Write();
+
+            LogUtils.DebugLog($"Applied scenario config: {preset.name}");
         }
     }
 }

@@ -68,7 +68,7 @@ namespace FactionGearCustomizer
         }
 
         /// <summary>
-        /// 检查服装是否适合pawn穿戴（包括身体部位和年龄限制）
+        /// 检查服装是否适合 pawn 穿戴（包括身体部位和年龄限制）
         /// </summary>
         private static bool CanWearApparel(Pawn pawn, ThingDef apparelDef)
         {
@@ -84,6 +84,133 @@ namespace FactionGearCustomizer
                 return false;
 
             return true;
+        }
+
+        /// <summary>
+        /// 检查 Hediff 是否会导致 Pawn 意识或移动能力低于 50%，或者导致缺失身体部位
+        /// 使用简化的检查方法：限制严重程度和类型
+        /// </summary>
+        private static bool WillHediffIncapacitatePawn(Pawn pawn, Hediff newHediff)
+        {
+            if (pawn == null || newHediff == null) return true;
+            
+            // 检查是否是危险类型的 Hediff
+            if (newHediff.def != null)
+            {
+                // 跳过会导致缺失身体部位的 Hediff
+                if (newHediff.def.hediffClass == typeof(Hediff_MissingPart))
+                {
+                    Log.Warning($"[FactionGearCustomizer] Skipped applying hediff {newHediff.def.defName} - MissingBodyPart hediffs are not allowed");
+                    return true;
+                }
+                
+                // 跳过会导致严重伤害的 Hediff（如致命伤、烧伤过重等）
+                if (newHediff.def.defName.ToLower().Contains("tendable"))
+                {
+                    return true;
+                }
+                
+                // 跳过导致昏迷的 Hediff
+                if (newHediff.def.stages != null)
+                {
+                    foreach (var stage in newHediff.def.stages)
+                    {
+                        if (stage?.capMods != null)
+                        {
+                            foreach (var cap in stage.capMods)
+                            {
+                                // 如果会导致意识或移动能力完全丧失
+                                if (cap.capacity != null)
+                                {
+                                    string capName = cap.capacity.defName.ToLower();
+                                    if ((capName == "consciousness" || capName == "moving") && cap.offset <= -0.5f)
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // 临时添加 Hediff 来检查效果
+            bool added = false;
+            try
+            {
+                pawn.health.AddHediff(newHediff);
+                added = true;
+                
+                // 检查是否会昏迷（Downed 状态）
+                if (pawn.Downed)
+                {
+                    return true;
+                }
+                
+                // 检查是否失去意识（Unconscious）
+                if (!pawn.Awake())
+                {
+                    return true;
+                }
+                
+                // 检查是否有缺失的身体部位（特别是头部）
+                if (pawn.health.hediffSet.HasHediff(HediffDefOf.MissingBodyPart))
+                {
+                    // 检查是否有头部缺失
+                    var allHediffs = pawn.health.hediffSet.hediffs;
+                    foreach (var hediff in allHediffs)
+                    {
+                        if (hediff is Hediff_MissingPart missing && missing.Part != null && missing.Part.def == BodyPartDefOf.Head)
+                        {
+                            return true;
+                        }
+                    }
+                }
+                
+                // 对于严重的负面 Hediff，限制其严重程度
+                if (newHediff.def != null && newHediff.def.isBad)
+                {
+                    // 如果严重程度超过 0.5，认为太危险
+                    if (newHediff.Severity > 0.5f)
+                    {
+                        return true;
+                    }
+                }
+                
+                return false;
+            }
+            finally
+            {
+                // 移除临时添加的 Hediff
+                if (added && newHediff != null)
+                {
+                    pawn.health.RemoveHediff(newHediff);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 安全地销毁所有服装，跳过不可摧毁的物品
+        /// </summary>
+        private static void SafeDestroyAllApparel(Pawn pawn)
+        {
+            if (pawn?.apparel?.WornApparel == null) return;
+
+            var apparelList = pawn.apparel.WornApparel.ToList();
+            foreach (var apparel in apparelList)
+            {
+                if (apparel == null || apparel.def == null) continue;
+
+                // 跳过不可摧毁的物品
+                if (!apparel.def.destroyable)
+                {
+                    pawn.apparel.Remove(apparel);
+                    continue;
+                }
+
+                pawn.apparel.Remove(apparel);
+                apparel.Destroy();
+            }
         }
 
         private static void ApplyInventory(Pawn pawn, KindGearData kindData)
@@ -210,6 +337,13 @@ namespace FactionGearCustomizer
         {
             HediffDef def = forcedHediff.HediffDef;
             
+            // 在应用前检查 Hediff 是否安全
+            if (!IsHediffSafe(def))
+            {
+                Log.Warning($"[FactionGearCustomizer] Skipped applying unsafe hediff: {def?.defName ?? "null"}");
+                return;
+            }
+            
             if (HediffNeedsBodyPart(def))
             {
                 ApplyHediffWithPart(pawn, forcedHediff);
@@ -224,13 +358,15 @@ namespace FactionGearCustomizer
         {
             if (def == null) return false;
             
-            if (def.countsAsAddedPartOrImplant) return true;
+            if (def.hediffClass == typeof(Hediff_Level)) return false;
             
             if (def.hediffClass == typeof(Hediff_AddedPart)) return true;
             
             if (def.hediffClass == typeof(Hediff_MissingPart)) return true;
             
             if (def.defName.Contains("Missing")) return true;
+            
+            if (def.countsAsAddedPartOrImplant) return true;
             
             return false;
         }
@@ -245,7 +381,16 @@ namespace FactionGearCustomizer
             {
                 Hediff hediff = HediffMaker.MakeHediff(def, pawn);
                 ApplyHediffSeverity(hediff, forcedHediff);
-                pawn.health.AddHediff(hediff);
+                
+                // 检查是否会使得意识或移动能力低于 50%
+                if (!WillHediffIncapacitatePawn(pawn, hediff))
+                {
+                    pawn.health.AddHediff(hediff);
+                }
+                else
+                {
+                    Log.Warning($"[FactionGearCustomizer] Skipped applying hediff {def.defName} to {pawn.Name.ToStringShort} - would reduce consciousness/moving below 50%");
+                }
             }
             catch (Exception ex)
             {
@@ -258,7 +403,16 @@ namespace FactionGearCustomizer
                     {
                         Hediff hediff = HediffMaker.MakeHediff(def, pawn, fallbackPart);
                         ApplyHediffSeverity(hediff, forcedHediff);
-                        pawn.health.AddHediff(hediff);
+                        
+                        // 检查是否会使得意识或移动能力低于 50%
+                        if (!WillHediffIncapacitatePawn(pawn, hediff))
+                        {
+                            pawn.health.AddHediff(hediff);
+                        }
+                        else
+                        {
+                            Log.Warning($"[FactionGearCustomizer] Skipped applying hediff {def.defName} to {pawn.Name.ToStringShort} - would reduce consciousness/moving below 50%");
+                        }
                     }
                 }
                 catch (Exception ex2)
@@ -300,7 +454,16 @@ namespace FactionGearCustomizer
                     {
                         Hediff hediff = HediffMaker.MakeHediff(def, pawn, part);
                         ApplyHediffSeverity(hediff, forcedHediff);
-                        pawn.health.AddHediff(hediff);
+                        
+                        // 检查是否会使得意识或移动能力低于 50%
+                        if (!WillHediffIncapacitatePawn(pawn, hediff))
+                        {
+                            pawn.health.AddHediff(hediff);
+                        }
+                        else
+                        {
+                            Log.Warning($"[FactionGearCustomizer] Skipped applying hediff {def.defName} to {pawn.Name.ToStringShort} - would reduce consciousness/moving below 50%");
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -415,7 +578,8 @@ namespace FactionGearCustomizer
 
                 case HediffPoolType.AnyDrugHigh:
                     candidates = DefDatabase<HediffDef>.AllDefsListForReading
-                        .Where(def => def.hediffClass == typeof(Hediff_High) || def.defName.ToLower().Contains("high"))
+                        .Where(def => (def.hediffClass == typeof(Hediff_High) || def.defName.ToLower().Contains("high")) 
+                                     && !def.defName.ToLower().Contains("alcohol"))
                         .ToList();
                     break;
 
@@ -450,7 +614,71 @@ namespace FactionGearCustomizer
                     break;
             }
 
+            // 过滤掉会导致危险效果的 Hediff
+            candidates = FilterSafeHediffs(candidates);
+            
             return candidates.NullOrEmpty() ? null : candidates.RandomElement();
+        }
+
+        /// <summary>
+        /// 过滤掉会导致危险效果的 Hediff（缺失身体部位、严重昏迷等）
+        /// </summary>
+        private static List<HediffDef> FilterSafeHediffs(List<HediffDef> hediffs)
+        {
+            if (hediffs.NullOrEmpty()) return hediffs;
+            
+            return hediffs.Where(def => IsHediffSafe(def)).ToList();
+        }
+
+        /// <summary>
+        /// 检查 Hediff 是否安全（不会导致倒地、缺失部位等）
+        /// </summary>
+        private static bool IsHediffSafe(HediffDef def)
+        {
+            if (def == null) return false;
+            
+            // 跳过会导致缺失身体部位的
+            if (def.hediffClass == typeof(Hediff_MissingPart) || def.hediffClass == typeof(Hediff_AddedPart))
+            {
+                return false;
+            }
+            
+            // 跳过包含 "Missing" 的（通常是缺失部分相关的）
+            if (def.defName.Contains("Missing"))
+            {
+                return false;
+            }
+            
+            // 跳过致命伤
+            if (def.defName.ToLower().Contains("tendable") || def.defName.ToLower().Contains("fatal"))
+            {
+                return false;
+            }
+            
+            // 检查 stages 是否会导致意识或移动能力严重下降
+            if (def.stages != null)
+            {
+                foreach (var stage in def.stages)
+                {
+                    if (stage?.capMods != null)
+                    {
+                        foreach (var cap in stage.capMods)
+                        {
+                            if (cap.capacity != null)
+                            {
+                                string capName = cap.capacity.defName.ToLower();
+                                // 如果会导致意识或移动能力下降超过 50%
+                                if ((capName == "consciousness" || capName == "moving") && cap.offset < -0.5f)
+                                {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            return true;
         }
 
         private static void ApplyHediffSeverity(Hediff hediff, ForcedHediff forcedHediff)
@@ -654,7 +882,7 @@ namespace FactionGearCustomizer
         {
             if (kindData.ForceNaked)
             {
-                pawn.apparel?.DestroyAll();
+                SafeDestroyAllApparel(pawn);
                 return;
             }
 
@@ -677,13 +905,13 @@ namespace FactionGearCustomizer
                  // Strip everything that isn't required (complex check, simplified here to strip all then re-add)
                  // Actually, TotalControl logic is: "Destroy what is worn that is NOT in the allowed list".
                  // For now, let's stick to: Strip all, then add what we want.
-                 pawn.apparel?.DestroyAll();
+                 SafeDestroyAllApparel(pawn);
             }
             else
             {
                 // Only destroy "destroyOnDrop" items (vanilla behavior for pawns)
                 var apparelToDestroy = pawn.apparel.WornApparel
-                    .Where(app => app.def.destroyOnDrop)
+                    .Where(app => app.def != null && app.def.destroyOnDrop && app.def.destroyable)
                     .ToList();
                 foreach (var apparel in apparelToDestroy)
                 {
@@ -718,6 +946,13 @@ namespace FactionGearCustomizer
                         var created = GenerateItem(pawn, item, kindData, forceIgnore ? -1f : (budget - currentSpent));
                         if (created is Apparel app && CanWearApparel(pawn, app.def))
                         {
+                            // 跳过不可摧毁的物品（如 Apparel_CerebrexNode），避免 InfoCard 报错
+                            if (!app.def.destroyable)
+                            {
+                                created.Destroy();
+                                continue;
+                            }
+
                             if (!forceIgnore && (currentSpent + app.MarketValue > budget))
                             {
                                 // Log.Warning($"[FactionGearCustomizer] Budget exceeded for {pawn}: Budget={budget}, Current={currentSpent}, Item={app.LabelCap} ({app.MarketValue}). Skipping.");
@@ -755,6 +990,13 @@ namespace FactionGearCustomizer
                          var created = GenerateItem(pawn, item, kindData, forceIgnore ? -1f : (budget - currentSpent));
                          if (created is Apparel app && CanWearApparel(pawn, app.def))
                          {
+                             // 跳过不可摧毁的物品（如 Apparel_CerebrexNode），避免 InfoCard 报错
+                             if (!app.def.destroyable)
+                             {
+                                 created.Destroy();
+                                 continue;
+                             }
+
                              // Check Budget
                              if (!forceIgnore && (currentSpent + app.MarketValue > budget))
                              {
@@ -830,6 +1072,13 @@ namespace FactionGearCustomizer
                                 var created = GenerateSimpleItem(pawn, item.ThingDef, kindData, false, forceIgnore ? -1f : (budget - currentSpent));
                                 if (created is Apparel app)
                                 {
+                                    // 跳过不可摧毁的物品（如 Apparel_CerebrexNode），避免 InfoCard 报错
+                                    if (!app.def.destroyable)
+                                    {
+                                        created.Destroy();
+                                        continue;
+                                    }
+
                                     // Check Budget (unless ignored)
                                     if (!forceIgnore && (currentSpent + app.MarketValue > budget))
                                     {
@@ -871,6 +1120,13 @@ namespace FactionGearCustomizer
                             var created = GenerateSimpleItem(pawn, item.ThingDef, kindData, false, forceIgnore ? -1f : (budget - currentSpent));
                             if (created is Apparel app)
                             {
+                                // 跳过不可摧毁的物品（如 Apparel_CerebrexNode），避免 InfoCard 报错
+                                if (!app.def.destroyable)
+                                {
+                                    created.Destroy();
+                                    return;
+                                }
+
                                 // Check Budget (unless ignored)
                                 if (!forceIgnore && (currentSpent + app.MarketValue > budget))
                                 {
