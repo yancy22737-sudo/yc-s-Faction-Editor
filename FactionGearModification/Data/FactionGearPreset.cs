@@ -127,6 +127,13 @@ namespace FactionGearCustomizer
                     factionGearData.Add(newFactionData);
                 }
             }
+            
+            // 【修复】保存后解析所有引用
+            foreach (var factionData in factionGearData)
+            {
+                factionData?.ResolveReferences();
+            }
+            
             CalculateRequiredMods();
         }
 

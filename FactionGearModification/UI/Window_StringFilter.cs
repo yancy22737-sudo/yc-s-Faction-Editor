@@ -35,6 +35,14 @@ namespace FactionGearCustomizer.UI
 
         public override void DoWindowContents(Rect inRect)
         {
+            // Handle Ctrl+S shortcut for applying changes
+            if (Event.current.type == EventType.KeyDown && Event.current.control && Event.current.keyCode == KeyCode.S)
+            {
+                ApplyChanges();
+                Close();
+                Event.current.Use();
+            }
+
             Text.Font = GameFont.Medium;
             Widgets.Label(new Rect(0f, 0f, inRect.width, 30f), title);
             Text.Font = GameFont.Small;

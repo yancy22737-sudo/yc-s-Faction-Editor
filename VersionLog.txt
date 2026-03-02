@@ -1,3 +1,13 @@
+v1.3.3
+- Fix: 修复同一次游戏运行中从一个存档退出后再新建第二个存档时数据残留的问题 - RemoveGlobalSettingsForNewSave() 现在无论新存档是否有自定义设置都会清理全局设置；RestoreAllFactionDefsToOriginal() 现在无论什么情况都会恢复所有 FactionDef 和 PawnKindDef 到原版状态，确保新存档总是在干净基础上应用
+
+v1.3.2
+- Fix: 根据 persistence_preset_matrix.md 检查并修复预设持久化问题 - 在 PresetIOManager.ImportFromBase64()、FactionGearPreset.SaveFullFactionData()、FactionGearGameComponent.ApplyPresetToSave()、FactionGearGameComponent.ApplyFactionsFromPreset() 所有关键数据流转位置都添加 ResolveReferences() 调用，确保引用在任何场景下都有效
+
+v1.3.1
+- Fix: 彻底修复新存档数据残留问题 - 在 Startup 类中确保在任何 Def 修改前先调用 SaveAllOriginalData()，防止原始数据被上一个存档修改污染
+- Fix: 彻底修复新游戏时装备/物品引用丢失问题 - 重构 SpecRequirementEdit 和 ForcedHediff，保存 defName 而非仅在序列化时转换，添加防御性编程在访问时自动重新解析引用，增加 ResolveReferences() 显式解析方法确保在数据同步、深拷贝等场景下引用有效
+
 v1.3.0
 - Add: 预览按钮新增未保存修改确认对话框 - 点击预览时如有未保存修改，会弹出确认对话框询问是否保存
 - Add: 预览对话框添加自动保存开关 - 勾选"预览前自动保存"后，后续预览将自动保存而不再询问

@@ -87,7 +87,10 @@ namespace FactionGearCustomizer.Core
                 {
                     foreach (var factionData in preset.factionGearData)
                     {
-                        savedFactionGearData.Add(factionData.DeepCopy());
+                        var cloned = factionData.DeepCopy();
+                        // 【修复】深拷贝后解析引用
+                        cloned.ResolveReferences();
+                        savedFactionGearData.Add(cloned);
                     }
                 }
 
@@ -119,6 +122,8 @@ namespace FactionGearCustomizer.Core
                 foreach (var factionData in savedFactionGearData)
                 {
                     var cloned = factionData.DeepCopy();
+                    // 【修复】确保深拷贝后引用被正确解析
+                    cloned.ResolveReferences();
                     FactionGearCustomizerMod.Settings.factionGearData.Add(cloned);
                     if (FactionGearCustomizerMod.Settings.factionGearDataDict != null)
                     {
@@ -230,6 +235,9 @@ namespace FactionGearCustomizer.Core
                 {
                     // 深拷贝派系数据
                     var clonedData = factionData.DeepCopy();
+                    
+                    // 【修复】深拷贝后解析引用
+                    clonedData.ResolveReferences();
                     
                     // 移除无效的兵种数据
                     clonedData.kindGearData.RemoveAll(k => DefDatabase<PawnKindDef>.GetNamedSilentFail(k.kindDefName) == null);

@@ -45,6 +45,16 @@ namespace FactionGearCustomizer.UI
 
         public override void DoWindowContents(Rect inRect)
         {
+            // Handle Ctrl+S shortcut for creating instance
+            if (Event.current.type == EventType.KeyDown && Event.current.control && Event.current.keyCode == KeyCode.S)
+            {
+                if (selectedFactionDef != null)
+                {
+                    TryCreateInstance();
+                }
+                Event.current.Use();
+            }
+
             Text.Font = GameFont.Medium;
             Widgets.Label(new Rect(0f, 0f, inRect.width, 35f), LanguageManager.Get("CreateNewInstance"));
             Text.Font = GameFont.Small;

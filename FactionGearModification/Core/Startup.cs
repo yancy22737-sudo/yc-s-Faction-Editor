@@ -11,6 +11,9 @@ namespace FactionGearCustomizer
         {
             try 
             {
+                // 【修复】关键：在任何修改 Def 之前先保存原始数据
+                FactionDefManager.SaveAllOriginalData();
+                
                 // Apply Faction/Kind Def changes on startup
                 FactionDefManager.ApplyAllSettings();
                 

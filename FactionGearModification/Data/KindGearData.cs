@@ -154,6 +154,41 @@ namespace FactionGearCustomizer
             if (others == null) others = new List<GearItem>();
         }
 
+        /// <summary>
+        /// 【修复】显式解析所有引用，确保在深拷贝/数据同步后引用有效
+        /// </summary>
+        public void ResolveReferences()
+        {
+            if (SpecificApparel != null)
+            {
+                foreach (var item in SpecificApparel)
+                {
+                    item?.ResolveReferences();
+                }
+            }
+            if (SpecificWeapons != null)
+            {
+                foreach (var item in SpecificWeapons)
+                {
+                    item?.ResolveReferences();
+                }
+            }
+            if (InventoryItems != null)
+            {
+                foreach (var item in InventoryItems)
+                {
+                    item?.ResolveReferences();
+                }
+            }
+            if (ForcedHediffs != null)
+            {
+                foreach (var item in ForcedHediffs)
+                {
+                    item?.ResolveReferences();
+                }
+            }
+        }
+
         public void ResetToDefault()
         {
             weapons.Clear();
@@ -326,7 +361,7 @@ namespace FactionGearCustomizer
         public void CopyFrom(KindGearData source)
         {
             this.isModified = source.isModified;
-            this.Label = source.Label;
+            // Note: Label is NOT copied during batch apply to preserve target kind's name
             this.weapons = source.weapons?.Select(g => g != null ? new GearItem(g.thingDefName, g.weight) : null).Where(g => g != null).ToList() ?? new List<GearItem>();
             this.meleeWeapons = source.meleeWeapons?.Select(g => g != null ? new GearItem(g.thingDefName, g.weight) : null).Where(g => g != null).ToList() ?? new List<GearItem>();
             this.armors = source.armors?.Select(g => g != null ? new GearItem(g.thingDefName, g.weight) : null).Where(g => g != null).ToList() ?? new List<GearItem>();

@@ -18,15 +18,70 @@ namespace FactionGearCustomizer
 
     public class ForcedHediff : IExposable
     {
-        public HediffDef HediffDef;
+        // 保存defName，确保引用不会在深拷贝或数据同步时丢失
+        public string hediffDefName;
+        public List<string> partsDefNames;
+        
+        // 缓存引用
+        [Unsaved]
+        private HediffDef cachedHediffDef;
+        [Unsaved]
+        private List<BodyPartDef> cachedParts;
+        
         public HediffPoolType PoolType = HediffPoolType.None;
         public int maxParts = 0;
         public IntRange maxPartsRange = default(IntRange);
         public float chance = 1f;
         public FloatRange severityRange = default(FloatRange);
-        public List<BodyPartDef> parts;
 
         public bool IsPool => PoolType != HediffPoolType.None;
+
+        public HediffDef HediffDef
+        {
+            get
+            {
+                // 【修复】防御性编程：访问时自动重新解析
+                if (cachedHediffDef == null && !string.IsNullOrEmpty(hediffDefName))
+                {
+                    cachedHediffDef = DefDatabase<HediffDef>.GetNamedSilentFail(hediffDefName);
+                }
+                return cachedHediffDef;
+            }
+            set
+            {
+                cachedHediffDef = value;
+                hediffDefName = value?.defName;
+            }
+        }
+
+        public List<BodyPartDef> parts
+        {
+            get
+            {
+                if (cachedParts == null && partsDefNames != null)
+                {
+                    cachedParts = new List<BodyPartDef>();
+                    foreach (string partDefName in partsDefNames)
+                    {
+                        BodyPartDef def = DefDatabase<BodyPartDef>.GetNamedSilentFail(partDefName);
+                        if (def != null) cachedParts.Add(def);
+                    }
+                }
+                return cachedParts;
+            }
+            set
+            {
+                cachedParts = value;
+                if (value != null)
+                {
+                    partsDefNames = value.Select(p => p.defName).ToList();
+                }
+                else
+                {
+                    partsDefNames = null;
+                }
+            }
+        }
 
         public string GetDisplayLabel()
         {
@@ -53,44 +108,38 @@ namespace FactionGearCustomizer
 
         public void ExposeData()
         {
-            if (Scribe.mode == LoadSaveMode.Saving)
-            {
-                string defName = HediffDef?.defName;
-                Scribe_Values.Look(ref defName, "hediffDef");
-            }
-            else if (Scribe.mode == LoadSaveMode.LoadingVars)
-            {
-                string defName = null;
-                Scribe_Values.Look(ref defName, "hediffDef");
-                if (!string.IsNullOrEmpty(defName))
-                {
-                    HediffDef = DefDatabase<HediffDef>.GetNamedSilentFail(defName);
-                }
-            }
-
+            Scribe_Values.Look(ref hediffDefName, "hediffDef");
             Scribe_Values.Look(ref PoolType, "poolType", HediffPoolType.None);
             Scribe_Values.Look(ref maxParts, "maxParts");
             Scribe_Values.Look(ref maxPartsRange, "maxPartsRange");
             Scribe_Values.Look(ref chance, "chance");
             Scribe_Values.Look(ref severityRange, "severityRange");
-
-            if (Scribe.mode == LoadSaveMode.Saving)
+            Scribe_Collections.Look(ref partsDefNames, "parts", LookMode.Value);
+            
+            // 加载后重新缓存引用
+            if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
-                List<string> partsList = parts?.Select(p => p.defName).ToList();
-                Scribe_Collections.Look(ref partsList, "parts", LookMode.Value);
+                ResolveReferences();
             }
-            else if (Scribe.mode == LoadSaveMode.LoadingVars)
+        }
+
+        /// <summary>
+        /// 【修复】显式解析所有引用，确保在深拷贝/数据同步后引用有效
+        /// </summary>
+        public void ResolveReferences()
+        {
+            if (!string.IsNullOrEmpty(hediffDefName))
             {
-                List<string> partsList = null;
-                Scribe_Collections.Look(ref partsList, "parts", LookMode.Value);
-                if (partsList != null)
+                cachedHediffDef = DefDatabase<HediffDef>.GetNamedSilentFail(hediffDefName);
+            }
+            
+            if (partsDefNames != null)
+            {
+                cachedParts = new List<BodyPartDef>();
+                foreach (string partDefName in partsDefNames)
                 {
-                    parts = new List<BodyPartDef>();
-                    foreach (string partDefName in partsList)
-                    {
-                        BodyPartDef def = DefDatabase<BodyPartDef>.GetNamedSilentFail(partDefName);
-                        if (def != null) parts.Add(def);
-                    }
+                    BodyPartDef def = DefDatabase<BodyPartDef>.GetNamedSilentFail(partDefName);
+                    if (def != null) cachedParts.Add(def);
                 }
             }
         }

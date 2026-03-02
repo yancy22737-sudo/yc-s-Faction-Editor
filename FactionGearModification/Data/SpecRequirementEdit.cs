@@ -29,9 +29,19 @@ namespace FactionGearCustomizer
 
     public class SpecRequirementEdit : IExposable
     {
-        public ThingDef Thing;
-        public ThingDef Material;
-        public ThingStyleDef Style;
+        // 保存defName，确保引用不会在深拷贝或数据同步时丢失
+        public string thingDefName;
+        public string materialDefName;
+        public string styleDefName;
+        
+        // 缓存引用
+        [Unsaved]
+        private ThingDef cachedThing;
+        [Unsaved]
+        private ThingDef cachedMaterial;
+        [Unsaved]
+        private ThingStyleDef cachedStyle;
+        
         public QualityCategory? Quality;
         public bool Biocode;
         public Color Color;
@@ -43,56 +53,64 @@ namespace FactionGearCustomizer
 
         public SpecRequirementEdit() { }
 
+        public ThingDef Thing
+        {
+            get
+            {
+                // 【修复】防御性编程：访问时自动重新解析
+                if (cachedThing == null && !string.IsNullOrEmpty(thingDefName))
+                {
+                    cachedThing = DefDatabase<ThingDef>.GetNamedSilentFail(thingDefName);
+                }
+                return cachedThing;
+            }
+            set
+            {
+                cachedThing = value;
+                thingDefName = value?.defName;
+            }
+        }
+
+        public ThingDef Material
+        {
+            get
+            {
+                if (cachedMaterial == null && !string.IsNullOrEmpty(materialDefName))
+                {
+                    cachedMaterial = DefDatabase<ThingDef>.GetNamedSilentFail(materialDefName);
+                }
+                return cachedMaterial;
+            }
+            set
+            {
+                cachedMaterial = value;
+                materialDefName = value?.defName;
+            }
+        }
+
+        public ThingStyleDef Style
+        {
+            get
+            {
+                if (cachedStyle == null && !string.IsNullOrEmpty(styleDefName))
+                {
+                    cachedStyle = DefDatabase<ThingStyleDef>.GetNamedSilentFail(styleDefName);
+                }
+                return cachedStyle;
+            }
+            set
+            {
+                cachedStyle = value;
+                styleDefName = value?.defName;
+            }
+        }
+
         public void ExposeData()
         {
-            // Robust loading for Thing
-            if (Scribe.mode == LoadSaveMode.Saving)
-            {
-                string thingDefName = Thing?.defName;
-                Scribe_Values.Look(ref thingDefName, "thing");
-            }
-            else if (Scribe.mode == LoadSaveMode.LoadingVars)
-            {
-                string thingDefName = null;
-                Scribe_Values.Look(ref thingDefName, "thing");
-                if (!string.IsNullOrEmpty(thingDefName))
-                {
-                    Thing = DefDatabase<ThingDef>.GetNamedSilentFail(thingDefName);
-                }
-            }
-
-            // Robust loading for Material
-            if (Scribe.mode == LoadSaveMode.Saving)
-            {
-                string materialDefName = Material?.defName;
-                Scribe_Values.Look(ref materialDefName, "material");
-            }
-            else if (Scribe.mode == LoadSaveMode.LoadingVars)
-            {
-                string materialDefName = null;
-                Scribe_Values.Look(ref materialDefName, "material");
-                if (!string.IsNullOrEmpty(materialDefName))
-                {
-                    Material = DefDatabase<ThingDef>.GetNamedSilentFail(materialDefName);
-                }
-            }
-
-            // Robust loading for Style
-            if (Scribe.mode == LoadSaveMode.Saving)
-            {
-                string styleDefName = Style?.defName;
-                Scribe_Values.Look(ref styleDefName, "style");
-            }
-            else if (Scribe.mode == LoadSaveMode.LoadingVars)
-            {
-                string styleDefName = null;
-                Scribe_Values.Look(ref styleDefName, "style");
-                if (!string.IsNullOrEmpty(styleDefName))
-                {
-                    Style = DefDatabase<ThingStyleDef>.GetNamedSilentFail(styleDefName);
-                }
-            }
-
+            Scribe_Values.Look(ref thingDefName, "thing");
+            Scribe_Values.Look(ref materialDefName, "material");
+            Scribe_Values.Look(ref styleDefName, "style");
+            
             Scribe_Values.Look(ref Quality, "quality");
             Scribe_Values.Look(ref Biocode, "biocode");
             Scribe_Values.Look(ref Color, "color");
@@ -101,6 +119,31 @@ namespace FactionGearCustomizer
             Scribe_Values.Look(ref weight, "weight", 1f);
             Scribe_Values.Look(ref CountRange, "countRange", new IntRange(1, 1));
             Scribe_Values.Look(ref PoolType, "poolType", ItemPoolType.None);
+            
+            // 加载后重新缓存引用
+            if (Scribe.mode == LoadSaveMode.PostLoadInit)
+            {
+                ResolveReferences();
+            }
+        }
+
+        /// <summary>
+        /// 【修复】显式解析所有引用，确保在深拷贝/数据同步后引用有效
+        /// </summary>
+        public void ResolveReferences()
+        {
+            if (!string.IsNullOrEmpty(thingDefName))
+            {
+                cachedThing = DefDatabase<ThingDef>.GetNamedSilentFail(thingDefName);
+            }
+            if (!string.IsNullOrEmpty(materialDefName))
+            {
+                cachedMaterial = DefDatabase<ThingDef>.GetNamedSilentFail(materialDefName);
+            }
+            if (!string.IsNullOrEmpty(styleDefName))
+            {
+                cachedStyle = DefDatabase<ThingStyleDef>.GetNamedSilentFail(styleDefName);
+            }
         }
     }
 }

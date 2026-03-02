@@ -213,7 +213,10 @@ namespace FactionGearCustomizer
             gameComponent.savedFactionGearData.Clear();
             foreach (var factionData in FactionGearCustomizerMod.Settings.factionGearData)
             {
-                gameComponent.savedFactionGearData.Add(factionData.DeepCopy());
+                var cloned = factionData.DeepCopy();
+                // 【修复】确保深拷贝后引用被正确解析
+                cloned.ResolveReferences();
+                gameComponent.savedFactionGearData.Add(cloned);
             }
 
             Log.Message($"[FactionGearCustomizer] Synced global settings to save. Faction count: {gameComponent.savedFactionGearData.Count}");

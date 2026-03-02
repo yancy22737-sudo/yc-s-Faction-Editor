@@ -19,5 +19,6 @@ Copy-Item "$sourceRoot\1.6" "$destRoot" -Recurse -Force
 
 Write-Host "Copying VersionLog.txt..."
 Copy-Item "$sourceRoot\VersionLog.txt" "$destRoot\VersionLog.txt" -Force
+Copy-Item "$sourceRoot\VersionLog_en.txt" "$destRoot\VersionLog_en.txt" -Force
 
 Write-Host "Deploy complete."

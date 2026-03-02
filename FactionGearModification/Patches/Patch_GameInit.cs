@@ -99,6 +99,8 @@ namespace FactionGearCustomizer.Patches
                 foreach (var factionData in gameComponent.savedFactionGearData)
                 {
                     var cloned = factionData.DeepCopy();
+                    // 【修复】确保深拷贝后引用被正确解析
+                    cloned.ResolveReferences();
                     FactionGearCustomizerMod.Settings.factionGearData.Add(cloned);
                     if (FactionGearCustomizerMod.Settings.factionGearDataDict != null)
                     {
@@ -148,33 +150,31 @@ namespace FactionGearCustomizer.Patches
                 Log.Message($"[FactionGearCustomizer] Generated new save identifier: {gameComponent.saveUniqueIdentifier}");
             }
 
-            // 如果存档没有绑定预设（useCustomSettings == false），则重置全局设置
-            // 这样可以避免上一个存档的设置残留到新存档
-            if (!gameComponent.useCustomSettings)
+            // 【修复】无论新存档是否使用自定义设置，都要清理全局设置！
+            // 从任意存档退出来再新建存档时，全局设置里肯定有上一个存档的残留
+            
+            // 清理原始数据缓存，确保使用真正的原版数据
+            FactionDefManager.ClearOriginalDataCache();
+
+            // 重置全局设置
+            FactionGearCustomizerMod.Settings.factionGearData.Clear();
+            if (FactionGearCustomizerMod.Settings.factionGearDataDict != null)
             {
-                // 清理原始数据缓存，确保使用真正的原版数据
-                FactionDefManager.ClearOriginalDataCache();
-
-                // 重置全局设置
-                FactionGearCustomizerMod.Settings.factionGearData.Clear();
-                if (FactionGearCustomizerMod.Settings.factionGearDataDict != null)
-                {
-                    FactionGearCustomizerMod.Settings.factionGearDataDict.Clear();
-                }
-                FactionGearCustomizerMod.Settings.currentPresetName = null;
-
-                // 重置会话状态
-                EditorSession.ResetSession();
-                UndoManager.Clear();
-
-                // 重新保存原始数据（确保是干净的）
-                FactionDefManager.SaveAllOriginalData();
-
-                // 刷新缓存
-                FactionGearEditor.RefreshAllCaches();
-
-                Log.Message("[FactionGearCustomizer] Global settings reset for new save.");
+                FactionGearCustomizerMod.Settings.factionGearDataDict.Clear();
             }
+            FactionGearCustomizerMod.Settings.currentPresetName = null;
+
+            // 重置会话状态
+            EditorSession.ResetSession();
+            UndoManager.Clear();
+
+            // 重新保存原始数据（确保是干净的）
+            FactionDefManager.SaveAllOriginalData();
+
+            // 刷新缓存
+            FactionGearEditor.RefreshAllCaches();
+
+            Log.Message("[FactionGearCustomizer] Global settings reset for new save.");
         }
 
         /// <summary>
@@ -244,22 +244,9 @@ namespace FactionGearCustomizer.Patches
         /// </summary>
         private static void RestoreAllFactionDefsToOriginal()
         {
-            // 从全局设置中获取所有已修改的 factionDefName
-            // 由于全局设置已被清除，我们需要使用存档中的原始数据来恢复
-            var gameComponent = FactionGearGameComponent.Instance;
-            if (gameComponent == null) return;
-
-            // 如果存档有保存的 FactionGearData，我们不需要恢复 - 那是新存档应该有的数据
-            // 如果存档没有自定义设置，那我们需要恢复所有被修改的 FactionDef
-            if (gameComponent.useCustomSettings && gameComponent.savedFactionGearData != null && gameComponent.savedFactionGearData.Count > 0)
-            {
-                // 存档有自定义设置，不需要恢复
-                Log.Message("[FactionGearCustomizer] Save has custom settings, skipping FactionDef restoration.");
-                return;
-            }
-
-            // 存档没有自定义设置，遍历所有 Def 并尝试恢复原始值
-            // 由于 originalFactionData 缓存在内存中，我们可以直接使用 FactionDefManager 的方法来恢复
+            // 【修复】无论新存档是否有自定义设置，都先恢复所有 FactionDef 到原版状态！
+            // 这确保了即使新存档有自定义设置，也是在干净的原版基础上应用，而不是在上一个存档修改过的基础上应用
+            
             try
             {
                 foreach (var factionDef in DefDatabase<FactionDef>.AllDefs)
@@ -269,7 +256,14 @@ namespace FactionGearCustomizer.Patches
                         FactionDefManager.ResetFaction(factionDef);
                     }
                 }
-                Log.Message("[FactionGearCustomizer] All FactionDefs restored to original state.");
+                foreach (var kindDef in DefDatabase<PawnKindDef>.AllDefs)
+                {
+                    if (kindDef != null)
+                    {
+                        FactionDefManager.ResetKind(kindDef);
+                    }
+                }
+                Log.Message("[FactionGearCustomizer] All FactionDefs and PawnKindDefs restored to original state.");
             }
             catch (System.Exception ex)
             {

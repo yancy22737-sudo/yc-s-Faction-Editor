@@ -201,6 +201,10 @@
   <ShowInMainTab>显示底部主按钮</ShowInMainTab>
   <ForceIgnore>强制忽略</ForceIgnore>
   <ForceIgnoreTooltip>强制移除冲突的服装/武器并忽略预算限制。单位将尝试装备配置列表中的所有可能物品, 允许您忽略限制并始终创建神级单位。</ForceIgnoreTooltip>
+  <ForceIgnoreGlobal>全局强制忽略</ForceIgnoreGlobal>
+  <ForceIgnoreGlobalTooltip>全局设置：强制移除冲突的服装/武器并忽略预算限制。作为所有兵种的默认设置，可被局部设置覆盖。</ForceIgnoreGlobalTooltip>
+  <ForceIgnoreLocal>局部强制忽略</ForceIgnoreLocal>
+  <ForceIgnoreLocalTooltip>局部设置：仅对此兵种强制移除冲突的服装/武器并忽略预算限制。覆盖全局设置。</ForceIgnoreLocalTooltip>
   <AdvancedItemTooltip>这是通过高级模式( 特定需求) 添加的物品。</AdvancedItemTooltip>
   <Shell>外层</Shell>
   <Belt>腰带</Belt>

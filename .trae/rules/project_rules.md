@@ -18,6 +18,7 @@
 
 4. **版本与适配**
    - 版本号格式为x.y.z（主/次/修订），每次build前必须升级。禁止删减旧版本号和内容。
+   - 同步维护这两个版本日志: VersionLog_en.txt, VersionLog.txt
    - 新功能涉及UI显示需做语言适配。
    - 修改已有Def必须用PatchOperation。
    - Harmony Patch 需谨慎：在对基类（如 `Window`）进行 Patch 时，目标过滤逻辑必须极其严密。

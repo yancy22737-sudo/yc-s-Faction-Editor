@@ -201,6 +201,10 @@ Recommended: Enable for full control.</ForceOnlySelectedTooltip>
   <ShowInMainTab>Show Main Button</ShowInMainTab>
   <ForceIgnore>Force Ignore</ForceIgnore>
   <ForceIgnoreTooltip>Force remove conflicting apparel/weapons and ignore budget limits. Pawns will attempt to equip all possible items from config list, allowing you to bypass restrictions and always create god-tier units.</ForceIgnoreTooltip>
+  <ForceIgnoreGlobal>Global Force Ignore</ForceIgnoreGlobal>
+  <ForceIgnoreGlobalTooltip>Global setting: Force remove conflicting apparel/weapons and ignore budget limits. Used as default for all pawn kinds, can be overridden by local settings.</ForceIgnoreGlobalTooltip>
+  <ForceIgnoreLocal>Local Force Ignore</ForceIgnoreLocal>
+  <ForceIgnoreLocalTooltip>Local setting: Force remove conflicting apparel/weapons and ignore budget limits for this pawn kind only. Overrides global setting.</ForceIgnoreLocalTooltip>
   <AdvancedItemTooltip>This item was added via advanced mode (specific requirements).</AdvancedItemTooltip>
   <Shell>Shell</Shell>
   <Belt>Belt</Belt>

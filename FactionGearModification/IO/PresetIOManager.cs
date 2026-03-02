@@ -54,6 +54,15 @@ namespace FactionGearCustomizer
                 Scribe_Deep.Look(ref preset, "Preset");
                 Scribe.loader.FinalizeLoading();
 
+                // 【修复】导入预设后解析所有引用
+                if (preset?.factionGearData != null)
+                {
+                    foreach (var factionData in preset.factionGearData)
+                    {
+                        factionData?.ResolveReferences();
+                    }
+                }
+
                 Log.Message("[FactionGearCustomizer] Preset imported successfully.");
                 return preset;
             }

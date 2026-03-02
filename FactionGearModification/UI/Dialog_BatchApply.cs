@@ -31,6 +31,33 @@ namespace FactionGearCustomizer
 
         public override void DoWindowContents(Rect inRect)
         {
+            // Handle Ctrl+S shortcut for applying changes
+            if (Event.current.type == EventType.KeyDown && Event.current.control && Event.current.keyCode == KeyCode.S)
+            {
+                if (selectedKinds.Count > 0)
+                {
+                    Find.WindowStack.Add(new Dialog_MessageBox(
+                        string.Format(LanguageManager.Get("BatchApplyConfirm"), selectedKinds.Count),
+                        LanguageManager.Get("Yes"),
+                        () => {
+                            Apply();
+                            Close();
+                        },
+                        LanguageManager.Get("No"),
+                        null,
+                        null,
+                        false,
+                        null,
+                        null
+                    ));
+                }
+                else
+                {
+                    Close();
+                }
+                Event.current.Use();
+            }
+
             Text.Font = GameFont.Medium;
             Widgets.Label(new Rect(inRect.x, inRect.y, inRect.width, 30f), LanguageManager.Get("BatchApplyTitle"));
             Text.Font = GameFont.Small;

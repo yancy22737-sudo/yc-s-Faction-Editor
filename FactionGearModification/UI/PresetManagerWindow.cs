@@ -43,6 +43,17 @@ namespace FactionGearCustomizer
 
         public override void DoWindowContents(Rect inRect)
         {
+            // Handle Ctrl+S shortcut for saving
+            if (Event.current.type == EventType.KeyDown && Event.current.control && Event.current.keyCode == KeyCode.S)
+            {
+                if (selectedPreset != null)
+                {
+                    SavePreset();
+                    Notify(LanguageManager.Get("PresetMetadataSaved"));
+                }
+                Event.current.Use();
+            }
+
             // 布局
             Rect listRect = new Rect(inRect.x, inRect.y, 300, inRect.height);
             Rect detailsRect = new Rect(inRect.x + 310, inRect.y, inRect.width - 310, inRect.height);

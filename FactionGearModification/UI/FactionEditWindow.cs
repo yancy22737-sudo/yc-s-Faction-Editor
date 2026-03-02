@@ -138,6 +138,24 @@ namespace FactionGearCustomizer.UI
 
         public override void DoWindowContents(Rect inRect)
         {
+            // Game Check - moved to top to avoid duplicate declaration
+            bool inGame = Current.Game != null;
+
+            // Handle Ctrl+S shortcut for saving
+            if (Event.current.type == EventType.KeyDown && Event.current.control && Event.current.keyCode == KeyCode.S)
+            {
+                if (inGame)
+                {
+                    ApplyChanges();
+                    Close();
+                }
+                else
+                {
+                    Messages.Message(LanguageManager.Get("OnlyAvailableInGame"), MessageTypeDefOf.RejectInput, false);
+                }
+                Event.current.Use();
+            }
+
             float width = inRect.width;
             
             // Content Area
@@ -184,7 +202,6 @@ namespace FactionGearCustomizer.UI
             float btnX = inRect.width - btnWidth;
 
             // Game Check
-            bool inGame = Current.Game != null;
             if (!inGame)
             {
                 GUI.color = Color.gray;

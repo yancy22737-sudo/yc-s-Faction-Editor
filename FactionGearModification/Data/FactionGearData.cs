@@ -146,6 +146,20 @@ namespace FactionGearCustomizer
             return kindGearData.FirstOrDefault(k => k.kindDefName == kindDefName);
         }
 
+        /// <summary>
+        /// 【修复】显式解析所有引用，确保在深拷贝/数据同步后引用有效
+        /// </summary>
+        public void ResolveReferences()
+        {
+            if (kindGearData != null)
+            {
+                foreach (var kindData in kindGearData)
+                {
+                    kindData?.ResolveReferences();
+                }
+            }
+        }
+
         public FactionGearData DeepCopy()
         {
             var copy = new FactionGearData(factionDefName);
@@ -179,6 +193,10 @@ namespace FactionGearCustomizer
                     copy.kindGearData.Add(kind.DeepCopy());
             }
             copy.InitializeDictionary();
+            
+            // 【修复】深拷贝后解析引用
+            copy.ResolveReferences();
+            
             return copy;
         }
     }
