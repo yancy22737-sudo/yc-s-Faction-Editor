@@ -376,6 +376,10 @@
   <Selected>已选</Selected>
   <BatchApplyConfirm>确定要将配置应用到选中的 {0} 个兵种吗？</BatchApplyConfirm>
   <BatchApplied>成功应用配置到 {0} 个兵种。</BatchApplied>
+  <BatchApplySource>来源</BatchApplySource>
+  <BatchCopyCategories>复制分类</BatchCopyCategories>
+  <BatchTargetFaction>目标派系</BatchTargetFaction>
+  <BatchApplyNoCategorySelected>请至少选择一个分类进行复制。</BatchApplyNoCategorySelected>
   <NewFaction>添加</NewFaction>
   <NewFactionTooltip>创建新派系。仅在游戏中可用。</NewFactionTooltip>
   <CreateFaction>创建派系</CreateFaction>

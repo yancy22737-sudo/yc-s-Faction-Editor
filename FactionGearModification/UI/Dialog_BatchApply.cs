@@ -6,113 +6,169 @@ using Verse;
 
 namespace FactionGearCustomizer
 {
+    /// <summary>
+    /// Flags indicating which gear categories to copy during batch apply.
+    /// </summary>
+    [System.Flags]
+    public enum GearCopyFlags
+    {
+        None = 0,
+        Ranged = 1 << 0,
+        Melee = 1 << 1,
+        Armor = 1 << 2,
+        Clothes = 1 << 3,
+        Others = 1 << 4,
+        Hediffs = 1 << 5,
+        Items = 1 << 6,
+        All = Ranged | Melee | Armor | Clothes | Others | Hediffs | Items
+    }
+
     public class Dialog_BatchApply : Window
     {
-        private FactionDef factionDef;
-        private KindGearData sourceData;
+        // ── Source ──────────────────────────────────────────────
+        private readonly FactionDef sourceFaction;
+        private readonly KindGearData sourceData;
+
+        // ── Target faction selector ───────────────────────────
+        private FactionDef targetFaction;
+        private List<FactionDef> allHumanFactions;
+
+        // ── Pawn kind list ────────────────────────────────────
         private List<PawnKindDef> allKinds;
-        private HashSet<PawnKindDef> selectedKinds = new HashSet<PawnKindDef>();
+        private readonly HashSet<PawnKindDef> selectedKinds = new HashSet<PawnKindDef>();
         private string searchText = "";
         private Vector2 scrollPos;
 
-        public override Vector2 InitialSize => new Vector2(500f, 700f);
+        // ── Copy flags ────────────────────────────────────────
+        private GearCopyFlags copyFlags = GearCopyFlags.All;
 
+        public override Vector2 InitialSize => new Vector2(520f, 780f);
+
+        // ── Constructor ───────────────────────────────────────
         public Dialog_BatchApply(FactionDef faction, KindGearData source)
         {
-            this.factionDef = faction;
+            this.sourceFaction = faction;
             this.sourceData = source;
+            this.targetFaction = faction;
             this.doCloseX = true;
             this.forcePause = true;
             this.absorbInputAroundWindow = true;
-            
-            // Load kinds
-            this.allKinds = FactionGearEditor.GetFactionKinds(faction);
+
+            allHumanFactions = DefDatabase<FactionDef>.AllDefs
+                .Where(f => f.humanlikeFaction)
+                .OrderBy(f => f.LabelCap.ToString())
+                .ToList();
+
+            RefreshKindList();
         }
 
+        // ── Helpers ───────────────────────────────────────────
+        private void RefreshKindList()
+        {
+            allKinds = FactionGearEditor.GetFactionKinds(targetFaction);
+            selectedKinds.Clear();
+            scrollPos = Vector2.zero;
+        }
+
+        private IEnumerable<PawnKindDef> GetFilteredKinds()
+        {
+            if (string.IsNullOrEmpty(searchText)) return allKinds;
+            string term = searchText.ToLower();
+            return allKinds.Where(k =>
+                (k.label ?? "").ToLower().Contains(term) ||
+                k.defName.ToLower().Contains(term));
+        }
+
+        // ── Draw ──────────────────────────────────────────────
         public override void DoWindowContents(Rect inRect)
         {
-            // Handle Ctrl+S shortcut for applying changes
-            if (Event.current.type == EventType.KeyDown && Event.current.control && Event.current.keyCode == KeyCode.S)
+            // Ctrl+S shortcut
+            if (Event.current.type == EventType.KeyDown && Event.current.control &&
+                Event.current.keyCode == KeyCode.S)
             {
-                if (selectedKinds.Count > 0)
-                {
-                    Find.WindowStack.Add(new Dialog_MessageBox(
-                        string.Format(LanguageManager.Get("BatchApplyConfirm"), selectedKinds.Count),
-                        LanguageManager.Get("Yes"),
-                        () => {
-                            Apply();
-                            Close();
-                        },
-                        LanguageManager.Get("No"),
-                        null,
-                        null,
-                        false,
-                        null,
-                        null
-                    ));
-                }
-                else
-                {
-                    Close();
-                }
+                TryApplyWithConfirmation();
                 Event.current.Use();
             }
 
-            Text.Font = GameFont.Medium;
-            Widgets.Label(new Rect(inRect.x, inRect.y, inRect.width, 30f), LanguageManager.Get("BatchApplyTitle"));
-            Text.Font = GameFont.Small;
+            float y = inRect.y;
 
-            float y = inRect.y + 40f;
-            
-            // Search
+            // ── Title ──────────────────────────────────────────
+            Text.Font = GameFont.Medium;
+            Widgets.Label(new Rect(inRect.x, y, inRect.width, 30f),
+                LanguageManager.Get("BatchApplyTitle"));
+            Text.Font = GameFont.Small;
+            y += 34f;
+
+            // ── Source info label ──────────────────────────────
+            GUI.color = Color.gray;
+            Widgets.Label(new Rect(inRect.x, y, inRect.width, 22f),
+                $"{LanguageManager.Get("BatchApplySource")}: [{sourceFaction.LabelCap}] {sourceData.kindDefName}");
+            GUI.color = Color.white;
+            y += 26f;
+
+            // ── Copy flags (checkboxes) ────────────────────────
+            DrawCopyFlagRow(inRect.x, ref y, inRect.width);
+            y += 6f;
+
+            // ── Target faction selector ────────────────────────
+            DrawFactionSelector(inRect.x, ref y, inRect.width);
+            y += 6f;
+
+            // ── Search ────────────────────────────────────────
             Rect searchRect = new Rect(inRect.x, y, inRect.width, 24f);
             string oldSearch = searchText;
             searchText = Widgets.TextField(searchRect, searchText);
             if (searchText != oldSearch) scrollPos = Vector2.zero;
             y += 30f;
 
-            // Buttons: Select All / None
+            // ── Select All / None ─────────────────────────────
             Rect btnRow = new Rect(inRect.x, y, inRect.width, 24f);
-            if (Widgets.ButtonText(new Rect(btnRow.x, btnRow.y, 100f, 24f), LanguageManager.Get("SelectAll")))
+            if (Widgets.ButtonText(new Rect(btnRow.x, btnRow.y, 100f, 24f),
+                    LanguageManager.Get("SelectAll")))
             {
                 selectedKinds.Clear();
                 foreach (var k in GetFilteredKinds()) selectedKinds.Add(k);
             }
-            if (Widgets.ButtonText(new Rect(btnRow.x + 110f, btnRow.y, 100f, 24f), LanguageManager.Get("SelectNone")))
+            if (Widgets.ButtonText(new Rect(btnRow.x + 110f, btnRow.y, 100f, 24f),
+                    LanguageManager.Get("SelectNone")))
             {
                 selectedKinds.Clear();
             }
-            
-            // Selected Count
-            Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(new Rect(btnRow.xMax - 200f, btnRow.y, 200f, 24f), $"{LanguageManager.Get("Selected")}: {selectedKinds.Count}");
-            Text.Anchor = TextAnchor.UpperLeft;
 
+            // Selected count (right-aligned)
+            Text.Anchor = TextAnchor.MiddleRight;
+            Widgets.Label(new Rect(btnRow.xMax - 200f, btnRow.y, 200f, 24f),
+                $"{LanguageManager.Get("Selected")}: {selectedKinds.Count}");
+            Text.Anchor = TextAnchor.UpperLeft;
             y += 30f;
 
-            // List
+            // ── Kind list ─────────────────────────────────────
             Rect listRect = new Rect(inRect.x, y, inRect.width, inRect.height - y - 40f);
             var filtered = GetFilteredKinds().ToList();
-            // Clamp viewRect height to avoid Unity GUI rendering limitations (~3700 items limit)
             const float MaxViewRectHeight = 100000f;
             float totalContentHeight = filtered.Count * 28f;
             float clampedViewHeight = Mathf.Min(totalContentHeight, MaxViewRectHeight);
             Rect viewRect = new Rect(0, 0, listRect.width - 16f, clampedViewHeight);
-            
+
             Widgets.BeginScrollView(listRect, ref scrollPos, viewRect);
             float curY = 0f;
             foreach (var kind in filtered)
             {
                 Rect rowRect = new Rect(0, curY, viewRect.width, 24f);
-                
-                // Alternating row background
                 if ((int)(curY / 28f) % 2 == 1) Widgets.DrawAltRect(rowRect);
 
                 bool selected = selectedKinds.Contains(kind);
                 bool oldSelected = selected;
-                
+
+                // Shade source kind
+                bool isSelf = kind.defName == sourceData.kindDefName &&
+                              targetFaction.defName == sourceFaction.defName;
+                if (isSelf) GUI.color = new Color(1f, 1f, 0.5f, 0.7f);
+
                 Widgets.CheckboxLabeled(rowRect, kind.LabelCap, ref selected);
-                
+
+                if (isSelf) GUI.color = Color.white;
+
                 if (selected != oldSelected)
                 {
                     if (selected) selectedKinds.Add(kind);
@@ -122,77 +178,362 @@ namespace FactionGearCustomizer
             }
             Widgets.EndScrollView();
 
-            // Apply Button
+            // ── Apply button ──────────────────────────────────
             Rect applyRect = new Rect(inRect.x, inRect.height - 30f, inRect.width, 30f);
             if (Widgets.ButtonText(applyRect, LanguageManager.Get("Apply")))
             {
-                if (selectedKinds.Count > 0)
-                {
-                    Find.WindowStack.Add(new Dialog_MessageBox(
-                        string.Format(LanguageManager.Get("BatchApplyConfirm"), selectedKinds.Count),
-                        LanguageManager.Get("Yes"),
-                        () => {
-                            Apply();
-                            Close();
-                        },
-                        LanguageManager.Get("No"),
-                        null,
-                        null,
-                        false,
-                        null,
-                        null
-                    ));
-                }
-                else
-                {
-                    Close();
-                }
+                TryApplyWithConfirmation();
             }
         }
 
-        private IEnumerable<PawnKindDef> GetFilteredKinds()
+        // ── Draw helpers ──────────────────────────────────────
+
+        private void DrawCopyFlagRow(float x, ref float y, float width)
         {
-            if (string.IsNullOrEmpty(searchText)) return allKinds;
-            string term = searchText.ToLower();
-            return allKinds.Where(k => (k.label ?? "").ToLower().Contains(term) || k.defName.ToLower().Contains(term));
+            // Label
+            Widgets.Label(new Rect(x, y, 130f, 22f), LanguageManager.Get("BatchCopyCategories") + ":");
+            y += 24f;
+
+            // 7 checkboxes in two rows
+            (GearCopyFlags flag, string labelKey)[] flags =
+            {
+                (GearCopyFlags.Ranged,  "Ranged"),
+                (GearCopyFlags.Melee,   "Melee"),
+                (GearCopyFlags.Armor,   "Armors"),
+                (GearCopyFlags.Clothes, "Clothes"),
+                (GearCopyFlags.Others,  "Others"),
+                (GearCopyFlags.Hediffs, "Hediffs"),
+                (GearCopyFlags.Items,   "Items"),
+            };
+
+            float colW = width / 4f;
+            float rowH = 24f;
+            int col = 0;
+            float startY = y;
+
+            foreach (var (flag, labelKey) in flags)
+            {
+                float cx = x + col * colW;
+                float cy = startY + (col >= 4 ? rowH : 0f);  // second row after 4 cols
+                if (col == 4) { /* reset */ }
+
+                Rect cbRect = new Rect(cx, cy, colW - 4f, 22f);
+                bool val = (copyFlags & flag) != 0;
+                bool oldVal = val;
+                Widgets.CheckboxLabeled(cbRect, LanguageManager.Get(labelKey), ref val);
+                if (val != oldVal)
+                    copyFlags = val ? (copyFlags | flag) : (copyFlags & ~flag);
+
+                col++;
+            }
+
+            // Advance y by 2 rows
+            y = startY + (flags.Length > 4 ? rowH * 2 : rowH) + 2f;
+
+            // "All" / "None" quick buttons
+            float btnW = 54f;
+            if (Widgets.ButtonText(new Rect(x, y, btnW, 20f), LanguageManager.Get("All")))
+                copyFlags = GearCopyFlags.All;
+            if (Widgets.ButtonText(new Rect(x + btnW + 4f, y, btnW, 20f), LanguageManager.Get("None")))
+                copyFlags = GearCopyFlags.None;
+            y += 26f;
+        }
+
+        private void DrawFactionSelector(float x, ref float y, float width)
+        {
+            float labelW = 120f;
+            float buttonW = width - labelW - 4f;
+
+            Widgets.Label(new Rect(x, y, labelW, 24f),
+                LanguageManager.Get("BatchTargetFaction") + ":");
+
+            string factionLabel = targetFaction?.LabelCap.ToString() ?? "?";
+            if (Widgets.ButtonText(new Rect(x + labelW + 4f, y, buttonW, 24f), factionLabel))
+            {
+                var options = allHumanFactions.Select(f =>
+                    new FloatMenuOption(f.LabelCap, () =>
+                    {
+                        if (targetFaction != f)
+                        {
+                            targetFaction = f;
+                            RefreshKindList();
+                        }
+                    })
+                ).ToList();
+                Find.WindowStack.Add(new FloatMenu(options));
+            }
+            y += 30f;
+        }
+
+        // ── Apply logic ───────────────────────────────────────
+
+        private void TryApplyWithConfirmation()
+        {
+            if (selectedKinds.Count > 0)
+            {
+                Find.WindowStack.Add(new Dialog_MessageBox(
+                    string.Format(LanguageManager.Get("BatchApplyConfirm"), selectedKinds.Count),
+                    LanguageManager.Get("Yes"),
+                    () => { Apply(); Close(); },
+                    LanguageManager.Get("No"),
+                    null, null, false, null, null));
+            }
+            else
+            {
+                Close();
+            }
         }
 
         private void Apply()
         {
-            var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(factionDef.defName);
-            int count = 0;
+            if (copyFlags == GearCopyFlags.None)
+            {
+                Messages.Message(LanguageManager.Get("BatchApplyNoCategorySelected"),
+                    MessageTypeDefOf.RejectInput, false);
+                return;
+            }
 
-            // Collect targets for undo (exclude source kind to prevent self-copy)
-            List<KindGearData> targets = new List<KindGearData>();
+            var targetFactionData =
+                FactionGearCustomizerMod.Settings.GetOrCreateFactionData(targetFaction.defName);
+
+            // Collect targets (skip self)
+            var targets = new List<KindGearData>();
             foreach (var kind in selectedKinds)
             {
-                // Skip the source kind itself
-                if (kind.defName == sourceData.kindDefName)
-                {
+                if (kind.defName == sourceData.kindDefName &&
+                    targetFaction.defName == sourceFaction.defName)
                     continue;
-                }
-                
-                var targetKindData = factionData.GetOrCreateKindData(kind.defName);
-                if (targetKindData != null)
-                {
-                    targets.Add(targetKindData);
-                }
+
+                var target = targetFactionData.GetOrCreateKindData(kind.defName);
+                if (target != null) targets.Add(target);
             }
 
-            // Record state
-            if (targets.Count > 0)
+            if (targets.Count == 0) { Close(); return; }
+
+            // Record undo
+            UndoManager.RecordState(new BatchUndoable(targets));
+
+            // Partial copy
+            foreach (var target in targets)
             {
-                UndoManager.RecordState(new BatchUndoable(targets));
+                CopyPartial(sourceData, target, copyFlags);
+                target.isModified = true;
             }
 
-            foreach (var targetKindData in targets)
-            {
-                targetKindData.CopyFrom(sourceData);
-                targetKindData.isModified = true;
-                count++;
-            }
             FactionGearEditor.MarkDirty();
-            Messages.Message(string.Format(LanguageManager.Get("BatchApplied"), count), MessageTypeDefOf.PositiveEvent, false);
+            Messages.Message(
+                string.Format(LanguageManager.Get("BatchApplied"), targets.Count),
+                MessageTypeDefOf.PositiveEvent, false);
+        }
+
+        /// <summary>
+        /// Copies only the data categories indicated by <paramref name="flags"/> from
+        /// <paramref name="src"/> into <paramref name="dst"/>, leaving all other fields
+        /// untouched.
+        /// </summary>
+        private static void CopyPartial(KindGearData src, KindGearData dst, GearCopyFlags flags)
+        {
+            if (ReferenceEquals(src, dst)) return;
+
+            // ── Ranged weapons ────────────────────────────────
+            if ((flags & GearCopyFlags.Ranged) != 0)
+            {
+                dst.weapons = src.weapons
+                    ?.Select(g => g != null ? new GearItem(g.thingDefName, g.weight) : null)
+                    .Where(g => g != null).ToList()
+                    ?? new List<GearItem>();
+
+                // SpecificWeapons that are ranged
+                var srcRanged = src.SpecificWeapons?.Where(
+                    x => x.Thing != null && x.Thing.IsRangedWeapon).ToList();
+                if (srcRanged != null && srcRanged.Count > 0)
+                {
+                    if (dst.SpecificWeapons == null)
+                        dst.SpecificWeapons = new List<SpecRequirementEdit>();
+                    else
+                        dst.SpecificWeapons.RemoveAll(x => x.Thing != null && x.Thing.IsRangedWeapon);
+
+                    foreach (var item in srcRanged)
+                        dst.SpecificWeapons.Add(CloneSpecReq(item));
+                }
+                else if (dst.SpecificWeapons != null)
+                {
+                    dst.SpecificWeapons.RemoveAll(x => x.Thing != null && x.Thing.IsRangedWeapon);
+                    if (dst.SpecificWeapons.Count == 0) dst.SpecificWeapons = null;
+                }
+            }
+
+            // ── Melee weapons ─────────────────────────────────
+            if ((flags & GearCopyFlags.Melee) != 0)
+            {
+                dst.meleeWeapons = src.meleeWeapons
+                    ?.Select(g => g != null ? new GearItem(g.thingDefName, g.weight) : null)
+                    .Where(g => g != null).ToList()
+                    ?? new List<GearItem>();
+
+                var srcMelee = src.SpecificWeapons?.Where(
+                    x => x.Thing != null && x.Thing.IsMeleeWeapon).ToList();
+                if (srcMelee != null && srcMelee.Count > 0)
+                {
+                    if (dst.SpecificWeapons == null)
+                        dst.SpecificWeapons = new List<SpecRequirementEdit>();
+                    else
+                        dst.SpecificWeapons.RemoveAll(x => x.Thing != null && x.Thing.IsMeleeWeapon);
+
+                    foreach (var item in srcMelee)
+                        dst.SpecificWeapons.Add(CloneSpecReq(item));
+                }
+                else if (dst.SpecificWeapons != null)
+                {
+                    dst.SpecificWeapons.RemoveAll(x => x.Thing != null && x.Thing.IsMeleeWeapon);
+                    if (dst.SpecificWeapons.Count == 0) dst.SpecificWeapons = null;
+                }
+            }
+
+            // ── Armor ─────────────────────────────────────────
+            if ((flags & GearCopyFlags.Armor) != 0)
+            {
+                dst.armors = src.armors
+                    ?.Select(g => g != null ? new GearItem(g.thingDefName, g.weight) : null)
+                    .Where(g => g != null).ToList()
+                    ?? new List<GearItem>();
+
+                CopySpecificApparelByPredicate(src, dst,
+                    x => x.Thing != null && IsArmor(x.Thing));
+            }
+
+            // ── Clothes / Apparel ─────────────────────────────
+            if ((flags & GearCopyFlags.Clothes) != 0)
+            {
+                dst.apparel = src.apparel
+                    ?.Select(g => g != null ? new GearItem(g.thingDefName, g.weight) : null)
+                    .Where(g => g != null).ToList()
+                    ?? new List<GearItem>();
+
+                CopySpecificApparelByPredicate(src, dst,
+                    x => x.Thing != null && IsApparel(x.Thing));
+            }
+
+            // ── Others (belts, etc.) ──────────────────────────
+            if ((flags & GearCopyFlags.Others) != 0)
+            {
+                dst.others = src.others
+                    ?.Select(g => g != null ? new GearItem(g.thingDefName, g.weight) : null)
+                    .Where(g => g != null).ToList()
+                    ?? new List<GearItem>();
+
+                CopySpecificApparelByPredicate(src, dst,
+                    x => x.Thing != null && IsBelt(x.Thing));
+            }
+
+            // ── Forced Hediffs ────────────────────────────────
+            if ((flags & GearCopyFlags.Hediffs) != 0)
+            {
+                if (src.ForcedHediffs != null)
+                {
+                    dst.ForcedHediffs = new List<ForcedHediff>();
+                    foreach (var item in src.ForcedHediffs)
+                    {
+                        if (item == null) continue;
+                        var n = new ForcedHediff
+                        {
+                            HediffDef = item.HediffDef,
+                            PoolType = item.PoolType,
+                            maxParts = item.maxParts,
+                            maxPartsRange = item.maxPartsRange,
+                            chance = item.chance,
+                            severityRange = item.severityRange
+                        };
+                        if (item.parts != null)
+                            n.parts = new List<BodyPartDef>(item.parts);
+                        dst.ForcedHediffs.Add(n);
+                    }
+                }
+                else
+                {
+                    dst.ForcedHediffs = null;
+                }
+            }
+
+            // ── Inventory Items ───────────────────────────────
+            if ((flags & GearCopyFlags.Items) != 0)
+            {
+                if (src.InventoryItems != null)
+                {
+                    dst.InventoryItems = new List<SpecRequirementEdit>();
+                    foreach (var item in src.InventoryItems)
+                    {
+                        if (item != null)
+                            dst.InventoryItems.Add(CloneSpecReq(item));
+                    }
+                }
+                else
+                {
+                    dst.InventoryItems = null;
+                }
+            }
+        }
+
+        // ── Static helpers ────────────────────────────────────
+
+        private static void CopySpecificApparelByPredicate(
+            KindGearData src, KindGearData dst,
+            System.Func<SpecRequirementEdit, bool> predicate)
+        {
+            var srcItems = src.SpecificApparel?.Where(predicate).ToList();
+            if (srcItems != null && srcItems.Count > 0)
+            {
+                if (dst.SpecificApparel == null)
+                    dst.SpecificApparel = new List<SpecRequirementEdit>();
+                else
+                    dst.SpecificApparel.RemoveAll(x => predicate(x));
+
+                foreach (var item in srcItems)
+                    dst.SpecificApparel.Add(CloneSpecReq(item));
+            }
+            else if (dst.SpecificApparel != null)
+            {
+                dst.SpecificApparel.RemoveAll(x => predicate(x));
+                if (dst.SpecificApparel.Count == 0) dst.SpecificApparel = null;
+            }
+        }
+
+        private static SpecRequirementEdit CloneSpecReq(SpecRequirementEdit item)
+        {
+            return new SpecRequirementEdit
+            {
+                Thing = item.Thing,
+                Material = item.Material,
+                Style = item.Style,
+                Quality = item.Quality,
+                Biocode = item.Biocode,
+                Color = item.Color,
+                SelectionMode = item.SelectionMode,
+                SelectionChance = item.SelectionChance,
+                CountRange = item.CountRange,
+                PoolType = item.PoolType,
+                weight = item.weight
+            };
+        }
+
+        // Mirror helpers from GearEditPanel (kept private to avoid coupling)
+        private static bool IsBelt(ThingDef t) =>
+            t.apparel?.layers?.Contains(ApparelLayerDefOf.Belt) ?? false;
+
+        private static bool IsArmor(ThingDef t)
+        {
+            if (t.apparel == null) return false;
+            if (IsBelt(t)) return false;
+            return t.apparel.layers.Contains(ApparelLayerDefOf.Shell) ||
+                   t.GetStatValueAbstract(StatDefOf.ArmorRating_Sharp) > 0.4f;
+        }
+
+        private static bool IsApparel(ThingDef t)
+        {
+            if (t.apparel == null) return false;
+            if (IsBelt(t)) return false;
+            if (IsArmor(t)) return false;
+            return true;
         }
     }
 }
