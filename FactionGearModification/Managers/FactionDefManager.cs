@@ -45,6 +45,12 @@ namespace FactionGearCustomizer.Managers
             return xenotypeChancesField?.GetValue(set) as List<XenotypeChance>;
         }
 
+        public static List<XenotypeChance> GetOriginalXenotypeChances(FactionDef faction)
+        {
+            if (faction == null || !originalFactionData.ContainsKey(faction)) return null;
+            return originalFactionData[faction].XenotypeChances;
+        }
+
         public static void SetXenotypeChances(XenotypeSet set, List<XenotypeChance> chances)
         {
             if (set == null) return;
@@ -218,10 +224,18 @@ namespace FactionGearCustomizer.Managers
             {
                 if (data.DisableXenotypeChances)
                 {
-                    // 禁用异种生成概率：清空异种列表
-                    if (faction.xenotypeSet != null)
+                    // 禁用异种生成概率控制：恢复原始异种设置
+                    if (originalFactionData.TryGetValue(faction, out var originalData) && originalData.XenotypeChances != null)
                     {
+                        if (faction.xenotypeSet == null) faction.xenotypeSet = new XenotypeSet();
+                        SetXenotypeChances(faction.xenotypeSet, new List<XenotypeChance>(originalData.XenotypeChances));
+                        LogUtils.DebugLog($"Restored original xenotype chances for {faction.defName}");
+                    }
+                    else if (faction.xenotypeSet != null)
+                    {
+                        // 原始数据也没有异种设置，则清空
                         SetXenotypeChances(faction.xenotypeSet, new List<XenotypeChance>());
+                        LogUtils.DebugLog($"Cleared xenotype chances for {faction.defName} (no original data)");
                     }
                 }
                 else if (data.XenotypeChances != null && data.XenotypeChances.Count > 0)
@@ -240,6 +254,7 @@ namespace FactionGearCustomizer.Managers
                         }
                     }
                     SetXenotypeChances(faction.xenotypeSet, newChances);
+                    LogUtils.DebugLog($"Applied custom xenotype chances for {faction.defName}");
                 }
             }
 

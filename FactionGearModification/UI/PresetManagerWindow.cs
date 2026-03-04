@@ -291,6 +291,8 @@ namespace FactionGearCustomizer
                         existingPreset.SaveFromCurrentSettings(FactionGearCustomizerMod.Settings.factionGearData);
                         existingPreset.description = newPresetDescription;
                         FactionGearCustomizerMod.Settings.UpdatePreset(existingPreset);
+                        FactionGearCustomizerMod.Settings.currentPresetName = existingPreset.name;
+                        FactionGearCustomizerMod.Settings.Write();
                         selectedPreset = existingPreset;
                         newPresetName = "";
                         newPresetDescription = "";
@@ -314,6 +316,7 @@ namespace FactionGearCustomizer
                 FactionGearCustomizerMod.Settings.AddPreset(newPreset);
                 // 设置为当前预设
                 FactionGearCustomizerMod.Settings.currentPresetName = newPreset.name;
+                FactionGearCustomizerMod.Settings.Write();
                 
                 selectedPreset = newPreset;
                 newPresetName = "";
@@ -395,6 +398,8 @@ namespace FactionGearCustomizer
                 {
                     // 使用 GameComponent 的 ApplyPresetToSave 方法，它会正确同步所有数据
                     gameComponent.ApplyPresetToSave(selectedPreset);
+                    FactionGearCustomizerMod.Settings.currentPresetName = selectedPreset.name;
+                    FactionGearCustomizerMod.Settings.Write();
                 }
                 else
                 {
@@ -455,6 +460,7 @@ namespace FactionGearCustomizer
                         if (FactionGearCustomizerMod.Settings.currentPresetName == selectedPreset.name)
                         {
                             FactionGearCustomizerMod.Settings.currentPresetName = null;
+                            FactionGearCustomizerMod.Settings.Write();
                         }
 
                         FactionGearCustomizerMod.Settings.RemovePreset(selectedPreset);
@@ -553,8 +559,12 @@ namespace FactionGearCustomizer
                     }
                     newPreset.name = finalName;
 
-                    // 添加到预设列�?
+                    // 添加到预设列表
                     FactionGearCustomizerMod.Settings.AddPreset(newPreset);
+                    // 设置为当前预设（关键修复）
+                    FactionGearCustomizerMod.Settings.currentPresetName = newPreset.name;
+                    FactionGearCustomizerMod.Settings.Write();
+                    
                     selectedPreset = newPreset;
                     LogUtils.DebugLog("Preset imported successfully!");
                     Notify(LanguageManager.Get("PresetImportedFromClipboard").Replace("{0}", newPreset.name));

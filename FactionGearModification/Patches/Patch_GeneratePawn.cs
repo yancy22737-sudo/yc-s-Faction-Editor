@@ -10,7 +10,7 @@ using FactionGearCustomizer.Utils;
 namespace FactionGearCustomizer
 {
     [HarmonyPatch(typeof(PawnGenerator), "GeneratePawn", new Type[] { typeof(PawnGenerationRequest) })]
-    [HarmonyPriority(Priority.VeryHigh)]
+    [HarmonyPriority(Priority.Low)]
     public static class Patch_GeneratePawn
     {
         [ThreadStatic]
@@ -105,15 +105,10 @@ namespace FactionGearCustomizer
                 return;
             }
 
-            // 禁用异种概率控制
+            // 禁用异种概率控制：不应用兵种级别设置，让派系统一设置生效
             if (kindData.DisableXenotypeChances)
             {
-                var chances = FactionDefManager.GetXenotypeChances(faction.def.xenotypeSet);
-                if (chances != null)
-                {
-                    chances.Clear();
-                    LogUtils.DebugLog($"Disabled xenotype chances for {faction.def.defName}");
-                }
+                LogUtils.DebugLog($"Kind xenotype chances disabled for {faction.def.defName}, skipping kind-level settings");
                 return;
             }
 
@@ -141,14 +136,33 @@ namespace FactionGearCustomizer
         {
             if (faction.def.xenotypeSet == null) return;
 
-            // 禁用异种概率控制
+            // 禁用异种概率控制：恢复原始异种设置
             if (factionData.DisableXenotypeChances)
             {
-                var chances = FactionDefManager.GetXenotypeChances(faction.def.xenotypeSet);
-                if (chances != null)
+                // 尝试从原始数据恢复
+                var originalFactionData = FactionDefManager.GetOriginalXenotypeChances(faction.def);
+                if (originalFactionData != null && originalFactionData.Count > 0)
                 {
-                    chances.Clear();
-                    LogUtils.DebugLog($"Disabled faction xenotype chances for {faction.def.defName}");
+                    var chances = FactionDefManager.GetXenotypeChances(faction.def.xenotypeSet);
+                    if (chances != null)
+                    {
+                        chances.Clear();
+                        foreach (var originalChance in originalFactionData)
+                        {
+                            chances.Add(originalChance);
+                        }
+                        LogUtils.DebugLog($"Restored original xenotype chances for {faction.def.defName}");
+                    }
+                }
+                else
+                {
+                    // 原始数据也没有异种设置，则清空
+                    var chances = FactionDefManager.GetXenotypeChances(faction.def.xenotypeSet);
+                    if (chances != null)
+                    {
+                        chances.Clear();
+                        LogUtils.DebugLog($"Cleared xenotype chances for {faction.def.defName} (no original data)");
+                    }
                 }
                 return;
             }

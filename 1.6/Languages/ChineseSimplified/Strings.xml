@@ -365,7 +365,7 @@
   <ForcedXenotype>强制异种</ForcedXenotype>
   <ForcedXenotypeTooltip>强制指定该兵种只能生成此异种，忽略概率设置。</ForcedXenotypeTooltip>
   <SelectXenotype>选择异种人</SelectXenotype>
-  <ClearForcedXenotype>清除强制异种</ClearForcedXenotype>
+  <ClearForcedXenotype>清除</ClearForcedXenotype>
   <Total>总计</Total>
   <XenotypeChancesExceed100>异种人概率总和不能超过 100%</XenotypeChancesExceed100>
   <BatchApply>批量应用</BatchApply>

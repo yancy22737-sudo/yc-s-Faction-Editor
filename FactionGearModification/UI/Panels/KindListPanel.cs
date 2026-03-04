@@ -112,13 +112,17 @@ namespace FactionGearCustomizer.UI.Panels
                     var existingKindNames = new HashSet<string>(fullList.Select(k => k.defName));
                     foreach (var kindData in factionData.kindGearData)
                     {
-                        if (!existingKindNames.Contains(kindData.kindDefName))
+                        // 只要用户在设置中配置过该兵种，就显示出来
+                        if (kindData != null && !string.IsNullOrEmpty(kindData.kindDefName))
                         {
-                            var kindDef = DefDatabase<PawnKindDef>.GetNamedSilentFail(kindData.kindDefName);
-                            if (kindDef != null)
+                            if (!existingKindNames.Contains(kindData.kindDefName))
                             {
-                                fullList.Add(kindDef);
-                                existingKindNames.Add(kindData.kindDefName);
+                                var kindDef = DefDatabase<PawnKindDef>.GetNamedSilentFail(kindData.kindDefName);
+                                if (kindDef != null)
+                                {
+                                    fullList.Add(kindDef);
+                                    existingKindNames.Add(kindData.kindDefName);
+                                }
                             }
                         }
                     }

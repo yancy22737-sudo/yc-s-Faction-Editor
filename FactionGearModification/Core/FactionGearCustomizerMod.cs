@@ -58,7 +58,8 @@ namespace FactionGearCustomizer
         {
             // 【关键修复】只在明确标记了需要清理时才执行清理！
             // 不要在游戏外（主菜单）打开UI时自动清理，这会干扰预设加载功能
-            if (needsCleanupAfterReturnToMenu)
+            // 【重要】只有在没有活跃预设的情况下才执行清理，避免清除用户刚刚加载的预设
+            if (needsCleanupAfterReturnToMenu && string.IsNullOrEmpty(Settings.currentPresetName))
             {
                 // 检查是否在主菜单（非游戏状态）
                 bool isInMainMenu = Current.Game == null || Current.ProgramState != ProgramState.Playing;
@@ -74,6 +75,7 @@ namespace FactionGearCustomizer
                     // 清理残留数据
                     Settings.factionGearData?.Clear();
                     Settings.factionGearDataDict?.Clear();
+                    // 【修复】只在currentPresetName为空时才重置，避免清除用户刚刚加载的预设
                     Settings.currentPresetName = null;
                     
                     // 【关键修复】调用Write()持久化清理操作，防止RimWorld从配置文件重新加载残留数据
@@ -94,6 +96,12 @@ namespace FactionGearCustomizer
                     
                     LogUtils.Info("Residual data cleanup completed.");
                 }
+            }
+            else if (needsCleanupAfterReturnToMenu)
+            {
+                // 如果用户已经有活跃预设，只重置标志而不清理数据
+                needsCleanupAfterReturnToMenu = false;
+                LogUtils.Info("User has active preset, skipping cleanup to preserve preset selection.");
             }
             
             if (!editorInitialized)
@@ -136,8 +144,17 @@ namespace FactionGearCustomizer
         {
             // 【关键修复】只在明确标记了需要清理时才执行清理！
             // 不要在游戏外（主菜单）打开UI时自动清理，这会干扰预设加载功能
+            // 【重要】只有在没有活跃预设的情况下才执行清理，避免清除用户刚刚加载的预设
             if (!needsCleanupAfterReturnToMenu)
             {
+                return;
+            }
+            
+            // 如果用户已经有活跃预设，只重置标志而不清理数据
+            if (!string.IsNullOrEmpty(Settings.currentPresetName))
+            {
+                needsCleanupAfterReturnToMenu = false;
+                LogUtils.Info("CheckAndCleanupResidualData: User has active preset, skipping cleanup to preserve preset selection.");
                 return;
             }
             
@@ -155,6 +172,7 @@ namespace FactionGearCustomizer
                 // 清理残留数据
                 Settings.factionGearData?.Clear();
                 Settings.factionGearDataDict?.Clear();
+                // 【修复】只在currentPresetName为空时才重置，避免清除用户刚刚加载的预设
                 Settings.currentPresetName = null;
                 
                 // 【关键修复】调用Write()持久化清理操作，防止RimWorld从配置文件重新加载残留数据

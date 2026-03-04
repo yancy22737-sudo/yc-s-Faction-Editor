@@ -104,6 +104,7 @@ namespace FactionGearCustomizer
                     newFactionData.IconPath = faction.IconPath;
                     newFactionData.Color = faction.Color;
                     newFactionData.XenotypeChances = faction.XenotypeChances != null ? new Dictionary<string, float>(faction.XenotypeChances) : null;
+                    newFactionData.DisableXenotypeChances = faction.DisableXenotypeChances;
                     newFactionData.PlayerRelationOverride = faction.PlayerRelationOverride;
 
                     // 保存 groupMakers
