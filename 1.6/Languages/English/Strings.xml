@@ -364,7 +364,7 @@ Applying this preset may cause missing items or errors. Continue?</MissingModsWa
   <ForcedXenotype>Forced Xenotype</ForcedXenotype>
   <ForcedXenotypeTooltip>Force this pawn kind to only spawn with this xenotype, ignoring chance settings.</ForcedXenotypeTooltip>
   <SelectXenotype>Select Xenotype</SelectXenotype>
-  <ClearForcedXenotype>Clear Forced Xenotype</ClearForcedXenotype>
+  <ClearForcedXenotype>Clear</ClearForcedXenotype>
   <Total>Total</Total>
   <XenotypeChancesExceed100>Xenotype chances cannot exceed 100%</XenotypeChancesExceed100>
   <BatchApply>Batch Apply</BatchApply>
