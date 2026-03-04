@@ -1016,24 +1016,4 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <Validation_InsufficientParts>状态 '{0}' 可用部位不足：请求 {1} 个，可用 {2} 个</Validation_InsufficientParts>
   <Validation_TooManyImplantsForPart>部位 '{0}' 的植入物过多：请求 {1} 个，最大允许 {2} 个</Validation_TooManyImplantsForPart>
 
-  <!-- Batch History -->
-  <History>历史记录</History>
-  <BatchHistoryTooltip>查看和撤销过去的批量应用操作。</BatchHistoryTooltip>
-  <BatchHistoryTitle>批量应用历史记录</BatchHistoryTitle>
-  <ClearAll>清空全部</ClearAll>
-  <BatchHistoryClearConfirm>确定要清空所有批量应用历史记录吗？此操作无法撤销。</BatchHistoryClearConfirm>
-  <Yes>是</Yes>
-  <No>否</No>
-  <BatchHistoryCount>共 {0} 条记录</BatchHistoryCount>
-  <BatchHistoryEmpty>暂无历史记录。</BatchHistoryEmpty>
-  <BatchHistoryInvalidBtn>失效</BatchHistoryInvalidBtn>
-  <BatchHistoryInvalidTooltip>快照或目标数据已损坏或因Mod变更而丢失。</BatchHistoryInvalidTooltip>
-  <BatchHistoryInvalid>无法撤销：目标数据已损坏。</BatchHistoryInvalid>
-  <BatchHistoryRevertBtn>撤销该次</BatchHistoryRevertBtn>
-  <BatchHistoryRevertConfirm>确定要撤销此次批量应用操作吗？目标兵种将恢复到应用前的状态。</BatchHistoryRevertConfirm>
-  <BatchReverted>批量操作撤销成功。</BatchReverted>
-  <General>高级设置</General>
-  <BatchHistory_SrcTgt>来源：[{0}] {1} → 目标数：{2}</BatchHistory_SrcTgt>
-  <BatchHistory_Flags>复制项：{0}</BatchHistory_Flags>
-
 </LanguageData>
