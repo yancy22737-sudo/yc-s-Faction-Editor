@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <GameVersion Condition=" '$(GameVersion)' == '' ">1.6</GameVersion>
     <TargetFramework>net48</TargetFramework>
     <AssemblyName>FactionGearCustomizer</AssemblyName>
     <RootNamespace>FactionGearCustomizer</RootNamespace>
@@ -100,4 +101,12 @@
     </Reference>
   </ItemGroup>
 
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);V$(GameVersion.Replace('.', '_'))</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Krafs.Rimworld.Ref" Version="$(GameVersion).*-*" PrivateAssets="All" />
+    <PackageReference Include="Lib.Harmony.Ref" Version="2.*" PrivateAssets="All" />
+  </ItemGroup>
 </Project>

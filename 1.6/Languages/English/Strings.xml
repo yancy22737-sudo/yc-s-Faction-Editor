@@ -375,6 +375,10 @@ Applying this preset may cause missing items or errors. Continue?</MissingModsWa
   <Selected>Selected</Selected>
   <BatchApplyConfirm>Apply config to {0} selected kinds?</BatchApplyConfirm>
   <BatchApplied>Applied config to {0} kinds.</BatchApplied>
+  <BatchApplySource>Source</BatchApplySource>
+  <BatchCopyCategories>Copy Categories</BatchCopyCategories>
+  <BatchTargetFaction>Target Faction</BatchTargetFaction>
+  <BatchApplyNoCategorySelected>Please select at least one category to copy.</BatchApplyNoCategorySelected>
   <NewFaction>New</NewFaction>
   <NewFactionTooltip>Create new faction. Only available in-game.</NewFactionTooltip>
   <CreateFaction>Create Faction</CreateFaction>
