@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
@@ -15,12 +16,13 @@ namespace FactionGearCustomizer
         None = 0,
         Ranged = 1 << 0,
         Melee = 1 << 1,
-        Armor = 1 << 2,
+        Armors = 1 << 2,
         Clothes = 1 << 3,
         Others = 1 << 4,
         Hediffs = 1 << 5,
         Items = 1 << 6,
-        All = Ranged | Melee | Armor | Clothes | Others | Hediffs | Items
+        General = 1 << 7,
+        All = Ranged | Melee | Armors | Clothes | Others | Hediffs | Items | General
     }
 
     public class Dialog_BatchApply : Window
@@ -179,10 +181,17 @@ namespace FactionGearCustomizer
             Widgets.EndScrollView();
 
             // ── Apply button ──────────────────────────────────
-            Rect applyRect = new Rect(inRect.x, inRect.height - 30f, inRect.width, 30f);
+            Rect applyRect = new Rect(inRect.x, inRect.height - 30f, inRect.width - 100f, 30f);
+            Rect historyRect = new Rect(inRect.xMax - 90f, inRect.height - 30f, 90f, 30f);
+
             if (Widgets.ButtonText(applyRect, LanguageManager.Get("Apply")))
             {
                 TryApplyWithConfirmation();
+            }
+            if (Widgets.ButtonText(historyRect, LanguageManager.Get("History")))
+            {
+                Close();
+                Find.WindowStack.Add(new Dialog_BatchHistory());
             }
         }
 
@@ -199,11 +208,12 @@ namespace FactionGearCustomizer
             {
                 (GearCopyFlags.Ranged,  "Ranged"),
                 (GearCopyFlags.Melee,   "Melee"),
-                (GearCopyFlags.Armor,   "Armors"),
+                (GearCopyFlags.Armors,  "Armors"),
                 (GearCopyFlags.Clothes, "Clothes"),
                 (GearCopyFlags.Others,  "Others"),
                 (GearCopyFlags.Hediffs, "Hediffs"),
                 (GearCopyFlags.Items,   "Items"),
+                (GearCopyFlags.General, "General"),
             };
 
             float colW = width / 4f;
@@ -213,9 +223,10 @@ namespace FactionGearCustomizer
 
             foreach (var (flag, labelKey) in flags)
             {
-                float cx = x + col * colW;
-                float cy = startY + (col >= 4 ? rowH : 0f);  // second row after 4 cols
-                if (col == 4) { /* reset */ }
+                int row = col / 4;
+                int colInRow = col % 4;
+                float cx = x + colInRow * colW;
+                float cy = startY + row * rowH;
 
                 Rect cbRect = new Rect(cx, cy, colW - 4f, 22f);
                 bool val = (copyFlags & flag) != 0;
@@ -310,8 +321,12 @@ namespace FactionGearCustomizer
 
             if (targets.Count == 0) { Close(); return; }
 
-            // Record undo
-            UndoManager.RecordState(new BatchUndoable(targets));
+            // Take snapshots before modifying
+            var preApplySnapshots = new List<KindGearData>(targets.Count);
+            foreach (var target in targets)
+            {
+                preApplySnapshots.Add(target.DeepCopy());
+            }
 
             // Partial copy
             foreach (var target in targets)
@@ -319,6 +334,19 @@ namespace FactionGearCustomizer
                 CopyPartial(sourceData, target, copyFlags);
                 target.isModified = true;
             }
+
+            // Record to BatchHistory instead of UndoManager
+            var record = new BatchApplyRecord
+            {
+                AppliedAt = DateTime.Now,
+                SourceKind = sourceData.kindDefName,
+                SourceFaction = sourceFaction.LabelCap,
+                Flags = copyFlags,
+                TargetKinds = targets.Select(x => x.kindDefName).ToList(),
+                PreApplySnapshots = preApplySnapshots,
+                TargetRefs = targets
+            };
+            BatchHistoryManager.Record(record);
 
             FactionGearEditor.MarkDirty();
             Messages.Message(
@@ -391,7 +419,7 @@ namespace FactionGearCustomizer
             }
 
             // ── Armor ─────────────────────────────────────────
-            if ((flags & GearCopyFlags.Armor) != 0)
+            if ((flags & GearCopyFlags.Armors) != 0)
             {
                 dst.armors = src.armors
                     ?.Select(g => g != null ? new GearItem(g.thingDefName, g.weight) : null)
@@ -471,6 +499,64 @@ namespace FactionGearCustomizer
                 {
                     dst.InventoryItems = null;
                 }
+            }
+
+            // ── General/Advanced ──────────────────────────────
+            if ((flags & GearCopyFlags.General) != 0)
+            {
+                dst.ForceNaked = src.ForceNaked;
+                dst.ForceOnlySelected = src.ForceOnlySelected;
+                dst.ForceIgnoreRestrictions = src.ForceIgnoreRestrictions;
+                dst.ItemQuality = src.ItemQuality;
+                dst.ForcedWeaponQuality = src.ForcedWeaponQuality;
+                dst.BiocodeWeaponChance = src.BiocodeWeaponChance;
+                dst.BiocodeApparelChance = src.BiocodeApparelChance;
+                dst.TechHediffChance = src.TechHediffChance;
+                dst.TechHediffsMaxAmount = src.TechHediffsMaxAmount;
+                dst.ApparelMoney = src.ApparelMoney;
+                dst.WeaponMoney = src.WeaponMoney;
+                dst.TechLevelLimit = src.TechLevelLimit;
+                dst.ApparelColor = src.ApparelColor;
+
+                dst.TechHediffTags = src.TechHediffTags == null ? null : new List<string>(src.TechHediffTags);
+                dst.TechHediffDisallowedTags = src.TechHediffDisallowedTags == null ? null : new List<string>(src.TechHediffDisallowedTags);
+                dst.WeaponTags = src.WeaponTags == null ? null : new List<string>(src.WeaponTags);
+                dst.ApparelTags = src.ApparelTags == null ? null : new List<string>(src.ApparelTags);
+                dst.ApparelDisallowedTags = src.ApparelDisallowedTags == null ? null : new List<string>(src.ApparelDisallowedTags);
+
+                if (src.ApparelRequired != null)
+                {
+                    dst.ApparelRequired = new List<ThingDef>(src.ApparelRequired);
+                }
+                else
+                {
+                    dst.ApparelRequired = null;
+                }
+
+                if (src.TechRequired != null)
+                {
+                    dst.TechRequired = new List<ThingDef>(src.TechRequired);
+                }
+                else
+                {
+                    dst.TechRequired = null;
+                }
+
+                // Xenotype checks
+                if (src.XenotypeChances != null)
+                {
+                    dst.XenotypeChances = new Dictionary<string, float>();
+                    foreach (var kvp in src.XenotypeChances)
+                    {
+                        dst.XenotypeChances[kvp.Key] = kvp.Value;
+                    }
+                }
+                else
+                {
+                    dst.XenotypeChances = new Dictionary<string, float>();
+                }
+                dst.DisableXenotypeChances = src.DisableXenotypeChances;
+                dst.ForcedXenotype = src.ForcedXenotype;
             }
         }
 
