@@ -16,6 +16,7 @@ namespace FactionGearCustomizer.Managers
         // Store original values for restoration
         private static Dictionary<FactionDef, OriginalFactionData> originalFactionData = new Dictionary<FactionDef, OriginalFactionData>();
         private static Dictionary<PawnKindDef, string> originalKindLabels = new Dictionary<PawnKindDef, string>();
+        private static Dictionary<Faction, OriginalFactionInstanceData> originalFactionInstanceData = new Dictionary<Faction, OriginalFactionInstanceData>();
 
         // 标记是否已保存所有原始数据（游戏启动时只保存一次）
         private static bool hasSavedAllOriginalData = false;
@@ -36,6 +37,14 @@ namespace FactionGearCustomizer.Managers
             // Biotech
             public List<XenotypeChance> XenotypeChances;
             // Relation
+            public FactionRelationKind? PlayerRelationKind;
+        }
+
+        private class OriginalFactionInstanceData
+        {
+            public string Name;
+            public Color? Color;
+            public int? PlayerGoodwill;
             public FactionRelationKind? PlayerRelationKind;
         }
 
@@ -90,6 +99,7 @@ namespace FactionGearCustomizer.Managers
             {
                 originalFactionData.Clear();
                 originalKindLabels.Clear();
+                originalFactionInstanceData.Clear();
                 hasSavedAllOriginalData = false;
                 LogUtils.DebugLog("Original data cache cleared.");
             }
@@ -191,6 +201,7 @@ namespace FactionGearCustomizer.Managers
                     {
                         if (f.def == faction)
                         {
+                            SaveOriginalFactionInstanceState(f);
                             f.Name = data.Label;
                         }
                     }
@@ -241,6 +252,7 @@ namespace FactionGearCustomizer.Managers
                     {
                         if (f.def == faction)
                         {
+                            SaveOriginalFactionInstanceState(f);
                             f.color = data.Color.Value;
                         }
                     }
@@ -321,6 +333,7 @@ namespace FactionGearCustomizer.Managers
                 {
                     if (f.def == faction && !f.IsPlayer)
                     {
+                        SaveOriginalFactionInstanceState(f);
                         LogUtils.DebugLog($"Found faction instance: {f.Name}");
                         ApplyFactionRelation(f, data.PlayerRelationOverride.Value);
                         count++;
@@ -369,6 +382,7 @@ namespace FactionGearCustomizer.Managers
         private static void ApplyFactionRelation(Faction faction, FactionRelationKind relationKind)
         {
             if (faction == null || faction.IsPlayer) return;
+            SaveOriginalFactionInstanceState(faction);
 
             if (Find.FactionManager == null) return;
             Faction playerFaction = Find.FactionManager.OfPlayer;
@@ -542,6 +556,8 @@ namespace FactionGearCustomizer.Managers
             {
                 cachedDescriptionField.SetValue(faction, null);
             }
+
+            RestoreFactionRuntimeState(faction);
         }
 
         public static void ResetKind(PawnKindDef kind)
@@ -729,6 +745,109 @@ namespace FactionGearCustomizer.Managers
             
             list.Sort((a, b) => (a.label ?? a.defName).CompareTo(b.label ?? b.defName));
             return list;
+        }
+
+        private static void SaveOriginalFactionInstanceState(Faction faction)
+        {
+            if (faction == null || faction.IsPlayer) return;
+            if (originalFactionInstanceData.ContainsKey(faction)) return;
+
+            var snapshot = new OriginalFactionInstanceData
+            {
+                Name = faction.Name,
+                Color = faction.color
+            };
+
+            if (Find.FactionManager?.OfPlayer != null)
+            {
+                snapshot.PlayerGoodwill = (int)faction.PlayerGoodwill;
+                snapshot.PlayerRelationKind = faction.PlayerRelationKind;
+            }
+
+            originalFactionInstanceData[faction] = snapshot;
+        }
+
+        private static void RestoreFactionRuntimeState(FactionDef factionDef)
+        {
+            if (factionDef == null || Current.Game == null || Find.FactionManager == null) return;
+
+            foreach (var faction in Find.FactionManager.AllFactions)
+            {
+                if (faction == null || faction.IsPlayer || faction.def != factionDef) continue;
+                if (!originalFactionInstanceData.TryGetValue(faction, out var snapshot)) continue;
+
+                if (!string.IsNullOrEmpty(snapshot.Name))
+                {
+                    faction.Name = snapshot.Name;
+                }
+
+                if (snapshot.Color.HasValue)
+                {
+                    faction.color = snapshot.Color.Value;
+                }
+
+                if (snapshot.PlayerRelationKind.HasValue && snapshot.PlayerGoodwill.HasValue)
+                {
+                    RestoreFactionRelation(faction, snapshot.PlayerRelationKind.Value, snapshot.PlayerGoodwill.Value);
+                }
+            }
+        }
+
+        private static void RestoreFactionRelation(Faction faction, FactionRelationKind relationKind, int goodwill)
+        {
+            if (faction == null || faction.IsPlayer) return;
+            if (Find.FactionManager == null) return;
+
+            var playerFaction = Find.FactionManager.OfPlayer;
+            if (playerFaction == null) return;
+
+            InitializeReflectionFields();
+
+            try
+            {
+                FactionRelation relation = faction.RelationWith(playerFaction);
+                if (relation == null) return;
+
+                int goodwillDelta = goodwill - (int)faction.PlayerGoodwill;
+                if (goodwillDelta != 0)
+                {
+                    faction.TryAffectGoodwillWith(playerFaction, goodwillDelta, true, true, null);
+                }
+
+                if (goodwillField != null)
+                {
+                    goodwillField.SetValue(relation, goodwill);
+                }
+
+                if (baseGoodwillField != null)
+                {
+                    baseGoodwillField.SetValue(relation, goodwill);
+                }
+
+                if (kindField != null)
+                {
+                    kindField.SetValue(relation, relationKind);
+                }
+
+                if (naturalGoodwillTimerField != null)
+                {
+                    naturalGoodwillTimerField.SetValue(faction, 0);
+                }
+
+                if (checkNaturalGoodwillField == null)
+                {
+                    checkNaturalGoodwillField = typeof(Faction).GetField("checkNaturalGoodwill", BindingFlags.Instance | BindingFlags.NonPublic);
+                }
+
+                if (checkNaturalGoodwillField != null)
+                {
+                    checkNaturalGoodwillField.SetValue(faction, false);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Warning($"[FactionGearCustomizer] Error restoring relation change: {ex.Message}");
+            }
         }
     }
 }

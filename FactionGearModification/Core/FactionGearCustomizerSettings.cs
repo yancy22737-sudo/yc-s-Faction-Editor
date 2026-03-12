@@ -161,6 +161,22 @@ namespace FactionGearCustomizer
             return data;
         }
 
+        public FactionGearData TryGetFactionData(string factionDefName)
+        {
+            if (string.IsNullOrEmpty(factionDefName))
+            {
+                return null;
+            }
+
+            if (factionGearDataDict == null)
+            {
+                InitializeDictionary();
+            }
+
+            factionGearDataDict.TryGetValue(factionDefName, out var data);
+            return data;
+        }
+
         public void AddPreset(FactionGearPreset preset)
         {
             presets.Add(preset);

@@ -5,6 +5,7 @@ using RimWorld;
 using RimWorld.Planet;
 using UnityEngine;
 using Verse;
+using FactionGearCustomizer.Core;
 using FactionGearCustomizer.UI;
 using FactionGearCustomizer.UI.Panels;
 
@@ -57,8 +58,8 @@ namespace FactionGearCustomizer.Managers
             }
 
             // Apply PlayerRelationOverride if set for this faction def
-            var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(factionDef.defName);
-            if (factionData.PlayerRelationOverride.HasValue)
+            var factionData = GetRuntimeFactionData(factionDef);
+            if (factionData != null && factionData.PlayerRelationOverride.HasValue)
             {
                 FactionDefManager.ApplyFactionChanges(factionDef, factionData);
             }
@@ -166,6 +167,20 @@ namespace FactionGearCustomizer.Managers
             }
 
             Find.WindowStack.Add(new FactionSpawnWindow(faction));
+        }
+
+        private static FactionGearData GetRuntimeFactionData(FactionDef factionDef)
+        {
+            if (factionDef == null) return null;
+
+            var gameComponent = FactionGearGameComponent.Instance;
+            var saveData = gameComponent?.GetActiveFactionGearData();
+            if (saveData != null)
+            {
+                return saveData.FirstOrDefault(f => f.factionDefName == factionDef.defName);
+            }
+
+            return FactionGearCustomizerMod.Settings?.TryGetFactionData(factionDef.defName);
         }
     }
 }

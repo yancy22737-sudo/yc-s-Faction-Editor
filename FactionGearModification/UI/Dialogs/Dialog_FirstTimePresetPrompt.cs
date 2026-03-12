@@ -15,6 +15,7 @@ namespace FactionGearCustomizer.UI.Dialogs
         private List<FactionGearPreset> availablePresets;
         private FactionGearPreset selectedPreset;
         private Vector2 scrollPosition;
+        private Vector2 factionScrollPosition;
         private bool dontAskAgain;
         private HashSet<string> selectedFactions = new HashSet<string>();
         private bool isExpanded = false;
@@ -236,8 +237,7 @@ namespace FactionGearCustomizer.UI.Dialogs
             float totalHeight = selectedPreset.factionGearData.Count * itemHeight;
 
             Rect viewRect = new Rect(listRect.x, listRect.y, listRect.width - 16f, totalHeight);
-            Vector2 factionScrollPos = new Vector2();
-            Widgets.BeginScrollView(listRect, ref factionScrollPos, viewRect);
+            Widgets.BeginScrollView(listRect, ref factionScrollPosition, viewRect);
 
             float y = viewRect.y;
             foreach (var factionData in selectedPreset.factionGearData)
@@ -323,12 +323,9 @@ namespace FactionGearCustomizer.UI.Dialogs
                     gameComponent.ApplyPresetToSave(null);
                 }
                 gameComponent.MarkFirstTimePromptShown();
-
-                if (dontAskAgain)
-                {
-                }
             }
 
+            ApplyDontAskAgainPreference();
             Close();
 
             string message;
@@ -354,7 +351,15 @@ namespace FactionGearCustomizer.UI.Dialogs
             {
                 gameComponent.MarkFirstTimePromptShown();
             }
+            ApplyDontAskAgainPreference();
             Close();
+        }
+
+        private void ApplyDontAskAgainPreference()
+        {
+            if (!dontAskAgain) return;
+
+            FactionGearCustomizerMod.Settings?.DismissDialog(FactionGearGameComponent.FirstTimePromptDialogId);
         }
     }
 }

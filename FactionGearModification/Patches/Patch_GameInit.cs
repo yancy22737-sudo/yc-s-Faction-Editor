@@ -415,52 +415,45 @@ namespace FactionGearCustomizer.Patches
         }
 
         /// <summary>
-/// 从全局设置中应用剧本配置（Phase 2）
-/// </summary>
-private static void ApplyScenarioConfigFromSettings()
-{
-    var settings = FactionGearCustomizerMod.Settings;
-    if (settings.scenarioFactionConfig == null)
-        return;
-
-    var config = settings.scenarioFactionConfig;
-    if (string.IsNullOrEmpty(config.presetName))
-        return;
-
-    var preset = settings.presets?.FirstOrDefault(p => p.name == config.presetName);
-    if (preset == null)
-        return;
-
-    var gameComponent = FactionGearGameComponent.Instance;
-    if (gameComponent == null)
-        return;
-
-    // 筛选指定的派系
-    if (config.selectedFactions != null && config.selectedFactions.Any())
-    {
-        var filteredData = preset.factionGearData
-            .Where(f => config.selectedFactions.Contains(f.factionDefName))
-            .ToList();
-
-        if (filteredData.Any())
+        /// 从全局设置中应用剧本配置（Phase 2）
+        /// </summary>
+        private static void ApplyScenarioConfigFromSettings()
         {
-            gameComponent.savedFactionGearData.Clear();
-            foreach (var faction in filteredData)
+            var settings = FactionGearCustomizerMod.Settings;
+            if (settings?.scenarioFactionConfig == null)
+                return;
+
+            var config = settings.scenarioFactionConfig;
+            if (string.IsNullOrEmpty(config.presetName))
+                return;
+
+            var preset = settings.presets?.FirstOrDefault(p => p.name == config.presetName);
+            if (preset == null)
+                return;
+
+            var gameComponent = FactionGearGameComponent.Instance;
+            if (gameComponent == null)
+                return;
+
+            if (config.selectedFactions != null && config.selectedFactions.Any())
             {
-                var cloned = faction.DeepCopy();
-                cloned.ResolveReferences();
-                gameComponent.savedFactionGearData.Add(cloned);
+                var presetFactionData = preset.factionGearData ?? new List<FactionGearData>();
+                var selectedFactionNames = config.selectedFactions
+                    .Where(name => presetFactionData.Any(f => f.factionDefName == name))
+                    .Distinct()
+                    .ToList();
+
+                if (selectedFactionNames.Any())
+                {
+                    gameComponent.ResetFactionData();
+                    gameComponent.ApplyFactionsFromPreset(preset, selectedFactionNames);
+                    LogUtils.DebugLog($"Applied scenario config: {preset.name}, factions: {selectedFactionNames.Count}");
+                }
             }
-            gameComponent.useCustomSettings = true;
-            gameComponent.activePresetName = preset.name;
-        }
-    }
 
             // 清除剧本配置
             settings.scenarioFactionConfig = new ScenarioFactionConfig();
             settings.Write();
-
-            LogUtils.DebugLog($"Applied scenario config: {preset.name}");
         }
     }
 }

@@ -40,7 +40,7 @@ namespace FactionGearCustomizer
                     else
                     {
                         // 使用全局设置（兼容旧存档或主菜单）
-                        factionData = FactionGearCustomizerMod.Settings?.GetOrCreateFactionData(faction.def?.defName);
+                        factionData = FactionGearCustomizerMod.Settings?.TryGetFactionData(faction.def?.defName);
                     }
                 }
 

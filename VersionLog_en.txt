@@ -1,3 +1,10 @@
+v1.4.3
+- Fix: Correct age-setting source during pawn generation: save-specific config now has priority, with global config as fallback, avoiding runtime pollution from empty auto-created entries.
+- Fix: Correct PlayerRelationOverride source when spawning faction instances, now aligned with active save data instead of global-only lookup.
+- Fix: ResetAllFactions now restores runtime faction instance state (name, color, and player relation), not just Def-level values.
+- Fix: Scenario config and world-creation lite editor now use the unified apply pipeline so changes take effect immediately.
+- Fix: First-time prompt faction list now keeps scroll position, and "Don't ask again" now persists correctly.
+
 v1.4.2
 - Add: Added age settings (min/max) in Kind Xenotype Editor, overriding faction group settings.
 - Add: Added warning dialog when selecting non-combatant xenotypes (e.g. Highmate), with option to force relax generation rules.

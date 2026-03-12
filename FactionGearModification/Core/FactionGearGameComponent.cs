@@ -13,6 +13,8 @@ namespace FactionGearCustomizer.Core
     /// </summary>
     public class FactionGearGameComponent : GameComponent
     {
+        public const string FirstTimePromptDialogId = "FirstTimePresetPrompt";
+
         // 当前存档激活的预设名称（null 表示使用原版设置）
         public string activePresetName = null;
 
@@ -161,6 +163,7 @@ namespace FactionGearCustomizer.Core
             // 3. 全局有可用预设
             return !hasShownFirstTimePrompt
                 && !useCustomSettings
+                && !IsFirstTimePromptDismissed()
                 && FactionGearCustomizerMod.Settings?.presets?.Any() == true;
         }
 
@@ -170,7 +173,9 @@ namespace FactionGearCustomizer.Core
         public bool ShouldShowSaveSwitchPrompt()
         {
             // 存档切换时总是显示选择界面（如果当前没有使用自定义设置且有可用预设）
-            return !useCustomSettings && FactionGearCustomizerMod.Settings?.presets?.Any() == true;
+            return !useCustomSettings
+                && !IsFirstTimePromptDismissed()
+                && FactionGearCustomizerMod.Settings?.presets?.Any() == true;
         }
 
         /// <summary>
@@ -179,6 +184,11 @@ namespace FactionGearCustomizer.Core
         public void MarkFirstTimePromptShown()
         {
             hasShownFirstTimePrompt = true;
+        }
+
+        private bool IsFirstTimePromptDismissed()
+        {
+            return FactionGearCustomizerMod.Settings?.IsDialogDismissed(FirstTimePromptDialogId) == true;
         }
 
         /// <summary>

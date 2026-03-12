@@ -4,6 +4,7 @@ using System.Linq;
 using HarmonyLib;
 using RimWorld;
 using Verse;
+using UnityEngine;
 using FactionGearCustomizer.Core;
 using FactionGearCustomizer.Managers;
 using FactionGearCustomizer.Utils;
@@ -82,7 +83,7 @@ namespace FactionGearCustomizer
             }
             else
             {
-                factionData = FactionGearCustomizerMod.Settings?.GetOrCreateFactionData(faction.def.defName);
+                factionData = FactionGearCustomizerMod.Settings?.TryGetFactionData(faction.def.defName);
             }
             
             var kindData = factionData?.GetKindData(kindDef.defName);
@@ -266,8 +267,10 @@ namespace FactionGearCustomizer
         {
             if (request.KindDef == null || request.Faction == null) return;
 
-            // 获取派系统一设置
-            var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(request.Faction.def.defName);
+            // 获取运行时生效的数据：存档优先，其次全局设置
+            var factionData = GetRuntimeFactionData(request.Faction);
+            if (factionData == null) return;
+
             string kindDefName = request.KindDef.defName;
             
             float? minAge = null;
@@ -328,8 +331,14 @@ namespace FactionGearCustomizer
 
         private static void ApplyAgeToRequest(ref PawnGenerationRequest request, float? minAge, float? maxAge, string kindDefName)
         {
-            float effectiveMin = minAge ?? 0f;
-            float effectiveMax = maxAge ?? 999f;
+            float effectiveMin = Mathf.Max(0f, minAge ?? 0f);
+            float effectiveMax = Mathf.Max(0f, maxAge ?? 999f);
+            if (effectiveMax < effectiveMin)
+            {
+                float temp = effectiveMin;
+                effectiveMin = effectiveMax;
+                effectiveMax = temp;
+            }
 
             if (!request.FixedBiologicalAge.HasValue)
             {
@@ -358,6 +367,20 @@ namespace FactionGearCustomizer
                     return;
                 }
             }
+        }
+
+        private static FactionGearData GetRuntimeFactionData(Faction faction)
+        {
+            if (faction?.def == null) return null;
+
+            var gameComponent = FactionGearGameComponent.Instance;
+            var saveData = gameComponent?.GetActiveFactionGearData();
+            if (saveData != null)
+            {
+                return saveData.FirstOrDefault(f => f.factionDefName == faction.def.defName);
+            }
+
+            return FactionGearCustomizerMod.Settings?.TryGetFactionData(faction.def.defName);
         }
     }
 }
