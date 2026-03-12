@@ -69,9 +69,6 @@ namespace FactionGearCustomizer
         {
             if (faction == null || kindDef == null || !faction.def.humanlikeFaction) return;
 
-            // Ensure XenotypeSet exists, otherwise create it (fixes preview issues for factions without default xenotypes)
-            FactionDefManager.EnsureXenotypeSetExists(faction.def);
-
             // 从 GameComponent 获取数据（与 ApplyAllSettings 保持一致）
             var gameComponent = FactionGearGameComponent.Instance;
             var saveData = gameComponent?.GetActiveFactionGearData();
@@ -87,6 +84,10 @@ namespace FactionGearCustomizer
             }
             
             var kindData = factionData?.GetKindData(kindDef.defName);
+            if (!ShouldApplyXenotypeSettings(factionData, kindData)) return;
+
+            // Ensure XenotypeSet exists, otherwise create it (fixes preview issues for factions without default xenotypes)
+            FactionDefManager.EnsureXenotypeSetExists(faction.def);
 
             ApplyFactionXenotypeSettings(faction, factionData);
 
@@ -128,13 +129,23 @@ namespace FactionGearCustomizer
 
         private static bool HasKindXenotypeSettings(KindGearData kindData)
         {
-            if (kindData == null) return false;
+            if (kindData == null || !kindData.isModified) return false;
             
             if (!string.IsNullOrEmpty(kindData.ForcedXenotype)) return true;
             if (kindData.DisableXenotypeChances) return true;
             if (kindData.XenotypeChances != null && kindData.XenotypeChances.Count > 0) return true;
             
             return false;
+        }
+
+        private static bool ShouldApplyXenotypeSettings(FactionGearData factionData, KindGearData kindData)
+        {
+            bool hasFactionOverrides = factionData != null &&
+                                       factionData.isModified &&
+                                       (factionData.DisableXenotypeChances ||
+                                        (factionData.XenotypeChances != null && factionData.XenotypeChances.Count > 0));
+
+            return hasFactionOverrides || HasKindXenotypeSettings(kindData);
         }
 
         private static void ApplyKindXenotypeSettings(Faction faction, KindGearData kindData)

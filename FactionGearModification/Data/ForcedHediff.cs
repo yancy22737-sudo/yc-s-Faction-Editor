@@ -110,7 +110,7 @@ namespace FactionGearCustomizer
             Scribe_Values.Look(ref PoolType, "poolType", HediffPoolType.None);
             Scribe_Values.Look(ref maxParts, "maxParts");
             Scribe_Values.Look(ref maxPartsRange, "maxPartsRange");
-            Scribe_Values.Look(ref chance, "chance");
+            Scribe_Values.Look(ref chance, "chance", 1f);
             Scribe_Values.Look(ref severityRange, "severityRange");
             Scribe_Collections.Look(ref partsDefNames, "parts", LookMode.Value);
             

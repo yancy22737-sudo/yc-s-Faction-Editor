@@ -115,7 +115,7 @@ namespace FactionGearCustomizer
             Scribe_Values.Look(ref Biocode, "biocode");
             Scribe_Values.Look(ref Color, "color");
             Scribe_Values.Look(ref SelectionMode, "selectionMode", ApparelSelectionMode.AlwaysTake);
-            Scribe_Values.Look(ref SelectionChance, "selectionChance");
+            Scribe_Values.Look(ref SelectionChance, "selectionChance", 1f);
             Scribe_Values.Look(ref weight, "weight", 1f);
             Scribe_Values.Look(ref CountRange, "countRange", new IntRange(1, 1));
             Scribe_Values.Look(ref PoolType, "poolType", ItemPoolType.None);

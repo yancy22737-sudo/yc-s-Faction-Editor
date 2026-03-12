@@ -1,3 +1,18 @@
+﻿v1.4.5
+- Fix: Refactor hediff runtime application with new HediffApplicationService/HediffPartResolver to unify validation, part resolution, and apply flow.
+- Fix: Integrate HediffApplicationValidator into the real pre-apply pipeline; invalid entries are skipped with logs, warnings are preserved.
+- Fix: Enforce strict target-part priority (manual > recipe > mapping > inference); when no valid part exists, skip with warning and remove whole-body random fallback.
+- Fix: Allow AddedPart/Implant hediff application while keeping MissingPart and high-risk definitions blocked.
+- Fix: Unify pool and non-pool hediffs under the same safety/part resolution path to remove branch drift.
+- Add: Add target-part mode (Auto/Manual) to Hediff cards and introduce a multi-select body-part picker dialog.
+- Update: Add EN/ZH language keys and add Index.md, Api.md, config.md documentation.
+v1.4.4
+- Fix: Restore backward-compatible defaults for `selectionChance` and hediff `chance` during deserialization, preventing legacy configs from reading as 0% chance.
+- Fix: Correct inventory generation aggregation when multiple specs/pools resolve to the same item, so counts are accumulated instead of being capped by the largest single entry.
+- Fix: Apply the same incapacitation safety check in user-specified body-part hediff application path to prevent unsafe hediffs from bypassing runtime guardrails.
+- Fix: Correct `AnyAddiction` hediff pool filtering to include actual addiction/tolerance hediffs instead of excluding most valid candidates.
+- Fix: Improve `AnyVegetable` item pool selection by using ingestible food-type flags instead of narrow name matching.
+
 v1.4.3
 - Fix: Correct age-setting source during pawn generation: save-specific config now has priority, with global config as fallback, avoiding runtime pollution from empty auto-created entries.
 - Fix: Correct PlayerRelationOverride source when spawning faction instances, now aligned with active save data instead of global-only lookup.
@@ -394,3 +409,4 @@ v1.0.3
 v1.0.2
 - Fix: Fix System.MissingMethodException: Method not found: void Verse.Widgets.DrawTextureFitted.
 - Add: Add WidgetsUtils helper class, wrapping UI drawing methods for better compatibility.
+

@@ -992,6 +992,14 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <!-- 炮塔/机械族武器过滤 -->
   <HideTurretMechanoidWeaponsTooltip>隐藏物品库中的炮塔和机械族武器</HideTurretMechanoidWeaponsTooltip>
 
+  <!-- Hediff 目标部位 -->
+  <TargetParts>目标部位</TargetParts>
+  <HediffPartModeAuto>自动</HediffPartModeAuto>
+  <HediffPartModeManual>手动</HediffPartModeManual>
+  <HediffPartModeAutoDescription>自动（配方/映射）</HediffPartModeAutoDescription>
+  <HediffPartSummaryFormat>{0}、{1}（+{2}）</HediffPartSummaryFormat>
+  <BodyPartSelectionTitle>选择目标身体部位</BodyPartSelectionTitle>
+
   <!-- 状态验证消息 -->
   <Validation_HediffNull>状态为 null</Validation_HediffNull>
   <Validation_InvalidPoolType>无效的池类型</Validation_InvalidPoolType>

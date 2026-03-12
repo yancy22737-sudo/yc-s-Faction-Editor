@@ -613,7 +613,8 @@ namespace FactionGearCustomizer.UI.Panels
             
             // 地狱球炮和霰弹枪
             if (defName == "Gun_HellsphereCannon" ||         // 地狱球炮
-                defName == "Gun_Scattergun")                 // 霰弹枪
+                defName == "Gun_Scattergun" ||               // 霰弹枪
+                defName == "Gun_BeamGraser")                 // Beam graser (mech weapon)
             {
                 return true;
             }
@@ -626,6 +627,7 @@ namespace FactionGearCustomizer.UI.Panels
                     tag == "Artillery" ||
                     tag.StartsWith("MechanoidGun") || 
                     tag.StartsWith("MechGun") ||
+                    tag == "BeamGraserGun" ||
                     tag == "HellsphereCannonGun" ||
                     tag == "SentryDroneGunShortRange" ||
                     tag == "SentryDroneGunLongRange" ||
