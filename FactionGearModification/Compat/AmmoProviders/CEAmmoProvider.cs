@@ -84,10 +84,10 @@ namespace FactionGearCustomizer.Compat.AmmoProviders
         public bool WeaponNeedsAmmo(ThingDef weaponDef)
         {
             if (!IsActive || weaponDef == null) return false;
-            if (_compAmmoUserType == null) return false;
+            if (_compPropertiesAmmoUserType == null) return false;
 
             return weaponDef.comps != null && weaponDef.comps.Any(c =>
-                c.GetType() == _compAmmoUserType || c.GetType().IsSubclassOf(_compAmmoUserType));
+                _compPropertiesAmmoUserType.IsAssignableFrom(c.GetType()));
         }
 
         public ThingDef GetDefaultAmmo(ThingDef weaponDef)

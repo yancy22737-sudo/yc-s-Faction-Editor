@@ -35,7 +35,7 @@ namespace FactionGearCustomizer
 
         // New fields ported from TotalControl
         public bool ForceNaked = false;
-        public bool ForceOnlySelected = true; // Default to true as requested
+        public bool ForceOnlySelected = false;
         public QualityCategory? ItemQuality = null;
         public QualityCategory? ForcedWeaponQuality = null;
         public float? BiocodeWeaponChance = null;
@@ -71,6 +71,10 @@ namespace FactionGearCustomizer
         
         // Force specific xenotype (ignores chances, forces this xenotype)
         public string ForcedXenotype = null;
+
+        // Age Settings
+        public float? MinAge = null;
+        public float? MaxAge = null;
 
         public KindGearData() { }
 
@@ -162,6 +166,8 @@ namespace FactionGearCustomizer
             if (XenotypeChances == null) XenotypeChances = new Dictionary<string, float>();
             Scribe_Values.Look(ref DisableXenotypeChances, "disableXenotypeChances", false);
             Scribe_Values.Look(ref ForcedXenotype, "forcedXenotype");
+            Scribe_Values.Look(ref MinAge, "minAge");
+            Scribe_Values.Look(ref MaxAge, "maxAge");
 
             if (weapons == null) weapons = new List<GearItem>();
             if (meleeWeapons == null) meleeWeapons = new List<GearItem>();
@@ -216,7 +222,7 @@ namespace FactionGearCustomizer
             Label = null;
             
             ForceNaked = false;
-            ForceOnlySelected = true; // Default to true
+            ForceOnlySelected = false;
             ForceIgnoreRestrictions = null;
             ItemQuality = null;
             ForcedWeaponQuality = null;
@@ -246,6 +252,8 @@ namespace FactionGearCustomizer
             XenotypeChances?.Clear();
             DisableXenotypeChances = false;
             ForcedXenotype = null;
+            MinAge = null;
+            MaxAge = null;
         }
 
         public KindGearData DeepCopy()
@@ -285,6 +293,8 @@ namespace FactionGearCustomizer
             }
             copy.DisableXenotypeChances = this.DisableXenotypeChances;
             copy.ForcedXenotype = this.ForcedXenotype;
+            copy.MinAge = this.MinAge;
+            copy.MaxAge = this.MaxAge;
 
             if (this.TechHediffTags != null) copy.TechHediffTags = new List<string>(this.TechHediffTags);
             if (this.TechHediffDisallowedTags != null) copy.TechHediffDisallowedTags = new List<string>(this.TechHediffDisallowedTags);
@@ -429,6 +439,8 @@ namespace FactionGearCustomizer
             else this.XenotypeChances = null;
             this.DisableXenotypeChances = source.DisableXenotypeChances;
             this.ForcedXenotype = source.ForcedXenotype;
+            this.MinAge = source.MinAge;
+            this.MaxAge = source.MaxAge;
 
             this.TechHediffTags = source.TechHediffTags == null ? null : new List<string>(source.TechHediffTags);
             this.TechHediffDisallowedTags = source.TechHediffDisallowedTags == null ? null : new List<string>(source.TechHediffDisallowedTags);

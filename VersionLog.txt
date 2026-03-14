@@ -1,3 +1,33 @@
+﻿v1.4.5
+- Fix: 重构 Hediff 应用链路，新增 HediffApplicationService/HediffPartResolver，统一校验、部位解析与应用流程。
+- Fix: 接入 HediffApplicationValidator 到实际应用前置校验，错误跳过并记录日志，警告继续记录。
+- Fix: 植入物部位选择改为严格优先级（手动 > 配方 > 映射 > 推断），无合法部位时跳过并告警，不再全身随机兜底。
+- Fix: 放行 AddedPart/Implant 应用，继续拦截 MissingPart 等高风险定义。
+- Fix: 池化与非池化 Hediff 统一走同一安全/部位逻辑，修复分支漂移。
+- Add: Hediff 编辑卡新增目标部位模式（自动/手动）与身体部位多选对话框。
+- Update: 新增中英语言键；新增 Index.md、Api.md、config.md 文档。
+v1.4.4
+- Fix: 修复 `selectionChance` 与 hediff `chance` 的反序列化默认值，兼容旧配置，避免旧数据被读取为 0% 概率。
+- Fix: 修复多个条目/池命中同一物品时数量只取最大值的问题，改为按来源数量累加生成。
+- Fix: 修复“手动指定身体部位”分支绕过安全检查的问题，统一执行昏迷/失能防护判定。
+- Fix: 修复 `AnyAddiction` Hediff 池筛选条件，避免错误排除真实成瘾/耐受类 Hediff。
+- Fix: 修复 `AnyVegetable` 物品池筛选过窄问题，改为基于可食物类型标记筛选，提高命中准确性。
+
+v1.4.3
+- Fix: 修复 Pawn 生成时年龄配置读取逻辑，改为“存档配置优先、全局配置兜底”，避免运行中写入空配置污染全局设置。
+- Fix: 修复新建派系实例时关系覆写只读取全局配置的问题，现已与存档激活配置一致。
+- Fix: 修复 ResetAllFactions 仅恢复 Def 不恢复实例状态的问题，现会同时恢复运行中派系实例的名称、颜色与玩家关系。
+- Fix: 修复剧本配置与世界创建 Lite 编辑器应用后未立即生效的问题，改为走统一应用链路并即时刷新生效。
+- Fix: 修复首次提示窗口派系列表滚动状态每帧重置问题，并实现“不再询问”持久化逻辑。
+
+v1.4.2
+- Add: 在兵种异种设置中添加年龄设置选项（最小/最大年龄），优先级高于派系群组设置。
+- Add: 选择非战斗异种（如优侣种）时弹出警告提示，并支持强制放宽生成规则以允许生成。
+- Fix: 修复预览时异种设置不生效的问题（NRE修复及空值保护）。
+- Fix: 修复年龄设置在生成时未正确应用的问题（参数传递修复）。
+- Update: 优化异种设置界面的布局。
+- feat: 增强批量应用 — 支持按类别选择性复制与跨派系应用。
+
 v1.4.1
 -添加了单独修改pawn的xeno type的功能。
 -修复了一个会导致item lib搜索栏无法使用的问题。
@@ -310,3 +340,4 @@ v1.0.3
 v1.0.2
 - Fix: 修复 System.MissingMethodException: Method not found: void Verse.Widgets.DrawTextureFitted
 - Add: 新增 WidgetsUtils 工具类，封装 UI 绘制方法以提高兼容性
+

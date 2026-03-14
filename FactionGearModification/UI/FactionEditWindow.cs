@@ -715,7 +715,7 @@ namespace FactionGearCustomizer.UI
                     if (Widgets.ButtonText(xenoBtnRect, LanguageManager.Get("XenoButtonLabel")))
                     {
                         var dataToEdit = factionData.GetOrCreateKindData(kind.defName);
-                        Find.WindowStack.Add(new Dialog_KindXenotypeEditor(kind, dataToEdit));
+                        Find.WindowStack.Add(new Dialog_KindXenotypeEditor(kind, dataToEdit, factionDef.defName));
                     }
 
                     GUI.color = Color.white;

@@ -992,6 +992,14 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <!-- 炮塔/机械族武器过滤 -->
   <HideTurretMechanoidWeaponsTooltip>隐藏物品库中的炮塔和机械族武器</HideTurretMechanoidWeaponsTooltip>
 
+  <!-- Hediff 目标部位 -->
+  <TargetParts>目标部位</TargetParts>
+  <HediffPartModeAuto>自动</HediffPartModeAuto>
+  <HediffPartModeManual>手动</HediffPartModeManual>
+  <HediffPartModeAutoDescription>自动（配方/映射）</HediffPartModeAutoDescription>
+  <HediffPartSummaryFormat>{0}、{1}（+{2}）</HediffPartSummaryFormat>
+  <BodyPartSelectionTitle>选择目标身体部位</BodyPartSelectionTitle>
+
   <!-- 状态验证消息 -->
   <Validation_HediffNull>状态为 null</Validation_HediffNull>
   <Validation_InvalidPoolType>无效的池类型</Validation_InvalidPoolType>
@@ -1035,5 +1043,23 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <General>高级设置</General>
   <BatchHistory_SrcTgt>来源：[{0}] {1} → 目标数：{2}</BatchHistory_SrcTgt>
   <BatchHistory_Flags>复制项：{0}</BatchHistory_Flags>
+
+</LanguageData>
+  <!-- Age Settings -->
+  <AgeSettings>年龄设置</AgeSettings>
+  <AgeSettingsTooltip>设置此兵种生成时的生物学年龄范围。</AgeSettingsTooltip>
+  <MinAge>最小年龄</MinAge>
+  <MaxAge>最大年龄</MaxAge>
+  <AgeSettingsHint>留空则不限制。若与派系群组设置冲突，以此处为准。</AgeSettingsHint>
+
+  <!-- Non-Combatant Warning -->
+  <NonCombatantWarningText>警告：您选择的异种包含“非暴力”基因或无法作为战斗人员生成。
+  
+如果强制应用此异种，我们将自动放宽生成规则，允许生成无法暴力的 Pawn。这可能导致该兵种在战斗中毫无用处（如只会逃跑）。
+
+是否继续？</NonCombatantWarningText>
+  <Yes>是</Yes>
+  <No>否</No>
+  <DoNotShowAgain>不再提示</DoNotShowAgain>
 
 </LanguageData>

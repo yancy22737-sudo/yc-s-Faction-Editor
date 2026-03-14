@@ -995,6 +995,14 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <!-- Turret/Mechanoid Weapon Filter -->
   <HideTurretMechanoidWeaponsTooltip>Hide turret and mechanoid weapons from the item library</HideTurretMechanoidWeaponsTooltip>
 
+  <!-- Hediff Target Parts -->
+  <TargetParts>Target Parts</TargetParts>
+  <HediffPartModeAuto>Auto</HediffPartModeAuto>
+  <HediffPartModeManual>Manual</HediffPartModeManual>
+  <HediffPartModeAutoDescription>Auto (recipe/mapping)</HediffPartModeAutoDescription>
+  <HediffPartSummaryFormat>{0}, {1} (+{2})</HediffPartSummaryFormat>
+  <BodyPartSelectionTitle>Select Target Body Parts</BodyPartSelectionTitle>
+
   <!-- Hediff Validation Messages -->
   <Validation_HediffNull>Hediff is null</Validation_HediffNull>
   <Validation_InvalidPoolType>Invalid pool type</Validation_InvalidPoolType>

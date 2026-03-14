@@ -416,45 +416,29 @@ namespace FactionGearCustomizer.UI.Dialogs
                 return;
             }
 
-            // 覆盖模式：先清空现有数据
+            List<string> targetFactions;
             if (currentApplyMode == ApplyMode.Overwrite)
             {
-                gameComponent.savedFactionGearData.Clear();
+                gameComponent.ResetFactionData();
+                targetFactions = selectedFactionDefNames.Distinct().ToList();
+            }
+            else
+            {
+                var existingFactionNames = new HashSet<string>(
+                    gameComponent.savedFactionGearData.Select(f => f.factionDefName)
+                );
+                targetFactions = selectedFactionDefNames
+                    .Where(name => !existingFactionNames.Contains(name))
+                    .Distinct()
+                    .ToList();
             }
 
-            int appliedCount = 0;
-            foreach (var factionDefName in selectedFactionDefNames)
+            if (targetFactions.Any())
             {
-                var sourceFaction = selectedPreset.factionGearData.FirstOrDefault(f => f.factionDefName == factionDefName);
-                if (sourceFaction == null) continue;
+                gameComponent.ApplyFactionsFromPreset(selectedPreset, targetFactions);
 
-                // 加入模式：检查是否已存在
-                if (currentApplyMode == ApplyMode.Add)
-                {
-                    var existing = gameComponent.savedFactionGearData.FirstOrDefault(f => f.factionDefName == factionDefName);
-                    if (existing != null)
-                    {
-                        // 已存在则跳过
-                        continue;
-                    }
-                }
-
-                var clonedFaction = sourceFaction.DeepCopy();
-                clonedFaction.ResolveReferences();
-
-                // 添加到游戏组件
-                gameComponent.savedFactionGearData.Add(clonedFaction);
-                appliedCount++;
-            }
-
-            if (appliedCount > 0)
-            {
-                gameComponent.useCustomSettings = true;
-                // 记录应用的预设名称（用于显示）
-                gameComponent.activePresetName = selectedPreset.name;
-                
                 string modeText = currentApplyMode == ApplyMode.Add ? LanguageManager.Get("P2_ModeAdd") : LanguageManager.Get("P2_ModeOverwrite");
-                Messages.Message(string.Format(LanguageManager.Get("P2_AppliedToWorld"), appliedCount, modeText), MessageTypeDefOf.PositiveEvent);
+                Messages.Message(string.Format(LanguageManager.Get("P2_AppliedToWorld"), targetFactions.Count, modeText), MessageTypeDefOf.PositiveEvent);
                 Close();
             }
             else if (currentApplyMode == ApplyMode.Add)

@@ -105,7 +105,7 @@ namespace FactionGearCustomizer.UI.Panels
             
             currentX = githubRect.xMax + gap;
 
-            string versionLabel = ModVersion.Current;
+            string versionLabel = "v1.4.2";
             Vector2 verSize = Text.CalcSize(versionLabel);
             Rect verRect = new Rect(currentX, buttonY, verSize.x + 10f, buttonHeight);
 

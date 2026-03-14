@@ -5,6 +5,7 @@ using UnityEngine;
 using Verse;
 using FactionGearModification.UI;
 using FactionGearCustomizer.Validation;
+using FactionGearCustomizer.UI.Dialogs;
 
 namespace FactionGearCustomizer.UI.Panels
 {
@@ -35,6 +36,7 @@ namespace FactionGearCustomizer.UI.Panels
             return HeaderPadding + HeaderHeight + RowGap + 
                    RowHeight + RowGap + 
                    RowHeight + RowGap + 
+                   RowHeight + RowGap +
                    InfoSectionHeight + BottomPadding + CardPadding * 2;
         }
 
@@ -305,11 +307,53 @@ namespace FactionGearCustomizer.UI.Panels
                 kindData.isModified = true;
                 FactionGearEditor.MarkDirty();
             }
+
+            float targetPartsY = partsY + RowHeight + RowGap;
+            Rect targetPartsLabelRect = new Rect(area.x, targetPartsY, area.width * 0.15f, RowHeight);
+            Widgets.Label(targetPartsLabelRect, LanguageManager.Get("TargetParts") + ":");
+
+            bool isManualMode = item.parts != null && item.parts.Count > 0;
+            Rect modeRect = new Rect(area.x + area.width * 0.16f, targetPartsY, area.width * 0.14f, RowHeight);
+            string modeLabel = isManualMode
+                ? LanguageManager.Get("HediffPartModeManual")
+                : LanguageManager.Get("HediffPartModeAuto");
+            if (Widgets.ButtonText(modeRect, modeLabel) && isManualMode)
+            {
+                if (kindData != null)
+                {
+                    UndoManager.RecordState(kindData);
+                    kindData.isModified = true;
+                }
+
+                item.parts = null;
+                FactionGearEditor.MarkDirty();
+            }
+
+            Rect selectPartsRect = new Rect(area.x + area.width * 0.31f, targetPartsY, area.width * 0.69f, RowHeight);
+            string selectPartsLabel = GetTargetPartsSummary(item);
+            if (Widgets.ButtonText(selectPartsRect, selectPartsLabel))
+            {
+                var selectedParts = item.parts?.ToList() ?? new List<BodyPartDef>();
+                Find.WindowStack.Add(new Dialog_BodyPartSelector(selectedParts, result =>
+                {
+                    if (kindData != null)
+                    {
+                        UndoManager.RecordState(kindData);
+                        kindData.isModified = true;
+                    }
+
+                    item.parts = result != null && result.Count > 0 ? result : null;
+                    FactionGearEditor.MarkDirty();
+                }));
+            }
         }
 
         private static void DrawInfoSection(Rect area, ForcedHediff item)
         {
-            float infoY = area.y + HeaderPadding + HeaderHeight + RowGap + RowHeight + RowGap + RowHeight + RowGap;
+            float infoY = area.y + HeaderPadding + HeaderHeight + RowGap +
+                          RowHeight + RowGap +
+                          RowHeight + RowGap +
+                          RowHeight + RowGap;
             Rect infoRect = new Rect(area.x, infoY, area.width, InfoSectionHeight);
             Widgets.DrawBoxSolid(infoRect, InfoBgColor);
             Widgets.DrawBox(infoRect, 1);
@@ -334,6 +378,7 @@ namespace FactionGearCustomizer.UI.Panels
                 {
                     detailText += $" | {LanguageManager.Get("HediffLethal")}: {item.HediffDef.lethalSeverity:F1}";
                 }
+                detailText += $" | {LanguageManager.Get("TargetParts")}: {GetTargetPartsSummary(item)}";
                 Widgets.Label(detailRect, detailText);
             }
             else
@@ -341,6 +386,31 @@ namespace FactionGearCustomizer.UI.Panels
                 Rect placeholderRect = infoRect.ContractedBy(6f);
                 Widgets.Label(placeholderRect, LanguageManager.Get("SelectHediffToViewDetails"));
             }
+        }
+
+        private static string GetTargetPartsSummary(ForcedHediff item)
+        {
+            if (item?.parts == null || item.parts.Count == 0)
+            {
+                return LanguageManager.Get("HediffPartModeAutoDescription");
+            }
+
+            var labels = item.parts
+                .Where(part => part != null)
+                .Select(part => string.IsNullOrEmpty(part.label) ? part.defName : part.LabelCap.ToString())
+                .Distinct()
+                .ToList();
+            if (labels.Count == 0)
+            {
+                return LanguageManager.Get("HediffPartModeAutoDescription");
+            }
+
+            if (labels.Count <= 3)
+            {
+                return string.Join(", ", labels);
+            }
+
+            return string.Format(LanguageManager.Get("HediffPartSummaryFormat"), labels[0], labels[1], labels.Count - 2);
         }
     }
 }

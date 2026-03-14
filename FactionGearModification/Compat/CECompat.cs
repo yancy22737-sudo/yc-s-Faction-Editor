@@ -213,35 +213,36 @@ namespace FactionGearCustomizer.Compat
         public static void GenerateAndAddAmmoForWeapon(Pawn pawn, ThingWithComps weapon)
         {
             if (!IsCEActive || pawn == null || weapon == null) return;
-            if (_compAmmoUserType == null) Init();
-            if (_compAmmoUserType == null) return;
+            if (_compAmmoUserType == null || _compPropertiesAmmoUserType == null) Init();
 
             try
             {
-                // 获取武器的 CompAmmoUser
-                var compAmmoUser = weapon.AllComps.FirstOrDefault(c => c.GetType() == _compAmmoUserType || c.GetType().IsSubclassOf(_compAmmoUserType));
-                if (compAmmoUser == null) return;
+                if (pawn.inventory?.innerContainer == null) return;
 
-                // 获取当前弹药类型和弹匣容量
-                var currentAmmo = _currentAmmoProperty?.GetValue(compAmmoUser) as ThingDef;
-                int magSize = _magSizeProperty != null ? (int)_magSizeProperty.GetValue(compAmmoUser) : 0;
+                ThingDef ammoDef = GetCurrentAmmoFromComp(weapon);
+                int magSize = GetCurrentMagSizeFromComp(weapon);
 
-                if (currentAmmo == null || magSize <= 0) return;
-
-                // 计算需要生成的弹药数量（2-3个弹匣的弹药量）
-                int ammoCount = magSize * Rand.Range(2, 4);
-
-                // 创建弹药
-                Thing ammo = ThingMaker.MakeThing(currentAmmo);
-                if (ammo == null) return;
-
-                ammo.stackCount = ammoCount;
-
-                // 添加到 pawn 的 inventory
-                if (pawn.inventory?.innerContainer != null && ammo.holdingOwner == null)
+                if (ammoDef == null)
                 {
-                    pawn.inventory.innerContainer.TryAdd(ammo, true);
+                    ammoDef = GetDefaultAmmoFor(weapon.def);
                 }
+
+                if (magSize <= 0)
+                {
+                    magSize = GetWeaponMagazineSize(weapon.def);
+                }
+
+                if (ammoDef == null || magSize <= 0) return;
+
+                int targetAmmoCount = magSize * Rand.Range(2, 4);
+                int existingAmmoCount = pawn.inventory.innerContainer
+                    .Where(t => t.def == ammoDef)
+                    .Sum(t => t.stackCount);
+
+                int toAdd = targetAmmoCount - existingAmmoCount;
+                if (toAdd <= 0) return;
+
+                AddAmmoToInventory(pawn, ammoDef, toAdd);
             }
             catch (Exception ex)
             {
@@ -255,10 +256,79 @@ namespace FactionGearCustomizer.Compat
         public static bool WeaponNeedsAmmo(ThingWithComps weapon)
         {
             if (!IsCEActive || weapon == null) return false;
-            if (_compAmmoUserType == null) Init();
-            if (_compAmmoUserType == null) return false;
+            if (_compAmmoUserType == null || _compPropertiesAmmoUserType == null) Init();
 
-            return weapon.AllComps.Any(c => c.GetType() == _compAmmoUserType || c.GetType().IsSubclassOf(_compAmmoUserType));
+            if (_compAmmoUserType != null &&
+                weapon.AllComps.Any(c => c.GetType() == _compAmmoUserType || c.GetType().IsSubclassOf(_compAmmoUserType)))
+            {
+                return true;
+            }
+
+            if (_compPropertiesAmmoUserType == null || weapon.def?.comps == null) return false;
+
+            return weapon.def.comps.Any(c => _compPropertiesAmmoUserType.IsAssignableFrom(c.GetType()));
+        }
+
+        private static ThingDef GetCurrentAmmoFromComp(ThingWithComps weapon)
+        {
+            if (_compAmmoUserType == null || _currentAmmoProperty == null) return null;
+
+            var compAmmoUser = weapon.AllComps.FirstOrDefault(c => c.GetType() == _compAmmoUserType || c.GetType().IsSubclassOf(_compAmmoUserType));
+            if (compAmmoUser == null) return null;
+            return _currentAmmoProperty.GetValue(compAmmoUser) as ThingDef;
+        }
+
+        private static int GetCurrentMagSizeFromComp(ThingWithComps weapon)
+        {
+            if (_compAmmoUserType == null || _magSizeProperty == null) return 0;
+
+            var compAmmoUser = weapon.AllComps.FirstOrDefault(c => c.GetType() == _compAmmoUserType || c.GetType().IsSubclassOf(_compAmmoUserType));
+            if (compAmmoUser == null) return 0;
+
+            var magSize = _magSizeProperty.GetValue(compAmmoUser);
+            return magSize is int size ? size : 0;
+        }
+
+        private static int GetWeaponMagazineSize(ThingDef weaponDef)
+        {
+            if (weaponDef?.comps == null || _compPropertiesAmmoUserType == null) return 0;
+
+            foreach (var comp in weaponDef.comps)
+            {
+                if (!_compPropertiesAmmoUserType.IsAssignableFrom(comp.GetType())) continue;
+                var magSizeValue = _magazineSizeField?.GetValue(comp);
+                if (magSizeValue is int magSize)
+                {
+                    return magSize;
+                }
+            }
+
+            return 0;
+        }
+
+        private static void AddAmmoToInventory(Pawn pawn, ThingDef ammoDef, int count)
+        {
+            if (count <= 0 || pawn?.inventory?.innerContainer == null || ammoDef == null) return;
+
+            int remaining = count;
+            int stackLimit = ammoDef.stackLimit > 0 ? ammoDef.stackLimit : count;
+
+            while (remaining > 0)
+            {
+                Thing ammo = ThingMaker.MakeThing(ammoDef);
+                if (ammo == null) return;
+
+                int requestCount = Math.Min(remaining, stackLimit);
+                ammo.stackCount = requestCount;
+
+                if (!pawn.inventory.innerContainer.TryAdd(ammo, true))
+                {
+                    if (ammo.holdingOwner == null) ammo.Destroy();
+                    return;
+                }
+
+                remaining -= requestCount;
+            }
         }
 
         /// <summary>

@@ -6,6 +6,7 @@ using UnityEngine;
 using Verse;
 using FactionGearCustomizer.Core;
 using FactionGearCustomizer.Managers;
+using FactionGearCustomizer.Utils;
 
 namespace FactionGearCustomizer.UI.Dialogs
 {
@@ -13,11 +14,16 @@ namespace FactionGearCustomizer.UI.Dialogs
     {
         private PawnKindDef kindDef;
         private KindGearData kindData;
+        private string factionDefName;
         
         private Dictionary<string, float> bufferXenotypes = new Dictionary<string, float>();
         private bool bufferDisableXenotypeChances;
         private string bufferForcedXenotype;
         
+        // Age buffers
+        private string bufferMinAge;
+        private string bufferMaxAge;
+
         private Vector2 scrollPosition;
         private Dictionary<string, string> xenotypeTextBuffers = new Dictionary<string, string>();
         
@@ -32,10 +38,11 @@ namespace FactionGearCustomizer.UI.Dialogs
         
         public override Vector2 InitialSize => new Vector2(700f, 800f);
 
-        public Dialog_KindXenotypeEditor(PawnKindDef kind, KindGearData data)
+        public Dialog_KindXenotypeEditor(PawnKindDef kind, KindGearData data, string factionDefName = null)
         {
             this.kindDef = kind;
             this.kindData = data;
+            this.factionDefName = factionDefName;
             
             this.forcePause = true;
             this.absorbInputAroundWindow = true;
@@ -48,6 +55,9 @@ namespace FactionGearCustomizer.UI.Dialogs
                 bufferDisableXenotypeChances = data.DisableXenotypeChances;
                 bufferForcedXenotype = data.ForcedXenotype;
                 
+                bufferMinAge = data.MinAge.HasValue ? data.MinAge.Value.ToString() : "";
+                bufferMaxAge = data.MaxAge.HasValue ? data.MaxAge.Value.ToString() : "";
+
                 bufferXenotypes = new Dictionary<string, float>();
                 xenotypeTextBuffers = new Dictionary<string, string>();
                 if (data.XenotypeChances != null && data.XenotypeChances.Count > 0)
@@ -75,6 +85,11 @@ namespace FactionGearCustomizer.UI.Dialogs
             Rect forcedCardRect = new Rect(inRect.x + padding, curY, inRect.width - padding * 2, 90f);
             DrawForcedXenotypeCard(forcedCardRect, cardPadding);
             curY += 100f;
+
+            // ========== 年龄设置卡片 ==========
+            Rect ageCardRect = new Rect(inRect.x + padding, curY, inRect.width - padding * 2, 70f);
+            DrawAgeSettingsCard(ageCardRect, cardPadding);
+            curY += 80f;
             
             // ========== 异种概率配置卡片 ==========
             float remainingHeight = inRect.height - curY - padding - 50f; // 留50给底部按钮
@@ -196,6 +211,46 @@ namespace FactionGearCustomizer.UI.Dialogs
             }
         }
         
+        private void DrawAgeSettingsCard(Rect rect, float padding)
+        {
+            // 卡片背景
+            Widgets.DrawBoxSolid(rect, CardBgColor);
+            GUI.color = BorderColor;
+            Widgets.DrawBox(rect, 1);
+            GUI.color = Color.white;
+            
+            Rect inner = rect.ContractedBy(padding);
+            
+            // 标题
+            Text.Font = GameFont.Small;
+            GUI.color = AccentColor;
+            Widgets.Label(new Rect(inner.x, inner.y, 100f, 24f), "▸ " + LanguageManager.Get("AgeSettings"));
+            GUI.color = Color.white;
+            TooltipHandler.TipRegion(new Rect(inner.x, inner.y, 100f, 24f), LanguageManager.Get("AgeSettingsTooltip"));
+
+            // Min Age
+            float fieldWidth = 60f;
+            float labelWidth = 60f;
+            float startX = inner.x + 120f;
+            
+            Widgets.Label(new Rect(startX, inner.y, labelWidth, 24f), LanguageManager.Get("MinAge"));
+            string newMin = Widgets.TextField(new Rect(startX + labelWidth, inner.y, fieldWidth, 24f), bufferMinAge);
+            bufferMinAge = new string(newMin.Where(c => char.IsDigit(c) || c == '.').ToArray());
+
+            // Max Age
+            startX += labelWidth + fieldWidth + 20f;
+            Widgets.Label(new Rect(startX, inner.y, labelWidth, 24f), LanguageManager.Get("MaxAge"));
+            string newMax = Widgets.TextField(new Rect(startX + labelWidth, inner.y, fieldWidth, 24f), bufferMaxAge);
+            bufferMaxAge = new string(newMax.Where(c => char.IsDigit(c) || c == '.').ToArray());
+
+            // 提示文本
+            Text.Font = GameFont.Tiny;
+            GUI.color = Color.gray;
+            Widgets.Label(new Rect(inner.x, inner.y + 30f, inner.width, 20f), LanguageManager.Get("AgeSettingsHint"));
+            GUI.color = Color.white;
+            Text.Font = GameFont.Small;
+        }
+
         private void DrawXenotypeConfigCard(Rect rect, float padding)
         {
             // 卡片背景
@@ -467,6 +522,7 @@ namespace FactionGearCustomizer.UI.Dialogs
                 
                 options.Add(new FloatMenuOption(label, () => {
                     bufferForcedXenotype = xDef.defName;
+                    CheckNonCombatantWarning(xDef);
                 }, xDef.Icon, Color.white));
             }
             
@@ -476,6 +532,24 @@ namespace FactionGearCustomizer.UI.Dialogs
             }
         }
         
+        private void CheckNonCombatantWarning(XenotypeDef xDef)
+        {
+            if (xDef == null) return;
+            if (FactionGearCustomizerMod.Settings.IsDialogDismissed("NonCombatantWarning")) return;
+
+            if (!xDef.canGenerateAsCombatant || (xDef.genes != null && xDef.genes.Any(g => g.defName == "ViolenceDisabled")))
+            {
+                var dialog = new Dialog_MessageBox(
+                    LanguageManager.Get("NonCombatantWarningText"),
+                    LanguageManager.Get("Yes"), null,
+                    LanguageManager.Get("No"), null,
+                    LanguageManager.Get("DoNotShowAgain"), false,
+                    () => FactionGearCustomizerMod.Settings.DismissDialog("NonCombatantWarning")
+                );
+                Find.WindowStack.Add(dialog);
+            }
+        }
+
         private void OpenXenotypeSelectorForAdding()
         {
             List<FloatMenuOption> options = new List<FloatMenuOption>();
@@ -526,6 +600,16 @@ namespace FactionGearCustomizer.UI.Dialogs
             kindData.DisableXenotypeChances = bufferDisableXenotypeChances;
             kindData.ForcedXenotype = bufferForcedXenotype;
             
+            if (float.TryParse(bufferMinAge, out float minAge))
+                kindData.MinAge = minAge;
+            else
+                kindData.MinAge = null;
+                
+            if (float.TryParse(bufferMaxAge, out float maxAge))
+                kindData.MaxAge = maxAge;
+            else
+                kindData.MaxAge = null;
+
             if (bufferXenotypes.Count > 0)
             {
                 kindData.XenotypeChances = new Dictionary<string, float>(bufferXenotypes);
@@ -540,8 +624,66 @@ namespace FactionGearCustomizer.UI.Dialogs
             // Apply changes to game
             FactionDefManager.ApplyKindChanges(kindDef, kindData);
             
+            // 【修复】同步数据到 GameComponent，确保运行时生效
+            SyncToGameComponent();
+            
             FactionGearCustomizerMod.Settings.Write();
             Messages.Message(LanguageManager.Get("SettingsSaved"), MessageTypeDefOf.PositiveEvent, false);
+        }
+        
+        /// <summary>
+        /// 【修复】将修改同步到 FactionGearGameComponent，确保运行时生效
+        /// </summary>
+        private void SyncToGameComponent()
+        {
+            var gameComponent = FactionGearGameComponent.Instance;
+            if (gameComponent == null) return;
+
+            if (gameComponent.savedFactionGearData == null)
+            {
+                gameComponent.savedFactionGearData = new List<FactionGearData>();
+            }
+
+            FactionGearData savedFactionData = null;
+            if (!string.IsNullOrEmpty(factionDefName))
+            {
+                savedFactionData = gameComponent.savedFactionGearData
+                    .FirstOrDefault(f => f.factionDefName == factionDefName);
+            }
+
+            if (savedFactionData == null)
+            {
+                savedFactionData = gameComponent.savedFactionGearData
+                    .FirstOrDefault(f => f.kindGearData != null && f.kindGearData.Any(k => k.kindDefName == kindDef.defName));
+            }
+
+            if (savedFactionData == null && !string.IsNullOrEmpty(factionDefName))
+            {
+                savedFactionData = new FactionGearData(factionDefName)
+                {
+                    isModified = true
+                };
+                gameComponent.savedFactionGearData.Add(savedFactionData);
+            }
+
+            if (savedFactionData == null) return;
+
+            var savedKindData = savedFactionData.GetOrCreateKindData(kindDef.defName);
+            savedKindData.DisableXenotypeChances = kindData.DisableXenotypeChances;
+            savedKindData.ForcedXenotype = kindData.ForcedXenotype;
+            savedKindData.MinAge = kindData.MinAge;
+            savedKindData.MaxAge = kindData.MaxAge;
+            if (kindData.XenotypeChances != null && kindData.XenotypeChances.Count > 0)
+            {
+                savedKindData.XenotypeChances = new Dictionary<string, float>(kindData.XenotypeChances);
+            }
+            else
+            {
+                savedKindData.XenotypeChances?.Clear();
+            }
+            savedKindData.isModified = true;
+            savedFactionData.isModified = true;
+            LogUtils.DebugLog($"Synced kind {kindDef.defName} xenotype settings to GameComponent");
         }
     }
 }
