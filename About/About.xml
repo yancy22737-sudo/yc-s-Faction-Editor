@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
-  <name>yc's Faction Editor(forked version)</name>
+  <name>yc's Faction Editor</name>
   <author>yancy</author>
-  <packageId>forked.yancy.factiongearcustomizer</packageId>
+  <packageId>yancy.factiongearcustomizer</packageId>
   <supportedVersions>
     <li>1.6</li>
   </supportedVersions>
   <modIconPath>UI/Logo</modIconPath>
   <description>
- yc的派系编辑器 （forked版本）, be notice that this mod is a forked version of yc's faction editor, 
- and it may not be updated in time with the original mod,
- but it will try to keep up with the original mod as much as possible. 
- if you want to use the original mod, please go to the steam workshop and search for "yc's faction editor". 
- 
- this mod is only for pull request and bug fix, if you want to contribute to the original mod, please go to the original mod's github page and submit a pull request.
+实时定制任意派系兵种的装备、武器、健康状态。
+拥有现代化的 UI 设计，支持一键导出分享配置。
+
+中文名：yc的派系编辑器
 </description>
   <modDependencies>
     <li>
