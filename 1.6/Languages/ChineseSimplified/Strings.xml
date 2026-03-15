@@ -165,10 +165,9 @@
   <ClearCategoryTooltip>清除当前分类中的所有物品。</ClearCategoryTooltip>
   <ForceNakedTooltip>如果启用, 应用装备时会移除该兵种的所有衣物, 使其保持裸体。
 
-请确保你已满18岁了。</ForceNakedTooltip>
+    请确保你已满18岁了。</ForceNakedTooltip>
   <ForceOnlySelectedTooltip>如果启用, 所有现有/原版装备将在应用自定义装备前被剥离。这确保角色只穿戴您在此指定的物品, 防止原版/自定义装备混穿。
-
-推荐：开启以获得完全控制。</ForceOnlySelectedTooltip>
+    推荐：开启以获得完全控制。</ForceOnlySelectedTooltip>
   <WeightMechanicsTooltip>权重机制：在边缘世界中, 装备权重作为选择权重, 而非100%被选择。高权重的装备将优先被选择穿戴。</WeightMechanicsTooltip>
   <ColorPicker>颜色选择器</ColorPicker>
   <ColorPickerApply>应用</ColorPickerApply>
@@ -218,8 +217,12 @@
   <PortraitUnavailable>肖像不可用</PortraitUnavailable>
   <Rotate>旋转</Rotate>
   <RerollPawn>重新生成角色</RerollPawn>
-  <EquippedGear><b>已装备武器：</b></EquippedGear>
-  <ApparelWorn><b>已穿戴服装：</b></ApparelWorn>
+  <EquippedGear>
+    <b>已装备武器：</b>
+  </EquippedGear>
+  <ApparelWorn>
+    <b>已穿戴服装：</b>
+  </ApparelWorn>
   <FailedToGeneratePreview>生成预览失败。( 派系可能未激活) </FailedToGeneratePreview>
   <SavedPresets>已保存预设</SavedPresets>
   <SearchPresets>搜索预设</SearchPresets>
@@ -231,7 +234,9 @@
   <PresetDetails>预设详情</PresetDetails>
   <PresetName>预设名称</PresetName>
   <Description>描述</Description>
-  <Management><b>管理：</b></Management>
+  <Management>
+    <b>管理：</b>
+  </Management>
   <SaveNameDesc>保存名称/描述</SaveNameDesc>
   <UpdateFromGame>从游戏更新</UpdateFromGame>
   <LoadPresetConfirmTitle>覆盖预设 "{0}" 用当前游戏设置？</LoadPresetConfirmTitle>
@@ -258,16 +263,16 @@
   <LoadPresetConfirmTitle>加载预设</LoadPresetConfirmTitle>
   <LoadPresetConfirmMessage>应用预设前清除当前自定义装备？
 
-是：覆盖全部( 推荐) 
-否：与当前设置合并</LoadPresetConfirmMessage>
+    是：覆盖全部( 推荐)
+    否：与当前设置合并</LoadPresetConfirmMessage>
   <LoadPresetOverwrite>是( 覆盖) </LoadPresetOverwrite>
   <LoadPresetMerge>否( 合并) </LoadPresetMerge>
   <MissingModsWarningTitle>警告：缺少所需Mod</MissingModsWarningTitle>
   <MissingModsWarningMessage>此预设所需的以下Mod缺失或未启用：
 
-- {0}
+    - {0}
 
-应用此预设可能导致物品缺失或错误。是否继续？</MissingModsWarningMessage>
+    应用此预设可能导致物品缺失或错误。是否继续？</MissingModsWarningMessage>
   <MissingModsWarningRiskIt>是( 冒险继续) </MissingModsWarningRiskIt>
   <MissingModsWarningCancel>否( 取消) </MissingModsWarningCancel>
   <DeletePresetConfirm>确定要永久删除预设 "{0}" 吗？</DeletePresetConfirm>
@@ -466,29 +471,29 @@
   <SelectInstanceToContinue>请先选择一个实例。</SelectInstanceToContinue>
   <PawnGroupGuideTitle>派系群组机制指南</PawnGroupGuideTitle>
   <PawnGroupGuideContent>1. 群组类型 (Kind Def)：
-- Combat: 战斗群组, 用于袭击。
-- Trader: 贸易群组, 必须包含商人(Traders)。
-- Settlement: 定居点守军。
-- Peaceful: 和平访客。
+    - Combat: 战斗群组, 用于袭击。
+    - Trader: 贸易群组, 必须包含商人(Traders)。
+    - Settlement: 定居点守军。
+    - Peaceful: 和平访客。
 
-2. 权重 (Commonality)：
-决定该群组被选中的相对概率。
+    2. 权重 (Commonality)：
+    决定该群组被选中的相对概率。
 
-3. 点数 (Points)：
-限制该群组的最大战斗力点数。通常设为极高值由叙事者控制。
+    3. 点数 (Points)：
+    限制该群组的最大战斗力点数。通常设为极高值由叙事者控制。
 
-4. 兵种配置：
-- Options: 通用战斗人员。
-- Traders: 商人核心( 仅用于 Trader 群组) 。
-- Carriers: 驮兽/搬运工。
-- Guards: 护卫( 保护商人) 。
+    4. 兵种配置：
+    - Options: 通用战斗人员。
+    - Traders: 商人核心( 仅用于 Trader 群组) 。
+    - Carriers: 驮兽/搬运工。
+    - Guards: 护卫( 保护商人) 。
 
-警告：
-- 删除所有 Combat 群组会导致派系无法发动袭击。
-- Trader 群组若无 Traders 配置会导致商队生成失败。</PawnGroupGuideContent>
+    警告：
+    - 删除所有 Combat 群组会导致派系无法发动袭击。
+    - Trader 群组若无 Traders 配置会导致商队生成失败。</PawnGroupGuideContent>
   <ConfirmCreateSettlement>派系已建立, 是否立即选址建立基地？
 
-  ( 缺少定居点将无法在游戏中显示新派系) </ConfirmCreateSettlement>
+    ( 缺少定居点将无法在游戏中显示新派系) </ConfirmCreateSettlement>
   <PawnGroupKind_Combat>战斗</PawnGroupKind_Combat>
   <PawnGroupKind_Trader>商队</PawnGroupKind_Trader>
   <PawnGroupKind_Settlement>定居点</PawnGroupKind_Settlement>
@@ -584,7 +589,7 @@
   <FGC_FirstTimePrompt_Title>选择派系装备预设</FGC_FirstTimePrompt_Title>
   <FGC_FirstTimePrompt_Description>检测到您有已保存的派系装备预设。您想要在当前存档中使用哪个预设？
 
-您也可以稍后在Mod设置中更改。</FGC_FirstTimePrompt_Description>
+    您也可以稍后在Mod设置中更改。</FGC_FirstTimePrompt_Description>
   <FGC_FirstTimePrompt_VanillaOption>使用原版设置( 不推荐修改) </FGC_FirstTimePrompt_VanillaOption>
   <FGC_FirstTimePrompt_UseVanilla>使用原版</FGC_FirstTimePrompt_UseVanilla>
   <FGC_FirstTimePrompt_ApplyPreset>应用预设</FGC_FirstTimePrompt_ApplyPreset>
@@ -608,243 +613,243 @@
   <WikiTab_Notes>注意事项</WikiTab_Notes>
   <Wiki_Principles_Content>[这个Mod是怎么工作的？]
 
-简单来说：你在Mod里配置好后, 当游戏生成新角色( 敌人、商队、守军等) 时, Mod会悄悄把原来的装备换成你设定的装备。
+    简单来说：你在Mod里配置好后, 当游戏生成新角色( 敌人、商队、守军等) 时, Mod会悄悄把原来的装备换成你设定的装备。
 
-[什么时候会生效？]
-• 新的敌人袭击
-• 新的商队到来
-• 定居点刷新的守军
-• 援军、访客等
+    [什么时候会生效？]
+    • 新的敌人袭击
+    • 新的商队到来
+    • 定居点刷新的守军
+    • 援军、访客等
 
-⚠️ 注意：已经在地图上的角色不会改变！
+    ⚠️ 注意：已经在地图上的角色不会改变！
 
-[简单模式 vs 高级模式]
+    [简单模式 vs 高级模式]
 
-📍 简单模式：
-用滑块调整各类装备的出现概率, 像调音量一样简单。
-适合：想快速调整派系装备风格, 不用纠结细节。
+    📍 简单模式：
+    用滑块调整各类装备的出现概率, 像调音量一样简单。
+    适合：想快速调整派系装备风格, 不用纠结细节。
 
-📍 高级模式：
-直接指定角色必须穿什么用什么。
-适合：想要精确控制, 比如"所有士兵必须穿动力装甲"。
+    📍 高级模式：
+    直接指定角色必须穿什么用什么。
+    适合：想要精确控制, 比如"所有士兵必须穿动力装甲"。
 
-[预算是什么？]
-每个兵种都有一个"预算", 超出预算的装备不会生成。
-例如:部落战士预算500银, 游戏不会给他生成价值800银的武器。
-想完全自定义怎么办？调高预算, 或者开启"强制忽略"选项。
+    [预算是什么？]
+    每个兵种都有一个"预算", 超出预算的装备不会生成。
+    例如:部落战士预算500银, 游戏不会给他生成价值800银的武器。
+    想完全自定义怎么办？调高预算, 或者开启"强制忽略"选项。
 
-[强制选项要小心！]
-• 强制忽略：无视预算, 按最高价值来可能产出超强力角色, 破坏游戏平衡
-• 仅用选中：去掉所有原版装备, 必须确保你配够了完善的装备
+    [强制选项要小心！]
+    • 强制忽略：无视预算, 按最高价值来可能产出超强力角色, 破坏游戏平衡
+    • 仅用选中：去掉所有原版装备, 必须确保你配够了完善的装备
 
-[修改物品生成概率]
-• 物品权重(Weight) ：每件装备出现概率, 点击具体物品会出现滑动条, 调整到你想要的概率。
+    [修改物品生成概率]
+    • 物品权重(Weight) ：每件装备出现概率, 点击具体物品会出现滑动条, 调整到你想要的概率。
 
-[物品池是什么？]
-把多件装备放进一个池子, 生成时随机抽一件。
-好处：每次生成的敌人装备都不同, 更有挑战性。
+    [物品池是什么？]
+    把多件装备放进一个池子, 生成时随机抽一件。
+    好处：每次生成的敌人装备都不同, 更有挑战性。
 
-有4个池子可以分别设置, 抽中概率由权重决定。</Wiki_Principles_Content>
+    有4个池子可以分别设置, 抽中概率由权重决定。</Wiki_Principles_Content>
   <Wiki_Terminology_Content>[你必须知道的基础概念]
 
-🎭 兵种( PawnKind) 
-就是游戏里各种"职业"：海盗枪手、部落战士、帝国骑士等。
-每个兵种有自己的装备偏好和属性。
+    🎭 兵种( PawnKind)
+    就是游戏里各种"职业"：海盗枪手、部落战士、帝国骑士等。
+    每个兵种有自己的装备偏好和属性。
 
-🏴 派系( Faction) 
-多个兵种组成的势力：海盗、部落、帝国、商队等。
-一个派系有很多兵种。
+    🏴 派系( Faction)
+    多个兵种组成的势力：海盗、部落、帝国、商队等。
+    一个派系有很多兵种。
 
-🔧 群组( Group) 
-每个派系生成的单位都有一个"群组", 比如"战斗"、"商队"、"定居点"等。
-一个派系有很多群组。你可以在群组里添加不同的兵种，或是机械族。
+    🔧 群组( Group)
+    每个派系生成的单位都有一个"群组", 比如"战斗"、"商队"、"定居点"等。
+    一个派系有很多群组。你可以在群组里添加不同的兵种，或是机械族。
 
-💰 预算( Budget) 
-每个兵种能花多少钱买装备。超出预算？不给你生成。
+    💰 预算( Budget)
+    每个兵种能花多少钱买装备。超出预算？不给你生成。
 
-🎲 选择模式
-• 必定携带：一定会穿上
-• 概率携带：看运气
-• 物品池：随机抽一个
+    🎲 选择模式
+    • 必定携带：一定会穿上
+    • 概率携带：看运气
+    • 物品池：随机抽一个
 
-🛡️ 强制选项
-• 强制忽略：不管预算, 硬穿
-• 强制裸体：先脱光再穿你指定的
-• 仅用选中：不要原版装备了
+    🛡️ 强制选项
+    • 强制忽略：不管预算, 硬穿
+    • 强制裸体：先脱光再穿你指定的
+    • 仅用选中：不要原版装备了
 
-🔧 物品属性
-• 材质：钢、布、玻璃钢等, 影响属性
-• 品质：极差→传奇, 影响属性和价格
+    🔧 物品属性
+    • 材质：钢、布、玻璃钢等, 影响属性
+    • 品质：极差→传奇, 影响属性和价格
 
-💊 健康状态
-可以给角色强制加状态：仿生肢体、成瘾品、疾病等。
-用途：全员超凡仿生人！
+    💊 健康状态
+    可以给角色强制加状态：仿生肢体、成瘾品、疾病等。
+    用途：全员超凡仿生人！
 
-🏘️ 群组类型 (在这里挑选生成的pawn类型)
-• Combat(战斗) ：打你的敌人/支援的盟友
-• Trader(商队) ：来做生意的
-• Settlement(定居点) ：基地的守军
-• Peaceful(和平访客) ：路过的旅行者
+    🏘️ 群组类型 (在这里挑选生成的pawn类型)
+    • Combat(战斗) ：打你的敌人/支援的盟友
+    • Trader(商队) ：来做生意的
+    • Settlement(定居点) ：基地的守军
+    • Peaceful(和平访客) ：路过的旅行者
 
-⚙️ 科技等级
-原始→中世纪→工业→太空→超凡
-高科技装备低科技派系用不了
+    ⚙️ 科技等级
+    原始→中世纪→工业→太空→超凡
+    高科技装备低科技派系用不了
 
-🦠 异种人(Xenotype) 
-Biotech DLC才有, 血族、猪人、鼹鼠人等基因改造人。
-可以设置各派系出现不同异种人的概率。</Wiki_Terminology_Content>
+    🦠 异种人(Xenotype)
+    Biotech DLC才有, 血族、猪人、鼹鼠人等基因改造人。
+    可以设置各派系出现不同异种人的概率。</Wiki_Terminology_Content>
   <Wiki_Workflow_Content>[快速上手-流程]
 
-1. 想快速调整派系装备？跟着做！
-• 创建预设
-点"预设管理" → 新建 → 取个名字( 如"加强部落") 
-• 选派系和兵种
-左边选派系( 海盗/部落/帝国...) 
-中间选兵种( 枪手/战士/骑士...) 
-• 配装备
-简单模式：拖动滑块调整各类装备概率
-高级模式：直接点"添加"选具体装备
-• 保存生效
-点保存！然后等新的敌人来袭, 看看效果！
+    1. 想快速调整派系装备？跟着做！
+    • 创建预设
+    点"预设管理" → 新建 → 取个名字( 如"加强部落")
+    • 选派系和兵种
+    左边选派系( 海盗/部落/帝国...)
+    中间选兵种( 枪手/战士/骑士...)
+    • 配装备
+    简单模式：拖动滑块调整各类装备概率
+    高级模式：直接点"添加"选具体装备
+    • 保存生效
+    点保存！然后等新的敌人来袭, 看看效果！
 
-提示：先在简单模式试试, 高级模式能精确控制每件装备。
-
-
-2.想调整派系群组生成的兵种？(加入动物/机械族/非本派系成员)
-• 点击编辑派系
-点"编辑派系" → 下拉找到你要调整的派系群组(如"战斗#1") 
-• 选兵种
-中间选你要移除/添加的兵种(战士/动物/机械族...) 
-• 编辑群组
-调整该群组的兵种/人数/权重等。
-• 保存生效  
-点保存！然后等新的敌人来袭, 看看群组效果！
+    提示：先在简单模式试试, 高级模式能精确控制每件装备。
 
 
-[进阶玩法]
+    2.想调整派系群组生成的兵种？(加入动物/机械族/非本派系成员)
+    • 点击编辑派系
+    点"编辑派系" → 下拉找到你要调整的派系群组(如"战斗#1")
+    • 选兵种
+    中间选你要移除/添加的兵种(战士/动物/机械族...)
+    • 编辑群组
+    调整该群组的兵种/人数/权重等。
+    • 保存生效
+    点保存！然后等新的敌人来袭, 看看群组效果！
 
-1. 随机但有主题(物品池) 
-  每次敌人来装备都不同？
-• 高级模式 → 点"物品池"
-• Pool1放入多件武器
-• 设置权重( 越高越容易抽中) 
-• 生成时随机抽一件
 
-2.全员仿生人
-  想敌人都是机械改造？
-• 高级模式 → "添加强制状态"
-• 选"仿生腿部"、"仿生手臂"等
-• 设置100%概率
+    [进阶玩法]
 
-3.批量应用
-  想一套配置给派系所有兵种用？
-• 配好一个兵种
-• 右键 → 复制
-• 选其他兵种 → 右键 → 粘贴
-• 搞定！
+    1. 随机但有主题(物品池)
+    每次敌人来装备都不同？
+    • 高级模式 → 点"物品池"
+    • Pool1放入多件武器
+    • 设置权重( 越高越容易抽中)
+    • 生成时随机抽一件
 
-4.实时预览
-• 不知道效果好不好？
-• 点"预览"按钮, 直接看生成结果！
-• 不满意就调整, 直到满意为止。
+    2.全员仿生人
+    想敌人都是机械改造？
+    • 高级模式 → "添加强制状态"
+    • 选"仿生腿部"、"仿生手臂"等
+    • 设置100%概率
 
-5.预设导出分享
-  配好了想分享给朋友？
-• 预设管理 → 导出
-• 复制生成的字符串
-• 发给朋友
-• 朋友导入即可使用
+    3.批量应用
+    想一套配置给派系所有兵种用？
+    • 配好一个兵种
+    • 右键 → 复制
+    • 选其他兵种 → 右键 → 粘贴
+    • 搞定！
 
-[实践]
+    4.实时预览
+    • 不知道效果好不好？
+    • 点"预览"按钮, 直接看生成结果！
+    • 不满意就调整, 直到满意为止。
 
-任务：给派系加入强力机械族Boss
-配置：
-• 左上角-派系编辑
-• 下拉找到派系群组编辑
-• 选择具体的群组类型，如（战斗#1）
-• 添加机械族。
+    5.预设导出分享
+    配好了想分享给朋友？
+    • 预设管理 → 导出
+    • 复制生成的字符串
+    • 发给朋友
+    • 朋友导入即可使用
 
-任务：加强部落实力
-目标：让部落敌人穿更好的装备
-配置：
-• 预算调高( 部落原来很穷) 
-• 简单模式：远程和近战权重都调高
-• 或者高级模式：直接添加铁剑、皮甲
+    [实践]
 
-任务：创建精英敌人
-目标：某派系全是传奇装备
-配置：
-• 高级模式：每件装备设"传奇"品质
-• 开启"强制忽略"
-• 开启"仅从装备池选择"
-• 添加最强力的装备</Wiki_Workflow_Content>
+    任务：给派系加入强力机械族Boss
+    配置：
+    • 左上角-派系编辑
+    • 下拉找到派系群组编辑
+    • 选择具体的群组类型，如（战斗#1）
+    • 添加机械族。
+
+    任务：加强部落实力
+    目标：让部落敌人穿更好的装备
+    配置：
+    • 预算调高( 部落原来很穷)
+    • 简单模式：远程和近战权重都调高
+    • 或者高级模式：直接添加铁剑、皮甲
+
+    任务：创建精英敌人
+    目标：某派系全是传奇装备
+    配置：
+    • 高级模式：每件装备设"传奇"品质
+    • 开启"强制忽略"
+    • 开启"仅从装备池选择"
+    • 添加最强力的装备</Wiki_Workflow_Content>
   <Wiki_Notes_Content>[一定要知道！]
 
-⏰ 保存！保存！
-• 保存后立即生效, 不用重启游戏
-• 只对新刷出来的敌人/商队/守军有效
-• 已经在地图上的敌人不会变！
+    ⏰ 保存！保存！
+    • 保存后立即生效, 不用重启游戏
+    • 只对新刷出来的敌人/商队/守军有效
+    • 已经在地图上的敌人不会变！
 
-想知道效果？点"预览"按钮直接看！
+    想知道效果？点"预览"按钮直接看！
 
-[常见问题]
+    [常见问题]
 
-如果装备修改没有生效,
-请检查:
+    如果装备修改没有生效,
+    请检查:
 
-- 是否符合【预算】限制
-- 是否成功保存到【预设】
-- 是否开启了【强制忽略】
-- 是否开启了【仅从装备池选择】
+    - 是否符合【预算】限制
+    - 是否成功保存到【预设】
+    - 是否开启了【强制忽略】
+    - 是否开启了【仅从装备池选择】
 
-如果pawn生成后倒地,
-请检查:
+    如果pawn生成后倒地,
+    请检查:
 
-- 携带物品是否超出合理的【重量/体积】
-- 是否在状态菜单添加了严重的【Debuff】
+    - 携带物品是否超出合理的【重量/体积】
+    - 是否在状态菜单添加了严重的【Debuff】
 
-🔧 物品选不了？
-• 需要特定DLC
-• 其他Mod禁用了吗
-• 科技等级太高了
+    🔧 物品选不了？
+    • 需要特定DLC
+    • 其他Mod禁用了吗
+    • 科技等级太高了
 
-🔧 和xxx Mod兼容性？
-• 把那个不兼容的mod放在本mod之后加载。
+    🔧 和xxx Mod兼容性？
+    • 把那个不兼容的mod放在本mod之后加载。
 
-[强制选项警告]
+    [强制选项警告]
 
-⚠️ 强制忽略：可能造出"神装"敌人, 游戏变太简单
-⚠️ 强制裸体：记得配足够的衣服, 否则真裸奔
-⚠️ 仅用选中：先确保自定义列表有东西！
+    ⚠️ 强制忽略：可能造出"神装"敌人, 游戏变太简单
+    ⚠️ 强制裸体：记得配足够的衣服, 否则真裸奔
+    ⚠️ 仅用选中：先确保自定义列表有东西！
 
-[备份！]
+    [备份！]
 
-• 首次使用导出一份原版预设
-• 大改之前导出一份备份
-• 分享给朋友前先测试
+    • 首次使用导出一份原版预设
+    • 大改之前导出一份备份
+    • 分享给朋友前先测试
 
-[兼容性]
+    [兼容性]
 
-✅ 这些Mod已测试过兼容性：
-• Combat Extended (CE)
-• Vanilla Expanded系列
-• Ideology DLC
-• Biotech DLC
+    ✅ 这些Mod已测试过兼容性：
+    • Combat Extended (CE)
+    • Vanilla Expanded系列
+    • Ideology DLC
+    • Biotech DLC
 
-⚠️ Mod加载顺序:
-Harmony → 大型Mod → 本Mod → 小补丁
+    ⚠️ Mod加载顺序:
+    Harmony → 大型Mod → 本Mod → 小补丁
 
-[有问题？]
-  联系我：
+    [有问题？]
+    联系我：
 
-• Steam创意工坊
-https://steamcommunity.com/sharedfiles/filedetails/?id=3670833973
+    • Steam创意工坊
+    https://steamcommunity.com/sharedfiles/filedetails/?id=3670833973
 
-• GitHub
-https://github.com/yancy22737-sudo/FactionGearCustomizer
+    • GitHub
+    https://github.com/yancy22737-sudo/FactionGearCustomizer
 
-• QQ群
-984338429</Wiki_Notes_Content>
+    • QQ群
+    984338429</Wiki_Notes_Content>
 
   <!-- 缺失键补全 -->
   <ItemQualityTooltip>覆盖此兵种所有装备的品质。</ItemQualityTooltip>
@@ -853,7 +858,7 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <TechLevelLimitTooltip>限制装备为指定科技等级或以下。</TechLevelLimitTooltip>
   <SkippedNonHumanKinds>已跳过 {0} 个非人类兵种。</SkippedNonHumanKinds>
   <AddedPawnKinds>已添加 {0} 个兵种。</AddedPawnKinds>
-  
+
   <!-- 装备详情对话框 -->
   <MassCarried>负重</MassCarried>
   <ComfortableTemperature>适宜温度范围</ComfortableTemperature>
@@ -988,7 +993,7 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <P2_OpenSettings>设置</P2_OpenSettings>
   <P2_ResetSuccess>已恢复默认派系数据</P2_ResetSuccess>
   <P2_NotInGameWarning>[提示] 当前不在游戏中，某些功能（如应用到存档）不可用</P2_NotInGameWarning>
-  
+
   <!-- 炮塔/机械族武器过滤 -->
   <HideTurretMechanoidWeaponsTooltip>隐藏物品库中的炮塔和机械族武器</HideTurretMechanoidWeaponsTooltip>
 
@@ -1024,6 +1029,26 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <Validation_InsufficientParts>状态 '{0}' 可用部位不足：请求 {1} 个，可用 {2} 个</Validation_InsufficientParts>
   <Validation_TooManyImplantsForPart>部位 '{0}' 的植入物过多：请求 {1} 个，最大允许 {2} 个</Validation_TooManyImplantsForPart>
 
+  <!-- Batch History -->
+  <History>历史记录</History>
+  <BatchHistoryTooltip>查看和撤销过去的批量应用操作。</BatchHistoryTooltip>
+  <BatchHistoryTitle>批量应用历史记录</BatchHistoryTitle>
+  <ClearAll>清空全部</ClearAll>
+  <BatchHistoryClearConfirm>确定要清空所有批量应用历史记录吗？此操作无法撤销。</BatchHistoryClearConfirm>
+  <Yes>是</Yes>
+  <No>否</No>
+  <BatchHistoryCount>共 {0} 条记录</BatchHistoryCount>
+  <BatchHistoryEmpty>暂无历史记录。</BatchHistoryEmpty>
+  <BatchHistoryInvalidBtn>失效</BatchHistoryInvalidBtn>
+  <BatchHistoryInvalidTooltip>快照或目标数据已损坏或因Mod变更而丢失。</BatchHistoryInvalidTooltip>
+  <BatchHistoryInvalid>无法撤销：目标数据已损坏。</BatchHistoryInvalid>
+  <BatchHistoryRevertBtn>撤销该次</BatchHistoryRevertBtn>
+  <BatchHistoryRevertConfirm>确定要撤销此次批量应用操作吗？目标兵种将恢复到应用前的状态。</BatchHistoryRevertConfirm>
+  <BatchReverted>批量操作撤销成功。</BatchReverted>
+  <General>高级设置</General>
+  <BatchHistory_SrcTgt>来源：[{0}] {1} → 目标数：{2}</BatchHistory_SrcTgt>
+  <BatchHistory_Flags>复制项：{0}</BatchHistory_Flags>
+
   <!-- Age Settings -->
   <AgeSettings>年龄设置</AgeSettings>
   <AgeSettingsTooltip>设置此兵种生成时的生物学年龄范围。</AgeSettingsTooltip>
@@ -1033,10 +1058,10 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
 
   <!-- Non-Combatant Warning -->
   <NonCombatantWarningText>警告：您选择的异种包含“非暴力”基因或无法作为战斗人员生成。
-  
-如果强制应用此异种，我们将自动放宽生成规则，允许生成无法暴力的 Pawn。这可能导致该兵种在战斗中毫无用处（如只会逃跑）。
 
-是否继续？</NonCombatantWarningText>
+    如果强制应用此异种，我们将自动放宽生成规则，允许生成无法暴力的 Pawn。这可能导致该兵种在战斗中毫无用处（如只会逃跑）。
+
+    是否继续？</NonCombatantWarningText>
   <Yes>是</Yes>
   <No>否</No>
   <DoNotShowAgain>不再提示</DoNotShowAgain>

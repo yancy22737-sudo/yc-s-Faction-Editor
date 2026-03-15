@@ -1027,4 +1027,40 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <Validation_InsufficientParts>Insufficient available parts for hediff '{0}': requested {1}, available {2}</Validation_InsufficientParts>
   <Validation_TooManyImplantsForPart>Too many implants for part '{0}': {1} requested, max allowed {2}</Validation_TooManyImplantsForPart>
 
+  <!-- Batch History -->
+  <History>History</History>
+  <BatchHistoryTooltip>View and revert past batch apply operations.</BatchHistoryTooltip>
+  <BatchHistoryTitle>Batch Apply History</BatchHistoryTitle>
+  <ClearAll>Clear All</ClearAll>
+  <BatchHistoryClearConfirm>Clear all batch apply history? This cannot be undone.</BatchHistoryClearConfirm>
+  <Yes>Yes</Yes>
+  <No>No</No>
+  <BatchHistoryCount>Total {0} records</BatchHistoryCount>
+  <BatchHistoryEmpty>No history found.</BatchHistoryEmpty>
+  <BatchHistoryInvalidBtn>Invalid</BatchHistoryInvalidBtn>
+  <BatchHistoryInvalidTooltip>Snapshot or target data is corrupted or lost due to mod changes.</BatchHistoryInvalidTooltip>
+  <BatchHistoryInvalid>Cannot revert: target data is corrupted.</BatchHistoryInvalid>
+  <BatchHistoryRevertBtn>Revert</BatchHistoryRevertBtn>
+  <BatchHistoryRevertConfirm>Revert this batch apply operation? Target kinds will be restored to their previous state.</BatchHistoryRevertConfirm>
+  <BatchReverted>Batch operation reverted successfully.</BatchReverted>
+  <General>General</General>
+  <BatchHistory_SrcTgt>Src: [{0}] {1} → Tgts: {2}</BatchHistory_SrcTgt>
+  <BatchHistory_Flags>Flags: {0}</BatchHistory_Flags>
+
+  <!-- Age Settings -->
+  <AgeSettings>Age Settings</AgeSettings>
+  <AgeSettingsTooltip>Set the biological age range for this pawn kind.</AgeSettingsTooltip>
+  <MinAge>Minimum Age</MinAge>
+  <MaxAge>Maximum Age</MaxAge>
+  <AgeSettingsHint>Leave empty to disable. If in conflict with faction group settings, this will take precedence.</AgeSettingsHint>
+
+  <!-- Non-Combatant Warning -->
+  <NonCombatantWarningText>Warning: The selected pawn kind contains "non-combatant" genes or cannot be generated as a combatant.
+
+    If you force apply this pawn kind, we will automatically relax generation rules to allow generating non-combatant Pawns. This may result in the pawn kind being useless in combat (e.g., only running away).
+
+    Continue?</NonCombatantWarningText>
+  <Yes>Yes</Yes>
+  <No>No</No>
+  <DoNotShowAgain>Don't Show Again</DoNotShowAgain>
 </LanguageData>
