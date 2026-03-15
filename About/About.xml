@@ -6,7 +6,7 @@
   <supportedVersions>
     <li>1.6</li>
   </supportedVersions>
-  <modIconPath>UI/Logo</modIconPath>
+  <modIconPath>UI/FactionGearCustomizer_ModIcon</modIconPath>
   <description>
 实时定制任意派系兵种的装备、武器、健康状态。
 拥有现代化的 UI 设计，支持一键导出分享配置。
