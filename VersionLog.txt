@@ -358,3 +358,10 @@ v1.0.2
 
 
 
+v1.4.8
+- Fix: 修复“仅从装备池选择 + 先成套后升材质”在核心套装失败时保留原版服装的问题；现在会严格清空并仅尝试穿戴装备池中的合法服装，允许缺位。
+- Fix: 修复核心套装不完整时直接中断的问题；严格池内模式下改为继续从用户配置池补穿，并输出区分性的失败/降级日志。
+- Fix: 统一兵种目标来源枚举，`GetFactionKinds` 现在会合并 `options/traders/carriers/guards` 与当前派系已配置的 PawnKind，补上帝国冠军等特殊来源目标。
+- Fix: `ApplyToAllKindsInFaction` 改为复用统一兵种枚举器，避免“应用到其他”与批量应用目标集合不一致。
+- Fix: 修复 `ApplyHediffWithPart` / `GetUserSpecifiedBodyParts` 空引用，异常不再中断整条装备应用链路。
+- Update: 同步更新 Index.md、Api.md、config.md。

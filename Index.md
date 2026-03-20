@@ -1,5 +1,17 @@
 # Index
 
+## Strict Pool And Kind Enumeration
+
+- `FactionGearModification/Managers/GearApplier.cs`
+  - Responsibility: Keep `ForceOnlySelected` authoritative even when outfit-first core planning fails.
+  - Behavior: If core outfit planning or initial generation fails and `ForceOnlySelected` is enabled, worn apparel is stripped and the system falls back to equipping only valid items from the configured apparel pools; empty slots are allowed.
+  - Logging: Distinguishes core planning failure, strict-pool fallback application, and "no valid apparel candidates" terminal state.
+  - Hediff safety: `ApplyHediffWithPart` and `GetUserSpecifiedBodyParts` now fail fast on missing pawn health/body data instead of throwing.
+- `FactionGearModification/UI/FactionGearEditor.cs`
+  - Responsibility: Provide a stable, de-duplicated PawnKind list for editor, preview, batch apply, and "apply to others".
+  - Sources: `pawnGroupMakers.options`, `traders`, `carriers`, `guards`, plus already-configured `kindGearData` entries for the faction.
+  - Contract: Return type, cache key, and sort order remain unchanged.
+
 ## Apparel Budget Strategy
 
 - `FactionGearModification/Managers/GearApplier.cs`

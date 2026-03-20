@@ -1,5 +1,27 @@
 # API Notes
 
+## Strict Pool Fallback API
+
+### `GearApplier.ApplyApparel`
+- Additional behavior when both `KindGearData.ForceOnlySelected == true` and `KindGearData.OutfitFirstBudgetStrategy == true`:
+  - If core outfit planning fails before stripping, the pipeline now switches to strict pool fallback instead of preserving vanilla apparel.
+  - If core outfit generation starts but cannot complete all core layers, the pipeline keeps already-equipped pool items and continues equipping any remaining valid configured apparel.
+  - Terminal outcome is pool-only: no fallback to vanilla apparel, empty slots are allowed.
+
+### `FactionGearEditor.GetFactionKinds`
+- Contract:
+  - Returns `List<PawnKindDef>` with stable label-based sorting.
+- Sources:
+  - `pawnGroupMakers.options`
+  - `pawnGroupMakers.traders`
+  - `pawnGroupMakers.carriers`
+  - `pawnGroupMakers.guards`
+  - existing configured `FactionGearData.kindGearData` entries for the same faction
+- Compatibility:
+  - No signature change
+  - No cache-key change
+  - De-duplication remains `defName`-based
+
 ## Runtime Apparel Budget API
 
 ### `GearApplier.ApplyApparel`

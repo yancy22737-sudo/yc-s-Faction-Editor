@@ -1,5 +1,18 @@
 # Config Guide
 
+## Strict Pool Behavior
+
+### `ForceOnlySelected` + `OutfitFirstBudgetStrategy`
+- UI path:
+  - Advanced -> General -> `仅从装备池选择`
+  - Advanced -> General -> `先成套后升材质`
+- Runtime behavior:
+  - If core outfit planning succeeds, outfit-first behavior is unchanged.
+  - If core outfit planning fails or core generation becomes incomplete, strict pool mode no longer keeps vanilla apparel.
+  - The system strips existing apparel and continues trying to wear only valid configured apparel from the selected pools/lists.
+  - Empty slots are allowed when the configured pool cannot satisfy all layers.
+  - Log output distinguishes planning failure, strict-pool fallback, and "no valid apparel candidates".
+
 ## Outfit-First Budget Strategy
 
 ### Switch
@@ -13,7 +26,8 @@
   2. Legs inner layer (`OnSkin/Middle`)
   3. Torso armored middle layer (`Middle`, `ArmorRating_Sharp > 0.4`)
   4. Torso shell layer (`Shell`)
-- If any core layer has no valid candidate, apparel apply fails fast before stripping and keeps current worn apparel unchanged.
+- If any core layer has no valid candidate, apparel apply fails fast before stripping when `ForceOnlySelected` is disabled.
+- If `ForceOnlySelected` is enabled, the same failure switches to strict pool fallback instead of preserving vanilla apparel.
 - Strategy budget uses max range value (`ApparelMoney.max`).
 - If core total exceeds budget, the strategy auto-replaces/downgrades pieces until it fits budget when feasible.
 - Core armor value (middle+shell) is constrained to at least 60% of budget by default when feasible.

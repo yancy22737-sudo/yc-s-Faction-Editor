@@ -47,9 +47,20 @@ namespace FactionGearCustomizer
             }
 
             var list = new List<PawnKindDef>();
+            var seenKinds = new HashSet<string>();
+            void TryAddKind(PawnKindDef kind)
+            {
+                if (kind == null || string.IsNullOrEmpty(kind.defName) || seenKinds.Contains(kind.defName))
+                {
+                    return;
+                }
+
+                list.Add(kind);
+                seenKinds.Add(kind.defName);
+            }
+
             if (factionDef.pawnGroupMakers != null)
             {
-                var seenKinds = new HashSet<string>();
                 foreach (var pgm in factionDef.pawnGroupMakers)
                 {
                     // 从 options 读取
@@ -57,11 +68,7 @@ namespace FactionGearCustomizer
                     {
                         foreach (var opt in pgm.options)
                         {
-                            if (opt.kind != null && !seenKinds.Contains(opt.kind.defName))
-                            {
-                                list.Add(opt.kind);
-                                seenKinds.Add(opt.kind.defName);
-                            }
+                            TryAddKind(opt.kind);
                         }
                     }
                     
@@ -70,11 +77,7 @@ namespace FactionGearCustomizer
                     {
                         foreach (var opt in pgm.traders)
                         {
-                            if (opt.kind != null && !seenKinds.Contains(opt.kind.defName))
-                            {
-                                list.Add(opt.kind);
-                                seenKinds.Add(opt.kind.defName);
-                            }
+                            TryAddKind(opt.kind);
                         }
                     }
                     
@@ -83,11 +86,7 @@ namespace FactionGearCustomizer
                     {
                         foreach (var opt in pgm.carriers)
                         {
-                            if (opt.kind != null && !seenKinds.Contains(opt.kind.defName))
-                            {
-                                list.Add(opt.kind);
-                                seenKinds.Add(opt.kind.defName);
-                            }
+                            TryAddKind(opt.kind);
                         }
                     }
                     
@@ -96,15 +95,22 @@ namespace FactionGearCustomizer
                     {
                         foreach (var opt in pgm.guards)
                         {
-                            if (opt.kind != null && !seenKinds.Contains(opt.kind.defName))
-                            {
-                                list.Add(opt.kind);
-                                seenKinds.Add(opt.kind.defName);
-                            }
+                            TryAddKind(opt.kind);
                         }
                     }
                 }
             }
+
+            var factionData = FactionGearCustomizerMod.Settings?.TryGetFactionData(factionDef.defName);
+            if (factionData?.kindGearData != null)
+            {
+                foreach (var kindData in factionData.kindGearData)
+                {
+                    if (kindData == null || string.IsNullOrEmpty(kindData.kindDefName)) continue;
+                    TryAddKind(DefDatabase<PawnKindDef>.GetNamedSilentFail(kindData.kindDefName));
+                }
+            }
+
             list.Sort((a, b) => (a.label ?? a.defName).CompareTo(b.label ?? b.defName));
             
             // 存储到缓存
@@ -570,25 +576,21 @@ namespace FactionGearCustomizer
             if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName) && EditorSession.CopiedKindGearData != null)
             {
                 var factionDef = DefDatabase<FactionDef>.GetNamedSilentFail(EditorSession.SelectedFactionDefName);
-                if (factionDef != null && factionDef.pawnGroupMakers != null)
+                if (factionDef != null)
                 {
                     var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
-                    foreach (var pawnGroupMaker in factionDef.pawnGroupMakers)
+                    foreach (var kindDef in GetFactionKinds(factionDef))
                     {
-                        if (pawnGroupMaker.options != null)
+                        if (kindDef == null)
                         {
-                            foreach (var option in pawnGroupMaker.options)
-                            {
-                                if (option.kind != null)
-                                {
-                                    var targetKindData = factionData.GetOrCreateKindData(option.kind.defName);
-                                    if (targetKindData != null)
-                                    {
-                                        targetKindData.CopyFrom(EditorSession.CopiedKindGearData);
-                                        targetKindData.isModified = true;
-                                    }
-                                }
-                            }
+                            continue;
+                        }
+
+                        var targetKindData = factionData.GetOrCreateKindData(kindDef.defName);
+                        if (targetKindData != null)
+                        {
+                            targetKindData.CopyFrom(EditorSession.CopiedKindGearData);
+                            targetKindData.isModified = true;
                         }
                     }
                     MarkDirty();

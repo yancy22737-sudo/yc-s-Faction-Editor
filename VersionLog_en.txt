@@ -427,3 +427,10 @@ v1.0.2
 
 
 
+v1.4.8
+- Fix: Correct `ForceOnlySelected + OutfitFirstBudgetStrategy` so failed core-outfit planning no longer preserves vanilla apparel; strict pool mode now strips and only equips valid pool apparel, leaving empty slots when needed.
+- Fix: Correct the incomplete core-outfit path in strict pool mode so it continues equipping from configured apparel pools instead of aborting the apparel pipeline.
+- Fix: Unify PawnKind target enumeration so `GetFactionKinds` merges `options/traders/carriers/guards` plus already-configured PawnKinds, restoring special Empire-derived targets such as champions/guards.
+- Fix: Switch `ApplyToAllKindsInFaction` to the unified kind enumerator so "Apply to others" and batch apply target the same PawnKind set.
+- Fix: Guard `ApplyHediffWithPart` / `GetUserSpecifiedBodyParts` against null body/health data so one bad hediff no longer aborts the full gear application chain.
+- Update: Sync Index.md, Api.md, and config.md.

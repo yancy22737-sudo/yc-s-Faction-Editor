@@ -480,6 +480,26 @@ namespace FactionGearCustomizer
 
         private static void ApplyHediffWithPart(Pawn pawn, ForcedHediff forcedHediff)
         {
+            string kindDefName = pawn?.kindDef?.defName ?? "UnknownKind";
+            string hediffDefName = forcedHediff?.HediffDef?.defName ?? "UnknownHediff";
+            if (pawn?.health?.hediffSet == null)
+            {
+                Log.Warning($"[FactionGearCustomizer] Skipped hediff {hediffDefName} for {kindDefName}: pawn health state is unavailable.");
+                return;
+            }
+
+            if (pawn.RaceProps?.body == null)
+            {
+                Log.Warning($"[FactionGearCustomizer] Skipped hediff {hediffDefName} for {kindDefName}: pawn body definition is unavailable.");
+                return;
+            }
+
+            if (forcedHediff?.HediffDef == null)
+            {
+                Log.Warning($"[FactionGearCustomizer] Skipped hediff application for {kindDefName}: forced hediff definition is null.");
+                return;
+            }
+
             HediffDef def = forcedHediff.HediffDef;
             
             int count = forcedHediff.maxParts > 0 ? forcedHediff.maxParts : forcedHediff.maxPartsRange.RandomInRange;
@@ -562,18 +582,29 @@ namespace FactionGearCustomizer
         private static List<BodyPartRecord> GetUserSpecifiedBodyParts(Pawn pawn, ForcedHediff forcedHediff)
         {
             List<BodyPartRecord> result = new List<BodyPartRecord>();
-            
-            if (!forcedHediff.parts.NullOrEmpty())
+
+            if (pawn?.RaceProps?.body == null || pawn.health?.hediffSet == null || forcedHediff?.parts.NullOrEmpty() != false)
             {
-                foreach (var partDef in forcedHediff.parts)
+                return result;
+            }
+
+            foreach (var partDef in forcedHediff.parts)
+            {
+                if (partDef == null) continue;
+
+                try
                 {
                     var parts = pawn.RaceProps.body.GetPartsWithDef(partDef)
                         .Where(p => !pawn.health.hediffSet.PartIsMissing(p))
                         .ToList();
                     result.AddRange(parts);
                 }
+                catch (Exception ex)
+                {
+                    Log.Warning($"[FactionGearCustomizer] Failed to resolve user-specified body part {partDef.defName} for {pawn?.kindDef?.defName ?? "UnknownKind"}: {ex.Message}");
+                }
             }
-            
+
             return result;
         }
 
@@ -1246,7 +1277,25 @@ namespace FactionGearCustomizer
                 out var corePlan,
                 out string reason))
             {
-                Log.Warning($"[FactionGearCustomizer] Fail fast for {pawn?.Name?.ToStringShort ?? "Unknown"}: {reason}");
+                Log.Warning($"[FactionGearCustomizer] Core outfit planning failed for {pawn?.Name?.ToStringShort ?? "Unknown"} ({pawn?.kindDef?.defName ?? "UnknownKind"}): {reason}");
+                if (kindData.ForceOnlySelected)
+                {
+                    ApplyStrictPoolFallbackApparel(
+                        pawn,
+                        kindData,
+                        requiredApparel,
+                        specificApparel,
+                        simpleArmors,
+                        simpleApparel,
+                        simpleOthers,
+                        hasAdvancedData,
+                        hasSimpleData,
+                        forceIgnore,
+                        techLevelLimit,
+                        budget,
+                        "Core outfit planning failed",
+                        true);
+                }
                 return;
             }
 
@@ -1276,7 +1325,27 @@ namespace FactionGearCustomizer
             var equippedCore = EquipCoreOutfit(pawn, kindData, corePlan, ref currentSpent, protectedCoreDefs);
             if (equippedCore.Count < CoreSlotOrder.Length)
             {
-                Log.Warning($"[FactionGearCustomizer] Core outfit generation incomplete for {pawn?.Name?.ToStringShort ?? "Unknown"}. Skipping supplemental apparel.");
+                Log.Warning($"[FactionGearCustomizer] Core outfit generation incomplete for {pawn?.Name?.ToStringShort ?? "Unknown"} ({pawn?.kindDef?.defName ?? "UnknownKind"}).");
+                if (kindData.ForceOnlySelected)
+                {
+                    ApplyStrictPoolFallbackApparel(
+                        pawn,
+                        kindData,
+                        requiredApparel,
+                        specificApparel,
+                        simpleArmors,
+                        simpleApparel,
+                        simpleOthers,
+                        hasAdvancedData,
+                        hasSimpleData,
+                        forceIgnore,
+                        techLevelLimit,
+                        budget,
+                        "Core outfit generation incomplete",
+                        false,
+                        currentSpent,
+                        protectedCoreDefs);
+                }
                 return;
             }
 
@@ -1308,6 +1377,78 @@ namespace FactionGearCustomizer
                     budget,
                     ref currentSpent,
                     protectedCoreDefs);
+            }
+        }
+
+        private static void ApplyStrictPoolFallbackApparel(
+            Pawn pawn,
+            KindGearData kindData,
+            List<ThingDef> requiredApparel,
+            List<SpecRequirementEdit> specificApparel,
+            List<GearItem> simpleArmors,
+            List<GearItem> simpleApparel,
+            List<GearItem> simpleOthers,
+            bool hasAdvancedData,
+            bool hasSimpleData,
+            bool forceIgnore,
+            TechLevel? techLevelLimit,
+            float budget,
+            string triggerReason,
+            bool stripExisting,
+            float currentSpent = 0f,
+            HashSet<ThingDef> protectedCoreDefs = null)
+        {
+            if (pawn?.apparel == null)
+            {
+                Log.Warning($"[FactionGearCustomizer] Strict pool fallback skipped for {pawn?.kindDef?.defName ?? "UnknownKind"} because apparel tracker is unavailable.");
+                return;
+            }
+
+            if (stripExisting)
+            {
+                SafeDestroyAllApparel(pawn);
+                currentSpent = 0f;
+            }
+
+            protectedCoreDefs = protectedCoreDefs ?? new HashSet<ThingDef>();
+
+            if (hasAdvancedData)
+            {
+                ApplyAdvancedAdditionalApparel(
+                    pawn,
+                    kindData,
+                    requiredApparel,
+                    specificApparel,
+                    forceIgnore,
+                    techLevelLimit,
+                    budget,
+                    ref currentSpent,
+                    protectedCoreDefs);
+            }
+
+            if (hasSimpleData)
+            {
+                ApplySimpleAdditionalApparel(
+                    pawn,
+                    kindData,
+                    simpleArmors,
+                    simpleApparel,
+                    simpleOthers,
+                    forceIgnore,
+                    techLevelLimit,
+                    budget,
+                    ref currentSpent,
+                    protectedCoreDefs);
+            }
+
+            int equippedCount = pawn.apparel.WornApparel?.Count ?? 0;
+            if (equippedCount > 0)
+            {
+                Log.Warning($"[FactionGearCustomizer] Strict pool fallback applied for {pawn?.Name?.ToStringShort ?? "Unknown"} ({pawn?.kindDef?.defName ?? "UnknownKind"}) after '{triggerReason}'. Equipped {equippedCount} pool-only apparel item(s).");
+            }
+            else
+            {
+                Log.Warning($"[FactionGearCustomizer] Strict pool fallback found no valid apparel candidates for {pawn?.Name?.ToStringShort ?? "Unknown"} ({pawn?.kindDef?.defName ?? "UnknownKind"}) after '{triggerReason}'.");
             }
         }
 
