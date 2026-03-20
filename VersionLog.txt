@@ -1,4 +1,19 @@
-﻿v1.4.5
+﻿v1.4.7
+- Update: 优先套装策略改为按服装预算上限（max）构建核心套装，不再使用随机预算。
+- Update: 核心套装选择逻辑改为“超预算自动替换降级直到不超预算”（可行时）。
+- Add: 新增默认防具预算下限约束：核心防具价值（中层防护+外层）不低于预算的60%（可行时）。
+- Fix: 当无法同时满足“预算上限+防具60%”时，改为优先保持预算内并记录降级日志；若最低组合仍超预算则回退最低成本核心套装并告警。
+- Update: 同步更新中英提示文案、Index.md、Api.md、config.md。
+v1.4.6
+- Add: 高级设置新增“先成套后升材质”开关（默认开启），支持兵种级独立控制。
+- Add: 服装生成改为两阶段流程：先生成核心层级套装，再根据剩余预算升级材质（不改款式、不改品质）。
+- Add: 简单模式接入同样的两阶段预算策略（合并 armors/apparel/others 后统一推断核心层级）。
+- Fix: 预算不足时，核心层级允许超预算保底穿齐，避免出现只穿一件高材质导致裸装。
+- Fix: Fail Fast 前置到剥离前校验；核心层级无法满足时直接退出本次服装流程并保留原穿着。
+- Fix: 批量应用 General 分类新增复制 OutfitFirstBudgetStrategy 字段，避免跨兵种复制时策略丢失。
+- Update: 新增中英语言键 `OutfitFirstBudgetStrategy` / `OutfitFirstBudgetStrategyTooltip`。
+- Update: 同步更新 Index.md、Api.md、config.md 文档说明。
+v1.4.5
 - Fix: 重构 Hediff 应用链路，新增 HediffApplicationService/HediffPartResolver，统一校验、部位解析与应用流程。
 - Fix: 接入 HediffApplicationValidator 到实际应用前置校验，错误跳过并记录日志，警告继续记录。
 - Fix: 植入物部位选择改为严格优先级（手动 > 配方 > 映射 > 推断），无合法部位时跳过并告警，不再全身随机兜底。
@@ -340,4 +355,6 @@ v1.0.3
 v1.0.2
 - Fix: 修复 System.MissingMethodException: Method not found: void Verse.Widgets.DrawTextureFitted
 - Add: 新增 WidgetsUtils 工具类，封装 UI 绘制方法以提高兼容性
+
+
 

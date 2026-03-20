@@ -1,4 +1,19 @@
-﻿v1.4.5
+﻿v1.4.7
+- Update: Outfit-first strategy now uses max apparel budget (`ApparelMoney.max`) instead of random budget.
+- Update: Core outfit selection now auto-replaces/downgrades pieces until budget-compliant when feasible.
+- Add: Add default armor budget floor: core armor value (armored middle + shell) is kept at least 60% of budget when feasible.
+- Fix: When budget cap and 60% armor floor cannot both be satisfied, fallback prefers budget-compliant core sets with warning logs; if even cheapest core exceeds budget, fallback uses cheapest core set with warning.
+- Update: Sync EN/ZH tooltip text and update Index.md, Api.md, config.md.
+v1.4.6
+- Add: Add a new Advanced setting toggle "Outfit First, Material Upgrade Later" (enabled by default) with per-kind control.
+- Add: Apparel generation now uses a two-phase flow: generate complete core layers first, then upgrade material with remaining budget (no style change, no quality change).
+- Add: Simple mode now uses the same two-phase budget strategy by merging armors/apparel/others into one core-layer candidate pool.
+- Fix: When budget is insufficient, core layers are allowed to exceed budget to guarantee full outfit and prevent naked results.
+- Fix: Move fail-fast to pre-strip validation; when core layers cannot be satisfied, abort apparel flow and keep current worn apparel.
+- Fix: Batch Apply General copy now includes `OutfitFirstBudgetStrategy` to avoid losing behavior in cross-kind copy.
+- Update: Add EN/ZH language keys `OutfitFirstBudgetStrategy` and `OutfitFirstBudgetStrategyTooltip`.
+- Update: Update Index.md, Api.md, and config.md documentation.
+v1.4.5
 - Fix: Refactor hediff runtime application with new HediffApplicationService/HediffPartResolver to unify validation, part resolution, and apply flow.
 - Fix: Integrate HediffApplicationValidator into the real pre-apply pipeline; invalid entries are skipped with logs, warnings are preserved.
 - Fix: Enforce strict target-part priority (manual > recipe > mapping > inference); when no valid part exists, skip with warning and remove whole-body random fallback.
@@ -409,4 +424,6 @@ v1.0.3
 v1.0.2
 - Fix: Fix System.MissingMethodException: Method not found: void Verse.Widgets.DrawTextureFitted.
 - Add: Add WidgetsUtils helper class, wrapping UI drawing methods for better compatibility.
+
+
 

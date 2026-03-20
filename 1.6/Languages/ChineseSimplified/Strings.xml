@@ -853,6 +853,8 @@
 
   <!-- 缺失键补全 -->
   <ItemQualityTooltip>覆盖此兵种所有装备的品质。</ItemQualityTooltip>
+  <OutfitFirstBudgetStrategy>先成套后升材质</OutfitFirstBudgetStrategy>
+  <OutfitFirstBudgetStrategyTooltip>按服装预算上限优先生成完整核心穿搭（躯干内层、下肢内层、防护中层、外层）。若超预算会自动替换降级直到不超预算；默认防具价值不低于预算的60%。若核心层级无法凑齐，将在剥离前快速失败并保留原穿着。</OutfitFirstBudgetStrategyTooltip>
   <ApparelBudgetTooltip>设置服装生成的市场价值预算范围。</ApparelBudgetTooltip>
   <WeaponBudgetTooltip>设置武器生成的市场价值预算范围。</WeaponBudgetTooltip>
   <TechLevelLimitTooltip>限制装备为指定科技等级或以下。</TechLevelLimitTooltip>

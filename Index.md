@@ -1,5 +1,21 @@
 # Index
 
+## Apparel Budget Strategy
+
+- `FactionGearModification/Managers/GearApplier.cs`
+  - Responsibility: Apply two-phase apparel budget strategy when `KindGearData.OutfitFirstBudgetStrategy` is enabled.
+  - Phase 1: Build and equip a complete core outfit first (`TorsoInner`, `LegsInner`, `ArmorMiddle`, `Shell`) using max apparel budget.
+  - Over-budget handling: If core plan exceeds budget, auto-replace/downgrade pieces until budget is met when feasible.
+  - Armor floor: Keep core armor value (`ArmorMiddle` + `Shell`) at least 60% of budget by default.
+  - Phase 2: Upgrade core item materials using remaining budget without changing item def/quality.
+  - Fail Fast: Core feasibility is validated before stripping worn apparel. If any core layer cannot be satisfied, apparel apply exits early and current worn apparel is preserved.
+- `FactionGearModification/Data/KindGearData.cs`
+  - Responsibility: Persist per-kind switch `OutfitFirstBudgetStrategy` (default `true`), including save/load and deep-copy paths.
+- `FactionGearModification/UI/Panels/GearEditPanel.cs`
+  - Responsibility: Expose `OutfitFirstBudgetStrategy` in Advanced General settings.
+- `FactionGearModification/UI/Dialog_BatchApply.cs`
+  - Responsibility: Copy `OutfitFirstBudgetStrategy` in General batch-copy category.
+
 ## Project Map
 
 ### Core Runtime

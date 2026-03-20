@@ -851,6 +851,8 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
 
   <!-- Missing Keys Added -->
   <ItemQualityTooltip>Override the quality of all items equipped by this pawn kind.</ItemQualityTooltip>
+  <OutfitFirstBudgetStrategy>Outfit First, Material Upgrade Later</OutfitFirstBudgetStrategy>
+  <OutfitFirstBudgetStrategyTooltip>Build a complete core outfit using the max apparel budget first (torso inner, legs inner, armored middle, shell). If over budget, it automatically downgrades/replaces pieces until within budget; armor value is kept at least 60% of budget by default. If core layers cannot be satisfied, fail fast before stripping and keep current worn apparel.</OutfitFirstBudgetStrategyTooltip>
   <ApparelBudgetTooltip>Set the minimum and maximum market value budget for apparel generation.</ApparelBudgetTooltip>
   <WeaponBudgetTooltip>Set the minimum and maximum market value budget for weapon generation.</WeaponBudgetTooltip>
   <TechLevelLimitTooltip>Limit equipment to specific tech level or below.</TechLevelLimitTooltip>

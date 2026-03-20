@@ -1,5 +1,31 @@
 # API Notes
 
+## Runtime Apparel Budget API
+
+### `GearApplier.ApplyApparel`
+- Behavior when `KindGearData.OutfitFirstBudgetStrategy == true`:
+  - Validates core-layer feasibility before stripping worn apparel (fail-fast).
+  - Uses max apparel budget (`ApparelMoney.max`) as the strategy budget.
+  - Equips core layers first:
+    1. `TorsoInner` (`Torso` + `OnSkin/Middle`)
+    2. `LegsInner` (`Legs` + `OnSkin/Middle`)
+    3. `ArmorMiddle` (`Torso` + `Middle` + `ArmorRating_Sharp > 0.4`)
+    4. `Shell` (`Torso` + `Shell`)
+  - If initial core plan exceeds budget, pieces are replaced/downgraded until budget-compliant when feasible.
+  - Default armor floor: core armor value is constrained to at least `0.60 * budget` when feasible.
+  - Performs material-only upgrades for equipped core items using remaining budget.
+  - Applies supplemental apparel with normal budget checks and core-layer conflict protection.
+
+### `KindGearData.OutfitFirstBudgetStrategy`
+- Type:
+  - `bool`
+- Default:
+  - `true`
+- Persistence:
+  - Serialized via `Scribe_Values.Look(..., "outfitFirstBudgetStrategy", true)`.
+- Copy semantics:
+  - Included in `DeepCopy`, `CopyFrom`, and batch apply `General` category copy.
+
 ## Runtime Hediff Application API
 
 ### `HediffApplicationService.ApplyForcedHediff`

@@ -36,6 +36,7 @@ namespace FactionGearCustomizer
         // New fields ported from TotalControl
         public bool ForceNaked = false;
         public bool ForceOnlySelected = false;
+        public bool OutfitFirstBudgetStrategy = true;
         public QualityCategory? ItemQuality = null;
         public QualityCategory? ForcedWeaponQuality = null;
         public float? BiocodeWeaponChance = null;
@@ -96,6 +97,7 @@ namespace FactionGearCustomizer
 
             Scribe_Values.Look(ref ForceNaked, "forceNaked");
             Scribe_Values.Look(ref ForceOnlySelected, "forceOnlySelected");
+            Scribe_Values.Look(ref OutfitFirstBudgetStrategy, "outfitFirstBudgetStrategy", true);
             Scribe_Values.Look(ref ForceIgnoreRestrictions, "forceIgnoreRestrictions");
             Scribe_Values.Look(ref ItemQuality, "itemQuality");
             Scribe_Values.Look(ref ForcedWeaponQuality, "forcedWeaponQuality");
@@ -223,6 +225,7 @@ namespace FactionGearCustomizer
             
             ForceNaked = false;
             ForceOnlySelected = false;
+            OutfitFirstBudgetStrategy = true;
             ForceIgnoreRestrictions = null;
             ItemQuality = null;
             ForcedWeaponQuality = null;
@@ -270,6 +273,7 @@ namespace FactionGearCustomizer
                 
                 ForceNaked = this.ForceNaked,
                 ForceOnlySelected = this.ForceOnlySelected,
+                OutfitFirstBudgetStrategy = this.OutfitFirstBudgetStrategy,
                 ForceIgnoreRestrictions = this.ForceIgnoreRestrictions,
                 ItemQuality = this.ItemQuality,
                 ForcedWeaponQuality = this.ForcedWeaponQuality,
@@ -415,6 +419,7 @@ namespace FactionGearCustomizer
 
             this.ForceNaked = source.ForceNaked;
             this.ForceOnlySelected = source.ForceOnlySelected;
+            this.OutfitFirstBudgetStrategy = source.OutfitFirstBudgetStrategy;
             this.ForceIgnoreRestrictions = source.ForceIgnoreRestrictions;
             this.ItemQuality = source.ItemQuality;
             this.ForcedWeaponQuality = source.ForcedWeaponQuality;

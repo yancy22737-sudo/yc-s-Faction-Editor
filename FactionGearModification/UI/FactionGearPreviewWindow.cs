@@ -226,22 +226,8 @@ namespace FactionGearCustomizer
                 false // allowAddictions
             );
             
-            Pawn pawn = PawnGenerator.GeneratePawn(request);
-            
-            // 应用自定义装备（包括 Hediff）
-            if (pawn != null && faction != null)
-            {
-                try
-                {
-                    GearApplier.ApplyCustomGear(pawn, faction);
-                }
-                catch (Exception ex)
-                {
-                    Log.Warning($"[FactionGearCustomizer] Error applying custom gear in preview: {ex.Message}");
-                }
-            }
-            
-            return pawn;
+            // Gear application is handled by Patch_GeneratePawn.Postfix.
+            return PawnGenerator.GeneratePawn(request);
         }
 
         public override void DoWindowContents(Rect inRect)

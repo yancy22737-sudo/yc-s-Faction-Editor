@@ -9,7 +9,7 @@
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
-    <Version>1.4.5</Version>
+    <Version>1.4.7</Version>
   </PropertyGroup>
 
   <ItemGroup>

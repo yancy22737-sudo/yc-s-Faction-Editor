@@ -40,12 +40,20 @@ namespace FactionGearCustomizer.Compat.AmmoProviders
         {
             if (_initialized) return;
 
+            // Preserve providers that may have been registered by static constructors
+            // before Initialize() is first invoked.
+            var preRegisteredProviders = _providers.Where(p => p != null).ToList();
             _providers.Clear();
 
             // 注册内置的弹药提供者
             RegisterProvider(new CEAmmoProvider());
 
-            // 未来可以在这里注册其他 combat mod 的弹药提供者
+            // Re-register previously loaded configured providers (e.g. XML mappings).
+            foreach (var provider in preRegisteredProviders)
+            {
+                if (provider is CEAmmoProvider) continue;
+                RegisterProvider(provider);
+            }
 
             _initialized = true;
             Log.Message($"[FactionGearCustomizer] Ammo Provider Manager initialized with {_providers.Count} providers");

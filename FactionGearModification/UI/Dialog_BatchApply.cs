@@ -507,6 +507,7 @@ namespace FactionGearCustomizer.UI
             {
                 dst.ForceNaked = src.ForceNaked;
                 dst.ForceOnlySelected = src.ForceOnlySelected;
+                dst.OutfitFirstBudgetStrategy = src.OutfitFirstBudgetStrategy;
                 dst.ForceIgnoreRestrictions = src.ForceIgnoreRestrictions;
                 dst.ItemQuality = src.ItemQuality;
                 dst.ForcedWeaponQuality = src.ForcedWeaponQuality;

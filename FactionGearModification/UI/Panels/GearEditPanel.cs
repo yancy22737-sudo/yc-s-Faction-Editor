@@ -705,6 +705,7 @@ namespace FactionGearCustomizer.UI.Panels
             {
                 UndoManager.RecordState(kindData);
                 kindData.ForceIgnoreRestrictions = localForceIgnore != forceIgnore ? localForceIgnore : (bool?)null;
+                kindData.isModified = true;
                 FactionGearEditor.MarkDirty();
             }
 
@@ -720,6 +721,17 @@ namespace FactionGearCustomizer.UI.Panels
                 {
                     UndoManager.RecordState(kindData);
                     kindData.ForceOnlySelected = forceOnly;
+                    kindData.isModified = true;
+                    FactionGearEditor.MarkDirty();
+                }
+
+                bool outfitFirst = kindData.OutfitFirstBudgetStrategy;
+                ui.CheckboxLabeled(LanguageManager.Get("OutfitFirstBudgetStrategy"), ref outfitFirst, LanguageManager.Get("OutfitFirstBudgetStrategyTooltip"));
+                if (outfitFirst != kindData.OutfitFirstBudgetStrategy)
+                {
+                    UndoManager.RecordState(kindData);
+                    kindData.OutfitFirstBudgetStrategy = outfitFirst;
+                    kindData.isModified = true;
                     FactionGearEditor.MarkDirty();
                 }
             }
