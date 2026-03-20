@@ -25,6 +25,8 @@
   - Responsibility: Persist per-kind switch `OutfitFirstBudgetStrategy` (default `true`), including save/load and deep-copy paths.
 - `FactionGearModification/UI/Panels/GearEditPanel.cs`
   - Responsibility: Expose `OutfitFirstBudgetStrategy` in Advanced General settings.
+  - Responsibility: Show current kind default apparel budget source (`PawnKindDef.apparelMoney`) to guide manual tuning.
+  - Contract: Manual apparel/weapon budget sliders support range `0..10000`.
 - `FactionGearModification/UI/Dialog_BatchApply.cs`
   - Responsibility: Copy `OutfitFirstBudgetStrategy` in General batch-copy category.
 
@@ -88,6 +90,8 @@
 - `FactionGearModification/UI/Panels/TopBarPanel.cs`
   - Responsibility: `Reset -> 当前 Pawn / 当前 Faction / Load Default Faction` now only touches the current target and must not call `PerformDeepCleanup`.
   - Contract: Only `ResetEVERYTHING` may clear preset binding, editor session, and save-scoped custom state.
+  - Contract: `Reset -> 当前兵种` must keep target `KindGearData.isModified == false` after reset to avoid false modified marker.
+  - Contract: Reset actions (`当前兵种/当前派系/加载默认派系`) must immediately run save-sync flow so `savedFactionGearData` is updated without extra manual save.
 - `FactionGearModification/Managers/FactionGearManager.cs`
   - Responsibility: `LoadKindDefGear` now fail-fasts on null `PawnKindDef` / `KindGearData` instead of throwing.
 - `FactionGearModification/UI/FactionGearEditor.cs`

@@ -427,7 +427,7 @@ v1.0.2
 
 
 
-v1.4.8
+v1.4.10
 - Fix: Correct `ForceOnlySelected + OutfitFirstBudgetStrategy` so failed core-outfit planning no longer preserves vanilla apparel; strict pool mode now strips and only equips valid pool apparel, leaving empty slots when needed.
 - Fix: Correct the incomplete core-outfit path in strict pool mode so it continues equipping from configured apparel pools instead of aborting the apparel pipeline.
 - Fix: Unify PawnKind target enumeration so `GetFactionKinds` merges `options/traders/carriers/guards` plus already-configured PawnKinds, restoring special Empire-derived targets such as champions/guards.
@@ -440,3 +440,8 @@ v1.4.9
 - Fix: Add fail-fast null guards to `LoadKindDefGear` to block `NullReferenceException` when the selected `PawnKindDef` cannot be resolved.
 - Fix: Add empty-override pruning before save/save-sync, preventing blank `KindGearData` entries from overriding vanilla rules.
 - Update: `ItemLibraryPanel` no longer creates empty per-pawn custom data during read-only drawing.
+v1.4.8
+- Fix: `Reset -> Current Kind` now keeps the kind override unmodified after reset (no false-positive modified marker).
+- Fix: `Reset -> Current Kind / Current Faction / Load Default Faction` now immediately runs save-sync flow so save-scoped data is updated at once.
+- Add: Advanced General now shows the default apparel budget source from `PawnKindDef.apparelMoney` for the current kind.
+- Update: Manual apparel/weapon budget slider cap increased from `5000` to `10000`.

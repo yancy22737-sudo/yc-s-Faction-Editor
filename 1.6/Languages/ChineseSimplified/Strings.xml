@@ -79,6 +79,7 @@
   <ApparelColor>服装颜色：</ApparelColor>
   <ItemQuality>物品品质</ItemQuality>
   <ApparelBudget>服装预算</ApparelBudget>
+  <DefaultApparelBudgetValue>默认服装预算来源（PawnKindDef）：{0}</DefaultApparelBudgetValue>
   <WeaponBudget>武器预算</WeaponBudget>
   <TechLevelLimit>科技限制</TechLevelLimit>
   <ForcedWeaponQuality>强制武器品质</ForcedWeaponQuality>

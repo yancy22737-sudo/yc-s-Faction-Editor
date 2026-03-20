@@ -34,6 +34,16 @@
 - Material upgrades are applied only to core items and only change material (no item-type/quality change).
 - Supplemental apparel still follows budget checks and cannot replace protected core layers.
 
+### Budget UI behavior
+- Advanced -> General displays current kind default apparel budget source (`PawnKindDef.apparelMoney`) for reference.
+- Manual override range for apparel/weapon budget sliders is `0..10000`.
+
+## Reset Sync Behavior
+
+- `Reset Current Kind`: keeps target `KindGearData.isModified == false` after reset and immediately syncs to save-scoped settings.
+- `Load Default Faction`: removes current faction override, reloads defaults, and immediately syncs to save-scoped settings.
+- `Reset Current Faction`: removes current faction override and immediately syncs to save-scoped settings.
+
 ## Hediff Target Part Mode
 
 ### Auto mode

@@ -697,6 +697,10 @@ namespace FactionGearCustomizer.UI.Panels
             bool forceIgnore = FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
 
             PawnKindDef kindDef = DefDatabase<PawnKindDef>.GetNamedSilentFail(kindData.kindDefName);
+            if (kindDef != null)
+            {
+                WidgetsUtils.Label(ui, LanguageManager.Get("DefaultApparelBudgetValue", FormatBudgetRange(kindDef.apparelMoney)));
+            }
 
             // Force Ignore option at the top
             bool localForceIgnore = kindData.ForceIgnoreRestrictions ?? forceIgnore;
@@ -1208,7 +1212,7 @@ namespace FactionGearCustomizer.UI.Panels
                 }
                 FloatRange val = range.Value;
                 FloatRange oldVal = val;
-                WidgetsUtils.FloatRange(ui.GetRect(24f), label.GetHashCode(), ref val, 0f, 5000f);
+                WidgetsUtils.FloatRange(ui.GetRect(24f), label.GetHashCode(), ref val, 0f, 10000f);
                 if (val != oldVal)
                 {
                     setRange(val);
@@ -1249,7 +1253,7 @@ namespace FactionGearCustomizer.UI.Panels
                 }
                 FloatRange val = range.Value;
                 FloatRange oldVal = val;
-                WidgetsUtils.FloatRange(ui.GetRect(24f), label.GetHashCode(), ref val, 0f, 5000f);
+                WidgetsUtils.FloatRange(ui.GetRect(24f), label.GetHashCode(), ref val, 0f, 10000f);
                 if (val != oldVal)
                 {
                     setRange(val);
@@ -1265,6 +1269,11 @@ namespace FactionGearCustomizer.UI.Panels
                     range = newRange;
                 }
             }
+        }
+
+        private static string FormatBudgetRange(FloatRange range)
+        {
+            return $"{range.min:0.#}-{range.max:0.#}";
         }
 
 

@@ -358,7 +358,7 @@ v1.0.2
 
 
 
-v1.4.8
+v1.4.10
 - Fix: 修复“仅从装备池选择 + 先成套后升材质”在核心套装失败时保留原版服装的问题；现在会严格清空并仅尝试穿戴装备池中的合法服装，允许缺位。
 - Fix: 修复核心套装不完整时直接中断的问题；严格池内模式下改为继续从用户配置池补穿，并输出区分性的失败/降级日志。
 - Fix: 统一兵种目标来源枚举，`GetFactionKinds` 现在会合并 `options/traders/carriers/guards` 与当前派系已配置的 PawnKind，补上帝国冠军等特殊来源目标。
@@ -371,3 +371,8 @@ v1.4.9
 - Fix: 为 `LoadKindDefGear` 增加 fail-fast 空值保护，阻断 `PawnKindDef` 丢失时的 `NullReferenceException`。
 - Fix: 新增空覆盖剪枝逻辑；会在保存和同步到存档前移除无实际内容的 `KindGearData`，避免空白覆盖污染原版规则。
 - Update: `ItemLibraryPanel` 纯绘制阶段不再偷偷创建当前 pawn 的空自定义数据。
+v1.4.8
+- Fix: 修复 `Reset -> 当前兵种` 在重置后被再次标记为已修改（绿色勾误报）的问题。
+- Fix: `Reset -> 当前兵种 / 当前派系 / 加载默认派系` 现在会立即走保存同步链，实时同步到 `savedFactionGearData`。
+- Add: 高级-常规新增显示当前兵种默认服装预算来源（`PawnKindDef.apparelMoney`），便于手动调参参考。
+- Update: 手动服装/武器预算滑条上限从 `5000` 提升到 `10000`。

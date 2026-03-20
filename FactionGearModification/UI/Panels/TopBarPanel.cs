@@ -325,7 +325,9 @@ namespace FactionGearCustomizer.UI.Panels
                         kindData.ResetToDefault();
                         var kindDef = DefDatabase<PawnKindDef>.GetNamedSilentFail(EditorSession.SelectedKindDefName);
                         FactionGearManager.LoadKindDefGear(kindDef, kindData);
-                        FactionGearEditor.MarkDirty();
+                        kindData.isModified = false;
+                        FactionGearEditor.SaveChanges();
+                        FactionGearEditor.RefreshAllCaches();
                     }
                 }),
                 new FloatMenuOption(LanguageManager.Get("LoadDefaultFaction"), () => {
@@ -333,7 +335,8 @@ namespace FactionGearCustomizer.UI.Panels
                     {
                         FactionGearCustomizerMod.Settings.RemoveFactionData(EditorSession.SelectedFactionDefName);
                         FactionGearManager.LoadDefaultPresets(EditorSession.SelectedFactionDefName);
-                        FactionGearEditor.MarkDirty();
+                        FactionGearEditor.SaveChanges();
+                        FactionGearEditor.RefreshAllCaches();
                     }
                 }),
                 new FloatMenuOption(LanguageManager.Get("ResetCurrentFaction"), () => {
@@ -344,7 +347,8 @@ namespace FactionGearCustomizer.UI.Panels
                             return;
                         }
 
-                        FactionGearEditor.MarkDirty();
+                        FactionGearEditor.SaveChanges();
+                        FactionGearEditor.RefreshAllCaches();
                         LogUtils.DebugLog($"Reset faction settings to default: {EditorSession.SelectedFactionDefName}");
                     }
                 }),

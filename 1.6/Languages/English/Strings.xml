@@ -79,6 +79,7 @@
   <ApparelColor>Apparel Color:</ApparelColor>
   <ItemQuality>Item Quality</ItemQuality>
   <ApparelBudget>Apparel Budget</ApparelBudget>
+  <DefaultApparelBudgetValue>Default apparel budget source (PawnKindDef): {0}</DefaultApparelBudgetValue>
   <WeaponBudget>Weapon Budget</WeaponBudget>
   <TechLevelLimit>Tech Level Limit</TechLevelLimit>
   <ForcedWeaponQuality>Weapon Quality</ForcedWeaponQuality>

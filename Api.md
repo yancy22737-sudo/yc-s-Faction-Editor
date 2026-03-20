@@ -37,6 +37,8 @@
   - Default armor floor: core armor value is constrained to at least `0.60 * budget` when feasible.
   - Performs material-only upgrades for equipped core items using remaining budget.
   - Applies supplemental apparel with normal budget checks and core-layer conflict protection.
+  - Advanced General UI now shows current kind default budget source from `PawnKindDef.apparelMoney`.
+  - Manual budget override UI range is `0..10000` for apparel/weapon budgets.
 
 ### `KindGearData.OutfitFirstBudgetStrategy`
 - Type:
@@ -47,6 +49,14 @@
   - Serialized via `Scribe_Values.Look(..., "outfitFirstBudgetStrategy", true)`.
 - Copy semantics:
   - Included in `DeepCopy`, `CopyFrom`, and batch apply `General` category copy.
+
+## Reset Sync API
+
+### `TopBarPanel.BuildResetMenuOptions`
+- Behavior:
+  - `Reset Current Kind`: resets selected `KindGearData`, reloads default kind gear, keeps `isModified == false`, then immediately runs save-sync flow.
+  - `Load Default Faction`: removes current faction override, reloads faction defaults, then immediately runs save-sync flow.
+  - `Reset Current Faction`: removes current faction override, then immediately runs save-sync flow.
 
 ## Runtime Hediff Application API
 
