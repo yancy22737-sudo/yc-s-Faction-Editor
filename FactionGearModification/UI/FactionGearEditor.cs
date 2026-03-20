@@ -127,14 +127,20 @@ namespace FactionGearCustomizer
                 IsDirty = true;
             }
 
+            PruneDefaultOverrides();
+
             if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName) && !string.IsNullOrEmpty(EditorSession.SelectedKindDefName))
             {
-                var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
-                var kindData = factionData.GetOrCreateKindData(EditorSession.SelectedKindDefName);
-                if (kindData != null) kindData.isModified = true;
+                var factionData = FactionGearCustomizerMod.Settings.TryGetFactionData(EditorSession.SelectedFactionDefName);
+                var kindData = factionData?.GetKindData(EditorSession.SelectedKindDefName);
+                if (kindData != null)
+                {
+                    kindData.isModified = true;
+                }
             }
             
             FactionListPanel.MarkDirty(); // Notify panel to refresh list if needed
+            KindListPanel.ClearCache();
         }
 
         public static void OnFactionSelected()
@@ -175,6 +181,8 @@ namespace FactionGearCustomizer
 
         public static void SaveChanges()
         {
+            PruneDefaultOverrides();
+
             if (!string.IsNullOrEmpty(FactionGearCustomizerMod.Settings.currentPresetName))
             {
                 var preset = FactionGearCustomizerMod.Settings.presets.FirstOrDefault(p => p.name == FactionGearCustomizerMod.Settings.currentPresetName);
@@ -199,6 +207,8 @@ namespace FactionGearCustomizer
         /// </summary>
         private static void SyncGlobalSettingsToSave()
         {
+            PruneDefaultOverrides();
+
             var gameComponent = FactionGearGameComponent.Instance;
             if (gameComponent == null)
             {
@@ -230,6 +240,32 @@ namespace FactionGearCustomizer
 
             // 立即应用设置到游戏
             FactionDefManager.ApplyAllSettings();
+        }
+
+        public static void PruneDefaultOverrides()
+        {
+            if (FactionGearCustomizerMod.Settings?.factionGearData == null)
+            {
+                return;
+            }
+
+            for (int i = FactionGearCustomizerMod.Settings.factionGearData.Count - 1; i >= 0; i--)
+            {
+                var factionData = FactionGearCustomizerMod.Settings.factionGearData[i];
+                if (factionData == null)
+                {
+                    FactionGearCustomizerMod.Settings.factionGearData.RemoveAt(i);
+                    continue;
+                }
+
+                factionData.RemoveDefaultKindOverrides();
+                if (factionData.IsEffectivelyDefault())
+                {
+                    FactionGearCustomizerMod.Settings.factionGearData.RemoveAt(i);
+                }
+            }
+
+            FactionGearCustomizerMod.Settings.factionGearDataDict = null;
         }
 
         public static void DrawEditor(Rect inRect)

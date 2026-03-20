@@ -650,8 +650,8 @@ namespace FactionGearCustomizer.UI.Panels
             KindGearData kindData = null;
             if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName) && !string.IsNullOrEmpty(EditorSession.SelectedKindDefName))
             {
-                var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
-                kindData = factionData.GetOrCreateKindData(EditorSession.SelectedKindDefName);
+                var factionData = FactionGearCustomizerMod.Settings.TryGetFactionData(EditorSession.SelectedFactionDefName);
+                kindData = factionData?.GetKindData(EditorSession.SelectedKindDefName);
             }
 
             Rect iconRect = new Rect(rect.x, rect.y + (rect.height - 48f) / 2f, 48f, 48f);

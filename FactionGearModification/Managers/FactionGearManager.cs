@@ -109,6 +109,12 @@ namespace FactionGearCustomizer
         // [修复] �?LoadKindDefGear 改为 public，供重置单兵种时重新抓取数据使用
         public static void LoadKindDefGear(PawnKindDef kindDef, KindGearData kindData)
         {
+            if (kindDef == null || kindData == null)
+            {
+                Log.Warning("[FactionGearCustomizer] LoadKindDefGear skipped because kindDef or kindData was null.");
+                return;
+            }
+
             // 1. 读取原版武器标签
             if (kindDef.weaponTags != null)
             {

@@ -177,6 +177,28 @@ namespace FactionGearCustomizer
             return data;
         }
 
+        public bool RemoveFactionData(string factionDefName)
+        {
+            if (string.IsNullOrEmpty(factionDefName))
+            {
+                return false;
+            }
+
+            if (factionGearDataDict == null)
+            {
+                InitializeDictionary();
+            }
+
+            if (!factionGearDataDict.TryGetValue(factionDefName, out var existing))
+            {
+                return false;
+            }
+
+            factionGearData.Remove(existing);
+            factionGearDataDict.Remove(factionDefName);
+            return true;
+        }
+
         public void AddPreset(FactionGearPreset preset)
         {
             presets.Add(preset);

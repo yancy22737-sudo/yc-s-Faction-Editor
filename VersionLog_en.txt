@@ -434,3 +434,9 @@ v1.4.8
 - Fix: Switch `ApplyToAllKindsInFaction` to the unified kind enumerator so "Apply to others" and batch apply target the same PawnKind set.
 - Fix: Guard `ApplyHediffWithPart` / `GetUserSpecifiedBodyParts` against null body/health data so one bad hediff no longer aborts the full gear application chain.
 - Update: Sync Index.md, Api.md, and config.md.
+v1.4.9
+- Fix: Correct `Reset -> Current Pawn` null-reference crash; remove the mistaken deep-cleanup call so reset no longer jumps back to the first-time preset selection flow.
+- Fix: Correct `Reset -> Current Faction` and `Load Default Faction` so they no longer clear the active preset binding; reset scope is now limited to the current target only.
+- Fix: Add fail-fast null guards to `LoadKindDefGear` to block `NullReferenceException` when the selected `PawnKindDef` cannot be resolved.
+- Fix: Add empty-override pruning before save/save-sync, preventing blank `KindGearData` entries from overriding vanilla rules.
+- Update: `ItemLibraryPanel` no longer creates empty per-pawn custom data during read-only drawing.

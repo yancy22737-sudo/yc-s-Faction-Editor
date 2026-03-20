@@ -145,6 +145,57 @@ namespace FactionGearCustomizer
                 kindGearDataDict.Add(data.kindDefName, data);
             }
         }
+
+        public bool RemoveKindData(string kindDefName)
+        {
+            if (string.IsNullOrEmpty(kindDefName))
+            {
+                return false;
+            }
+
+            if (kindGearDataDict == null)
+            {
+                InitializeDictionary();
+            }
+
+            if (!kindGearDataDict.TryGetValue(kindDefName, out var existing))
+            {
+                return false;
+            }
+
+            kindGearData.Remove(existing);
+            kindGearDataDict.Remove(kindDefName);
+            return true;
+        }
+
+        public int RemoveDefaultKindOverrides()
+        {
+            if (kindGearData == null || kindGearData.Count == 0)
+            {
+                return 0;
+            }
+
+            int removedCount = 0;
+            for (int i = kindGearData.Count - 1; i >= 0; i--)
+            {
+                var kindData = kindGearData[i];
+                if (kindData == null || string.IsNullOrEmpty(kindData.kindDefName))
+                {
+                    kindGearData.RemoveAt(i);
+                    removedCount++;
+                    continue;
+                }
+
+                if (kindData.IsEffectivelyDefault())
+                {
+                    kindGearData.RemoveAt(i);
+                    removedCount++;
+                }
+            }
+
+            InitializeDictionary();
+            return removedCount;
+        }
         
         // 获取指定兵种的数据
         public KindGearData GetKindData(string kindDefName)
@@ -164,6 +215,22 @@ namespace FactionGearCustomizer
                     kindData?.ResolveReferences();
                 }
             }
+        }
+
+        public bool IsEffectivelyDefault()
+        {
+            bool hasFactionOverrides =
+                isModified ||
+                !string.IsNullOrEmpty(Label) ||
+                !string.IsNullOrEmpty(Description) ||
+                !string.IsNullOrEmpty(IconPath) ||
+                Color.HasValue ||
+                DisableXenotypeChances ||
+                PlayerRelationOverride.HasValue ||
+                (XenotypeChances?.Count ?? 0) > 0 ||
+                (groupMakers?.Count ?? 0) > 0;
+
+            return !hasFactionOverrides && (kindGearData?.Count ?? 0) == 0;
         }
 
         public FactionGearData DeepCopy()

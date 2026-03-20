@@ -365,3 +365,9 @@ v1.4.8
 - Fix: `ApplyToAllKindsInFaction` 改为复用统一兵种枚举器，避免“应用到其他”与批量应用目标集合不一致。
 - Fix: 修复 `ApplyHediffWithPart` / `GetUserSpecifiedBodyParts` 空引用，异常不再中断整条装备应用链路。
 - Update: 同步更新 Index.md、Api.md、config.md。
+v1.4.9
+- Fix: 修复顶部 `Reset -> 当前 Pawn` 空引用崩溃；移除该入口对全局深度清理的误调用，避免点击后跳回首次预设选择界面。
+- Fix: 修复 `Reset -> 当前 Faction` 与 `Load Default Faction` 误清空当前预设绑定的问题，重置范围现严格限制为当前目标。
+- Fix: 为 `LoadKindDefGear` 增加 fail-fast 空值保护，阻断 `PawnKindDef` 丢失时的 `NullReferenceException`。
+- Fix: 新增空覆盖剪枝逻辑；会在保存和同步到存档前移除无实际内容的 `KindGearData`，避免空白覆盖污染原版规则。
+- Update: `ItemLibraryPanel` 纯绘制阶段不再偷偷创建当前 pawn 的空自定义数据。

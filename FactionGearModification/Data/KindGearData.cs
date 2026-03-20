@@ -259,6 +259,51 @@ namespace FactionGearCustomizer
             MaxAge = null;
         }
 
+        public bool IsEffectivelyDefault()
+        {
+            bool hasGear =
+                (weapons?.Count ?? 0) > 0 ||
+                (meleeWeapons?.Count ?? 0) > 0 ||
+                (armors?.Count ?? 0) > 0 ||
+                (apparel?.Count ?? 0) > 0 ||
+                (others?.Count ?? 0) > 0;
+
+            bool hasOverrides =
+                ForceNaked ||
+                ForceOnlySelected ||
+                !OutfitFirstBudgetStrategy ||
+                ItemQuality.HasValue ||
+                ForcedWeaponQuality.HasValue ||
+                BiocodeWeaponChance.HasValue ||
+                BiocodeApparelChance.HasValue ||
+                TechHediffChance.HasValue ||
+                TechHediffsMaxAmount.HasValue ||
+                ApparelMoney.HasValue ||
+                TechLevelLimit.HasValue ||
+                WeaponMoney.HasValue ||
+                ApparelColor.HasValue ||
+                ForceIgnoreRestrictions.HasValue ||
+                DisableXenotypeChances ||
+                !string.IsNullOrEmpty(ForcedXenotype) ||
+                MinAge.HasValue ||
+                MaxAge.HasValue ||
+                !string.IsNullOrEmpty(Label) ||
+                !(TechHediffTags?.Count ?? 0).Equals(0) ||
+                !(TechHediffDisallowedTags?.Count ?? 0).Equals(0) ||
+                !(WeaponTags?.Count ?? 0).Equals(0) ||
+                !(ApparelTags?.Count ?? 0).Equals(0) ||
+                !(ApparelDisallowedTags?.Count ?? 0).Equals(0) ||
+                !(ApparelRequired?.Count ?? 0).Equals(0) ||
+                !(TechRequired?.Count ?? 0).Equals(0) ||
+                !(SpecificApparel?.Count ?? 0).Equals(0) ||
+                !(SpecificWeapons?.Count ?? 0).Equals(0) ||
+                !(InventoryItems?.Count ?? 0).Equals(0) ||
+                !(ForcedHediffs?.Count ?? 0).Equals(0) ||
+                !(XenotypeChances?.Count ?? 0).Equals(0);
+
+            return !hasGear && !hasOverrides;
+        }
+
         public KindGearData DeepCopy()
         {
             var copy = new KindGearData(kindDefName)

@@ -105,7 +105,7 @@ namespace FactionGearCustomizer.UI.Panels
             
             currentX = githubRect.xMax + gap;
 
-            string versionLabel = "v1.4.2";
+            string versionLabel = "v1.4.9";
             Vector2 verSize = Text.CalcSize(versionLabel);
             Rect verRect = new Rect(currentX, buttonY, verSize.x + 10f, buttonHeight);
 
@@ -315,22 +315,23 @@ namespace FactionGearCustomizer.UI.Panels
                 new FloatMenuOption(LanguageManager.Get("ResetCurrentKind"), () => {
                     if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName) && !string.IsNullOrEmpty(EditorSession.SelectedKindDefName))
                     {
-                        // 【关键修复】首先执行完整的深度清理
-                        FactionGearCustomizerMod.PerformDeepCleanup("ResetCurrentKind");
-                        
-                        var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
-                        var kindData = factionData.GetOrCreateKindData(EditorSession.SelectedKindDefName);
+                        var factionData = FactionGearCustomizerMod.Settings.TryGetFactionData(EditorSession.SelectedFactionDefName);
+                        var kindData = factionData?.GetKindData(EditorSession.SelectedKindDefName);
+                        if (kindData == null)
+                        {
+                            return;
+                        }
+
                         kindData.ResetToDefault();
-                        FactionGearManager.LoadKindDefGear(DefDatabase<PawnKindDef>.GetNamedSilentFail(EditorSession.SelectedKindDefName), kindData);
+                        var kindDef = DefDatabase<PawnKindDef>.GetNamedSilentFail(EditorSession.SelectedKindDefName);
+                        FactionGearManager.LoadKindDefGear(kindDef, kindData);
                         FactionGearEditor.MarkDirty();
                     }
                 }),
                 new FloatMenuOption(LanguageManager.Get("LoadDefaultFaction"), () => {
                     if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName))
                     {
-                        // 【关键修复】首先执行完整的深度清理
-                        FactionGearCustomizerMod.PerformDeepCleanup("LoadDefaultFaction");
-                        
+                        FactionGearCustomizerMod.Settings.RemoveFactionData(EditorSession.SelectedFactionDefName);
                         FactionGearManager.LoadDefaultPresets(EditorSession.SelectedFactionDefName);
                         FactionGearEditor.MarkDirty();
                     }
@@ -338,11 +339,11 @@ namespace FactionGearCustomizer.UI.Panels
                 new FloatMenuOption(LanguageManager.Get("ResetCurrentFaction"), () => {
                     if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName))
                     {
-                        // 【关键修复】首先执行完整的深度清理
-                        FactionGearCustomizerMod.PerformDeepCleanup("ResetCurrentFaction");
-                        
-                        var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
-                        factionData.ResetToDefault();
+                        if (!FactionGearCustomizerMod.Settings.RemoveFactionData(EditorSession.SelectedFactionDefName))
+                        {
+                            return;
+                        }
+
                         FactionGearEditor.MarkDirty();
                         LogUtils.DebugLog($"Reset faction settings to default: {EditorSession.SelectedFactionDefName}");
                     }

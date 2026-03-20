@@ -82,3 +82,19 @@
   - Unified runtime entry for single/pool hediff application.
 - `HediffPartResolver.ResolveCandidates(Pawn, HediffDef, ForcedHediff)`
   - Returns `PartResolutionResult` with candidates, source, and warnings.
+
+## Reset And Override Hygiene
+
+- `FactionGearModification/UI/Panels/TopBarPanel.cs`
+  - Responsibility: `Reset -> 当前 Pawn / 当前 Faction / Load Default Faction` now only touches the current target and must not call `PerformDeepCleanup`.
+  - Contract: Only `ResetEVERYTHING` may clear preset binding, editor session, and save-scoped custom state.
+- `FactionGearModification/Managers/FactionGearManager.cs`
+  - Responsibility: `LoadKindDefGear` now fail-fasts on null `PawnKindDef` / `KindGearData` instead of throwing.
+- `FactionGearModification/UI/FactionGearEditor.cs`
+  - Responsibility: Prune empty `KindGearData` overrides before preset save and save-sync so blank runtime objects cannot override vanilla rules.
+- `FactionGearModification/Data/FactionGearData.cs`
+  - Responsibility: Owns explicit `KindGearData` removal and default-override pruning while keeping list/dictionary indexes in sync.
+- `FactionGearModification/Core/FactionGearCustomizerSettings.cs`
+  - Responsibility: Owns explicit faction-level removal so target-scoped reset can delete the active override without clearing unrelated preset/save state.
+- `FactionGearModification/UI/Panels/ItemLibraryPanel.cs`
+  - Responsibility: Read-only drawing must not create current-kind override data as a side effect.
