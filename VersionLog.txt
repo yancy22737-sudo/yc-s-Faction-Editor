@@ -1,4 +1,19 @@
-﻿v1.4.7
+﻿v1.5.2
+- Fix: 优化语言回退热路径，语言变化时只更新一次回退链，避免在 UI 每帧大量重复归一语言名与分配枚举器。
+- Fix: 保持繁中优先退简中、其它语言退英文，同时降低未提供语言包环境下打开 mod 的性能开销。
+
+v1.5.1
+- Fix: 新增语言文件回退链；当前语言缺少对应 Keyed 文件时自动回退到英文。
+- Fix: 繁体中文特殊处理为 ChineseTraditional -> ChineseSimplified -> English，避免繁中环境直接暴露语言键。
+- Update: 同步更新 LanguageManager、Index.md、Api.md、config.md 文档说明。
+
+v1.5.0
+- Fix: 翻译加载链路切换为 RimWorld 原生 Keyed/DefInjected，第三方翻译 mod 可按标准方式覆盖本 mod UI 文本。
+- Fix: LanguageManager 降级为过渡包装层，不再从本 mod 私有 Strings.xml 直接加载文本。
+- Update: 中英文语言资源迁移到 1.6/Languages/*/Keyed/FactionGearCustomizer.xml。
+- Update: 同步更新 Index.md、Api.md、config.md，明确外部翻译接入方式。
+
+v1.4.7
 - Update: 优先套装策略改为按服装预算上限（max）构建核心套装，不再使用随机预算。
 - Update: 核心套装选择逻辑改为“超预算自动替换降级直到不超预算”（可行时）。
 - Add: 新增默认防具预算下限约束：核心防具价值（中层防护+外层）不低于预算的60%（可行时）。
@@ -376,3 +391,6 @@ v1.4.8
 - Fix: `Reset -> 当前兵种 / 当前派系 / 加载默认派系` 现在会立即走保存同步链，实时同步到 `savedFactionGearData`。
 - Add: 高级-常规新增显示当前兵种默认服装预算来源（`PawnKindDef.apparelMoney`），便于手动调参参考。
 - Update: 手动服装/武器预算滑条上限从 `5000` 提升到 `10000`。
+
+
+

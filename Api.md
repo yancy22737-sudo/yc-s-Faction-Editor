@@ -1,5 +1,18 @@
 # API Notes
 
+## Translation API
+
+### `LanguageManager.Get`
+- Contract:
+  - Kept as a compatibility wrapper for existing C# call sites.
+  - Resolves the base text through RimWorld native `Translate()`.
+- Behavior:
+  - No longer loads `Strings.xml` from this mod folder.
+  - Formatted variants use `string.Format(...)` on the translated template.
+  - Third-party translation mods can now override UI text through standard `Keyed/DefInjected` resources.
+  - If the active-language translation is missing, this mod falls back to its own keyed file for that language; non-Traditional-Chinese languages then fall back to English.
+  - Traditional Chinese uses a dedicated fallback chain: `ChineseTraditional -> ChineseSimplified -> English`.
+
 ## Strict Pool Fallback API
 
 ### `GearApplier.ApplyApparel`

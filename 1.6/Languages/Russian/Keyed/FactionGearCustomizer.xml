@@ -1,0 +1,1065 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <FactionGearCustomizer>Редактор фракций от yc</FactionGearCustomizer>
+  <Factions>Фракции</Factions>
+  <ItemLibrary>Библиотека предметов</ItemLibrary>
+  <Advanced>Дополнительно</Advanced>
+  <Simple>Основное</Simple>
+  <Preview>Предпросмотр</Preview>
+  <PawnGroupPreviewTitle>Предпросмотр группы</PawnGroupPreviewTitle>
+  <Seed>Сид</Seed>
+  <DrawsPerList>Кол-во выборок</DrawsPerList>
+  <RebuildPreview>Обновить</RebuildPreview>
+  <GeneratePortraits>Создать портреты</GeneratePortraits>
+  <ClearAll>Очистить всё</ClearAll>
+  <Clear>Очистить</Clear>
+  <ApplyOthers>Применить к остальным</ApplyOthers>
+  <Yes>Да</Yes>
+  <Cancel>Отмена</Cancel>
+  <Save>Сохранить</Save>
+  <SaveAs>Сохранить как</SaveAs>
+  <Load>Загрузить</Load>
+  <Delete>Удалить</Delete>
+  <Export>Экспорт</Export>
+  <Import>Импорт</Import>
+  <Apply>Применить</Apply>
+  <Reset>Сбросить</Reset>
+  <Close>Закрыть</Close>
+  <Confirm>Подтвердить</Confirm>
+  <AddNewApparel>Добавить одежду</AddNewApparel>
+  <AddNewWeapon>Добавить оружие</AddNewWeapon>
+  <AddNewHediff>Добавить состояние здоровья</AddNewHediff>
+  <PickColor>Выбрать цвет</PickColor>
+  <SetColor>Установить цвет</SetColor>
+  <SelectItem>Выбрать предмет</SelectItem>
+  <SelectHediff>Выбрать состояние</SelectHediff>
+  <Show>Показать</Show>
+  <Hide>Скрыть</Hide>
+  <Disabled>Отключено</Disabled>
+  <All>Все</All>
+  <None>Ни одного</None>
+  <Invert>Инвертировать</Invert>
+  <Default>По умолчанию</Default>
+  <RandomDefault>Случайный материал</RandomDefault>
+  <SelectedGear>Выбранное снаряжение</SelectedGear>
+  <AdvancedSettings>Расширенные настройки</AdvancedSettings>
+  <LayerPreview>Предпросмотр слоёв</LayerPreview>
+  <GeneralOverrides>Общие переопределения</GeneralOverrides>
+  <SpecificApparelAdvanced>Конкретная одежда (расш.)</SpecificApparelAdvanced>
+  <SpecificWeaponsAdvanced>Конкретное оружие (расш.)</SpecificWeaponsAdvanced>
+  <ForcedHediffs>Принудительные состояния</ForcedHediffs>
+  <HediffPickerTitle>Добавить состояние здоровья</HediffPickerTitle>
+  <InventoryItems>Инвентарь</InventoryItems>
+  <AddNewItem>Добавить предмет</AddNewItem>
+  <QuickAdd>Быстрое добавление</QuickAdd>
+  <InventoryItemPickerTitle>Добавить предмет</InventoryItemPickerTitle>
+  <ApparelPickerTitle>Добавить одежду</ApparelPickerTitle>
+  <WeaponPickerTitle>Добавить оружие</WeaponPickerTitle>
+  <DefaultCountRange>Кол-во по умолчанию</DefaultCountRange>
+  <DefaultSelectionMode>Режим по умолчанию: {0}</DefaultSelectionMode>
+  <DefaultChance>Шанс по умолчанию</DefaultChance>
+  <SkipExistingItems>Пропускать существующие</SkipExistingItems>
+  <AlreadyAdded>Уже добавлено</AlreadyAdded>
+  <AddSelected>Добавить выбранное</AddSelected>
+  <InventoryItemsAddedMessage>Добавлено предметов: {0}, пропущено дубликатов: {1}.</InventoryItemsAddedMessage>
+  <ApparelItemsAddedMessage>Добавлено одежды: {0}, пропущено дубликатов: {1}.</ApparelItemsAddedMessage>
+  <WeaponItemsAddedMessage>Добавлено оружия: {0}, пропущено дубликатов: {1}.</WeaponItemsAddedMessage>
+  <HediffsAddedMessage>Добавлено состояний: {0}, пропущено дубликатов: {1}.</HediffsAddedMessage>
+  <SelectionModeAlwaysTake>Всегда</SelectionModeAlwaysTake>
+  <SelectionModeRandomChance>Шанс</SelectionModeRandomChance>
+  <SelectionModeFromPool>Пул {0}</SelectionModeFromPool>
+  <Items>Предметы</Items>
+  <Count>Кол-во</Count>
+  <AdvancedSpecificItems>Доп./Конкретные предметы</AdvancedSpecificItems>
+  <EditFactionDetails>Редактировать фракцию</EditFactionDetails>
+  <ModFilter>Фильтр модов</ModFilter>
+  <CategoryFilter>Фильтр категорий</CategoryFilter>
+  <CategoryAll>Категория: Все</CategoryAll>
+  <CategoryCountSelected>Категория: Выбрано {0}</CategoryCountSelected>
+  <ApparelColor>Цвет одежды:</ApparelColor>
+  <ItemQuality>Качество предмета</ItemQuality>
+  <ApparelBudget>Бюджет на одежду</ApparelBudget>
+  <DefaultApparelBudgetValue>Источник бюджета на одежду (PawnKindDef): {0}</DefaultApparelBudgetValue>
+  <WeaponBudget>Бюджет на оружие</WeaponBudget>
+  <TechLevelLimit>Лимит тех. уровня</TechLevelLimit>
+  <ForcedWeaponQuality>Качество оружия</ForcedWeaponQuality>
+  <BiocodeChance>Шанс биокодирования</BiocodeChance>
+  <BiocodeApparelChance>Шанс биокодирования одежды</BiocodeApparelChance>
+  <Biocode>Биокод</Biocode>
+  <ForceNaked>Принудительно раздеть</ForceNaked>
+  <ForceOnlySelected>Только выбранное</ForceOnlySelected>
+  <MinMax>Мин. (Игнор принуждения)</MinMax>
+  <MaxForceIgnore>Макс. (Игнор принуждения)</MaxForceIgnore>
+  <Ranged>Стрелковое</Ranged>
+  <Melee>Ближний бой</Melee>
+  <Armors>Броня</Armors>
+  <Clothes>Одежда</Clothes>
+  <Others>Прочее</Others>
+  <General>Общее</General>
+  <Apparel>Одежда</Apparel>
+  <Weapons>Оружие</Weapons>
+  <Hediffs>Состояния</Hediffs>
+  <Head>Голова</Head>
+  <Torso>Торс</Torso>
+  <Shoulders>Плечи</Shoulders>
+  <Arms>Руки</Arms>
+  <Hands>Кисти</Hands>
+  <Waist>Пояс</Waist>
+  <Legs>Ноги</Legs>
+  <Feet>Ступни</Feet>
+  <Skin>Кожа</Skin>
+  <Mid>Средний слой</Mid>
+  <SettingsSaved>Настройки сохранены!</SettingsSaved>
+  <SettingsDiscarded>Настройки сброшены.</SettingsDiscarded>
+  <PresetUpdated>Пресет «{0}» обновлен</PresetUpdated>
+  <PresetSaved>Пресет сохранен</PresetSaved>
+  <TipCreatePreset>Совет: создайте пресет, чтобы сохранить свою работу!</TipCreatePreset>
+  <CannotPreviewFactionNotPresent>Предпросмотр невозможен: фракция отсутствует в текущей игре.</CannotPreviewFactionNotPresent>
+  <AppliedToAllKinds>Текущее снаряжение применено ко всем видам пешек в этой фракции!</AppliedToAllKinds>
+  <CopiedKindGear>Снаряжение вида скопировано!</CopiedKindGear>
+  <PastedGearTo>Снаряжение вставлено в {0}</PastedGearTo>
+  <CopiedGearFrom>Снаряжение скопировано из {0}</CopiedGearFrom>
+  <ClearAllGearConfirm>Очистить всё снаряжение</ClearAllGearConfirm>
+  <ClearAllGearConfirmMessage>Очистить всё снаряжение для этого вида?</ClearAllGearConfirmMessage>
+  <ClearCategoryGearConfirm>Очистить категорию</ClearCategoryGearConfirm>
+  <ClearCategoryGearConfirmMessage>Очистить все предметы в этой категории?</ClearCategoryGearConfirmMessage>
+  <ApplyToAllKindsConfirm>Перезаписать все виды в этой фракции текущей конфигурацией снаряжения?</ApplyToAllKindsConfirm>
+  <NoItemsInThisCategory>В этой категории нет предметов.</NoItemsInThisCategory>
+  <SelectAKindDefFirst>Пожалуйста, сначала выберите вид пешки.</SelectAKindDefFirst>
+  <PresetManager>Менеджер пресетов</PresetManager>
+  <PresetMetadataSaved>Метаданные пресета сохранены.</PresetMetadataSaved>
+  <PresetUpdatedFromGameSettings>Пресет обновлен на основе игровых настроек.</PresetUpdatedFromGameSettings>
+  <PresetOverwritten>Пресет «{0}» перезаписан текущими настройками!</PresetOverwritten>
+  <NewPresetCreated>Новый пресет создан и сохранен с текущими настройками!</NewPresetCreated>
+  <PresetApplied>Пресет успешно применен к текущей игре!</PresetApplied>
+  <ApplyPresetFailed>Не удалось применить пресет. Проверьте логи для подробностей.</ApplyPresetFailed>
+  <PresetDeleted>Пресет удален.</PresetDeleted>
+  <PresetCleared>Данные пресета очищены.</PresetCleared>
+  <PresetExportedToClipboard>Пресет «{0}» экспортирован в буфер обмена!</PresetExportedToClipboard>
+  <ImportFailedInvalidData>Ошибка импорта: неверные данные пресета в буфере обмена!</ImportFailedInvalidData>
+  <ImportFailed>Ошибка импорта: {0}</ImportFailed>
+  <ClipboardIsEmpty>Буфер обмена пуст!</ClipboardIsEmpty>
+  <ExportFailed>Ошибка экспорта!</ExportFailed>
+  <PresetImportedFromClipboard>Пресет «{0}» импортирован из буфера обмена!</PresetImportedFromClipboard>
+  <FactionDetailsUpdated>Детали фракции обновлены (только в памяти)</FactionDetailsUpdated>
+  <TechLevel>Технологический уровень</TechLevel>
+  <QualityAwful>Ужасное</QualityAwful>
+  <QualityPoor>Плохое</QualityPoor>
+  <QualityNormal>Обычное</QualityNormal>
+  <QualityGood>Хорошее</QualityGood>
+  <QualityExcellent>Отличное</QualityExcellent>
+  <QualityMasterwork>Шедевр</QualityMasterwork>
+  <QualityLegendary>Легендарное</QualityLegendary>
+  <SelectionModeIfPossible>Если возможно</SelectionModeIfPossible>
+  <SelectionModeBest>Лучшее</SelectionModeBest>
+  <SelectionModeRandom>Случайно</SelectionModeRandom>
+  <ResetFilters>Сбросить фильтры</ResetFilters>
+  <ResetCurrentKind>Сбросить текущий вид</ResetCurrentKind>
+  <LoadDefaultFaction>Загрузить фракцию по умолчанию</LoadDefaultFaction>
+  <ResetCurrentFaction>Сбросить текущую фракцию</ResetCurrentFaction>
+  <ResetEVERYTHING>Сбросить ВСЁ</ResetEVERYTHING>
+  <UndoTooltip>Отмена (Ctrl+Z)</UndoTooltip>
+  <RedoTooltip>Повтор (Ctrl+Y)</RedoTooltip>
+  <PreviewAllKindsTooltip>Предпросмотр всех видов пешек для этой фракции</PreviewAllKindsTooltip>
+  <PreviewInGameOnlyTooltip>Доступно только в игре</PreviewInGameOnlyTooltip>
+  <ApplyToOthersTooltip>Применить текущее снаряжение ко всем остальным видам в этой фракции</ApplyToOthersTooltip>
+  <ClearCategoryTooltip>Очистить все предметы в текущей категории.</ClearCategoryTooltip>
+  <ForceNakedTooltip>Если включено, снимает всю одежду при применении снаряжения, оставляя пешку раздетой.
+
+Требуется подтверждение возраста.</ForceNakedTooltip>
+  <ForceOnlySelectedTooltip>Если включено, всё существующее/ванильное снаряжение будет снято перед применением пользовательского. Гарантирует, что пешки будут носить только то, что вы укажете, предотвращая смешивание с ванильным.
+
+Рекомендуется: включить для полного контроля.</ForceOnlySelectedTooltip>
+  <WeightMechanicsTooltip>Механика веса: В RimWorld вес снаряжения действует как вес выбора, а не 100% вероятность. Снаряжение с бóльшим весом имеет приоритет, но это не гарантировано.</WeightMechanicsTooltip>
+  <ColorPicker>Выбор цвета</ColorPicker>
+  <ColorPickerApply>Применить</ColorPickerApply>
+  <UnsavedChanges>Несохраненные изменения</UnsavedChanges>
+  <UnsavedChangesMessage>У вас есть несохраненные изменения. Сохранить их?</UnsavedChangesMessage>
+  <Discard>Отменить изменения</Discard>
+  <Version>Версия</Version>
+  <VersionLog>Список изменений</VersionLog>
+  <GiveMeALike>Поставьте лайк!</GiveMeALike>
+  <AvgValue>Ср. цена</AvgValue>
+  <AvgWeight>Ср. вес</AvgWeight>
+  <Weight>Вес</Weight>
+  <Missing>Отсутствует</Missing>
+  <MissingParts>Отсутствующие части</MissingParts>
+  <NoPreset>[Нет пресета]</NoPreset>
+  <NoPresetWarning>Нет активного пресета</NoPresetWarning>
+  <NoPresetDescription>Вам нужно создать или загрузить пресет, чтобы начать настройку снаряжения фракции. Пресеты сохраняют ваши конфигурации.</NoPresetDescription>
+  <CreatePreset>Создать пресет</CreatePreset>
+  <PresetEqualsConfigTip>Совет: Пресет = Конфигурация. Создайте пресет, чтобы начать редактирование</PresetEqualsConfigTip>
+  <ClearAllConfigs>Очистить все конфигурации</ClearAllConfigs>
+  <ClearAllConfigsTooltip>Очистить все сохраненные данные конфигураций, вернуться к исходному состоянию</ClearAllConfigsTooltip>
+  <ClearAllConfigsConfirm>Очистить все конфигурации?</ClearAllConfigsConfirm>
+  <ClearAllConfigsConfirmMessage>Это удалит все сохраненные конфигурации снаряжения фракций, действие нельзя отменить.</ClearAllConfigsConfirmMessage>
+  <ActivePreset>[Текущий: {0}]</ActivePreset>
+  <AddedItemsToGearList>Предметы добавлены в список снаряжения: {0}</AddedItemsToGearList>
+  <SaveChangesToGame>Сохранить изменения в текущей игре</SaveChangesToGame>
+  <SaveImmediateEffectTooltip>Все изменения вступают в силу немедленно, перезапуск не требуется.</SaveImmediateEffectTooltip>
+  <Presets>Пресеты</Presets>
+  <Options>Настройки</Options>
+  <AdvancedOptionsTooltip>Расширенные настройки</AdvancedOptionsTooltip>
+  <ShowHiddenFactions>Показывать скрытые/нечеловеческие фракции</ShowHiddenFactions>
+  <ShowInMainTab>Показывать основную кнопку</ShowInMainTab>
+  <EnableDebugLog>Включить журнал отладки</EnableDebugLog>
+  <EnableDebugLogTooltip>При включении во время игры будут выводиться подробные отладочные сообщения для поиска неисправностей. Рекомендуется включать только при необходимости, чтобы избежать разрастания файлов логов.</EnableDebugLogTooltip>
+  <ForceIgnore>Принудительное игнорирование</ForceIgnore>
+  <ForceIgnoreTooltip>Принудительно удалять конфликтующую одежду/оружие и игнорировать бюджетные ограничения. Пешки будут пытаться экипировать все возможные предметы из списка конфигурации, что позволит вам обходить ограничения и создавать «имбовых» персонажей.</ForceIgnoreTooltip>
+  <ForceIgnoreGlobal>Глобальное принудительное игнорирование</ForceIgnoreGlobal>
+  <ForceIgnoreGlobalTooltip>Глобальная настройка: принудительно удалять конфликтующую одежду/оружие и игнорировать бюджетные ограничения. Используется по умолчанию для всех видов пешек, может быть переопределена локальными настройками.</ForceIgnoreGlobalTooltip>
+  <ForceIgnoreLocal>Локальное принудительное игнорирование</ForceIgnoreLocal>
+  <ForceIgnoreLocalTooltip>Локальная настройка: принудительно удалять конфликтующую одежду/оружие и игнорировать бюджетные ограничения только для этого вида пешек. Переопределяет глобальную настройку.</ForceIgnoreLocalTooltip>
+  <AdvancedItemTooltip>Этот предмет был добавлен через расширенный режим (особые требования).</AdvancedItemTooltip>
+  <Shell>Верхняя одежда</Shell>
+  <Belt>Пояс</Belt>
+  <Over>Поверх одежды</Over>
+  <Reroll>Перебросить</Reroll>
+  <Retry>Повторить</Retry>
+  <PortraitUnavailable>Портрет недоступен</PortraitUnavailable>
+  <Rotate>Поворот</Rotate>
+  <RerollPawn>Пересоздать пешку</RerollPawn>
+  <EquippedGear><b>Экипировано:</b></EquippedGear>
+  <ApparelWorn><b>Надето:</b></ApparelWorn>
+  <FailedToGeneratePreview>Ошибка предпросмотра. (Возможно, фракция неактивна)</FailedToGeneratePreview>
+  <SavedPresets>Сохраненные пресеты</SavedPresets>
+  <SearchPresets>Поиск пресетов</SearchPresets>
+  <CreateNew>Создать новый</CreateNew>
+  <Name>Имя</Name>
+  <Add>Добавить</Add>
+  <AddAll>Добавить всё</AddAll>
+  <SelectPresetFirst>Пожалуйста, сначала выберите пресет из списка слева.</SelectPresetFirst>
+  <PresetDetails>Детали пресета</PresetDetails>
+  <PresetName>Имя пресета</PresetName>
+  <Description>Описание</Description>
+  <Management><b>Управление:</b></Management>
+  <SaveNameDesc>Сохранить имя/описание</SaveNameDesc>
+  <UpdateFromGame>Обновить из игры</UpdateFromGame>
+  <LoadPresetConfirmTitle>Перезаписать пресет «{0}» текущими игровыми настройками?</LoadPresetConfirmTitle>
+  <LoadPresetConfirmMessage>Перезаписать данные снаряжения этого пресета текущей игровой конфигурацией?</LoadPresetConfirmMessage>
+  <UpdateFromGameTooltip>Перезаписать данные снаряжения этого пресета текущей игровой конфигурацией.</UpdateFromGameTooltip>
+  <RequiredMods>Требуемые моды</RequiredMods>
+  <FactionPreview>Предпросмотр фракции</FactionPreview>
+  <NoFactionDataInPreset>В пресете нет данных о фракции.</NoFactionDataInPreset>
+  <NoRequiredMods>Нет требуемых модов.</NoRequiredMods>
+  <ModNotActiveTooltip>Этот мод не включен в текущей игре.</ModNotActiveTooltip>
+  <Chance>Шанс</Chance>
+  <MaxParts>Части</MaxParts>
+  <Severity>Сила воздействия</Severity>
+  <SelectHediffToViewDetails>Выберите состояние здоровья, чтобы увидеть детали.</SelectHediffToViewDetails>
+  <FromMod>Из мода</FromMod>
+  <KindDefs>Виды пешек (KindDefs)</KindDefs>
+  <DontShowAgain>Больше не показывать</DontShowAgain>
+  <Label>Название</Label>
+  <InGame>В игре</InGame>
+  <ShowInGameFactionNamesTooltip>Показывать названия внутриигровых фракций. Посерено, если фракции нет в текущей игре.</ShowInGameFactionNamesTooltip>
+  <LoadPreset>Загрузить пресет</LoadPreset>
+  <LoadPresetTooltip>Применить этот пресет к вашей игре.</LoadPresetTooltip>
+  <LoadPresetConfirmTitle>Загрузить пресет</LoadPresetConfirmTitle>
+  <LoadPresetConfirmMessage>Очистить текущее пользовательское снаряжение перед применением пресета?
+
+Да: Перезаписать всё (Рекомендуется)
+Нет: Объединить с текущим</LoadPresetConfirmMessage>
+  <LoadPresetOverwrite>Да (Перезаписать)</LoadPresetOverwrite>
+  <LoadPresetMerge>Нет (Объединить)</LoadPresetMerge>
+  <MissingModsWarningTitle>Внимание: Отсутствуют требуемые моды</MissingModsWarningTitle>
+  <MissingModsWarningMessage>Следующие требуемые моды для этого пресета отсутствуют или отключены:
+
+- {0}
+
+Применение этого пресета может привести к отсутствию предметов или ошибкам. Продолжить?</MissingModsWarningMessage>
+  <MissingModsWarningRiskIt>Да (Рискнуть)</MissingModsWarningRiskIt>
+  <MissingModsWarningCancel>Нет (Отмена)</MissingModsWarningCancel>
+  <DeletePresetConfirm>Безвозвратно удалить пресет «{0}»?</DeletePresetConfirm>
+  <ClearPresetConfirm>Очистить все данные из пресета «{0}»?</ClearPresetConfirm>
+  <ExportTooltip>Скопировать пресет в буфер обмена для обмена с другими.</ExportTooltip>
+  <ClearPresetTooltip>Очистить все данные пресета, но сохранить сам пресет.</ClearPresetTooltip>
+  <DeletePresetTooltip>Удалить этот пресет (удаляет только запись о пресете, не делает автоматический откат сохраненных изменений).</DeletePresetTooltip>
+  <SavePresetMetadataTooltip>Сохранить только имя/описание текущего пресета (не будет обновлять контент снаряжения).</SavePresetMetadataTooltip>
+  <CreatePresetTooltip>Создать новый пресет и сохранить текущие настройки в качестве начальных данных.</CreatePresetTooltip>
+  <ImportFromClipboard>Импортировать из буфера обмена</ImportFromClipboard>
+  <ImportFromClipboardTooltip>Импортировать пресет из base64 строки в буфере обмена.</ImportFromClipboardTooltip>
+  <PresetAlreadyExists>Пресет «{0}» уже существует. Перезаписать?</PresetAlreadyExists>
+  <Overwrite>Перезаписать</Overwrite>
+  <CannotAddItemsInCurrentTabTooltip>Невозможно добавить предметы на текущей вкладке расширенного режима.</CannotAddItemsInCurrentTabTooltip>
+  <NewPreset>Новый пресет</NewPreset>
+  <ClearSearch>Очистить поиск</ClearSearch>
+  <ModAll>Все</ModAll>
+  <ModCountSelected>Мод: Выбрано {0}</ModCountSelected>
+  <FilterByModTooltip>Фильтр по моду (множественный выбор)</FilterByModTooltip>
+  <AmmoAll>Калибр: Все</AmmoAll>
+  <AmmoFilter>Фильтр калибра</AmmoFilter>
+  <FilterByAmmoTooltip>Фильтр по калибру боеприпасов (множественный выбор)</FilterByAmmoTooltip>
+  <AmmoCountSelected>Калибр: Выбрано {0}</AmmoCountSelected>
+  <TechAll>Тех.: Все</TechAll>
+  <FilterByTechLevelTooltip>Фильтр по тех. уровню. Уровень берется из предмета/оружия, используется для разделения на примитивный/средневековый/индустриальный/космический и т.д.</FilterByTechLevelTooltip>
+  <SortBy>Сортировка: {0}</SortBy>
+  <SortAscending>По возрастанию</SortAscending>
+  <SortDescending>По убыванию</SortDescending>
+  <SortFieldTooltip>Нажмите, чтобы выбрать поле сортировки. В разных категориях доступны разные поля.</SortFieldTooltip>
+  <SortField_Name>Имя</SortField_Name>
+  <SortField_MarketValue>Рыночная цена</SortField_MarketValue>
+  <SortField_TechLevel>Тех. уровень</SortField_TechLevel>
+  <SortField_ModSource>Мод</SortField_ModSource>
+  <SortField_Accuracy>Точность</SortField_Accuracy>
+  <SortField_DPS>УВС</SortField_DPS>
+  <SortField_Armor_Sharp>Защита от острых</SortField_Armor_Sharp>
+  <SortField_Armor_Blunt>Защита от тупых</SortField_Armor_Blunt>
+  <BaseMarketValue>Рыночная цена</BaseMarketValue>
+  <Weight>Вес</Weight>
+  <Damage>Урон</Damage>
+  <Range>Дальность</Range>
+  <DPS>УВС</DPS>
+  <ArmorSharp>Защита от острых</ArmorSharp>
+  <ArmorBlunt>Защита от тупых</ArmorBlunt>
+  <Value>Цена</Value>
+  <RangeFilterTooltip>Перетащите ползунок для фильтрации диапазона {0} (мин~макс). Верхний предел диапазона берется из текущего списка кандидатов.</RangeFilterTooltip>
+  <Material>Материал</Material>
+  <MaterialSelect>Материал: {0}</MaterialSelect>
+  <QualitySelect>Качество: {0}</QualitySelect>
+  <SelectionMode>Режим: {0}</SelectionMode>
+  <SelectionMode_AlwaysTake>Всегда</SelectionMode_AlwaysTake>
+  <SelectionMode_RandomChance>Шанс</SelectionMode_RandomChance>
+  <SelectionMode_FromPool1>Пул 1</SelectionMode_FromPool1>
+  <SelectionMode_FromPool2>Пул 2</SelectionMode_FromPool2>
+  <SelectionMode_FromPool3>Пул 3</SelectionMode_FromPool3>
+  <SelectionMode_FromPool4>Пул 4</SelectionMode_FromPool4>
+  <Remove>Удалить</Remove>
+  <Search>Поиск</Search>
+  <Active>(Активно)</Active>
+  <ManagePresetsTooltip>Управление пресетами снаряжения</ManagePresetsTooltip>
+  <GithubLinkTooltip>Открыть домашнюю страницу проекта (сообщить об ошибках/просмотреть обновления).</GithubLinkTooltip>
+  <VersionLogTooltip>Просмотреть список изменений и обновления.</VersionLogTooltip>
+  <ResetMenuTooltip>Открыть меню сброса: сброс фильтров, текущего вида, текущей фракции или всех настроек.</ResetMenuTooltip>
+  <Changelog>Список изменений</Changelog>
+  <FactionEdit>Редактирование фракции</FactionEdit>
+  <FactionEditTooltip>Редактирование фракций, групп пешек [Добавление новых видов пешек], добавление поселений, настройка шансов ксенотипов.</FactionEditTooltip>
+  <Settings>Настройки</Settings>
+  <PawnKinds>Виды пешек</PawnKinds>
+  <FactionName>Имя фракции</FactionName>
+  <FactionDescription>Описание фракции</FactionDescription>
+  <FactionIconPath>Путь к иконке</FactionIconPath>
+  <FactionColor>Цвет фракции</FactionColor>
+  <PawnKindLabel>Название вида</PawnKindLabel>
+  <OriginalValue>Оригинал</OriginalValue>
+  <CurrentValue>Текущее</CurrentValue>
+  <ApplyChanges>Применить изменения</ApplyChanges>
+  <ResetChanges>Сбросить изменения</ResetChanges>
+  <Browse>Обзор</Browse>
+  <IconPathPlaceholder>Введите путь к текстуре (например, World/WorldObjects/Expanding/Town)</IconPathPlaceholder>
+  <OnlyAvailableInGame>Доступно только в игре.</OnlyAvailableInGame>
+  <FactionEditDisabledInLiteMode>Редактирование фракций недоступно при создании мира. Пожалуйста, зайдите в полноценный редактор через настройки мода после начала игры.</FactionEditDisabledInLiteMode>
+  <NewFactionDisabledInLiteMode>Добавление фракций недоступно при создании мира. Пожалуйста, зайдите в полноценный редактор через настройки мода после начала игры.</NewFactionDisabledInLiteMode>
+  <FiltersDisabledInLiteMode>Фильтры предметов недоступны при создании мира. Пожалуйста, зайдите в полноценный редактор через настройки мода после начала игры.</FiltersDisabledInLiteMode>
+  <AdvancedModeTooltip>Расширенный режим: предоставляет более тонкий контроль редактирования (конкретные предметы/особые требования). Простой режим редактирует только базовые пулы снаряжения.</AdvancedModeTooltip>
+  <ClearAllGearTooltip>Очистить все конфигурации пользовательского снаряжения для текущего вида. Показывает подтверждение, действие можно отменить.</ClearAllGearTooltip>
+  <FactionInfoCardTooltip>Просмотреть информационную карточку Def этой фракции.</FactionInfoCardTooltip>
+  <DefName>DefName</DefName>
+  <XenotypeChances>Шансы ксенотипов (Biotech)</XenotypeChances>
+  <DisableXenotypeChances>Отключить управление шансами ксенотипов</DisableXenotypeChances>
+  <AddXenotype>Добавить ксенотип</AddXenotype>
+  <AllXenotypesAdded>Все ксенотипы добавлены.</AllXenotypesAdded>
+  <KindXenotypeSettings>Настройки ксенотипов вида</KindXenotypeSettings>
+  <KindXenotypeTooltip>Установите независимые шансы появления ксенотипов для этого вида пешек, переопределяя настройки уровня фракции.</KindXenotypeTooltip>
+  <XenoButtonLabel>Ксено</XenoButtonLabel>
+  <ForcedXenotype>Принудительный ксенотип</ForcedXenotype>
+  <ForcedXenotypeTooltip>Заставить этот вид пешек появляться только с этим ксенотипом, игнорируя настройки шансов.</ForcedXenotypeTooltip>
+  <SelectXenotype>Выбрать ксенотип</SelectXenotype>
+  <ClearForcedXenotype>Очистить</ClearForcedXenotype>
+  <Total>Итого</Total>
+  <XenotypeChancesExceed100>Шансы ксенотипов не могут превышать 100%</XenotypeChancesExceed100>
+  <BatchApply>Пакетное применение</BatchApply>
+  <BatchApplyTooltip>Открыть окно пакетного применения, чтобы применить текущую конфигурацию к выбранным видам.</BatchApplyTooltip>
+  <BatchApplyTitle>Пакетное применение конфигурации</BatchApplyTitle>
+  <SelectAll>Выбрать все</SelectAll>
+  <SelectNone>Отменить всё</SelectNone>
+  <Selected>Выбрано</Selected>
+  <BatchApplyConfirm>Применить конфигурацию к {0} выбранным видам?</BatchApplyConfirm>
+  <BatchApplied>Конфигурация применена к {0} видам.</BatchApplied>
+  <BatchApplySource>Источник</BatchApplySource>
+  <BatchCopyCategories>Копировать категории</BatchCopyCategories>
+  <BatchTargetFaction>Целевая фракция</BatchTargetFaction>
+  <BatchApplyNoCategorySelected>Пожалуйста, выберите хотя бы одну категорию для копирования.</BatchApplyNoCategorySelected>
+  <NewFaction>Новая</NewFaction>
+  <NewFactionTooltip>Создать новую фракцию. Доступно только в игре.</NewFactionTooltip>
+  <CreateFaction>Создать фракцию</CreateFaction>
+  <CreateFactionTooltip>Создать новую фракцию путем клонирования существующей.</CreateFactionTooltip>
+  <SelectTemplateFaction>Выберите шаблон фракции</SelectTemplateFaction>
+  <SelectTemplateFactionTooltip>Выберите фракцию, которая будет использоваться в качестве шаблона. Новая фракция унаследует определения видов пешек и настройки генерации поселений.</SelectTemplateFactionTooltip>
+  <NewFactionDefName>DefName новой фракции</NewFactionDefName>
+  <NewFactionLabel>Название новой фракции</NewFactionLabel>
+  <CloneFactionSuccess>Новая фракция успешно создана: {0}</CloneFactionSuccess>
+  <FactionDefNameRequired>DefName обязателен и должен быть уникальным.</FactionDefNameRequired>
+  <FactionDefNameExists>Фракция с таким DefName уже существует.</FactionDefNameExists>
+  <PawnGroups>Группы пешек</PawnGroups>
+  <GeneralSettings>Общие настройки</GeneralSettings>
+  <SortByPower>Сортировка по силе</SortByPower>
+  <PawnKind>Вид пешки</PawnKind>
+  <Race>Раса</Race>
+  <RaceAll>Все расы</RaceAll>
+  <Power>Сила</Power>
+  <FactionLeader>Лидер фракции</FactionLeader>
+  <Points>Очки</Points>
+  <RaidPoints>Очки рейда</RaidPoints>
+  <PointsOverrideTooltip>Переопределить очки рейда для этой пешки. Оставьте пустым, чтобы использовать боевую мощь по умолчанию.</PointsOverrideTooltip>
+  <PointsOverrideFieldTooltip>Введите количество очков или оставьте пустым для использования значения по умолчанию. Установите 0, чтобы сбросить переопределение.</PointsOverrideFieldTooltip>
+  <Unknown>Неизвестно</Unknown>
+  <Category_All>Все</Category_All>
+  <Category_Humanlike>Гуманоиды</Category_Humanlike>
+  <Category_Animal>Животные</Category_Animal>
+  <Category_Mechanoid>Механоиды</Category_Mechanoid>
+  <Category_Other>Прочее</Category_Other>
+  <AddGroup>Добавить группу</AddGroup>
+  <Group>Группа</Group>
+  <GroupName>Имя группы</GroupName>
+  <GroupDefaultName>{0} #{1}</GroupDefaultName>
+  <Commonality>Распространенность</Commonality>
+  <EditGroup>Редактировать группу</EditGroup>
+  <MaxTotalPoints>Макс. всего очков</MaxTotalPoints>
+  <AddPawn>Добавить пешку</AddPawn>
+  <AddKindDef>Добавить</AddKindDef>
+  <AddPawnKind>Добавить</AddPawnKind>
+  <Traders>Торговцы</Traders>
+  <Carriers>Носильщики</Carriers>
+  <Guards>Охранники</Guards>
+  <GroupOptions>Основные члены</GroupOptions>
+  <Weight>Вес</Weight>
+  <Edit>Редактировать</Edit>
+  <Delete>Удалить</Delete>
+  <ConfirmDeleteGroup>Удалить эту группу?</ConfirmDeleteGroup>
+  <DeleteGroup>Удалить группу</DeleteGroup>
+  <WorldOperations>Операции на карте мира</WorldOperations>
+  <InstanceCount>Количество экземпляров</InstanceCount>
+  <Create>Создать</Create>
+  <SelectFactionToCreate>Выберите шаблон фракции для создания нового экземпляра.</SelectFactionToCreate>
+  <CreateNewInstance>Создать новый экземпляр</CreateNewInstance>
+  <ConfirmCreateNewInstance>Создать новый экземпляр фракции? Примечание: слишком большое количество экземпляров может повлиять на производительность. Рекомендуемый максимум — 10 на тип.</ConfirmCreateNewInstance>
+  <NewInstancePreview>Имя нового экземпляра: {0}</NewInstancePreview>
+  <TooManyInstances>Слишком много экземпляров этого типа (>20). Невозможно создать больше.</TooManyInstances>
+  <SpawnRandomSettlement>Создать поселение</SpawnRandomSettlement>
+  <SelectSettlementLocation>Выберите местоположение</SelectSettlementLocation>
+  <FactionInstanceCreated>Экземпляр фракции «{0}» создан!</FactionInstanceCreated>
+  <SettlementCreated>Поселение «{0}» создано!</SettlementCreated>
+  <NoValidTileFound>Не удалось найти подходящее место для поселения.</NoValidTileFound>
+  <InvalidTile>Выбрано недопустимое местоположение.</InvalidTile>
+  <FilterByFaction>Показывать только виды этой фракции</FilterByFaction>
+  <SpawnSettlements>Разместить поселения</SpawnSettlements>
+  <TargetFaction>Целевая фракция</TargetFaction>
+  <RandomGeneration>Случайная генерация</RandomGeneration>
+  <SettlementCount>Кол-во</SettlementCount>
+  <MinDistanceToPlayer>Мин. расстояние до игрока</MinDistanceToPlayer>
+  <GenerateRandomly>Сгенерировать случайно</GenerateRandomly>
+  <ManualSelection>Ручной выбор</ManualSelection>
+  <ManualSelectionDesc>Нажмите на карту мира, чтобы выбрать местоположение.</ManualSelectionDesc>
+  <SettlementPermanentWarning>Внимание: новые поселения нельзя удалить! Доступно только пока открыто это окно.</SettlementPermanentWarning>
+  <SelectOnWorldMap>Выбрать на карте мира</SelectOnWorldMap>
+  <SettlementsCreated>Создано поселений: {0}!</SettlementsCreated>
+  <EnterSpawningModeMessage>Режим размещения активен. Нажмите правой кнопкой мыши на карту мира, чтобы создать {0} поселение.</EnterSpawningModeMessage>
+  <SpawningModeExited>Режим размещения завершен.</SpawningModeExited>
+  <ExitSpawningMode>Выйти из режима размещения</ExitSpawningMode>
+  <SpawnSettlementFor>Создать {0} поселение</SpawnSettlementFor>
+  <CreateAndSpawn>Создать и разместить {0} поселение</CreateAndSpawn>
+  <CannotSpawnHere>Невозможно создать поселение здесь</CannotSpawnHere>
+  <EnableSpawningMode>Включить режим размещения на карте</EnableSpawningMode>
+  <SelectFactionInstanceTitle>Выбрать экземпляр: {0}</SelectFactionInstanceTitle>
+  <NoFactionInstancesFound>Экземпляры не найдены. Сначала создайте один.</NoFactionInstancesFound>
+  <SelectInstanceToContinue>Пожалуйста, сначала выберите экземпляр.</SelectInstanceToContinue>
+  <PawnGroupGuideTitle>Руководство по механике групп пешек</PawnGroupGuideTitle>
+  <PawnGroupGuideContent>[Типы групп]
+
+• Combat (Боевая): Боевые группы для рейдов
+• Trader (Торговая): Торговые караваны, обязательно должны включать торговцев
+• Settlement (Поселение): Гарнизоны поселений
+• Peaceful (Мирная): Мирные посетители
+
+[Вес (Weight)]
+
+Распространенность (Commonality) определяет вероятность выбора.
+
+[Очки (Points)]
+
+Ограничивает максимальную боевую мощь. Обычно устанавливается очень высоко для контроля рассказчиком.
+
+[Конфигурация ролей]
+
+• Options: Обычные комбатанты
+• Traders: Ядро торговцев (только для торговых групп)
+• Carriers: Вьючные животные/носильщики
+• Guards: Охрана, защищающая торговцев
+
+Предупреждения:
+• Удаление всех боевых групп (Combat) делает рейды невозможными
+• Торговые группы без торговцев не создаются</PawnGroupGuideContent>
+  <ConfirmCreateSettlement>Фракция основана. Создать поселение прямо сейчас?
+
+(Поселения необходимы для появления фракции в игре)</ConfirmCreateSettlement>
+  <PawnGroupKind_Combat>Боевая</PawnGroupKind_Combat>
+  <PawnGroupKind_Trader>Торговая</PawnGroupKind_Trader>
+  <PawnGroupKind_Settlement>Поселение</PawnGroupKind_Settlement>
+  <PawnGroupKind_Peaceful>Мирная</PawnGroupKind_Peaceful>
+  <PawnGroupKind_FactionBase>База</PawnGroupKind_FactionBase>
+  <PawnGroupKind_Settlement_Remote>Удаленное поселение</PawnGroupKind_Settlement_Remote>
+  <PawnGroupKind_WorkSite>Рабочий участок</PawnGroupKind_WorkSite>
+  <PawnGroupKind_Refugee>Беженцы</PawnGroupKind_Refugee>
+  <PawnGroupKind_Beggar>Нищие</PawnGroupKind_Beggar>
+  <PawnGroupKind_Pilgrims>Паломники</PawnGroupKind_Pilgrims>
+  <PawnGroupKind_Hunters>Охотники</PawnGroupKind_Hunters>
+  <PawnGroupKind_Loggers>Лесорубы</PawnGroupKind_Loggers>
+  <PawnGroupKind_Miners>Шахтеры</PawnGroupKind_Miners>
+  <PawnGroupKind_Farmers>Фермеры</PawnGroupKind_Farmers>
+  <PawnGroupKind_Kidnappers>Похитители</PawnGroupKind_Kidnappers>
+  <PawnGroupKind_Villagers>Селяне</PawnGroupKind_Villagers>
+  <PawnGroupKind_Junkyard>Свалка</PawnGroupKind_Junkyard>
+  <CannotSettleHere>Здесь нельзя поселиться</CannotSettleHere>
+  <ImportIconTitle>Импорт иконки</ImportIconTitle>
+  <ImagePathPrompt>Путь к изображению (PNG/JPG)</ImagePathPrompt>
+  <LoadImage>Загрузить изображение</LoadImage>
+  <NoImageLoaded>Изображение не загружено. Введите правильный абсолютный путь.</NoImageLoaded>
+  <Scale>Масштаб</Scale>
+  <SaveIcon>Сохранить иконку</SaveIcon>
+  <IconSaved>Иконка сохранена!</IconSaved>
+  <IconSaveError>Ошибка сохранения иконки.</IconSaveError>
+  <FileNotFound>Файл не найден: {0}</FileNotFound>
+  <PreviewFailed_FactionNotFound>Предпросмотр невозможен: фракция не найдена в текущей игре.</PreviewFailed_FactionNotFound>
+  <PreviewFailed_GenFailed>Ошибка генерации</PreviewFailed_GenFailed>
+  <PreviewFailed_NoPawn>Нет пешки</PreviewFailed_NoPawn>
+  <HediffType_Debuff>Отрицательный эффект</HediffType_Debuff>
+  <HediffType_Illness>Болезнь</HediffType_Illness>
+  <HediffType_Implant>Имплант</HediffType_Implant>
+  <HediffType_Missing>Отсутствующая часть</HediffType_Missing>
+  <HediffType_Other>Прочее</HediffType_Other>
+  <HediffLethal>Смертельный</HediffLethal>
+  <NoDescription>Описание отсутствует.</NoDescription>
+  <TypePrefix>Тип</TypePrefix>
+  <ClickToSpawn>Нажмите на карту, чтобы разместить поселение ({0})</ClickToSpawn>
+  <AddedItemsMessage>Предметы добавлены в список снаряжения: {0}</AddedItemsMessage>
+  <VisualPreview>Визуальный предпросмотр</VisualPreview>
+  <PreviewError_NoData>Нет данных</PreviewError_NoData>
+  <PreviewError_DefMissing>Отсутствует определение</PreviewError_DefMissing>
+  <PreviewError_FactionMissing>Фракция отсутствует</PreviewError_FactionMissing>
+  <PreviewError_Error>Ошибка</PreviewError_Error>
+  <ImportedCopySuffix>(Импортировано {0})</ImportedCopySuffix>
+  <NoPawn>Нет пешки</NoPawn>
+  <CopiedKindGearMessage>Снаряжение вида скопировано!</CopiedKindGearMessage>
+  <UnknownFaction>Неизвестная фракция</UnknownFaction>
+  <NameColor>Цвет одежды</NameColor>
+  <NameColorTooltip>Отображаемый цвет для одежды.</NameColorTooltip>
+  <RimTalkLinkage>Интеграция RimTalk</RimTalkLinkage>
+  <NameCannotBeEmpty>Имя не может быть пустым</NameCannotBeEmpty>
+  <NameTooShort>Имя слишком короткое</NameTooShort>
+  <NameTooLong>Имя слишком длинное (макс. 100 символов)</NameTooLong>
+  <NameCannotBeOnlySpecialChars>Имя не может состоять только из спецсимволов</NameCannotBeOnlySpecialChars>
+  <Refresh>Обновить</Refresh>
+  <CachesRefreshed>Кэши обновлены</CachesRefreshed>
+  <RefreshTooltip>Обновить все кэши интерфейса, включая списки фракций, видов пешек и кэши иконок.</RefreshTooltip>
+  <AlreadyExists>Уже существует</AlreadyExists>
+  <FactionAlreadyExistsTooltip>Эта фракция уже существует в игре. Только один экземпляр на шаблон фракции. Чтобы изменить существующую фракцию, используйте функцию «Редактирование фракции».</FactionAlreadyExistsTooltip>
+  <Changelog_FixWikiLang>Исправлено неприменение настроек языка Wiki</Changelog_FixWikiLang>
+  <Changelog_AddWikiUI>Улучшения интерфейса Wiki: добавлен заголовок, раскраска разделов, оптимизация макета</Changelog_AddWikiUI>
+  <DeleteFactionTitle>Удалить фракцию</DeleteFactionTitle>
+  <DeleteFactionWarning>Внимание: это действие необратимо!</DeleteFactionWarning>
+  <SettlementsToRemove>Поселений к удалению</SettlementsToRemove>
+  <PawnsToRemove>Пешек к удалению</PawnsToRemove>
+  <OtherEffects>Другие эффекты</OtherEffects>
+  <FactionRelationsRemoved>Отношения фракции будут сброшены</FactionRelationsRemoved>
+  <ActiveQuestsAffected>Активные задания могут быть затронуты</ActiveQuestsAffected>
+  <DeleteFaction>Удалить фракцию</DeleteFaction>
+  <DangerZone>Опасная зона</DangerZone>
+  <NoFactionInstanceToDelete>Нет экземпляра фракции для удаления</NoFactionInstanceToDelete>
+  <FactionDeleted>Фракция «{0}» удалена.</FactionDeleted>
+  <FactionDeleteFailed>Не удалось удалить фракцию. Проверьте логи.</FactionDeleteFailed>
+  <SelectFactionInstanceToDelete>Выберите экземпляр {0} для удаления</SelectFactionInstanceToDelete>
+  <SelectInstance>Пожалуйста, выберите экземпляр</SelectInstance>
+  <Next>Далее</Next>
+  <Settlements>Поселения</Settlements>
+  <UnknownLocation>Неизвестное местоположение</UnknownLocation>
+  <PlayerRelationSettings>Отношения с игроком</PlayerRelationSettings>
+  <RelationAlly>Союзник</RelationAlly>
+  <RelationNeutral>Нейтрально</RelationNeutral>
+  <RelationHostile>Враждебно</RelationHostile>
+  <RelationCurrent>Текущее: {0}</RelationCurrent>
+  <RelationDefault>Использовать игровые отношения по умолчанию</RelationDefault>
+  <FGC_FirstTimePrompt_Title>Выберите пресет снаряжения фракции</FGC_FirstTimePrompt_Title>
+  <FGC_FirstTimePrompt_Description>Обнаружены сохраненные пресеты снаряжения фракции. Какой пресет вы хотите использовать для этого сохранения?
+
+Вы можете изменить это позже в настройках мода.</FGC_FirstTimePrompt_Description>
+  <FGC_FirstTimePrompt_VanillaOption>Использовать ванильные настройки (не рекомендуется)</FGC_FirstTimePrompt_VanillaOption>
+  <FGC_FirstTimePrompt_UseVanilla>Использовать ваниль</FGC_FirstTimePrompt_UseVanilla>
+  <FGC_FirstTimePrompt_ApplyPreset>Применить пресет</FGC_FirstTimePrompt_ApplyPreset>
+  <FGC_FirstTimePrompt_DecideLater>Решить позже</FGC_FirstTimePrompt_DecideLater>
+  <FGC_FirstTimePrompt_DontAskAgain>Больше не спрашивать</FGC_FirstTimePrompt_DontAskAgain>
+  <FGC_Preset_NoDescription>Нет описания</FGC_Preset_NoDescription>
+  <FGC_Factions_Label>фракции</FGC_Factions_Label>
+  <FGC_Message_PresetApplied>Пресет «{0}» применен к текущему сохранению.</FGC_Message_PresetApplied>
+  <FGC_Message_SelectedFactionsApplied>Применено {1} фракций из пресета «{0}» к текущему сохранению.</FGC_Message_SelectedFactionsApplied>
+  <FGC_SelectFactions>Выберите фракции</FGC_SelectFactions>
+  <FGC_Message_UsingVanilla>Текущее сохранение использует ванильные настройки фракций.</FGC_Message_UsingVanilla>
+  <NoPresetEditingDisabledTooltip>Создайте или загрузите пресет, чтобы разрешить редактирование</NoPresetEditingDisabledTooltip>
+  <NoPresetCannotSave>Создайте или загрузите пресет для сохранения</NoPresetCannotSave>
+  <WikiTooltip>Открыть документацию Wiki</WikiTooltip>
+  <WikiMascotTip>Хитрый енот — нажмите, чтобы просмотреть в Мастерской Steam</WikiMascotTip>
+  <WikiTab_Principles>Основные принципы</WikiTab_Principles>
+  <WikiTab_Terminology>Терминология</WikiTab_Terminology>
+  <WikiTab_Workflow>Рабочий процесс</WikiTab_Workflow>
+  <WikiTab_Notes>Заметки</WikiTab_Notes>
+
+  <!-- Wiki Content -->
+  <Wiki_Principles_Content>[Как работает этот мод?]
+
+Проще говоря: после настройки мода, когда игра генерирует новых персонажей (врагов, караваны, защитников и т.д.), мод незаметно заменяет их оригинальное снаряжение на ваше пользовательское.
+
+[Когда это вступает в силу?]
+• Новые вражеские рейды
+• Прибытие новых караванов
+• Обновление защитников поселения
+• Подкрепления, посетители и т.д.
+
+⚠️ Примечание: Персонажи, которые уже находятся на карте, НЕ изменятся!
+
+[Простой режим против Расширенного режима]
+
+📍 Простой режим:
+Регулируйте вероятность снаряжения с помощью ползунков, это так же просто, как настроить громкость.
+Подходит для: быстрой настройки стиля снаряжения фракции без углубления в детали.
+
+📍 Расширенный режим:
+Напрямую указывайте, что персонажи обязаны носить и использовать.
+Подходит для: точного контроля, например «Все солдаты должны носить силовую броню».
+
+[Что такое Бюджет?]
+
+У каждого вида пешки есть «бюджет». Снаряжение, превышающее бюджет, не будет сгенерировано.
+
+Пример: дикарь с бюджетом в 500 серебра не получит оружие стоимостью 800 серебра.
+
+Хотите полной свободы? Увеличьте бюджет или включите опцию «Принудительное игнорирование» (Force Ignore).
+
+[Осторожнее с опциями принуждения!]
+• Принудительное игнорирование: игнорирует бюджет, может создать чрезмерно сильных персонажей, нарушив баланс игры.
+• Только выбранное: удаляет всё ванильное снаряжение, убедитесь, что вы настроили полный комплект оборудования.
+
+[Настройка вероятности генерации предмета]
+• Вес (Weight): вероятность появления снаряжения. Нажмите на конкретный предмет, чтобы увидеть ползунок, и установите желаемую вероятность.
+
+[Что такое Пулы предметов (Item Pools)?]
+
+Поместите несколько предметов в пул — при генерации случайно выберется один из них.
+Преимущество: враги каждый раз экипированы по-разному, что интереснее.
+
+Есть 4 пула, которые можно настроить отдельно, вероятность выбора определяется их весами.</Wiki_Principles_Content>
+  <Wiki_Terminology_Content>[Основные понятия, которые необходимо знать]
+
+🎭 PawnKind (Вид пешки)
+«Классы» в игре: Пират-стрелок, Дикарь-воин, Имперский рыцарь и т.д.
+У каждого вида пешки свои предпочтения в снаряжении и характеристики.
+
+🏴 Faction (Фракция)
+Сила, состоящая из множества видов пешек: Пираты, Дикари, Империя, Караваны и т.д.
+Фракция содержит множество видов пешек.
+
+🔧 Group (Группа)
+Каждая фракция генерирует юнитов с «группой», например: «Боевая», «Торговая», «Поселение» и т.д.
+У фракции может быть много групп. Вы можете добавлять разные виды пешек или механоидов в группы.
+
+💰 Budget (Бюджет)
+Сколько серебра каждый вид пешки может потратить на экипировку. Превысили бюджет? Предмет не будет сгенерирован.
+
+🎲 Selection Mode (Режим выбора)
+• AlwaysTake: Всегда экипировано
+• RandomChance: Зависит от удачи
+• FromPool: Случайный выбор из пула
+
+🛡️ Force Options (Опции принуждения)
+• Force Ignore: Игнорировать бюджет, принудительно экипировать
+• Force Naked: Раздеть перед экипировкой вашего выбора
+• Force Only Selected: Удалить всё ванильное снаряжение
+
+🔧 Item Properties (Свойства предмета)
+• Material: Сталь, ткань, пласталь и т.д. Влияет на статы.
+• Quality: Ужасное → Легендарное, влияет на статы и цену.
+
+💊 Hediff (Состояние здоровья)
+Можно принудительно добавить состояния персонажам: бионические конечности, наркотики, болезни и т.д.
+Применение: все — киборги архотек!
+
+🏘️ Group Types (Типы групп)
+• Combat: Враги, которые атакуют вас / Союзники, которые помогают вам
+• Trader: Караваны для торговли
+• Settlement: Защитники поселения
+• Peaceful: Мирные посетители
+
+⚙️ Tech Level (Технологический уровень)
+Примитивный → Средневековый → Индустриальный → Космический → Ультра
+Высокотехнологичное снаряжение не будет работать у низкотехнологичных фракций.
+
+🦠 Xenotype (Ксенотип)
+Доступно только с DLC Biotech: Сангвифаги, свинолюди, кротолюди и другие генетически модифицированные люди.
+Можно установить вероятности для разных ксенотипов в каждой фракции.</Wiki_Terminology_Content>
+  <Wiki_Workflow_Content>[Быстрый старт — Рабочий процесс]
+
+1. Хотите быстро настроить снаряжение фракции? Следуйте этим шагам!
+• Создайте пресет
+Нажмите «Менеджер пресетов» → Создать → Назовите его (например, «Улучшенные дикари»)
+• Выберите фракцию и вид пешки
+Слева: выберите фракцию (Пираты/Дикари/Империя...)
+Посередине: выберите вид пешки (Стрелок/Воин/Рыцарь...)
+• Настройте снаряжение
+Простой режим: перетаскивайте ползунки для настройки вероятностей снаряжения
+Расширенный режим: нажмите «Добавить», чтобы выбрать конкретную экипировку
+• Сохраните и примените
+Нажмите «Сохранить»! Затем дождитесь прибытия новых врагов и посмотрите на результат!
+
+Совет: сначала попробуйте простой режим, расширенный дает точный контроль над каждым предметом.
+
+2. Хотите настроить виды пешек, генерируемые группой фракции? (Добавить животных/механоидов/не-членов фракции)
+• Нажмите «Редактировать фракцию»
+Нажмите «Редактировать фракцию» → в выпадающем списке найдите группу для настройки (например, «Combat #1»)
+• Выберите виды пешек
+Посередине: выберите виды пешек для удаления/добавления (Воины/Животные/Механоиды...)
+• Редактируйте группу
+Настройте виды пешек группы, их количество, веса и т.д.
+• Сохраните и примените
+Нажмите «Сохранить»! Затем дождитесь прибытия новых врагов и посмотрите эффект группы!
+
+[Продвинутая игра]
+
+1. Случайное, но тематическое (Пулы предметов)
+Разное снаряжение у врагов каждый раз?
+• Расширенный режим → нажмите «Пул предметов»
+• В Pool1 добавьте несколько видов оружия
+• Установите веса (выше = выше шанс выбора)
+• При генерации будет выбран случайный предмет
+
+2. Все — киборги
+Хотите, чтобы все враги были механически улучшены?
+• Расширенный режим → «Добавить принудительное состояние (Hediff)»
+• Выберите «Бионическая нога», «Бионическая рука» и т.д.
+• Установите 100% вероятность
+
+3. Пакетное применение
+Хотите одну конфигурацию для всех видов пешек во фракции?
+• Настройте один вид пешки
+• Нажмите правой кнопкой мыши → Копировать
+• Выберите другие виды пешек → правой кнопкой мыши → Вставить
+• Готово!
+
+4. Живой предпросмотр
+Не уверены в результате?
+Нажмите кнопку «Предпросмотр», чтобы увидеть результаты генерации напрямую!
+Настраивайте, пока не будете довольны.
+
+5. Экспорт пресета для обмена
+Настроили что-то крутое и хотите поделиться с друзьями?
+• Менеджер пресетов → Экспорт
+• Скопируйте сгенерированную строку
+• Отправьте друзьям
+• Друзья смогут импортировать её и использовать
+
+[Практика]
+
+Задача: добавить мощного босса-механоида во фракцию
+Конфигурация:
+• Вверху слева - Редактирование фракции
+• В выпадающем списке найти Редактирование группы фракции
+• Выбрать тип группы, например (Combat #1)
+• Добавить механоидов.
+
+Задача: усилить силы дикарей
+Цель: заставить дикарей носить лучшее снаряжение
+Конфигурация:
+• Увеличить бюджет (дикари изначально бедны)
+• Простой режим: увеличить вес стрелкового и оружия ближнего боя
+• Или Расширенный режим: напрямую добавить железные мечи, кожаную броню
+
+Задача: создать элитных врагов
+Цель: фракция со всем легендарным снаряжением
+Конфигурация:
+• Расширенный режим: установить качество каждого предмета на «Легендарное»
+• Включить «Принудительное игнорирование»
+• Включить «Только выбранное»
+• Добавить самое сильное снаряжение</Wiki_Workflow_Content>
+  <Wiki_Notes_Content>[Важно знать!]
+
+⏰ Сохраняйте! Сохраняйте!
+• Сохранение вступает в силу немедленно, перезапуск игры не нужен
+• Влияет только на недавно созданных врагов/караваны/защитников
+• Враги, которые уже на карте, не изменятся!
+
+Хотите узнать эффект? Нажмите кнопку «Предпросмотр», чтобы увидеть его напрямую!
+
+[Частые проблемы]
+
+Если модификации снаряжения не вступают в силу,
+пожалуйста, проверьте:
+
+- Соответствует ли это лимитам [Бюджета]
+- Успешно ли сохранено в [Пресет]
+- Включено ли [Принудительное игнорирование]
+- Включено ли [Только выбранное]
+
+Если пешка падает после спавна,
+пожалуйста, проверьте:
+
+- Не превышают ли переносимые предметы разумную [Массу/Объем]
+- Был ли добавлен тяжелый [Отрицательный эффект] в меню состояний (Hediff)
+
+🔧 Не удается выбрать предметы?
+• Требуется конкретное DLC
+• Заблокировано другими модами
+• Слишком высокий тех. уровень
+
+🔧 Совместимость с модом XXX?
+• Разместите несовместимый мод после этого мода в списке загрузки.
+
+[Предупреждение об опциях принуждения]
+
+⚠️ Принудительное игнорирование: может создать врагов «божественного уровня», игра станет слишком легкой
+⚠️ Принудительно раздеть: не забудьте настроить достаточно одежды, иначе они будут по-настоящему голыми
+⚠️ Только выбранное: сначала убедитесь, что в вашем пользовательском списке есть предметы!
+
+[Резервное копирование!]
+
+• При первом использовании экспортируйте ванильный пресет
+• При крупных изменениях экспортируйте резервную копию
+• Протестируйте перед обменом с друзьями
+
+[Совместимость]
+
+✅ Протестировано на совместимость с этими модами:
+• Combat Extended (CE)
+• Vanilla Expanded серия
+• DLC Ideology
+• DLC Biotech
+
+⚠️ Порядок загрузки модов:
+Harmony → Крупные моды → Этот мод → Небольшие патчи
+
+[Вопросы?]
+Свяжитесь со мной:
+
+• Мастерская Steam
+https://steamcommunity.com/sharedfiles/filedetails/?id=3670833973
+
+• GitHub
+https://github.com/yancy22737-sudo/FactionGearCustomizer
+
+• Группа QQ
+984338429</Wiki_Notes_Content>
+
+  <!-- Missing Keys Added -->
+  <ItemQualityTooltip>Переопределить качество всех предметов, экипированных этим видом пешки.</ItemQualityTooltip>
+  <OutfitFirstBudgetStrategy>Сначала снаряжение, затем улучшение материалов</OutfitFirstBudgetStrategy>
+  <OutfitFirstBudgetStrategyTooltip>Сначала собрать полный комплект снаряжения, используя макс. бюджет на одежду (торс, ноги, броня среднего слоя, верхняя одежда). Если бюджет превышен, автоматически понижает/заменяет части, пока они не впишутся в бюджет; показатель брони по умолчанию поддерживается на уровне не менее 60% от бюджета. Если базовые слои не могут быть удовлетворены, процесс быстро прерывается до раздевания, и текущая надетая одежда сохраняется.</OutfitFirstBudgetStrategyTooltip>
+  <ApparelBudgetTooltip>Установите минимальный и максимальный бюджет в рыночной стоимости для генерации одежды.</ApparelBudgetTooltip>
+  <WeaponBudgetTooltip>Установите минимальный и максимальный бюджет в рыночной стоимости для генерации оружия.</WeaponBudgetTooltip>
+  <TechLevelLimitTooltip>Ограничить снаряжение определенным технологическим уровнем или ниже.</TechLevelLimitTooltip>
+  <SkippedNonHumanKinds>Пропущено нечеловеческих видов пешек: {0}.</SkippedNonHumanKinds>
+  <AddedPawnKinds>Добавлено видов пешек: {0}.</AddedPawnKinds>
+  
+  <!-- Gear Info Dialog -->
+  <MassCarried>Переносимая масса</MassCarried>
+  <ComfortableTemperature>Диапазон комфортных температур</ComfortableTemperature>
+  <OverallArmor>Общая броня</OverallArmor>
+  <ArmorSharp>Острые</ArmorSharp>
+  <ArmorBlunt>Тупые</ArmorBlunt>
+  <ArmorHeat>Жара</ArmorHeat>
+  <Equipment>Снаряжение</Equipment>
+  <Apparel>Одежда</Apparel>
+  <Inventory>Инвентарь</Inventory>
+  <TotalMass>Общая масса</TotalMass>
+  <ClickToViewGearInfo>Нажмите, чтобы просмотреть детали снаряжения</ClickToViewGearInfo>
+
+  <!-- Category Filter -->
+  <CategoryAll>Все категории</CategoryAll>
+  <Category_Food>Еда</Category_Food>
+  <Category_Medicine>Медицина</Category_Medicine>
+  <Category_SocialDrug>Социальные наркотики</Category_SocialDrug>
+  <Category_HardDrug>Тяжелые наркотики</Category_HardDrug>
+  <Category_Ammo>Боеприпасы</Category_Ammo>
+  <CategoryFilterTooltip>Фильтр по категории предмета</CategoryFilterTooltip>
+
+  <!-- Preview Save Confirmation -->
+  <ConfirmSaveBeforePreview>У вас есть несохраненные изменения. Сохранить перед предпросмотром?</ConfirmSaveBeforePreview>
+  <AutoSaveBeforePreview>Автосохранение перед предпросмотром</AutoSaveBeforePreview>
+  <AutoSaveBeforePreviewTooltip>Если включено, автосохранение происходит перед предпросмотром без запроса</AutoSaveBeforePreviewTooltip>
+
+  <!-- Clear Buttons -->
+  <ClearStatuses>Очистить состояния</ClearStatuses>
+  <ClearInventory>Очистить инвентарь</ClearInventory>
+  <ClearStatusesTooltip>Очистить все эффекты состояний для этого вида пешки</ClearStatusesTooltip>
+  <ClearInventoryTooltip>Очистить все предметы для этого вида пешки</ClearInventoryTooltip>
+  <ConfirmClearStatuses>Вы уверены, что хотите очистить все эффекты состояний?</ConfirmClearStatuses>
+  <ConfirmClearInventory>Вы уверены, что хотите очистить все предметы?</ConfirmClearInventory>
+
+  <!-- Item Pool -->
+  <QuickAddPool>Быстрое добавление</QuickAddPool>
+  <Pool_AnyFood>Любая еда</Pool_AnyFood>
+  <Pool_AnyMeal>Любое готовое блюдо</Pool_AnyMeal>
+  <Pool_AnyRawFood>Любая сырая еда</Pool_AnyRawFood>
+  <Pool_AnyMeat>Любое мясо</Pool_AnyMeat>
+  <Pool_AnyVegetable>Любые овощи</Pool_AnyVegetable>
+  <Pool_AnyMedicine>Любая медицина</Pool_AnyMedicine>
+  <Pool_AnySocialDrug>Любые соц. наркотики</Pool_AnySocialDrug>
+  <Pool_AnyHardDrug>Любые тяж. наркотики</Pool_AnyHardDrug>
+  <QuickAddPoolTooltip>Быстро добавить пул предметов</QuickAddPoolTooltip>
+  <EditPoolContents>Редактировать содержимое пула</EditPoolContents>
+
+  <!-- Hediff Pool -->
+  <QuickAddHediffPool>Пул состояний (быстрый)</QuickAddHediffPool>
+  <QuickAddHediffPoolTooltip>Быстро добавить пул состояний (случайный выбор из указанного типа)</QuickAddHediffPoolTooltip>
+  <HediffPool_Tag>Пул</HediffPool_Tag>
+  <HediffPool_AnyDebuff>Любой дебафф</HediffPool_AnyDebuff>
+  <HediffPool_AnyDrugHigh>Любой наркотический эффект</HediffPool_AnyDrugHigh>
+  <HediffPool_AnyAddiction>Любая зависимость</HediffPool_AnyAddiction>
+  <HediffPool_AnyImplant>Любой имплант</HediffPool_AnyImplant>
+  <HediffPool_AnyIllness>Любая болезнь</HediffPool_AnyIllness>
+  <HediffPool_AnyBuff>Любой бафф</HediffPool_AnyBuff>
+
+  <!-- Apply to Others Dialogs -->
+  <ApplyHediffsToOthersTooltip>Применить текущие состояния здоровья к другим видам в этой фракции</ApplyHediffsToOthersTooltip>
+  <ApplyItemsToOthersTooltip>Применить текущие предметы инвентаря к другим видам в этой фракции</ApplyItemsToOthersTooltip>
+  <ApplyHediffsToOthersTitle>Применить состояния здоровья к другим видам</ApplyHediffsToOthersTitle>
+  <ApplyItemsToOthersTitle>Применить предметы к другим видам</ApplyItemsToOthersTitle>
+  <ApplyHediffsConfirm>Применить состояния здоровья к {0} выбранным видам?</ApplyHediffsConfirm>
+  <ApplyItemsConfirm>Применить предметы к {0} выбранным видам?</ApplyItemsConfirm>
+  <HediffsApplied>Состояния здоровья применены к {0} видам.</HediffsApplied>
+  <ItemsApplied>Предметы применены к {0} видам.</ItemsApplied>
+  <NoOtherKindsInFaction>В этой фракции нет других видов.</NoOtherKindsInFaction>
+
+  <!-- Inventory Limit Warnings -->
+  <InventoryItemCountLimit>Количество предметов превышает лимит (макс. {0})</InventoryItemCountLimit>
+  <InvalidItem>Недопустимый предмет</InvalidItem>
+  <MassWarning>Предупреждение о массе: {0}/{1} кг</MassWarning>
+  <BulkWarning>Предупреждение об объеме: {0}/{1}</BulkWarning>
+  <MassCriticalWarning>Критический перевес: {0}/{1} кг — может привести к потере подвижности!</MassCriticalWarning>
+  <BulkCriticalWarning>Критический переобъем: {0}/{1} — может привести к потере подвижности!</BulkCriticalWarning>
+  <InventoryOverweightWarning>Внимание: инвентарь критически перегружен, пешка может потерять способность передвигаться!</InventoryOverweightWarning>
+
+  <!-- Hediff Critical Warnings -->
+  <HediffWarningType_Consciousness>Сознание</HediffWarningType_Consciousness>
+  <HediffWarningType_Moving>Подвижность</HediffWarningType_Moving>
+  <HediffWarningType_Manipulation>Манипуляция</HediffWarningType_Manipulation>
+  <HediffWarning_ConsciousnessZero>Приведет к потере сознания и невозможности действовать</HediffWarning_ConsciousnessZero>
+  <HediffWarning_ConsciousnessLow>Сильно снизит уровень сознания</HediffWarning_ConsciousnessLow>
+  <HediffWarning_MovingZero>Приведет к потере способности двигаться</HediffWarning_MovingZero>
+  <HediffWarning_MovingLow>Сильно снизит способность двигаться</HediffWarning_MovingLow>
+  <HediffWarning_ManipulationZero>Приведет к невозможности взаимодействия с предметами</HediffWarning_ManipulationZero>
+  <HediffWarning_ManipulationLow>Сильно снизит способность взаимодействия с предметами</HediffWarning_ManipulationLow>
+
+  <!-- Faction Export Feature -->
+  <yFE_ExportFactions>Экспорт фракций</yFE_ExportFactions>
+  <yFE_ExportFactions_Title>Экспорт фракций в пресет</yFE_ExportFactions_Title>
+  <yFE_TargetPreset>Целевой пресет</yFE_TargetPreset>
+  <yFE_ExportToNewPreset>Создать новый пресет...</yFE_ExportToNewPreset>
+  <yFE_ExportToExistingPreset>Выбрать существующий пресет</yFE_ExportToExistingPreset>
+  <yFE_ConflictResolution>Разрешение конфликтов</yFE_ConflictResolution>
+  <yFE_ExportConflict_Skip>Пропускать существующие фракции</yFE_ExportConflict_Skip>
+  <yFE_ExportConflict_Overwrite>Перезаписать существующие фракции</yFE_ExportConflict_Overwrite>
+  <yFE_ExportConflict_Merge>Объединить данные видов</yFE_ExportConflict_Merge>
+  <yFE_ExportSuccess>Фракции ({0}) успешно экспортированы в пресет «{1}»</yFE_ExportSuccess>
+  <yFE_ExportNoSelection>Пожалуйста, сначала выберите фракции для экспорта</yFE_ExportNoSelection>
+  <yFE_ExportFailed>Ошибка экспорта</yFE_ExportFailed>
+  <yFE_Kinds_Label>видов</yFE_Kinds_Label>
+  <yFE_Factions_Label>фракций</yFE_Factions_Label>
+  <yFE_SelectAll>Выбрать всё</yFE_SelectAll>
+  <yFE_DeselectAll>Отменить всё</yFE_DeselectAll>
+  <yFE_PresetName>Имя пресета</yFE_PresetName>
+  <yFE_PresetDescription>Описание пресета</yFE_PresetDescription>
+
+  <!-- Phase 2: Scenario Creation UI -->
+  <P2_FactionEditorButton>Редактор фракций</P2_FactionEditorButton>
+  <P2_FactionEditorLite_Title>Выберите пресет фракции</P2_FactionEditorLite_Title>
+  <P2_SelectPreset>Выберите пресет:</P2_SelectPreset>
+  <P2_SelectedFactions>Выбранные фракции:</P2_SelectedFactions>
+  <P2_SelectPresetHint>Пожалуйста, сначала выберите пресет</P2_SelectPresetHint>
+  <P2_Kinds_Label>видов</P2_Kinds_Label>
+  <P2_ApplyPreset>Применить пресет</P2_ApplyPreset>
+  <P2_ConfigApplied>Пресет «{0}» применен к игре</P2_ConfigApplied>
+  <P2_SelectFactions>Выберите фракции</P2_SelectFactions>
+  <P2_FactionDetails>Детали фракции</P2_FactionDetails>
+  <P2_SelectFactionHint>Нажмите на фракцию, чтобы просмотреть детали</P2_SelectFactionHint>
+  <P2_KindList>Включенные виды</P2_KindList>
+  <P2_ApplyMode>Режим применения</P2_ApplyMode>
+  <P2_ModeAdd>Добавить</P2_ModeAdd>
+  <P2_ModeOverwrite>Перезаписать</P2_ModeOverwrite>
+  <P2_ApplyToWorld>Применить к миру</P2_ApplyToWorld>
+  <P2_NoWorldComponent>Ошибка: не удалось найти компонент фракции мира</P2_NoWorldComponent>
+  <P2_AppliedToWorld>{0} фракций успешно применены к миру (режим {1})</P2_AppliedToWorld>
+  <P2_NoNewFactionsToAdd>Нет новых фракций для добавления (все выбранные фракции уже существуют)</P2_NoNewFactionsToAdd>
+  <P2_ResetDefault>Сбросить настройки по умолчанию</P2_ResetDefault>
+  <P2_OpenSettings>Настройки</P2_OpenSettings>
+  <P2_ResetSuccess>Данные фракции сброшены к значениям по умолчанию</P2_ResetSuccess>
+  <P2_NotInGameWarning>[Примечание] В данный момент вы не в игре, некоторые функции (например, применение к сохранению) недоступны</P2_NotInGameWarning>
+  
+  <!-- Turret/Mechanoid Weapon Filter -->
+  <HideTurretMechanoidWeaponsTooltip>Скрыть оружие турелей и механоидов из библиотеки предметов</HideTurretMechanoidWeaponsTooltip>
+
+  <!-- Hediff Target Parts -->
+  <TargetParts>Целевые части тела</TargetParts>
+  <HediffPartModeAuto>Авто</HediffPartModeAuto>
+  <HediffPartModeManual>Вручную</HediffPartModeManual>
+  <HediffPartModeAutoDescription>Авто (рецепт/отображение)</HediffPartModeAutoDescription>
+  <HediffPartSummaryFormat>{0}, {1} (+{2})</HediffPartSummaryFormat>
+  <BodyPartSelectionTitle>Выберите целевые части тела</BodyPartSelectionTitle>
+
+  <!-- Hediff Validation Messages -->
+  <Validation_HediffNull>Состояние (Hediff) равно null</Validation_HediffNull>
+  <Validation_InvalidPoolType>Недопустимый тип пула</Validation_InvalidPoolType>
+  <Validation_HediffDefNull>HediffDef равно null</Validation_HediffDefNull>
+  <Validation_HediffDefNotFound>HediffDef «{0}» не найден</Validation_HediffDefNotFound>
+  <Validation_HediffDefResolved>HediffDef «{0}» разрешен</Validation_HediffDefResolved>
+  <Validation_InvalidChance>Шанс вне допустимого диапазона, приведено к 0-1</Validation_InvalidChance>
+  <Validation_NoHediffClass>Hediff «{0}» не имеет hediffClass</Validation_NoHediffClass>
+  <Validation_LethalHediff>Hediff «{0}» имеет смертельную силу {1:F1}, используйте с осторожностью!</Validation_LethalHediff>
+  <Validation_NegativeMaxParts>Отрицательное значение maxParts, установлено в 0</Validation_NegativeMaxParts>
+  <Validation_NegativeMaxPartsRange>Отрицательный минимум в maxPartsRange, установлено в 0</Validation_NegativeMaxPartsRange>
+  <Validation_InvalidMaxPartsRange>Неверный maxPartsRange, минимум и максимум поменяны местами</Validation_InvalidMaxPartsRange>
+  <Validation_ExcessiveMaxParts>maxPartsRange слишком велик (&gt;10), ограничено до 10</Validation_ExcessiveMaxParts>
+  <Validation_NegativeSeverityMin>Отрицательный минимум силы, установлено в 0</Validation_NegativeSeverityMin>
+  <Validation_ExcessiveSeverityMax>Максимум силы слишком велик (&gt;1), ограничено до 1</Validation_ExcessiveSeverityMax>
+  <Validation_InvalidSeverityRange>Неверный диапазон силы, минимум и максимум поменяны местами</Validation_InvalidSeverityRange>
+  <Validation_BodyPartNotFound>Часть тела «{0}» не найдена, удалено</Validation_BodyPartNotFound>
+  <Validation_PawnNull>Пешка равна null</Validation_PawnNull>
+  <Validation_PawnHealthNull>Здоровье пешки или набор состояний (hediffSet) равны null</Validation_PawnHealthNull>
+  <Validation_PawnBodyNull>Свойства расы или тело пешки равны null</Validation_PawnBodyNull>
+  <Validation_NoAvailableParts>Нет доступных частей тела для состояния «{0}»</Validation_NoAvailableParts>
+  <Validation_InsufficientParts>Недостаточно доступных частей для состояния «{0}»: запрошено {1}, доступно {2}</Validation_InsufficientParts>
+  <Validation_TooManyImplantsForPart>Слишком много имплантов для части «{0}»: запрошено {1}, макс. разрешено {2}</Validation_TooManyImplantsForPart>
+
+  <!-- Batch History -->
+  <History>История</History>
+  <BatchHistoryTooltip>Просмотр и отмена прошлых операций пакетного применения.</BatchHistoryTooltip>
+  <BatchHistoryTitle>История пакетного применения</BatchHistoryTitle>
+  <ClearAll>Очистить всё</ClearAll>
+  <BatchHistoryClearConfirm>Очистить всю историю пакетного применения? Это действие нельзя отменить.</BatchHistoryClearConfirm>
+  <Yes>Да</Yes>
+  <No>Нет</No>
+  <BatchHistoryCount>Всего записей: {0}</BatchHistoryCount>
+  <BatchHistoryEmpty>История не найдена.</BatchHistoryEmpty>
+  <BatchHistoryInvalidBtn>Недопустимо</BatchHistoryInvalidBtn>
+  <BatchHistoryInvalidTooltip>Снимок или целевые данные повреждены или утеряны из-за изменений в модах.</BatchHistoryInvalidTooltip>
+  <BatchHistoryInvalid>Невозможно отменить: целевые данные повреждены.</BatchHistoryInvalid>
+  <BatchHistoryRevertBtn>Отменить</BatchHistoryRevertBtn>
+  <BatchHistoryRevertConfirm>Отменить эту операцию пакетного применения? Целевые виды будут восстановлены до их предыдущего состояния.</BatchHistoryRevertConfirm>
+  <BatchReverted>Пакетная операция успешно отменена.</BatchReverted>
+  <General>Общее</General>
+  <BatchHistory_SrcTgt>Ист: [{0}] {1} → Цели: {2}</BatchHistory_SrcTgt>
+  <BatchHistory_Flags>Флаги: {0}</BatchHistory_Flags>
+
+  <!-- Age Settings -->
+  <AgeSettings>Настройки возраста</AgeSettings>
+  <AgeSettingsTooltip>Установите диапазон биологического возраста для этого вида пешек.</AgeSettingsTooltip>
+  <MinAge>Минимальный возраст</MinAge>
+  <MaxAge>Максимальный возраст</MaxAge>
+  <AgeSettingsHint>Оставьте пустым, чтобы отключить. Если настройки конфликтуют с настройками группы фракции, этот параметр будет иметь приоритет.</AgeSettingsHint>
+
+  <!-- Non-Combatant Warning -->
+  <NonCombatantWarningText>Внимание: выбранный вид пешки содержит гены «некомбатанта» или не может быть сгенерирован как боец.
+
+    Если вы принудительно примените этот вид пешки, мы автоматически ослабим правила генерации, чтобы разрешить создание пешек-некомбатантов. Это может привести к тому, что вид пешки будет бесполезен в бою (например, будет только убегать).
+
+    Продолжить?</NonCombatantWarningText>
+  <Yes>Да</Yes>
+  <No>Нет</No>
+  <DoNotShowAgain>Больше не показывать</DoNotShowAgain>
+</LanguageData>

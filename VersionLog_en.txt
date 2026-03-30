@@ -1,4 +1,19 @@
-﻿v1.4.7
+﻿v1.5.2
+- Fix: Optimize the language-fallback hot path so fallback chains are recomputed only when the game language changes, avoiding repeated per-frame normalization and enumerable allocations in the UI.
+- Fix: Keep Traditional Chinese -> Simplified Chinese and other-language -> English fallback behavior while reducing the performance cost of opening the mod in unsupported language environments.
+
+v1.5.1
+- Fix: Add language-file fallback chain; when the current language has no keyed file, this mod now falls back to English automatically.
+- Fix: Special-case Traditional Chinese to use ChineseTraditional -> ChineseSimplified -> English, preventing raw language keys from leaking in zh-Hant environments.
+- Update: Sync LanguageManager, Index.md, Api.md, and config.md documentation.
+
+v1.5.0
+- Fix: Switch translation loading to RimWorld native Keyed/DefInjected, so third-party translation mods can override this mod's UI text through the standard path.
+- Fix: Downgrade LanguageManager to a transition wrapper and stop loading text from this mod's private Strings.xml.
+- Update: Move English and Chinese text resources to 1.6/Languages/*/Keyed/FactionGearCustomizer.xml.
+- Update: Sync Index.md, Api.md, and config.md with the new translation integration rules.
+
+v1.4.7
 - Update: Outfit-first strategy now uses max apparel budget (`ApparelMoney.max`) instead of random budget.
 - Update: Core outfit selection now auto-replaces/downgrades pieces until budget-compliant when feasible.
 - Add: Add default armor budget floor: core armor value (armored middle + shell) is kept at least 60% of budget when feasible.
@@ -445,3 +460,6 @@ v1.4.8
 - Fix: `Reset -> Current Kind / Current Faction / Load Default Faction` now immediately runs save-sync flow so save-scoped data is updated at once.
 - Add: Advanced General now shows the default apparel budget source from `PawnKindDef.apparelMoney` for the current kind.
 - Update: Manual apparel/weapon budget slider cap increased from `5000` to `10000`.
+
+
+

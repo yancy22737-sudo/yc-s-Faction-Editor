@@ -1,5 +1,16 @@
 # Config Guide
 
+## Translation Mod Integration
+
+- Native path:
+  - `Languages/<language>/Keyed/*.xml`
+  - `Languages/<language>/DefInjected/**/*.xml`
+- Runtime behavior:
+  - This mod now follows RimWorld native translation loading.
+  - Independent translation mods should override text with standard `Keyed/DefInjected` files and do not need private `Strings.xml`.
+  - If the current language file is missing, this mod falls back to English.
+  - Traditional Chinese is special-cased to fall back in this order: `ChineseTraditional -> ChineseSimplified -> English`.
+
 ## Strict Pool Behavior
 
 ### `ForceOnlySelected` + `OutfitFirstBudgetStrategy`

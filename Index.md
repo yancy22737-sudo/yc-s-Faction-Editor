@@ -1,5 +1,20 @@
 # Index
 
+## Native Translation Pipeline
+
+- `FactionGearModification/Managers/LanguageManager.cs`
+  - Responsibility: Legacy wrapper only. All runtime text now resolves through RimWorld native `Translate()` instead of private XML loading.
+  - Depends on: `Verse.LanguageDatabase`, `Verse.Translate()` extension pipeline.
+  - Contract: Preserve existing `LanguageManager.Get(...)` call sites during migration while allowing third-party translation mods to override `Keyed/DefInjected` resources normally.
+  - Fallback: When active-language text is missing, uses this mod's keyed file fallback chain. Default order is `CurrentLanguage -> English`; Traditional Chinese uses `ChineseTraditional -> ChineseSimplified -> English`.
+- `1.6/Languages/English/Keyed/FactionGearCustomizer.xml`
+  - Responsibility: English keyed text source for UI, messages, validation text, and wiki text.
+- `1.6/Languages/ChineseSimplified/Keyed/FactionGearCustomizer.xml`
+  - Responsibility: Simplified Chinese keyed text source for UI, messages, validation text, and wiki text.
+- `1.6/Languages/*/DefInjected/...`
+  - Responsibility: Keep Def-backed translations on the native RimWorld path.
+  - Contract: External translation mods should override this mod by providing standard `Languages/<lang>/Keyed` and `Languages/<lang>/DefInjected` files only.
+
 ## Strict Pool And Kind Enumeration
 
 - `FactionGearModification/Managers/GearApplier.cs`
