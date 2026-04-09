@@ -1,5 +1,26 @@
 # API Notes
 
+## Safe Def Name API
+
+### `DefDisplayNameUtility.GetSafeFactionDisplayName`
+- Contract:
+  - Returns a non-null, non-empty display name for `FactionDef` or runtime `Faction`.
+  - Uses fallback chain `localized label -> raw label -> defName -> placeholder`.
+  - Emits deduplicated warning logs when the placeholder path is used.
+
+### `DefDisplayNameUtility.GetSafePawnKindDisplayName`
+- Contract:
+  - Returns a non-null, non-empty display name for `PawnKindDef`.
+  - Uses fallback chain `localized label -> raw label -> defName -> placeholder`.
+  - Emits deduplicated warning logs when the placeholder path is used.
+
+### `DefDisplayNameUtility.GetSafeFactionSortKey`
+### `DefDisplayNameUtility.GetSafePawnKindSortKey`
+- Contract:
+  - Return stable non-null sort keys for faction and PawnKind UI.
+  - Must be used instead of direct `LabelCap.ToString()` or raw `CompareTo(...)` in faction/PawnKind UI lists.
+  - Sorting behavior is case-insensitive via `StringComparer.OrdinalIgnoreCase`.
+
 ## Translation API
 
 ### `LanguageManager.Get`

@@ -351,13 +351,44 @@ namespace FactionGearCustomizer
                 effectiveMax = temp;
             }
 
+            float minAdultAge = GetMinAdultAge(request.KindDef);
+            effectiveMin = Mathf.Max(effectiveMin, minAdultAge);
+            if (effectiveMax < effectiveMin)
+            {
+                effectiveMax = effectiveMin;
+            }
+
             if (!request.FixedBiologicalAge.HasValue)
             {
                 float targetAge = Rand.Range(effectiveMin, effectiveMax);
                 request.FixedBiologicalAge = targetAge;
                 request.FixedChronologicalAge = targetAge;
-                LogUtils.DebugLog($"Applied age settings for {kindDefName}: {targetAge:F1} (range: {effectiveMin:F1}-{effectiveMax:F1})");
+                LogUtils.DebugLog($"Applied age settings for {kindDefName}: {targetAge:F1} (range: {effectiveMin:F1}-{effectiveMax:F1}, minAdult: {minAdultAge:F1})");
             }
+        }
+
+        private static float GetMinAdultAge(PawnKindDef kindDef)
+        {
+            if (kindDef?.race?.race?.lifeStageAges == null) return 18f;
+
+            foreach (var lsa in kindDef.race.race.lifeStageAges)
+            {
+                if (lsa.def?.defName == "HumanlikeAdult" || lsa.def?.defName == "Adult")
+                {
+                    return lsa.minAge;
+                }
+            }
+
+            float maxMinAge = 0f;
+            foreach (var lsa in kindDef.race.race.lifeStageAges)
+            {
+                if (lsa.minAge > maxMinAge)
+                {
+                    maxMinAge = lsa.minAge;
+                }
+            }
+
+            return maxMinAge > 0f ? maxMinAge : 18f;
         }
 
         /// <summary>

@@ -5,6 +5,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 using FactionGearCustomizer.Managers;
+using FactionGearCustomizer.Utils;
 
 namespace FactionGearCustomizer.UI
 {
@@ -59,7 +60,7 @@ namespace FactionGearCustomizer.UI
 
             allHumanFactions = DefDatabase<FactionDef>.AllDefs
                 .Where(f => f.humanlikeFaction)
-                .OrderBy(f => f.LabelCap.ToString())
+                .OrderBy(f => DefDisplayNameUtility.GetSafeFactionSortKey(f, "Dialog_BatchApply.ctor"))
                 .ToList();
 
             RefreshKindList();
@@ -76,10 +77,10 @@ namespace FactionGearCustomizer.UI
         private IEnumerable<PawnKindDef> GetFilteredKinds()
         {
             if (string.IsNullOrEmpty(searchText)) return allKinds;
-            string term = searchText.ToLower();
+            string term = searchText.ToLowerInvariant();
             return allKinds.Where(k =>
-                (k.label ?? "").ToLower().Contains(term) ||
-                k.defName.ToLower().Contains(term));
+                DefDisplayNameUtility.GetSafePawnKindDisplayName(k, "Dialog_BatchApply.GetFilteredKinds").ToLowerInvariant().Contains(term) ||
+                (k.defName ?? string.Empty).ToLowerInvariant().Contains(term));
         }
 
         // ── Draw ──────────────────────────────────────────────
@@ -168,7 +169,7 @@ namespace FactionGearCustomizer.UI
                               targetFaction.defName == sourceFaction.defName;
                 if (isSelf) GUI.color = new Color(1f, 1f, 0.5f, 0.7f);
 
-                Widgets.CheckboxLabeled(rowRect, kind.LabelCap, ref selected);
+                Widgets.CheckboxLabeled(rowRect, DefDisplayNameUtility.GetSafePawnKindDisplayName(kind, "Dialog_BatchApply.DoWindowContents"), ref selected);
 
                 if (isSelf) GUI.color = Color.white;
 
@@ -259,11 +260,13 @@ namespace FactionGearCustomizer.UI
             Widgets.Label(new Rect(x, y, labelW, 24f),
                 LanguageManager.Get("BatchTargetFaction") + ":");
 
-            string factionLabel = targetFaction?.LabelCap.ToString() ?? "?";
+            string factionLabel = targetFaction != null
+                ? DefDisplayNameUtility.GetSafeFactionDisplayName(targetFaction, "Dialog_BatchApply.DrawFactionSelector")
+                : "?";
             if (Widgets.ButtonText(new Rect(x + labelW + 4f, y, buttonW, 24f), factionLabel))
             {
                 var options = allHumanFactions.Select(f =>
-                    new FloatMenuOption(f.LabelCap, () =>
+                    new FloatMenuOption(DefDisplayNameUtility.GetSafeFactionDisplayName(f, "Dialog_BatchApply.FactionMenu"), () =>
                     {
                         if (targetFaction != f)
                         {
@@ -341,7 +344,7 @@ namespace FactionGearCustomizer.UI
             {
                 AppliedAt = DateTime.Now,
                 SourceKind = sourceData.kindDefName,
-                SourceFaction = sourceFaction.LabelCap,
+                SourceFaction = DefDisplayNameUtility.GetSafeFactionDisplayName(sourceFaction, "Dialog_BatchApply.Apply"),
                 Flags = copyFlags,
                 TargetKinds = targets.Select(x => x.kindDefName).ToList(),
                 PreApplySnapshots = preApplySnapshots,

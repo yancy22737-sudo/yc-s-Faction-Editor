@@ -79,7 +79,7 @@ namespace FactionGearCustomizer
             float buttonHeight = 40f;
             Rect titleRect = new Rect(inRect.x, inRect.y, inRect.width, 30f);
             Text.Font = GameFont.Medium;
-            Widgets.Label(titleRect, LanguageManager.Get("VersionLog"));
+            Widgets.Label(titleRect, $"{LanguageManager.Get("VersionLog")} ({ModVersion.Current})");
             Text.Font = GameFont.Small;
 
             Rect scrollRect = new Rect(inRect.x, titleRect.yMax + 10f, inRect.width, inRect.height - buttonHeight - titleRect.height - 30f);

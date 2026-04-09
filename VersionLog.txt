@@ -394,3 +394,8 @@ v1.4.8
 
 
 
+v1.5.3
+- Fix: 新增统一名称安全工具 `DefDisplayNameUtility`，统一处理 `FactionDef` / `PawnKindDef` 的显示名解析、排序键生成和空值告警日志。
+- Fix: 设置窗口首帧相关链路（`FactionGearEditor`、`FactionListPanel`、`KindListPanel`）改为统一安全排序，避免异常 Def/翻译数据导致 `Failed to compare two elements in the array`。
+- Fix: 派系/兵种相关窗口（批量应用、创建派系实例、兵种选择器、旧版派系编辑窗口）改为复用安全名称解析，降低 mod 冲突或坏翻译触发 UI 空引用的概率。
+- Update: 同步更新 Index.md、Api.md、config.md 文档说明。

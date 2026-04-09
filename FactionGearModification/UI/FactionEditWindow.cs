@@ -8,6 +8,7 @@ using FactionGearCustomizer.Core;
 using FactionGearCustomizer.Managers;
 using FactionGearCustomizer.UI.Panels;
 using FactionGearCustomizer.UI.Dialogs;
+using FactionGearCustomizer.Utils;
 
 namespace FactionGearCustomizer.UI
 {
@@ -133,10 +134,12 @@ namespace FactionGearCustomizer.UI
         {
             if (Current.Game == null || Find.FactionManager == null)
             {
-                return factionDef.label;
+                return DefDisplayNameUtility.GetSafeFactionDisplayName(factionDef, "FactionEditWindow.GetInGameFactionName");
             }
             var factionInstance = Find.FactionManager.FirstFactionOfDef(factionDef);
-            return factionInstance != null ? factionInstance.Name : factionDef.label;
+            return factionInstance != null
+                ? DefDisplayNameUtility.GetSafeFactionDisplayName(factionInstance, "FactionEditWindow.GetInGameFactionName")
+                : DefDisplayNameUtility.GetSafeFactionDisplayName(factionDef, "FactionEditWindow.GetInGameFactionName");
         }
 
         public override void DoWindowContents(Rect inRect)
@@ -279,8 +282,9 @@ namespace FactionGearCustomizer.UI
             List<PawnKindDef> kinds = FactionDefManager.GetOriginalFactionKinds(factionDef);
             if (!string.IsNullOrEmpty(pawnKindSearchQuery))
             {
-                kinds = kinds.Where(k => k.LabelCap.ToString().ToLower().Contains(pawnKindSearchQuery.ToLower()) || 
-                                         k.defName.ToLower().Contains(pawnKindSearchQuery.ToLower())).ToList();
+                string lowerSearch = pawnKindSearchQuery.ToLowerInvariant();
+                kinds = kinds.Where(k => DefDisplayNameUtility.GetSafePawnKindDisplayName(k, "FactionEditWindow.GetFilteredKinds").ToLowerInvariant().Contains(lowerSearch) ||
+                                         (k.defName ?? string.Empty).ToLowerInvariant().Contains(lowerSearch)).ToList();
             }
             return kinds;
         }
@@ -291,7 +295,7 @@ namespace FactionGearCustomizer.UI
             listing.Begin(rect);
 
             // Faction Label
-            listing.Label($"<b>{LanguageManager.Get("Factions")}: {factionDef.LabelCap}</b>");
+            listing.Label($"<b>{LanguageManager.Get("Factions")}: {DefDisplayNameUtility.GetSafeFactionDisplayName(factionDef, "FactionEditWindow.DrawFactionSettings")}</b>");
             listing.Label($"{LanguageManager.Get("DefName")}: {factionDef.defName}");
             listing.Gap();
 
@@ -392,7 +396,7 @@ namespace FactionGearCustomizer.UI
                     {
                         List<FloatMenuOption> options = new List<FloatMenuOption>();
                         var sortedDefs = DefDatabase<XenotypeDef>.AllDefs
-                            .OrderBy(x => x.LabelCap.ToString())
+                            .OrderBy(x => x.label ?? x.defName ?? string.Empty, StringComparer.OrdinalIgnoreCase)
                             .ToList();
 
                         foreach (var x in sortedDefs)
@@ -411,7 +415,7 @@ namespace FactionGearCustomizer.UI
                     // List of Xenotypes
                     var sortedKeys = bufferXenotypes.Keys
                         .Select(k => new { Key = k, Def = DefDatabase<XenotypeDef>.GetNamedSilentFail(k) })
-                        .OrderBy(x => x.Def?.LabelCap.ToString() ?? x.Key)
+                        .OrderBy(x => x.Def != null ? (x.Def.label ?? x.Def.defName ?? string.Empty) : (x.Key ?? string.Empty), StringComparer.OrdinalIgnoreCase)
                         .Select(x => x.Key)
                         .ToList();
 
@@ -662,7 +666,7 @@ namespace FactionGearCustomizer.UI
 
                 // Labels
                 Rect labelRect = new Rect(row.x + 10f, row.y + 2f, row.width * 0.4f, 20f);
-                Widgets.Label(labelRect, $"<b>{kind.LabelCap}</b>");
+                Widgets.Label(labelRect, $"<b>{DefDisplayNameUtility.GetSafePawnKindDisplayName(kind, "FactionEditWindow.DrawKindList")}</b>");
                 
                 Rect defNameRect = new Rect(row.x + 10f, row.y + 22f, row.width * 0.4f, 16f);
                 GUI.color = Color.gray;

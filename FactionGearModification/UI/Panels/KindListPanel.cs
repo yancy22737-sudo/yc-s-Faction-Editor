@@ -6,6 +6,7 @@ using UnityEngine;
 using Verse;
 using FactionGearModification.UI;
 using FactionGearCustomizer.UI;
+using FactionGearCustomizer.Utils;
 
 namespace FactionGearCustomizer.UI.Panels
 {
@@ -127,7 +128,7 @@ namespace FactionGearCustomizer.UI.Panels
                         }
                     }
                     // 重新排序
-                    fullList.Sort((a, b) => (a.label ?? a.defName).CompareTo(b.label ?? b.defName));
+                    fullList.Sort((a, b) => DefDisplayNameUtility.ComparePawnKinds(a, b, "KindListPanel.GetKindsToDraw"));
                 }
                 
                 cachedFactionKinds[EditorSession.SelectedFactionDefName] = fullList;
@@ -179,7 +180,7 @@ namespace FactionGearCustomizer.UI.Panels
 
             // Draw Label
             Rect labelRect = new Rect(rowRect.x + 6f, rowRect.y, rowRect.width - 60f, rowRect.height); // Reserve space for buttons
-            string labelText = kindDef.label != null ? kindDef.LabelCap.ToString() : kindDef.defName;
+            string labelText = DefDisplayNameUtility.GetSafePawnKindDisplayName(kindDef, "KindListPanel.DrawKindRow");
 
             if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName))
             {

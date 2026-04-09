@@ -1,5 +1,18 @@
 # Config Guide
 
+## Safe Name Fallback Behavior
+
+- Scope:
+  - Faction and PawnKind related UI now resolves names through a centralized safe-name helper.
+  - Covered paths include the main settings window, faction list, kind list, batch apply, create-instance dialog, PawnKind picker, and legacy faction editor.
+- Runtime behavior:
+  - Invalid or missing translated labels no longer crash sorting or search.
+  - When no usable name exists, UI shows a placeholder (`[UnnamedFaction]` / `[UnnamedPawnKind]`) instead of throwing.
+  - A warning log is emitted once per bad Def so mod authors can trace the offending data source.
+- Compatibility:
+  - This change does not alter save data, external config format, or user-visible options.
+  - It is defensive against broken third-party Defs, translation packs, and runtime faction-instance naming issues.
+
 ## Translation Mod Integration
 
 - Native path:

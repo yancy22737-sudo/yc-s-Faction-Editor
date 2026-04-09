@@ -6,6 +6,7 @@ using UnityEngine;
 using Verse;
 using FactionGearCustomizer.Managers;
 using FactionGearCustomizer; // Added to access FactionGearEditor
+using FactionGearCustomizer.Utils;
 
 namespace FactionGearCustomizer.UI
 {
@@ -150,7 +151,7 @@ namespace FactionGearCustomizer.UI
             if (!string.IsNullOrEmpty(search))
             {
                 string lowerSearch = search.ToLowerInvariant();
-                source = source.Where(k => (k.LabelCap != null && k.LabelCap.ToString().ToLowerInvariant().Contains(lowerSearch)) ||
+                source = source.Where(k => DefDisplayNameUtility.GetSafePawnKindDisplayName(k, "Dialog_PawnKindPicker.UpdateList").ToLowerInvariant().Contains(lowerSearch) ||
                                            (k.defName != null && k.defName.ToLowerInvariant().Contains(lowerSearch)));
             }
 
@@ -174,8 +175,8 @@ namespace FactionGearCustomizer.UI
             else
             {
                 source = sortDescending
-                    ? source.OrderByDescending(k => k.LabelCap.ToString())
-                    : source.OrderBy(k => k.LabelCap.ToString());
+                    ? source.OrderByDescending(k => DefDisplayNameUtility.GetSafePawnKindSortKey(k, "Dialog_PawnKindPicker.UpdateList"))
+                    : source.OrderBy(k => DefDisplayNameUtility.GetSafePawnKindSortKey(k, "Dialog_PawnKindPicker.UpdateList"));
             }
 
             // 优化：使用延迟执行，只在需要时获取结果
@@ -366,7 +367,7 @@ namespace FactionGearCustomizer.UI
                     Widgets.InfoCardButton(rowX, y, kind);
                     rowX += 28f;
                 }
-                Widgets.Label(new Rect(rowX, y, 200f - (rowX - 5f), 28f), kind.LabelCap);
+                Widgets.Label(new Rect(rowX, y, 200f - (rowX - 5f), 28f), DefDisplayNameUtility.GetSafePawnKindDisplayName(kind, "Dialog_PawnKindPicker.Row"));
                 rowX = 215f;
 
                 // Race
@@ -424,7 +425,7 @@ namespace FactionGearCustomizer.UI
             if (defaultFactionTypeField != null)
             {
                 var faction = defaultFactionTypeField.GetValue(kind) as FactionDef;
-                if (faction != null) return faction.LabelCap;
+                if (faction != null) return DefDisplayNameUtility.GetSafeFactionDisplayName(faction, "Dialog_PawnKindPicker.GetFactionLabelForKind");
             }
 
             // 2. 如果当前有指定派系，检查兵种是否属于该派系
@@ -433,7 +434,7 @@ namespace FactionGearCustomizer.UI
                 var factionKinds = FactionGearEditor.GetFactionKinds(factionDef);
                 if (factionKinds != null && factionKinds.Any(k => k.defName == kind.defName))
                 {
-                    return factionDef.LabelCap;
+                    return DefDisplayNameUtility.GetSafeFactionDisplayName(factionDef, "Dialog_PawnKindPicker.GetFactionLabelForKind");
                 }
             }
 
@@ -450,7 +451,7 @@ namespace FactionGearCustomizer.UI
                             {
                                 if (opt.kind != null && opt.kind.defName == kind.defName)
                                 {
-                                    return faction.LabelCap;
+                                    return DefDisplayNameUtility.GetSafeFactionDisplayName(faction, "Dialog_PawnKindPicker.GetFactionLabelForKind");
                                 }
                             }
                         }

@@ -1055,7 +1055,8 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <AgeSettingsTooltip>Set the biological age range for this pawn kind.</AgeSettingsTooltip>
   <MinAge>Minimum Age</MinAge>
   <MaxAge>Maximum Age</MaxAge>
-  <AgeSettingsHint>Leave empty to disable. If in conflict with faction group settings, this will take precedence.</AgeSettingsHint>
+  <AgeSettingsHint>Leave empty to disable. If in conflict with faction group settings, this will take precedence. Age will be clamped to the minimum adult age of the race.</AgeSettingsHint>
+  <AgeClampedToAdult>Age value adjusted to minimum adult age: {0}</AgeClampedToAdult>
 
   <!-- Non-Combatant Warning -->
   <NonCombatantWarningText>Warning: The selected pawn kind contains "non-combatant" genes or cannot be generated as a combatant.

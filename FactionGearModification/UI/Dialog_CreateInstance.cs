@@ -5,6 +5,7 @@ using UnityEngine;
 using Verse;
 using RimWorld;
 using FactionGearCustomizer.Managers;
+using FactionGearCustomizer.Utils;
 
 namespace FactionGearCustomizer.UI
 {
@@ -39,7 +40,7 @@ namespace FactionGearCustomizer.UI
             // Filter available faction defs
             availableFactionDefs = DefDatabase<FactionDef>.AllDefsListForReading
                 .Where(f => f.humanlikeFaction && !f.isPlayer && !f.hidden)
-                .OrderBy(f => f.LabelCap.ToString() ?? "")
+                .OrderBy(f => DefDisplayNameUtility.GetSafeFactionSortKey(f, "Dialog_CreateInstance.ctor"))
                 .ToList();
         }
 
@@ -73,7 +74,7 @@ namespace FactionGearCustomizer.UI
             Rect outRect = new Rect(0f, listY, inRect.width, listHeight);
             
             var filteredDefs = availableFactionDefs
-                .Where(f => searchBuffer.NullOrEmpty() || f.LabelCap.ToString().ToLower().Contains(searchBuffer.ToLower()))
+                .Where(f => searchBuffer.NullOrEmpty() || DefDisplayNameUtility.GetSafeFactionDisplayName(f, "Dialog_CreateInstance.Search").ToLowerInvariant().Contains(searchBuffer.ToLowerInvariant()))
                 .ToList();
 
             Rect viewRect = new Rect(0f, 0f, outRect.width - 16f, filteredDefs.Count * 30f);
@@ -127,13 +128,13 @@ namespace FactionGearCustomizer.UI
                 if (isDisabled)
                 {
                     GUI.color = Color.gray;
-                    string labelText = def.LabelCap + " (" + LanguageManager.Get("AlreadyExists") + ")";
+                    string labelText = DefDisplayNameUtility.GetSafeFactionDisplayName(def, "Dialog_CreateInstance.Row") + " (" + LanguageManager.Get("AlreadyExists") + ")";
                     Widgets.Label(labelRect, labelText);
                     TooltipHandler.TipRegion(rowRect, LanguageManager.Get("FactionAlreadyExistsTooltip"));
                 }
                 else
                 {
-                    Widgets.Label(labelRect, def.LabelCap);
+                    Widgets.Label(labelRect, DefDisplayNameUtility.GetSafeFactionDisplayName(def, "Dialog_CreateInstance.Row"));
                 }
                 
                 GUI.color = Color.white;

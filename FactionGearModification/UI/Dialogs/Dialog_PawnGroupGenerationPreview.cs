@@ -709,7 +709,9 @@ namespace FactionGearCustomizer.UI.Dialogs
             {
                 float minAge = entry.MinAge ?? 0f;
                 float maxAge = entry.MaxAge ?? 999f;
-                // 在范围内随机选择一个年龄
+                float minAdultAge = GetMinAdultAge(kDef);
+                minAge = Mathf.Max(minAge, minAdultAge);
+                if (maxAge < minAge) maxAge = minAge;
                 float targetAge = Rand.Range(minAge, maxAge);
                 request.FixedBiologicalAge = targetAge;
                 request.FixedChronologicalAge = targetAge;
@@ -722,6 +724,30 @@ namespace FactionGearCustomizer.UI.Dialogs
         private Faction GetFactionOrNull()
         {
             return Find.FactionManager?.FirstFactionOfDef(factionDef);
+        }
+
+        private static float GetMinAdultAge(PawnKindDef kindDef)
+        {
+            if (kindDef?.race?.race?.lifeStageAges == null) return 18f;
+
+            foreach (var lsa in kindDef.race.race.lifeStageAges)
+            {
+                if (lsa.def?.defName == "HumanlikeAdult" || lsa.def?.defName == "Adult")
+                {
+                    return lsa.minAge;
+                }
+            }
+
+            float maxMinAge = 0f;
+            foreach (var lsa in kindDef.race.race.lifeStageAges)
+            {
+                if (lsa.minAge > maxMinAge)
+                {
+                    maxMinAge = lsa.minAge;
+                }
+            }
+
+            return maxMinAge > 0f ? maxMinAge : 18f;
         }
 
         private void DestroyAllPreviewPawns()

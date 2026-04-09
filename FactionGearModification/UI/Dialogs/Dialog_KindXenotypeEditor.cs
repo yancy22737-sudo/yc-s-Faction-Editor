@@ -601,14 +601,38 @@ namespace FactionGearCustomizer.UI.Dialogs
             kindData.ForcedXenotype = bufferForcedXenotype;
             
             if (float.TryParse(bufferMinAge, out float minAge))
+            {
+                float minAdultAge = GetMinAdultAge(kindDef);
+                if (minAge < minAdultAge)
+                {
+                    minAge = minAdultAge;
+                    bufferMinAge = minAdultAge.ToString();
+                    Messages.Message(string.Format(LanguageManager.Get("AgeClampedToAdult"), minAdultAge), MessageTypeDefOf.CautionInput, false);
+                }
                 kindData.MinAge = minAge;
+            }
             else
                 kindData.MinAge = null;
                 
             if (float.TryParse(bufferMaxAge, out float maxAge))
+            {
+                float minAdultAge = GetMinAdultAge(kindDef);
+                if (maxAge < minAdultAge)
+                {
+                    maxAge = minAdultAge;
+                    bufferMaxAge = minAdultAge.ToString();
+                    Messages.Message(string.Format(LanguageManager.Get("AgeClampedToAdult"), minAdultAge), MessageTypeDefOf.CautionInput, false);
+                }
                 kindData.MaxAge = maxAge;
+            }
             else
                 kindData.MaxAge = null;
+
+            if (kindData.MinAge.HasValue && kindData.MaxAge.HasValue && kindData.MaxAge.Value < kindData.MinAge.Value)
+            {
+                kindData.MaxAge = kindData.MinAge;
+                bufferMaxAge = kindData.MaxAge.Value.ToString();
+            }
 
             if (bufferXenotypes.Count > 0)
             {
@@ -684,6 +708,30 @@ namespace FactionGearCustomizer.UI.Dialogs
             savedKindData.isModified = true;
             savedFactionData.isModified = true;
             LogUtils.DebugLog($"Synced kind {kindDef.defName} xenotype settings to GameComponent");
+        }
+
+        private static float GetMinAdultAge(PawnKindDef kindDef)
+        {
+            if (kindDef?.race?.race?.lifeStageAges == null) return 18f;
+
+            foreach (var lsa in kindDef.race.race.lifeStageAges)
+            {
+                if (lsa.def?.defName == "HumanlikeAdult" || lsa.def?.defName == "Adult")
+                {
+                    return lsa.minAge;
+                }
+            }
+
+            float maxMinAge = 0f;
+            foreach (var lsa in kindDef.race.race.lifeStageAges)
+            {
+                if (lsa.minAge > maxMinAge)
+                {
+                    maxMinAge = lsa.minAge;
+                }
+            }
+
+            return maxMinAge > 0f ? maxMinAge : 18f;
         }
     }
 }

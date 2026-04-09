@@ -111,7 +111,7 @@ namespace FactionGearCustomizer
                 }
             }
 
-            list.Sort((a, b) => (a.label ?? a.defName).CompareTo(b.label ?? b.defName));
+            list.Sort((a, b) => DefDisplayNameUtility.ComparePawnKinds(a, b, "FactionGearEditor.GetFactionKinds"));
             
             // 存储到缓存
             factionKindsCache[cacheKey] = list;
@@ -292,7 +292,10 @@ namespace FactionGearCustomizer
             // Default Selection Logic
             if (string.IsNullOrEmpty(EditorSession.SelectedFactionDefName) && string.IsNullOrEmpty(EditorSession.SelectedKindDefName))
             {
-                var allFactions = DefDatabase<FactionDef>.AllDefs.Where(f => f.humanlikeFaction && !f.hidden).OrderBy(f => f.LabelCap.ToString()).ToList();
+                var allFactions = DefDatabase<FactionDef>.AllDefs
+                    .Where(f => f.humanlikeFaction && !f.hidden)
+                    .OrderBy(f => DefDisplayNameUtility.GetSafeFactionSortKey(f, "FactionGearEditor.DrawEditor"))
+                    .ToList();
                 if (allFactions.Any())
                 {
                     EditorSession.SelectedFactionDefName = allFactions.First().defName;

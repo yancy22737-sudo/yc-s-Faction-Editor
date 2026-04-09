@@ -1,16 +1,14 @@
-using System.Reflection;
-
 namespace FactionGearCustomizer
 {
     public static class ModVersion
     {
+        private const string CurrentVersion = "v1.5.3";
+
         public static string Current
         {
             get
             {
-                var assembly = Assembly.GetExecutingAssembly();
-                var ver = assembly.GetName().Version;
-                return $"v{ver.Major}.{ver.Minor}.{ver.Build}";
+                return CurrentVersion;
             }
         }
         

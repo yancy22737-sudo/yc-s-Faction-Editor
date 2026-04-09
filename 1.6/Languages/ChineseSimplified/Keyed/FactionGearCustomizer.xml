@@ -1057,7 +1057,8 @@
   <AgeSettingsTooltip>设置此兵种生成时的生物学年龄范围。</AgeSettingsTooltip>
   <MinAge>最小年龄</MinAge>
   <MaxAge>最大年龄</MaxAge>
-  <AgeSettingsHint>留空则不限制。若与派系群组设置冲突，以此处为准。</AgeSettingsHint>
+  <AgeSettingsHint>留空则不限制。若与派系群组设置冲突，以此处为准。年龄值将自动限制为该种族的最低成人年龄。</AgeSettingsHint>
+  <AgeClampedToAdult>年龄值已调整为最低成人年龄：{0}</AgeClampedToAdult>
 
   <!-- Non-Combatant Warning -->
   <NonCombatantWarningText>警告：您选择的异种包含“非暴力”基因或无法作为战斗人员生成。

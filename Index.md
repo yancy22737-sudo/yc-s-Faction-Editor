@@ -1,5 +1,30 @@
 # Index
 
+## Safe Def Name Resolution
+
+- `FactionGearModification/Utils/DefDisplayNameUtility.cs`
+  - Responsibility: Centralize safe display-name resolution and stable sort keys for `FactionDef`, faction instances, and `PawnKindDef`.
+  - Fallback order:
+    - `FactionDef`: localized label -> raw `label` -> `defName` -> `[UnnamedFaction]`
+    - `PawnKindDef`: localized label -> raw `label` -> `defName` -> `[UnnamedPawnKind]`
+    - faction instance: `Faction.Name` -> owning `FactionDef` safe name -> fallback placeholder
+  - Logging: Emits deduplicated warning logs when fallback placeholder is used, including Def type, `defName`, raw label, and calling context.
+  - Contract: Returned display names and sort keys are never null/empty; sorting must use these helpers instead of direct `LabelCap.ToString()` / bare `CompareTo`.
+- `FactionGearModification/UI/FactionGearEditor.cs`
+  - Responsibility: Default faction selection and cached PawnKind enumeration now use centralized safe sorting.
+- `FactionGearModification/UI/Panels/FactionListPanel.cs`
+  - Responsibility: Faction row display names and list ordering now tolerate invalid faction instance names, broken Def labels, and translation failures without crashing the window.
+- `FactionGearModification/UI/Panels/KindListPanel.cs`
+  - Responsibility: Kind list merge/sort/display now use centralized safe PawnKind naming and no longer depend on raw `(label ?? defName).CompareTo(...)`.
+- `FactionGearModification/UI/Dialog_CreateInstance.cs`
+  - Responsibility: Faction search and list rendering now use safe faction names.
+- `FactionGearModification/UI/Dialog_BatchApply.cs`
+  - Responsibility: Target faction sorting, target kind search, and list labels now use safe names.
+- `FactionGearModification/UI/Dialog_PawnKindPicker.cs`
+  - Responsibility: PawnKind search/sort/faction label rendering now use safe names.
+- `FactionGearModification/UI/FactionEditWindow.cs`
+  - Responsibility: Legacy faction editor now uses safe faction/kind display names in search and row rendering.
+
 ## Native Translation Pipeline
 
 - `FactionGearModification/Managers/LanguageManager.cs`

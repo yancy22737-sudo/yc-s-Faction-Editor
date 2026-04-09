@@ -5,6 +5,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 using FactionGearCustomizer.UI; // For Dialog_CreateInstance
+using FactionGearCustomizer.Utils;
 
 namespace FactionGearCustomizer.UI.Panels
 {
@@ -354,7 +355,7 @@ namespace FactionGearCustomizer.UI.Panels
             cachedFactionList.Sort((a, b) => {
                 int priorityCompare = a.priority.CompareTo(b.priority);
                 if (priorityCompare != 0) return priorityCompare;
-                return a.displayName.CompareTo(b.displayName);
+                return StringComparer.OrdinalIgnoreCase.Compare(a.displayName ?? string.Empty, b.displayName ?? string.Empty);
             });
         }
 
@@ -374,13 +375,13 @@ namespace FactionGearCustomizer.UI.Panels
 
             if (instance != null)
             {
-                displayName = instance.Name;
+                displayName = DefDisplayNameUtility.GetSafeFactionDisplayName(instance, "FactionListPanel.TryCreateFactionEntry");
                 color = instance.color ?? Color.white;
                 priority = GetFactionPriority(def);
             }
             else
             {
-                displayName = def.LabelCap.ToString();
+                displayName = DefDisplayNameUtility.GetSafeFactionDisplayName(def, "FactionListPanel.TryCreateFactionEntry");
                 // If instance is null but we are in game, use Gray to indicate "No Instance"
                 // If not in game (Main Menu), use def color
                 if (Current.ProgramState == ProgramState.Playing && EditorSession.UseInGameNames)

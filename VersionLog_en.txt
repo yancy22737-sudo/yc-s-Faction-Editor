@@ -463,3 +463,8 @@ v1.4.8
 
 
 
+v1.5.3
+- Fix: Add unified name-safety utility `DefDisplayNameUtility` to centralize `FactionDef` / `PawnKindDef` display-name resolution, sort-key generation, and fallback warning logs.
+- Fix: Switch settings-window first-frame paths (`FactionGearEditor`, `FactionListPanel`, `KindListPanel`) to unified safe sorting, preventing bad Def or translation data from triggering `Failed to compare two elements in the array`.
+- Fix: Update faction/pawnkind related dialogs (batch apply, create faction instance, pawnkind picker, legacy faction editor) to reuse safe display-name resolution and reduce UI null-reference crashes triggered by mod conflicts or broken translations.
+- Update: Sync Index.md, Api.md, and config.md documentation.

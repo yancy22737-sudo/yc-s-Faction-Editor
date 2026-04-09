@@ -743,7 +743,7 @@ namespace FactionGearCustomizer.Managers
                 }
             }
             
-            list.Sort((a, b) => (a.label ?? a.defName).CompareTo(b.label ?? b.defName));
+            list.Sort((a, b) => DefDisplayNameUtility.ComparePawnKinds(a, b, "FactionDefManager.ExtractKindsFromPawnGroupMakers"));
             return list;
         }
 
