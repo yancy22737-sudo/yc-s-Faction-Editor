@@ -17,6 +17,8 @@ namespace FactionGearCustomizer
     {
         [ThreadStatic]
         private static bool isApplyingGear;
+        
+        private const float DefaultMaxAge = 999f;
 
         public static void Prefix(ref PawnGenerationRequest request)
         {
@@ -343,7 +345,7 @@ namespace FactionGearCustomizer
         private static void ApplyAgeToRequest(ref PawnGenerationRequest request, float? minAge, float? maxAge, string kindDefName)
         {
             float effectiveMin = Mathf.Max(0f, minAge ?? 0f);
-            float effectiveMax = Mathf.Max(0f, maxAge ?? 999f);
+            float effectiveMax = Mathf.Max(0f, maxAge ?? DefaultMaxAge);
             if (effectiveMax < effectiveMin)
             {
                 float temp = effectiveMin;

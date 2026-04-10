@@ -17,6 +17,8 @@ namespace FactionGearCustomizer.UI.Dialogs
             Carriers,
             Guards
         }
+        
+        private const float DefaultMaxAge = 999f;
 
         private class Entry
         {
@@ -708,7 +710,7 @@ namespace FactionGearCustomizer.UI.Dialogs
             if (entry.MinAge.HasValue || entry.MaxAge.HasValue)
             {
                 float minAge = entry.MinAge ?? 0f;
-                float maxAge = entry.MaxAge ?? 999f;
+                float maxAge = entry.MaxAge ?? DefaultMaxAge;
                 float minAdultAge = GetMinAdultAge(kDef);
                 minAge = Mathf.Max(minAge, minAdultAge);
                 if (maxAge < minAge) maxAge = minAge;

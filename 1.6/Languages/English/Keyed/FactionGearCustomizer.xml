@@ -313,7 +313,7 @@ Applying this preset may cause missing items or errors. Continue?</MissingModsWa
   <ArmorSharp>Sharp Armor</ArmorSharp>
   <ArmorBlunt>Blunt Armor</ArmorBlunt>
   <Value>Value</Value>
-  <RangeFilterTooltip>Drag slider to filter {0} range (min~max). Range上限取自当前候选列表。</RangeFilterTooltip>
+  <RangeFilterTooltip>Drag slider to filter {0} range (min~max). Upper range limit is taken from the current candidate list.</RangeFilterTooltip>
   <Material>Material</Material>
   <MaterialSelect>Material: {0}</MaterialSelect>
   <QualitySelect>Quality: {0}</QualitySelect>
