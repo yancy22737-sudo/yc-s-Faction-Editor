@@ -292,8 +292,9 @@ namespace FactionGearCustomizer
             // Default Selection Logic
             if (string.IsNullOrEmpty(EditorSession.SelectedFactionDefName) && string.IsNullOrEmpty(EditorSession.SelectedKindDefName))
             {
+                bool showHidden = FactionGearCustomizerMod.Settings.ShowHiddenFactions;
                 var allFactions = DefDatabase<FactionDef>.AllDefs
-                    .Where(f => f.humanlikeFaction && !f.hidden)
+                    .Where(f => f.humanlikeFaction && (showHidden || !f.hidden))
                     .OrderBy(f => DefDisplayNameUtility.GetSafeFactionSortKey(f, "FactionGearEditor.DrawEditor"))
                     .ToList();
                 if (allFactions.Any())

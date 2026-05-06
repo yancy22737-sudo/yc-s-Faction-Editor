@@ -88,6 +88,7 @@
   <Biocode>生物编码</Biocode>
   <ForceNaked>强制裸装</ForceNaked>
   <ForceOnlySelected>仅从装备池选择</ForceOnlySelected>
+  <ForceOverrideHediffs>强制覆盖状态效果</ForceOverrideHediffs>
   <MinMax>最小值( 强制忽略) </MinMax>
   <MaxForceIgnore>最大值( 强制忽略) </MaxForceIgnore>
   <Ranged>远程</Ranged>
@@ -169,6 +170,8 @@
     请确保你已满18岁了。</ForceNakedTooltip>
   <ForceOnlySelectedTooltip>如果启用, 所有现有/原版装备将在应用自定义装备前被剥离。这确保角色只穿戴您在此指定的物品, 防止原版/自定义装备混穿。
     推荐：开启以获得完全控制。</ForceOnlySelectedTooltip>
+  <ForceOverrideHediffsTooltip>如果启用, 应用装备时会清除小人身上所有的非机械族状态效果 (包括基因提供的状态增益), 然后只应用您在「强制状态」中配置的状态效果。
+    如果禁用, 基因等来源提供的状态效果将被保留。</ForceOverrideHediffsTooltip>
   <WeightMechanicsTooltip>权重机制：在边缘世界中, 装备权重作为选择权重, 而非100%被选择。高权重的装备将优先被选择穿戴。</WeightMechanicsTooltip>
   <ColorPicker>颜色选择器</ColorPicker>
   <ColorPickerApply>应用</ColorPickerApply>
@@ -311,6 +314,9 @@
   <SortField_DPS>DPS</SortField_DPS>
   <SortField_Armor_Sharp>利器护甲</SortField_Armor_Sharp>
   <SortField_Armor_Blunt>钝器护甲</SortField_Armor_Blunt>
+  <SortField_Range>射程</SortField_Range>
+  <SortField_Damage>伤害</SortField_Damage>
+  <SortField_Mass>质量</SortField_Mass>
   <BaseMarketValue>市场价值</BaseMarketValue>
   <Weight>重量</Weight>
   <Damage>伤害</Damage>
@@ -410,6 +416,7 @@
   <PointsOverrideTooltip>自定义该兵种的袭击点数。留空则使用默认战斗力量值。</PointsOverrideTooltip>
   <PointsOverrideFieldTooltip>输入自定义点数，或留空以使用默认值。设置为 0 可清除自定义值。</PointsOverrideFieldTooltip>
   <Unknown>未知</Unknown>
+  <Category>类别</Category>
   <Category_All>所有</Category_All>
   <Category_Humanlike>人类</Category_Humanlike>
   <Category_Animal>动物</Category_Animal>
@@ -512,6 +519,18 @@
   <PawnGroupKind_Kidnappers>绑架者</PawnGroupKind_Kidnappers>
   <PawnGroupKind_Villagers>村民</PawnGroupKind_Villagers>
   <PawnGroupKind_Junkyard>废料场</PawnGroupKind_Junkyard>
+  <PawnGroupKind_Settlement_RangeOnly>定居点(远程)</PawnGroupKind_Settlement_RangeOnly>
+  <PawnGroupKind_Shamplers>踏行者</PawnGroupKind_Shamplers>
+  <PawnGroupKind_Fleshbeasts>血肉兽</PawnGroupKind_Fleshbeasts>
+  <PawnGroupKind_FleshbeastsWithDreamers>血肉兽与梦境者</PawnGroupKind_FleshbeastsWithDreamers>
+  <PawnGroupKind_Sightstealers>夺目者</PawnGroupKind_Sightstealers>
+  <PawnGroupKind_Metalhorrors>金属恐怖</PawnGroupKind_Metalhorrors>
+  <PawnGroupKind_PsychicRitualSiege>灵能仪式围攻</PawnGroupKind_PsychicRitualSiege>
+  <PawnGroupKind_Gorehulks>血肉巨人</PawnGroupKind_Gorehulks>
+  <PawnGroupKind_Devourers>吞噬者</PawnGroupKind_Devourers>
+  <PawnGroupKind_Noctols>暗夜生物</PawnGroupKind_Noctols>
+  <PawnGroupKind_SightstealersNoctols>夺目者与暗夜生物</PawnGroupKind_SightstealersNoctols>
+  <PawnGroupKind_Chimeras>嵌合体</PawnGroupKind_Chimeras>
   <CannotSettleHere>此处无法定居</CannotSettleHere>
   <ImportIconTitle>导入图标</ImportIconTitle>
   <ImagePathPrompt>图片路径 (PNG/JPG)</ImagePathPrompt>
@@ -547,7 +566,6 @@
   <NameColor>外观颜色</NameColor>
   <NameColorTooltip>派系成员外观服饰的颜色。</NameColorTooltip>
   <RimTalkLinkage>RimTalk联动</RimTalkLinkage>
-  <RimTalkUnderDev>开发中</RimTalkUnderDev>
   <NameCannotBeEmpty>名称不能为空</NameCannotBeEmpty>
   <NameTooShort>名称太短</NameTooShort>
   <NameTooLong>名称太长( 最多100个字符) </NameTooLong>
@@ -1069,5 +1087,12 @@
   <Yes>是</Yes>
   <No>否</No>
   <DoNotShowAgain>不再提示</DoNotShowAgain>
+  <RaidPoints>袭击点数</RaidPoints>
+  <AddPawnKindTooltip>点击添加新的兵种类型</AddPawnKindTooltip>
+  <SelectFactionFirst>请先选择一个派系</SelectFactionFirst>
+  <OK>确定</OK>
+  <OverwritePresetConfirm>覆盖预设？</OverwritePresetConfirm>
+  <PoolType>物品池类型</PoolType>
+  <RelationPermanentEnemyTooltip>永久敌对关系无法修改</RelationPermanentEnemyTooltip>
 
 </LanguageData>

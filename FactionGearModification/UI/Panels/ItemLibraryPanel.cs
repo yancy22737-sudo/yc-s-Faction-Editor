@@ -322,7 +322,7 @@ namespace FactionGearCustomizer.UI.Panels
             Rect sortFieldRect = new Rect(sortRowRect.x, sortRowRect.y, sortRowRect.width - 26f, sortRowRect.height);
             Rect sortOrderRect = new Rect(sortRowRect.xMax - 24f, sortRowRect.y, 24f, sortRowRect.height);
 
-            List<string> dynamicSortOptions = new List<string> { "Name", "MarketValue", "TechLevel", "ModSource" };
+            List<string> dynamicSortOptions = new List<string> { "Name", "MarketValue", "TechLevel", "ModSource", "Mass" };
             if (EditorSession.SelectedCategory == GearCategory.Weapons) dynamicSortOptions.AddRange(new[] { "Range", "Accuracy", "Damage", "DPS" });
             else if (EditorSession.SelectedCategory == GearCategory.MeleeWeapons) dynamicSortOptions.AddRange(new[] { "Damage", "DPS" });
             else if (EditorSession.SelectedCategory == GearCategory.Armors || EditorSession.SelectedCategory == GearCategory.Apparel) dynamicSortOptions.AddRange(new[] { "Armor_Sharp", "Armor_Blunt" });
@@ -561,6 +561,11 @@ namespace FactionGearCustomizer.UI.Panels
                     var bluntArmorPairs = items.Select(t => new { Thing = t, Armor = t.GetStatValueAbstract(StatDefOf.ArmorRating_Blunt) }).ToList();
                     bluntArmorPairs = EditorSession.SortAscending ? bluntArmorPairs.OrderBy(x => x.Armor).ToList() : bluntArmorPairs.OrderByDescending(x => x.Armor).ToList();
                     items = bluntArmorPairs.Select(x => x.Thing).ToList();
+                    break;
+                case "Mass":
+                    var massPairs = items.Select(t => new { Thing = t, Mass = t.GetStatValueAbstract(StatDefOf.Mass) }).ToList();
+                    massPairs = EditorSession.SortAscending ? massPairs.OrderBy(x => x.Mass).ToList() : massPairs.OrderByDescending(x => x.Mass).ToList();
+                    items = massPairs.Select(x => x.Thing).ToList();
                     break;
             }
 

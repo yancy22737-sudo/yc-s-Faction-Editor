@@ -387,7 +387,7 @@ namespace FactionGearCustomizer
 
         private static void ApplyHediffs(Pawn pawn, KindGearData kindData)
         {
-            if (kindData.ForceOnlySelected && pawn.health != null)
+            if (kindData.ForceOverrideHediffs && pawn.health != null)
             {
                 var hediffsToRemove = pawn.health.hediffSet.hediffs
                     .Where(h => h.def != null && !h.def.defName.StartsWith("Mech"))
@@ -457,7 +457,7 @@ namespace FactionGearCustomizer
                 }
                 else
                 {
-                    Log.Warning($"[FactionGearCustomizer] Skipped applying hediff {def.defName} to {pawn.Name.ToStringShort} - would reduce consciousness/moving below 50%");
+                    Log.Warning($"[FactionGearCustomizer] Skipped applying hediff {def.defName} to {SafePawnLabel(pawn)} - would reduce consciousness/moving below 50%");
                 }
             }
             catch (Exception ex)
@@ -479,7 +479,7 @@ namespace FactionGearCustomizer
                         }
                         else
                         {
-                            Log.Warning($"[FactionGearCustomizer] Skipped applying hediff {def.defName} to {pawn.Name.ToStringShort} - would reduce consciousness/moving below 50%");
+                            Log.Warning($"[FactionGearCustomizer] Skipped applying hediff {def.defName} to {SafePawnLabel(pawn)} - would reduce consciousness/moving below 50%");
                         }
                     }
                 }
@@ -525,7 +525,7 @@ namespace FactionGearCustomizer
                 
                 if (validParts.NullOrEmpty())
                 {
-                    Log.Warning($"[FactionGearCustomizer] Cannot find valid body parts for hediff {def.defName} on pawn {pawn.Name.ToStringShort}");
+                    Log.Warning($"[FactionGearCustomizer] Cannot find valid body parts for hediff {def.defName} on pawn {SafePawnLabel(pawn)}");
                     return;
                 }
                 
@@ -550,7 +550,7 @@ namespace FactionGearCustomizer
                         }
                         else
                         {
-                            Log.Warning($"[FactionGearCustomizer] Skipped applying hediff {def.defName} to {pawn.Name.ToStringShort} - would reduce consciousness/moving below 50%");
+                            Log.Warning($"[FactionGearCustomizer] Skipped applying hediff {def.defName} to {SafePawnLabel(pawn)} - would reduce consciousness/moving below 50%");
                         }
                     }
                     catch (Exception ex)
@@ -580,7 +580,7 @@ namespace FactionGearCustomizer
                         }
                         else
                         {
-                            Log.Warning($"[FactionGearCustomizer] Skipped applying hediff {def.defName} to {pawn.Name.ToStringShort} - would reduce consciousness/moving below 50%");
+                            Log.Warning($"[FactionGearCustomizer] Skipped applying hediff {def.defName} to {SafePawnLabel(pawn)} - would reduce consciousness/moving below 50%");
                         }
                     }
                     catch (Exception ex)
@@ -837,8 +837,18 @@ namespace FactionGearCustomizer
             // Simple Mode: Old Lists (Fallback)
             else if (hasSimpleWeaponData)
             {
-                // ... Existing simple logic ...
-                if (kindData.weapons.Any())
+                bool hasRanged = kindData.weapons.Any();
+                bool hasMelee = kindData.meleeWeapons.Any();
+
+                if (hasRanged && hasMelee)
+                {
+                    if (Rand.Chance(0.5f))
+                        hasMelee = false;
+                    else
+                        hasRanged = false;
+                }
+
+                if (hasRanged)
                 {
                     // Filter by tech level
                     var validWeapons = forceIgnore
@@ -894,7 +904,7 @@ namespace FactionGearCustomizer
                     }
                 }
 
-                if (kindData.meleeWeapons.Any())
+                if (hasMelee)
                 {
                     // Filter by tech level
                     var validMelee = forceIgnore
@@ -2619,6 +2629,18 @@ namespace FactionGearCustomizer
             }
 
             return null;
+        }
+
+        private static string SafePawnLabel(Pawn pawn)
+        {
+            try
+            {
+                return pawn?.Name?.ToStringShort ?? pawn?.LabelShort ?? pawn?.KindLabel ?? "Unknown";
+            }
+            catch
+            {
+                return "Unknown";
+            }
         }
     }
 }

@@ -305,6 +305,9 @@
   <SortField_DPS>УВС</SortField_DPS>
   <SortField_Armor_Sharp>Защита от острых</SortField_Armor_Sharp>
   <SortField_Armor_Blunt>Защита от тупых</SortField_Armor_Blunt>
+  <SortField_Range>Дальность</SortField_Range>
+  <SortField_Damage>Урон</SortField_Damage>
+  <SortField_Mass>Масса</SortField_Mass>
   <BaseMarketValue>Рыночная цена</BaseMarketValue>
   <Weight>Вес</Weight>
   <Damage>Урон</Damage>
@@ -404,6 +407,7 @@
   <PointsOverrideTooltip>Переопределить очки рейда для этой пешки. Оставьте пустым, чтобы использовать боевую мощь по умолчанию.</PointsOverrideTooltip>
   <PointsOverrideFieldTooltip>Введите количество очков или оставьте пустым для использования значения по умолчанию. Установите 0, чтобы сбросить переопределение.</PointsOverrideFieldTooltip>
   <Unknown>Неизвестно</Unknown>
+  <Category>Категория</Category>
   <Category_All>Все</Category_All>
   <Category_Humanlike>Гуманоиды</Category_Humanlike>
   <Category_Animal>Животные</Category_Animal>
@@ -510,6 +514,18 @@
   <PawnGroupKind_Kidnappers>Похитители</PawnGroupKind_Kidnappers>
   <PawnGroupKind_Villagers>Селяне</PawnGroupKind_Villagers>
   <PawnGroupKind_Junkyard>Свалка</PawnGroupKind_Junkyard>
+  <PawnGroupKind_Settlement_RangeOnly>Поселение (дальнобойное)</PawnGroupKind_Settlement_RangeOnly>
+  <PawnGroupKind_Shamplers>Шаркающие</PawnGroupKind_Shamplers>
+  <PawnGroupKind_Fleshbeasts>Плотозвери</PawnGroupKind_Fleshbeasts>
+  <PawnGroupKind_FleshbeastsWithDreamers>Плотозвери со сновидцами</PawnGroupKind_FleshbeastsWithDreamers>
+  <PawnGroupKind_Sightstealers>Похитители зрения</PawnGroupKind_Sightstealers>
+  <PawnGroupKind_Metalhorrors>Металлоужасы</PawnGroupKind_Metalhorrors>
+  <PawnGroupKind_PsychicRitualSiege>Психическая ритуальная осада</PawnGroupKind_PsychicRitualSiege>
+  <PawnGroupKind_Gorehulks>Кровавые великаны</PawnGroupKind_Gorehulks>
+  <PawnGroupKind_Devourers>Пожиратели</PawnGroupKind_Devourers>
+  <PawnGroupKind_Noctols>Ноктолы</PawnGroupKind_Noctols>
+  <PawnGroupKind_SightstealersNoctols>Похитители зрения и ноктолы</PawnGroupKind_SightstealersNoctols>
+  <PawnGroupKind_Chimeras>Химеры</PawnGroupKind_Chimeras>
   <CannotSettleHere>Здесь нельзя поселиться</CannotSettleHere>
   <ImportIconTitle>Импорт иконки</ImportIconTitle>
   <ImagePathPrompt>Путь к изображению (PNG/JPG)</ImagePathPrompt>
@@ -545,6 +561,10 @@
   <NameColor>Цвет одежды</NameColor>
   <NameColorTooltip>Отображаемый цвет для одежды.</NameColorTooltip>
   <RimTalkLinkage>Интеграция RimTalk</RimTalkLinkage>
+  <SeverityRange>Диапазон тяжести</SeverityRange>
+  <ForceOverrideHediffs>Принудительная перезапись эффектов</ForceOverrideHediffs>
+  <ForceOverrideHediffsTooltip>Если включено, все немеханические эффекты состояния будут удалены перед применением настроенных принудительных эффектов. Это включает бонусы от генов.
+    Если отключено, существующие эффекты от генов, имплантов и т.д. будут сохранены.</ForceOverrideHediffsTooltip>
   <NameCannotBeEmpty>Имя не может быть пустым</NameCannotBeEmpty>
   <NameTooShort>Имя слишком короткое</NameTooShort>
   <NameTooLong>Имя слишком длинное (макс. 100 символов)</NameTooLong>
@@ -1063,4 +1083,11 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <Yes>Да</Yes>
   <No>Нет</No>
   <DoNotShowAgain>Больше не показывать</DoNotShowAgain>
+  <RaidPoints>Очки рейда</RaidPoints>
+  <AddPawnKindTooltip>Нажмите, чтобы добавить новый вид пешки</AddPawnKindTooltip>
+  <SelectFactionFirst>Сначала выберите фракцию</SelectFactionFirst>
+  <OK>ОК</OK>
+  <OverwritePresetConfirm>Перезаписать пресет?</OverwritePresetConfirm>
+  <PoolType>Тип пула</PoolType>
+  <RelationPermanentEnemyTooltip>Постоянные враждебные отношения нельзя изменить</RelationPermanentEnemyTooltip>
 </LanguageData>

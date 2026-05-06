@@ -7,6 +7,7 @@ using FactionGearCustomizer.UI.Panels;
 using FactionGearCustomizer.Managers;
 using FactionGearCustomizer.Core;
 using FactionGearCustomizer.Utils;
+using FactionGearCustomizer.Patches;
 
 namespace FactionGearCustomizer
 {
@@ -37,6 +38,9 @@ namespace FactionGearCustomizer
             {
                 FactionDefManager.SaveAllOriginalData();
             }, "SavingFactionOriginalData", false, null);
+
+            // 延迟应用 Milira 兼容性补丁（需要等待 Milira 程序集加载完成）
+            Patch_MiliraHairGraphicFor.SchedulePatch();
         }
 
         private void PatchAllSafely()

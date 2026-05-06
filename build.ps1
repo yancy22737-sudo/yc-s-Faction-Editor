@@ -3,18 +3,18 @@ $ErrorActionPreference = "Stop"
 Write-Host "Checking for running RimWorld process..."
 Get-Process RimWorldWin64 -ErrorAction SilentlyContinue | Stop-Process -Force
 
-$sourceRoot = "C:\Users\Administrator\source\repos\FactionGearModification"
-$destRoot = "E:\SteamLibrary\steamapps\common\RimWorld\Mods\FactionGearCustomizer"
+$sourceRoot = "c:\Users\22737\source\repos\FactionGearModification"
+$destRoot = "D:\SteamLibrary\steamapps\common\RimWorld\Mods\FactionGearCustomizer"
 
 Write-Host "Building project..."
-dotnet build "$sourceRoot\FactionGearModification\FactionGearModification.csproj" -c Release
+dotnet build "$sourceRoot\FactionGearModification\FactionGearModification.csproj" -c Debug
 
-if ($LASTEXITCODE -ne 0) { 
+if ($LASTEXITCODE -ne 0) {
     Write-Error "Build failed."
-    exit 1 
+    exit 1
 }
 
-$dllSource = "$sourceRoot\FactionGearModification\bin\Release\net48\FactionGearCustomizer.dll"
+$dllSource = "$sourceRoot\FactionGearModification\bin\Debug\net48\FactionGearCustomizer.dll"
 $dllDest = "$sourceRoot\1.6\Assemblies"
 
 if (-not (Test-Path $dllSource)) {

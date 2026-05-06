@@ -515,6 +515,17 @@ namespace FactionGearCustomizer.UI.Panels
             }
             else if (EditorSession.CurrentAdvancedTab == AdvancedTab.Items)
                 height = 200f;
+            else if (EditorSession.CurrentAdvancedTab == AdvancedTab.General)
+            {
+                bool isForceIgnore = kindData.ForceIgnoreRestrictions ?? FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
+                height = 310f;
+                if (!kindData.ForceNaked) height += 84f;
+                if (!isForceIgnore)
+                {
+                    if (kindData.ApparelMoney.HasValue) height += 24f;
+                    if (kindData.WeaponMoney.HasValue) height += 24f;
+                }
+            }
             else
                 height = 350f;
 
@@ -729,6 +740,16 @@ namespace FactionGearCustomizer.UI.Panels
                     FactionGearEditor.MarkDirty();
                 }
 
+                bool forceOverrideHediffs = kindData.ForceOverrideHediffs;
+                ui.CheckboxLabeled(LanguageManager.Get("ForceOverrideHediffs"), ref forceOverrideHediffs, LanguageManager.Get("ForceOverrideHediffsTooltip"));
+                if (forceOverrideHediffs != kindData.ForceOverrideHediffs)
+                {
+                    UndoManager.RecordState(kindData);
+                    kindData.ForceOverrideHediffs = forceOverrideHediffs;
+                    kindData.isModified = true;
+                    FactionGearEditor.MarkDirty();
+                }
+
                 bool outfitFirst = kindData.OutfitFirstBudgetStrategy;
                 ui.CheckboxLabeled(LanguageManager.Get("OutfitFirstBudgetStrategy"), ref outfitFirst, LanguageManager.Get("OutfitFirstBudgetStrategyTooltip"));
                 if (outfitFirst != kindData.OutfitFirstBudgetStrategy)
@@ -775,12 +796,6 @@ namespace FactionGearCustomizer.UI.Panels
                 }
             }
 
-            ui.Gap(6f);
-            Rect rimTalkRect = ui.GetRect(30f);
-            Color oldColor = GUI.color;
-            GUI.color = Color.gray;
-            Widgets.ButtonText(rimTalkRect, $"{LanguageManager.Get("RimTalkLinkage")} - {LanguageManager.Get("RimTalkUnderDev")}", true, false, false);
-            GUI.color = oldColor;
         }
 
         private static void DrawAdvancedApparel(Listing_Standard ui, KindGearData kindData)

@@ -1,4 +1,30 @@
-﻿v1.5.2
+﻿v1.5.6
+- Fix: 拆分「仅从装备池选择」中的状态效果强制覆盖为独立选项「强制覆盖状态效果」，避免基因提供的状态增益被误清除。
+- Fix: 修复中世纪大修等模组中部分派系（如邪教徒）无法在列表中显示的问题，扩展 pawnGroupMakers 过滤条件以检查 traders/carriers/guards 子列表。
+- Fix: 修复同时配置近战+远程武器时近战无条件覆盖远程的问题，改为随机二选一。
+- Fix: 修复预览小人数据堆积的内存泄漏问题，字典赋值前先销毁旧 Pawn。
+- Fix: 修复高级设置中服装预算/武器预算滑块展开导致下方 UI 内容截断的问题。
+- Fix: 移除未完成的「RimTalk联动」按钮。
+- Fix: 预览卡片左下角添加袭击点数显示。
+- Fix: 物品库添加 Mass（质量）排序选项。
+- Fix: 补全大量缺失的语言键（Category、SortField_Range/Damage/Mass、ForceOverrideHediffs、PawnGroupKind 系列等）。
+- Fix: 移除重复图片资源，统一使用 Logo.png。
+
+v1.5.5
+- Fix: 修复加入mod后Pawn物品栏UI负重值不显示的问题。新增Patch_ITab_Pawn_Gear_Debug.cs，确保MassUtility方法在inventory为null时返回安全值而非抛出异常。
+
+v1.5.4
+- Fix: Milira 补丁改用 LongEventHandler.QueueLongEvent 延迟应用，确保 Milira 程序集已加载后才执行补丁（之前 StaticConstructorOnStartup 时机太早导致补丁未生效）。
+- Fix: Milira 补丁改用独立 Harmony 实例，不再依赖 FactionGearCustomizerMod.HarmonyInstance（避免因初始化顺序导致 null）。
+- Fix: 扩展 Milira 头发渲染节点类型搜索，支持多种类型名称（PawnRenderNode_MilianHair / PawnRenderNode_MiliraHair / 包含"Hair"的 PawnRenderNode 子类）。
+
+v1.5.3
+- Fix: 新增统一名称安全工具 `DefDisplayNameUtility`，统一处理 `FactionDef` / `PawnKindDef` 的显示名解析、排序键生成和空值告警日志。
+- Fix: 设置窗口首帧相关链路（`FactionGearEditor`、`FactionListPanel`、`KindListPanel`）改为统一安全排序，避免异常 Def/翻译数据导致 `Failed to compare two elements in the array`。
+- Fix: 派系/兵种相关窗口（批量应用、创建派系实例、兵种选择器、旧版派系编辑窗口）改为复用安全名称解析，降低 mod 冲突或坏翻译触发 UI 空引用的概率。
+- Update: 同步更新 Index.md、Api.md、config.md 文档说明。
+
+v1.5.2
 - Fix: 优化语言回退热路径，语言变化时只更新一次回退链，避免在 UI 每帧大量重复归一语言名与分配枚举器。
 - Fix: 保持繁中优先退简中、其它语言退英文，同时降低未提供语言包环境下打开 mod 的性能开销。
 
@@ -15,12 +41,12 @@ v1.5.0
 
 v1.4.7
 - Update: 优先套装策略改为按服装预算上限（max）构建核心套装，不再使用随机预算。
-- Update: 核心套装选择逻辑改为“超预算自动替换降级直到不超预算”（可行时）。
+- Update: 核心套装选择逻辑改为"超预算自动替换降级直到不超预算"（可行时）。
 - Add: 新增默认防具预算下限约束：核心防具价值（中层防护+外层）不低于预算的60%（可行时）。
-- Fix: 当无法同时满足“预算上限+防具60%”时，改为优先保持预算内并记录降级日志；若最低组合仍超预算则回退最低成本核心套装并告警。
+- Fix: 当无法同时满足"预算上限+防具60%"时，改为优先保持预算内并记录降级日志；若最低组合仍超预算则回退最低成本核心套装并告警。
 - Update: 同步更新中英提示文案、Index.md、Api.md、config.md。
 v1.4.6
-- Add: 高级设置新增“先成套后升材质”开关（默认开启），支持兵种级独立控制。
+- Add: 高级设置新增"先成套后升材质"开关（默认开启），支持兵种级独立控制。
 - Add: 服装生成改为两阶段流程：先生成核心层级套装，再根据剩余预算升级材质（不改款式、不改品质）。
 - Add: 简单模式接入同样的两阶段预算策略（合并 armors/apparel/others 后统一推断核心层级）。
 - Fix: 预算不足时，核心层级允许超预算保底穿齐，避免出现只穿一件高材质导致裸装。
@@ -39,16 +65,16 @@ v1.4.5
 v1.4.4
 - Fix: 修复 `selectionChance` 与 hediff `chance` 的反序列化默认值，兼容旧配置，避免旧数据被读取为 0% 概率。
 - Fix: 修复多个条目/池命中同一物品时数量只取最大值的问题，改为按来源数量累加生成。
-- Fix: 修复“手动指定身体部位”分支绕过安全检查的问题，统一执行昏迷/失能防护判定。
+- Fix: 修复"手动指定身体部位"分支绕过安全检查的问题，统一执行昏迷/失能防护判定。
 - Fix: 修复 `AnyAddiction` Hediff 池筛选条件，避免错误排除真实成瘾/耐受类 Hediff。
 - Fix: 修复 `AnyVegetable` 物品池筛选过窄问题，改为基于可食物类型标记筛选，提高命中准确性。
 
 v1.4.3
-- Fix: 修复 Pawn 生成时年龄配置读取逻辑，改为“存档配置优先、全局配置兜底”，避免运行中写入空配置污染全局设置。
+- Fix: 修复 Pawn 生成时年龄配置读取逻辑，改为"存档配置优先、全局配置兜底"，避免运行中写入空配置污染全局设置。
 - Fix: 修复新建派系实例时关系覆写只读取全局配置的问题，现已与存档激活配置一致。
 - Fix: 修复 ResetAllFactions 仅恢复 Def 不恢复实例状态的问题，现会同时恢复运行中派系实例的名称、颜色与玩家关系。
 - Fix: 修复剧本配置与世界创建 Lite 编辑器应用后未立即生效的问题，改为走统一应用链路并即时刷新生效。
-- Fix: 修复首次提示窗口派系列表滚动状态每帧重置问题，并实现“不再询问”持久化逻辑。
+- Fix: 修复首次提示窗口派系列表滚动状态每帧重置问题，并实现"不再询问"持久化逻辑。
 
 v1.4.2
 - Add: 在兵种异种设置中添加年龄设置选项（最小/最大年龄），优先级高于派系群组设置。
@@ -169,16 +195,16 @@ v1.1.59
 - Fix: 增强 GearApplier.ApplyCustomGear 的异常捕获 (try-catch)，防止 Patch 注入点报错打断 Pawn 生成流程。
 - Update: 移除 FactionGearManager.GetModGroup 相关功能及引用，简化代码。
 v1.1.58
-- Update: 将“服饰颜色”选项更名为“名称颜色”，并添加了相关说明提示。
-- Add: 在高级设置中新增“RimTalk联动”按钮（暂未开放，显示为开发中）。
+- Update: 将"服饰颜色"选项更名为"名称颜色"，并添加了相关说明提示。
+- Add: 在高级设置中新增"RimTalk联动"按钮（暂未开放，显示为开发中）。
 v1.1.57
-- Fix: 修复“在地图上选择”功能因调用旧方法而导致的 NullReferenceException。现在该功能使用新的 FactionSpawnWindow 逻辑。
+- Fix: 修复"在地图上选择"功能因调用旧方法而导致的 NullReferenceException。现在该功能使用新的 FactionSpawnWindow 逻辑。
 v1.1.56
 - Build: Release build.
 v1.1.55
 - Fix: Fixed TopBar not showing in MainTabWindow.
 v1.1.54
-- Add: 新增“在地图上选择”据点功能 (FactionSpawnWindow)，参考 WorldEdit 实现，支持在世界地图上连续点击生成据点。
+- Add: 新增"在地图上选择"据点功能 (FactionSpawnWindow)，参考 WorldEdit 实现，支持在世界地图上连续点击生成据点。
 - Update: 替换原有的 WorldTargeter 选择方式，改为更直观的非模态窗口交互。
 v1.1.53
 - Fix: 修复 FactionSpawnManager 中切换 World 标签页时可能发生的 NullReferenceException，增加对 MainButtonDefOf.World.TabWindow 的空值检查和自动修复逻辑。
@@ -234,7 +260,7 @@ v1.1.35
 v1.1.34
 - Fix: 增强 FactionGearMainTabWindow 的标题隐藏逻辑，在 PreOpen、PostOpen 和 DoWindowContents 中强制将 optionalTitle 设为空格，彻底解决重复标题问题。
 v1.1.33
-- Fix: 禁用 FactionGearMainTabWindow 的系统默认标题绘制，解决主界面顶部出现“巨大的重复标题”问题。
+- Fix: 禁用 FactionGearMainTabWindow 的系统默认标题绘制，解决主界面顶部出现"巨大的重复标题"问题。
 v1.1.32
 - Fix: 彻底修复主界面重复标题问题，通过重写 Title 属性确保原生标题不被绘制。
 v1.1.31
@@ -278,7 +304,7 @@ v1.1.16
 v1.1.15
 - Fix: 修复派系编辑菜单顶部选项卡（Settings/PawnKinds）无法点击的问题。调整了 Tab 绘制位置，使其正确显示在窗口内容区域内。
 v1.1.14
-- Update: 修改默认排序方式为按“市场价值”降序
+- Update: 修改默认排序方式为按"市场价值"降序
 - Update: 将价值筛选范围默认设置为最大覆盖范围
 v1.1.14
 - Fix: 修复 MainButtonWorker_FactionGear 中激活逻辑，改用 Find.MainTabsRoot.ToggleTab(def) 代替手动 WindowStack.Add，解决了因 MainTabWindow.def 未赋值导致的 NullReferenceException 崩溃。
@@ -332,7 +358,7 @@ v1.1.0
 - Update: 改进预设导入导出功能
 - Fix: 修复装备应用逻辑，GearApplier重构确保自定义装备正确生效
 v1.0.29
-- Update: Layer Preview 默认隐藏，优化了布局并新增“腰部”行，更直观展示腰带装备。
+- Update: Layer Preview 默认隐藏，优化了布局并新增"腰部"行，更直观展示腰带装备。
 - Update: Layer Preview 现在会检查 others 列表（如腰带），不再遗漏。
 - Fix: 增强 SpecRequirementEdit 加载逻辑，防止因 ThingDef 缺失（如卸载 Mod 后）导致红字报错。
 - Fix: 增强 ForcedHediff 加载逻辑，防止因 HediffDef 缺失导致红字报错。
@@ -349,7 +375,7 @@ v1.0.26
 v1.0.22
 - Update: 优化 Hediff 卡片 UI 布局，增加卡片高度和详细信息展示区
 - Add: HediffCardUI 新增 Severity（严重程度）范围控制
-- Fix: 修复 PresetManagerWindow 中 WidgetsUtils 引用缺失问题
+- Fix: 修复 PresetManagerUI 中 WidgetsUtils 引用缺失问题
 - Fix: 修复 WidgetsUtils 中 PortraitsCache 类型查找兼容性问题
 v1.0.7
 - Fix: 修复 FactionGearPreviewWindow (预览卡片) 无法正常工作的问题 (PortraitsCache/DrawBox 兼容性修复)。
@@ -374,10 +400,10 @@ v1.0.2
 
 
 v1.4.10
-- Fix: 修复“仅从装备池选择 + 先成套后升材质”在核心套装失败时保留原版服装的问题；现在会严格清空并仅尝试穿戴装备池中的合法服装，允许缺位。
+- Fix: 修复"仅从装备池选择 + 先成套后升材质"在核心套装失败时保留原版服装的问题；现在会严格清空并仅尝试穿戴装备池中的合法服装，允许缺位。
 - Fix: 修复核心套装不完整时直接中断的问题；严格池内模式下改为继续从用户配置池补穿，并输出区分性的失败/降级日志。
 - Fix: 统一兵种目标来源枚举，`GetFactionKinds` 现在会合并 `options/traders/carriers/guards` 与当前派系已配置的 PawnKind，补上帝国冠军等特殊来源目标。
-- Fix: `ApplyToAllKindsInFaction` 改为复用统一兵种枚举器，避免“应用到其他”与批量应用目标集合不一致。
+- Fix: `ApplyToAllKindsInFaction` 改为复用统一兵种枚举器，避免"应用到其他"与批量应用目标集合不一致。
 - Fix: 修复 `ApplyHediffWithPart` / `GetUserSpecifiedBodyParts` 空引用，异常不再中断整条装备应用链路。
 - Update: 同步更新 Index.md、Api.md、config.md。
 v1.4.9
@@ -394,8 +420,3 @@ v1.4.8
 
 
 
-v1.5.3
-- Fix: 新增统一名称安全工具 `DefDisplayNameUtility`，统一处理 `FactionDef` / `PawnKindDef` 的显示名解析、排序键生成和空值告警日志。
-- Fix: 设置窗口首帧相关链路（`FactionGearEditor`、`FactionListPanel`、`KindListPanel`）改为统一安全排序，避免异常 Def/翻译数据导致 `Failed to compare two elements in the array`。
-- Fix: 派系/兵种相关窗口（批量应用、创建派系实例、兵种选择器、旧版派系编辑窗口）改为复用安全名称解析，降低 mod 冲突或坏翻译触发 UI 空引用的概率。
-- Update: 同步更新 Index.md、Api.md、config.md 文档说明。

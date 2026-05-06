@@ -133,6 +133,11 @@ namespace FactionGearCustomizer
                     Pawn p = GeneratePawnInternal(k, faction);
                     if (p != null)
                     {
+                        if (previewPawns.TryGetValue(k, out var existing) && existing != null && !existing.Destroyed)
+                        {
+                            SafeClearApparel(existing);
+                            existing.Destroy();
+                        }
                         previewPawns[k] = p;
                         WidgetsUtils.SetPortraitDirty(p);
                     }
@@ -356,10 +361,27 @@ namespace FactionGearCustomizer
             if (p != null)
             {
                 // Draw Pawn
-                RenderTexture image = WidgetsUtils.GetPortrait(p, new Vector2(portraitRect.width, portraitRect.height), rotation, new Vector3(0f, 0f, 0f), 1f);
+                RenderTexture image = null;
+                try
+                {
+                    image = WidgetsUtils.GetPortrait(p, new Vector2(portraitRect.width, portraitRect.height), rotation, new Vector3(0f, 0f, 0f), 1f);
+                }
+                catch (Exception ex)
+                {
+                    // 捕获任何未处理的渲染异常
+                    Log.Warning($"[FactionGearCustomizer] 绘制 {k.defName} 肖像时发生未处理异常：{ex.Message}");
+                }
+                
                 if (image != null)
                 {
-                    GUI.DrawTexture(portraitRect, image);
+                    try
+                    {
+                        GUI.DrawTexture(portraitRect, image);
+                    }
+                    catch (Exception drawEx)
+                    {
+                        Log.Warning($"[FactionGearCustomizer] 绘制肖像纹理失败：{drawEx.Message}");
+                    }
                 }
 
                 // Draw Weapon Thumbnail
@@ -380,13 +402,23 @@ namespace FactionGearCustomizer
                     TooltipHandler.TipRegion(weaponRect, weapon.LabelCap);
                 }
 
+                // Raid points display - bottom left
+                Rect raidPointsRect = new Rect(inner.x + 2f, inner.yMax - 18f, inner.width - 44f, 16f);
+                Text.Anchor = TextAnchor.LowerLeft;
+                Text.Font = GameFont.Tiny;
+                GUI.color = new Color(1f, 0.85f, 0.4f);
+                Widgets.Label(raidPointsRect, $"{LanguageManager.Get("RaidPoints")}: {(int)(k.combatPower)}");
+                GUI.color = Color.white;
+                Text.Font = GameFont.Small;
+                Text.Anchor = TextAnchor.UpperLeft;
+
                 // 点击显示装备详情
                 Rect infoButtonRect = new Rect(rect.xMax - 30f, rect.y + 30f, 26f, 26f);
                 if (Widgets.InfoCardButton(infoButtonRect.x, infoButtonRect.y, p))
                 {
                     pendingInfoPawn = p;
                 }
-                
+
                 // 提示点击可以查看详情
                 if (Mouse.IsOver(rect))
                 {
@@ -453,10 +485,26 @@ namespace FactionGearCustomizer
             WidgetsUtils.DrawWindowBackground(pawnRect);
 
             // Render Pawn
-            RenderTexture image = WidgetsUtils.GetPortrait(previewPawn, new Vector2(200f, 300f), rotation, new Vector3(0f, 0f, 0f), 1f);
+            RenderTexture image = null;
+            try
+            {
+                image = WidgetsUtils.GetPortrait(previewPawn, new Vector2(200f, 300f), rotation, new Vector3(0f, 0f, 0f), 1f);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning($"[FactionGearCustomizer] 渲染单个预览Pawn时发生异常：{ex.Message}");
+            }
+            
             if (image != null)
             {
-                GUI.DrawTexture(pawnRect, image);
+                try
+                {
+                    GUI.DrawTexture(pawnRect, image);
+                }
+                catch (Exception drawEx)
+                {
+                    Log.Warning($"[FactionGearCustomizer] 绘制单个预览纹理失败：{drawEx.Message}");
+                }
                 
                 // Info Card Button
                 Widgets.InfoCardButton(pawnRect.xMax - 24f, pawnRect.y, previewPawn);

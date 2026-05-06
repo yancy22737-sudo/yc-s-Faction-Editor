@@ -88,6 +88,7 @@
   <Biocode>Biocode</Biocode>
   <ForceNaked>Force Naked</ForceNaked>
   <ForceOnlySelected>Force Only Selected</ForceOnlySelected>
+  <ForceOverrideHediffs>Force Override Hediffs</ForceOverrideHediffs>
   <MinMax>Min (Force Ignore)</MinMax>
   <MaxForceIgnore>Max (Force Ignore)</MaxForceIgnore>
   <Ranged>Ranged</Ranged>
@@ -170,6 +171,8 @@ Age verification required.</ForceNakedTooltip>
   <ForceOnlySelectedTooltip>If enabled, all existing/vanilla gear will be stripped before applying custom gear. Ensures pawns only wear what you specify, preventing vanilla/custom mixing.
 
 Recommended: Enable for full control.</ForceOnlySelectedTooltip>
+  <ForceOverrideHediffsTooltip>If enabled, all non-mechanoid hediffs (status effects) will be cleared before applying your configured forced hediffs. This includes gene-provided buffs.
+    If disabled, existing hediffs from genes, implants, etc. will be preserved.</ForceOverrideHediffsTooltip>
   <WeightMechanicsTooltip>Weight mechanics: In RimWorld, gear weight acts as selection weight, not 100% selection. Higher weight gear is prioritized but not guaranteed.</WeightMechanicsTooltip>
   <ColorPicker>Color Picker</ColorPicker>
   <ColorPickerApply>Apply</ColorPickerApply>
@@ -305,6 +308,9 @@ Applying this preset may cause missing items or errors. Continue?</MissingModsWa
   <SortField_DPS>DPS</SortField_DPS>
   <SortField_Armor_Sharp>Sharp Armor</SortField_Armor_Sharp>
   <SortField_Armor_Blunt>Blunt Armor</SortField_Armor_Blunt>
+  <SortField_Range>Range</SortField_Range>
+  <SortField_Damage>Damage</SortField_Damage>
+  <SortField_Mass>Mass</SortField_Mass>
   <BaseMarketValue>Market Value</BaseMarketValue>
   <Weight>Weight</Weight>
   <Damage>Damage</Damage>
@@ -404,6 +410,7 @@ Applying this preset may cause missing items or errors. Continue?</MissingModsWa
   <PointsOverrideTooltip>Override this pawn's raid points. Leave empty to use default combat power.</PointsOverrideTooltip>
   <PointsOverrideFieldTooltip>Enter custom points, or leave empty to use default. Set to 0 to clear override.</PointsOverrideFieldTooltip>
   <Unknown>Unknown</Unknown>
+  <Category>Category</Category>
   <Category_All>All</Category_All>
   <Category_Humanlike>Humanlike</Category_Humanlike>
   <Category_Animal>Animal</Category_Animal>
@@ -510,6 +517,18 @@ Warnings:
   <PawnGroupKind_Kidnappers>Kidnappers</PawnGroupKind_Kidnappers>
   <PawnGroupKind_Villagers>Villagers</PawnGroupKind_Villagers>
   <PawnGroupKind_Junkyard>Junkyard</PawnGroupKind_Junkyard>
+  <PawnGroupKind_Settlement_RangeOnly>Settlement (Ranged)</PawnGroupKind_Settlement_RangeOnly>
+  <PawnGroupKind_Shamplers>Shamplers</PawnGroupKind_Shamplers>
+  <PawnGroupKind_Fleshbeasts>Fleshbeasts</PawnGroupKind_Fleshbeasts>
+  <PawnGroupKind_FleshbeastsWithDreamers>Fleshbeasts with Dreamers</PawnGroupKind_FleshbeastsWithDreamers>
+  <PawnGroupKind_Sightstealers>Sightstealers</PawnGroupKind_Sightstealers>
+  <PawnGroupKind_Metalhorrors>Metalhorrors</PawnGroupKind_Metalhorrors>
+  <PawnGroupKind_PsychicRitualSiege>Psychic Ritual Siege</PawnGroupKind_PsychicRitualSiege>
+  <PawnGroupKind_Gorehulks>Gorehulks</PawnGroupKind_Gorehulks>
+  <PawnGroupKind_Devourers>Devourers</PawnGroupKind_Devourers>
+  <PawnGroupKind_Noctols>Noctols</PawnGroupKind_Noctols>
+  <PawnGroupKind_SightstealersNoctols>Sightstealers & Noctols</PawnGroupKind_SightstealersNoctols>
+  <PawnGroupKind_Chimeras>Chimeras</PawnGroupKind_Chimeras>
   <CannotSettleHere>Cannot settle here</CannotSettleHere>
   <ImportIconTitle>Import Icon</ImportIconTitle>
   <ImagePathPrompt>Image Path (PNG/JPG)</ImagePathPrompt>
@@ -545,6 +564,7 @@ Warnings:
   <NameColor>Apparel Color</NameColor>
   <NameColorTooltip>Display color for Apparel.</NameColorTooltip>
   <RimTalkLinkage>RimTalk Integration</RimTalkLinkage>
+  <SeverityRange>Severity Range</SeverityRange>
   <NameCannotBeEmpty>Name cannot be empty</NameCannotBeEmpty>
   <NameTooShort>Name too short</NameTooShort>
   <NameTooLong>Name too long (max 100 chars)</NameTooLong>
@@ -1067,4 +1087,11 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <Yes>Yes</Yes>
   <No>No</No>
   <DoNotShowAgain>Don't Show Again</DoNotShowAgain>
+  <RaidPoints>Raid Points</RaidPoints>
+  <AddPawnKindTooltip>Click to add a new pawn kind</AddPawnKindTooltip>
+  <SelectFactionFirst>Please select a faction first</SelectFactionFirst>
+  <OK>OK</OK>
+  <OverwritePresetConfirm>Overwrite preset?</OverwritePresetConfirm>
+  <PoolType>Pool Type</PoolType>
+  <RelationPermanentEnemyTooltip>Permanent enemy relations cannot be modified</RelationPermanentEnemyTooltip>
 </LanguageData>

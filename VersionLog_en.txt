@@ -1,4 +1,30 @@
-﻿v1.5.2
+v1.5.6
+- Fix: Split "Force Override Status Effects" into a separate toggle from "Force Only Selected", so gene-provided buffs are no longer wiped when using equipment pool mode.
+- Fix: Fixed factions from mods like Medieval Overhaul (e.g. Cultist) not appearing in the faction list. Extended pawnGroupMakers filter to check traders/carriers/guards sublists.
+- Fix: Fixed melee weapons unconditionally overwriting ranged weapons when both are configured. Now randomly picks one.
+- Fix: Fixed preview pawn memory leak where old pawns were not destroyed before dictionary overwrite.
+- Fix: Fixed UI content truncation when apparel/weapon budget sliders expand in advanced settings.
+- Fix: Removed unfinished "RimTalk Integration" button.
+- Fix: Added raid points display on preview card bottom-left.
+- Fix: Added Mass sort option to item library.
+- Fix: Added many missing language keys (Category, SortField_Range/Damage/Mass, ForceOverrideHediffs, PawnGroupKind series, etc.).
+- Fix: Removed duplicate image assets, unified to Logo.png.
+
+v1.5.5
+- Fix: Fixed the issue where the pawn inventory UI mass/capacity display was blank after enabling this mod. Added Patch_ITab_Pawn_Gear_Debug.cs to ensure MassUtility methods return safe values instead of throwing exceptions when inventory is null.
+
+v1.5.4
+- Fix: Milira patch now uses LongEventHandler.QueueLongEvent for delayed application, ensuring Milira assembly is loaded before patching (previous StaticConstructorOnStartup was too early, causing patch to not take effect).
+- Fix: Milira patch now uses an independent Harmony instance instead of relying on FactionGearCustomizerMod.HarmonyInstance (avoiding null due to initialization order).
+- Fix: Extended Milira hair render node type search to support multiple type names (PawnRenderNode_MilianHair / PawnRenderNode_MiliraHair / PawnRenderNode subclasses containing "Hair").
+
+v1.5.3
+- Fix: Add unified name-safety utility `DefDisplayNameUtility` to centralize `FactionDef` / `PawnKindDef` display-name resolution, sort-key generation, and fallback warning logs.
+- Fix: Switch settings-window first-frame paths (`FactionGearEditor`, `FactionListPanel`, `KindListPanel`) to unified safe sorting, preventing bad Def or translation data from triggering `Failed to compare two elements in the array`.
+- Fix: Update faction/pawnkind related dialogs (batch apply, create faction instance, pawnkind picker, legacy faction editor) to reuse safe display-name resolution and reduce UI null-reference crashes triggered by mod conflicts or broken translations.
+- Update: Sync Index.md, Api.md, and config.md documentation.
+
+v1.5.2
 - Fix: Optimize the language-fallback hot path so fallback chains are recomputed only when the game language changes, avoiding repeated per-frame normalization and enumerable allocations in the UI.
 - Fix: Keep Traditional Chinese -> Simplified Chinese and other-language -> English fallback behavior while reducing the performance cost of opening the mod in unsupported language environments.
 
@@ -463,8 +489,3 @@ v1.4.8
 
 
 
-v1.5.3
-- Fix: Add unified name-safety utility `DefDisplayNameUtility` to centralize `FactionDef` / `PawnKindDef` display-name resolution, sort-key generation, and fallback warning logs.
-- Fix: Switch settings-window first-frame paths (`FactionGearEditor`, `FactionListPanel`, `KindListPanel`) to unified safe sorting, preventing bad Def or translation data from triggering `Failed to compare two elements in the array`.
-- Fix: Update faction/pawnkind related dialogs (batch apply, create faction instance, pawnkind picker, legacy faction editor) to reuse safe display-name resolution and reduce UI null-reference crashes triggered by mod conflicts or broken translations.
-- Update: Sync Index.md, Api.md, and config.md documentation.

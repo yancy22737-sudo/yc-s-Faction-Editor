@@ -367,7 +367,12 @@ namespace FactionGearCustomizer.UI.Panels
             bool isHidden = !def.humanlikeFaction || def.hidden;
             if (!FactionGearCustomizerMod.Settings.ShowHiddenFactions && isHidden) return false;
             
-            if (def.pawnGroupMakers == null || !def.pawnGroupMakers.Any(pgm => pgm.options != null && pgm.options.Any(o => o.kind != null))) return false;
+            if (def.pawnGroupMakers == null || !def.pawnGroupMakers.Any(pgm =>
+                (pgm.options != null && pgm.options.Any(o => o.kind != null)) ||
+                (pgm.traders != null && pgm.traders.Any(o => o.kind != null)) ||
+                (pgm.carriers != null && pgm.carriers.Any(o => o.kind != null)) ||
+                (pgm.guards != null && pgm.guards.Any(o => o.kind != null))
+            )) return false;
 
             string displayName;
             Color color;

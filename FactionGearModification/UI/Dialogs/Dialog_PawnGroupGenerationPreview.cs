@@ -462,10 +462,26 @@ namespace FactionGearCustomizer.UI.Dialogs
                 return;
             }
 
-            RenderTexture image = WidgetsUtils.GetPortrait(pawn, new Vector2(rect.width, rect.height), Rot4.South);
+            RenderTexture image = null;
+            try
+            {
+                image = WidgetsUtils.GetPortrait(pawn, new Vector2(rect.width, rect.height), Rot4.South);
+            }
+            catch (Exception ex)
+            {
+                Log.WarningOnce($"[FactionGearCustomizer] 绘制群组预览肖像 {kind.defName} 时发生异常：{ex.Message}", kind.defName.GetHashCode());
+            }
+            
             if (image != null)
             {
-                GUI.DrawTexture(rect, image);
+                try
+                {
+                    GUI.DrawTexture(rect, image);
+                }
+                catch (Exception drawEx)
+                {
+                    Log.WarningOnce($"[FactionGearCustomizer] 绘制肖像纹理失败 {kind.defName}: {drawEx.Message}", kind.defName.GetHashCode());
+                }
             }
         }
 
@@ -659,6 +675,11 @@ namespace FactionGearCustomizer.UI.Dialogs
                     var pawn = GeneratePawnInternal(entry, faction);
                     if (pawn != null)
                     {
+                        if (previewPawns.TryGetValue(entry.Kind, out var existing) && existing != null && !existing.Destroyed)
+                        {
+                            SafeClearApparel(existing);
+                            existing.Destroy();
+                        }
                         previewPawns[entry.Kind] = pawn;
                         WidgetsUtils.SetPortraitDirty(pawn);
                     }

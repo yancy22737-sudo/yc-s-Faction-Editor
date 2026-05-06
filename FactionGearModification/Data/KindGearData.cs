@@ -36,6 +36,7 @@ namespace FactionGearCustomizer
         // New fields ported from TotalControl
         public bool ForceNaked = false;
         public bool ForceOnlySelected = false;
+        public bool ForceOverrideHediffs = false;
         public bool OutfitFirstBudgetStrategy = true;
         public QualityCategory? ItemQuality = null;
         public QualityCategory? ForcedWeaponQuality = null;
@@ -97,6 +98,7 @@ namespace FactionGearCustomizer
 
             Scribe_Values.Look(ref ForceNaked, "forceNaked");
             Scribe_Values.Look(ref ForceOnlySelected, "forceOnlySelected");
+            Scribe_Values.Look(ref ForceOverrideHediffs, "forceOverrideHediffs");
             Scribe_Values.Look(ref OutfitFirstBudgetStrategy, "outfitFirstBudgetStrategy", true);
             Scribe_Values.Look(ref ForceIgnoreRestrictions, "forceIgnoreRestrictions");
             Scribe_Values.Look(ref ItemQuality, "itemQuality");
@@ -225,6 +227,7 @@ namespace FactionGearCustomizer
             
             ForceNaked = false;
             ForceOnlySelected = false;
+            ForceOverrideHediffs = false;
             OutfitFirstBudgetStrategy = true;
             ForceIgnoreRestrictions = null;
             ItemQuality = null;
@@ -271,6 +274,7 @@ namespace FactionGearCustomizer
             bool hasOverrides =
                 ForceNaked ||
                 ForceOnlySelected ||
+                ForceOverrideHediffs ||
                 !OutfitFirstBudgetStrategy ||
                 ItemQuality.HasValue ||
                 ForcedWeaponQuality.HasValue ||
@@ -318,6 +322,7 @@ namespace FactionGearCustomizer
                 
                 ForceNaked = this.ForceNaked,
                 ForceOnlySelected = this.ForceOnlySelected,
+                ForceOverrideHediffs = this.ForceOverrideHediffs,
                 OutfitFirstBudgetStrategy = this.OutfitFirstBudgetStrategy,
                 ForceIgnoreRestrictions = this.ForceIgnoreRestrictions,
                 ItemQuality = this.ItemQuality,
@@ -464,6 +469,7 @@ namespace FactionGearCustomizer
 
             this.ForceNaked = source.ForceNaked;
             this.ForceOnlySelected = source.ForceOnlySelected;
+            this.ForceOverrideHediffs = source.ForceOverrideHediffs;
             this.OutfitFirstBudgetStrategy = source.OutfitFirstBudgetStrategy;
             this.ForceIgnoreRestrictions = source.ForceIgnoreRestrictions;
             this.ItemQuality = source.ItemQuality;

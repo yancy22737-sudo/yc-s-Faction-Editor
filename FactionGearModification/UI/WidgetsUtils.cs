@@ -2,6 +2,7 @@ using UnityEngine;
 using Verse;
 using HarmonyLib;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace FactionGearModification.UI
@@ -392,8 +393,18 @@ namespace FactionGearModification.UI
             return portraitsCacheType;
         }
 
+        private static HashSet<string> loggedPawnRenderErrors = new HashSet<string>();
+
         public static RenderTexture GetPortrait(Pawn pawn, Vector2 size, Rot4 rotation, Vector3 cameraOffset = default(Vector3), float cameraZoom = 1f)
         {
+            if (pawn == null)
+            {
+                return null;
+            }
+
+            // Milira 头发渲染 null 路径问题已由 Harmony Prefix 补丁 (Patch_MiliraHairGraphicFor)
+            // 在底层拦截，无需在此处做特殊处理。
+
             try
             {
                 var portraitsCache = GetPortraitsCacheType();
@@ -411,7 +422,6 @@ namespace FactionGearModification.UI
                         if (m.Name == "Get")
                         {
                             var p = m.GetParameters();
-                            // First param is Pawn, second is Vector2
                             if (p.Length >= 2 && p[0].ParameterType == typeof(Pawn) && p[1].ParameterType == typeof(Vector2))
                             {
                                 portraitsCacheGetMethod = m;
@@ -431,7 +441,6 @@ namespace FactionGearModification.UI
                     if (p.Length > 3) args[3] = cameraOffset;
                     if (p.Length > 4) args[4] = cameraZoom;
                     
-                    // Fill remaining defaults
                     for (int i = 5; i < args.Length; i++)
                     {
                         var param = p[i];
@@ -443,9 +452,28 @@ namespace FactionGearModification.UI
                     return (RenderTexture)portraitsCacheGetMethod.Invoke(null, args);
                 }
             }
+            catch (TargetInvocationException tex)
+            {
+                Exception inner = tex.InnerException ?? tex;
+                string errorKey = pawn.def?.defName ?? "UnknownPawn";
+                
+                if (!loggedPawnRenderErrors.Contains(errorKey))
+                {
+                    loggedPawnRenderErrors.Add(errorKey);
+                    Log.Warning($"[FactionGearModification] 渲染肖像时出错 ({errorKey}): {inner.Message}");
+                }
+                
+                SetPortraitDirty(pawn);
+            }
             catch (Exception ex)
             {
-                Log.WarningOnce($"[FactionGearModification] Reflection failed for PortraitsCache.Get: {ex.Message}", 9812379);
+                string errorKey = pawn.def?.defName ?? "UnknownPawn";
+                
+                if (!loggedPawnRenderErrors.Contains(errorKey))
+                {
+                    loggedPawnRenderErrors.Add(errorKey);
+                    Log.Warning($"[FactionGearModification] 获取肖像失败 ({errorKey}): {ex.Message}");
+                }
             }
             return null;
         }
@@ -463,7 +491,7 @@ namespace FactionGearModification.UI
                 {
                     portraitsCacheSetDirtyMethod = AccessTools.Method(portraitsCache, "SetDirty", new Type[] { typeof(Pawn) });
                 }
-                
+
                 if (portraitsCacheSetDirtyMethod != null)
                 {
                     portraitsCacheSetDirtyMethod.Invoke(null, new object[] { pawn });
@@ -473,6 +501,54 @@ namespace FactionGearModification.UI
             {
                 // Ignore
             }
+        }
+
+        private static Dictionary<int, string> sliderTextBuffers = new Dictionary<int, string>();
+
+        public static float HorizontalSliderWithInput(Rect rect, float value, float min, float max, int id, string format = "F2")
+        {
+            float inputWidth = 58f;
+            float gap = 4f;
+            Rect sliderRect = new Rect(rect.x, rect.y, rect.width - inputWidth - gap, rect.height);
+            Rect inputRect = new Rect(sliderRect.xMax + gap, rect.y, inputWidth, rect.height);
+
+            float newValue = GUI.HorizontalSlider(sliderRect, value, min, max);
+
+            if (!sliderTextBuffers.TryGetValue(id, out string text) || GUI.GetNameOfFocusedControl() != $"SliderInput_{id}")
+            {
+                text = newValue.ToString(format);
+                sliderTextBuffers[id] = text;
+            }
+
+            GUI.SetNextControlName($"SliderInput_{id}");
+            string newText = GUI.TextField(inputRect, text);
+            if (newText != text)
+            {
+                sliderTextBuffers[id] = newText;
+            }
+
+            if (GUI.GetNameOfFocusedControl() == $"SliderInput_{id}")
+            {
+                if (Event.current.isKey && (Event.current.keyCode == KeyCode.Return || Event.current.keyCode == KeyCode.KeypadEnter))
+                {
+                    if (float.TryParse(newText, out float parsed))
+                    {
+                        newValue = Mathf.Clamp(parsed, min, max);
+                        sliderTextBuffers[id] = newValue.ToString(format);
+                    }
+                    GUI.FocusControl(null);
+                    Event.current.Use();
+                }
+            }
+            else
+            {
+                if (Mathf.Abs(newValue - value) > 0.0001f)
+                {
+                    sliderTextBuffers[id] = newValue.ToString(format);
+                }
+            }
+
+            return newValue;
         }
     }
 }
