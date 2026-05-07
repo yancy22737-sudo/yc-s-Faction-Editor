@@ -376,3 +376,7 @@ prompt.txt
 tmp_log.txt
 workshop_description_plan.md
 .gitnexus
+
+# IDE and AI tool directories
+.trae/
+.claude/
