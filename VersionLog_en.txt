@@ -1,3 +1,22 @@
+v1.5.7
+- Feat: Preview window supports group filter dropdown, defaults to combat group.
+- Feat: Preview carry weight color improved (green #33C192 / yellow #FFAF1A / red #CC4B53), raid points read from group override.
+- Feat: CE ammo tooltip auto-shows damage, sharp/blunt armor penetration.
+- Feat: Item picker ammo category now has caliber sub-filter with pagination.
+- Feat: Item picker food category now has sub-categories (Cooked/Raw/Meat/Vegetable).
+- Feat: Batch apply dialog adds "Skip Ammo" checkbox, defaults to current tab's category.
+- Feat: Sort button moved to selection row (same row as Select All/None/Invert).
+- Fix: Filter bar height now precisely matches drawn content, eliminating bottom whitespace.
+- Fix: Removed value slider from item picker.
+- Fix: Hediff picker category filter changed to quick button style with auto-width.
+- Fix: Deep rewrite of HediffCardUI and ItemCardUI for cleaner layout, fixed delete button hit area overlap.
+- Fix: Faction list single-line display with ellipsis, fixed 28px row height, desaturated colors.
+- Fix: Kind list 60% / faction list 40% height ratio.
+- Fix: Default settings aligned: Force Only Selected defaults to ON.
+- Fix: Simple mode weapon removal now auto-cleans corresponding ammo.
+- Fix: CE weapon range showing 0 (reflection to read VerbPropertiesCE.range).
+- Fix: Caliber filter auto-clears when switching categories.
+
 v1.5.6
 - Fix: Split "Force Override Status Effects" into a separate toggle from "Force Only Selected", so gene-provided buffs are no longer wiped when using equipment pool mode.
 - Fix: Fixed factions from mods like Medieval Overhaul (e.g. Cultist) not appearing in the faction list. Extended pawnGroupMakers filter to check traders/carriers/guards sublists.
