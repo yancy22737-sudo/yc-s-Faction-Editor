@@ -29,7 +29,7 @@ namespace FactionGearCustomizer
         internal Dictionary<string, FactionGearData> factionGearDataDict;
 
         // [新增] 强制忽略原版限制的全局开关
-        public bool forceIgnoreRestrictions = false;
+        public bool forceIgnoreRestrictions = true;
 
         // [New] Show in main tab toggle
         public bool ShowInMainTab = true;
