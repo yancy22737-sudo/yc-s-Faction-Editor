@@ -16,60 +16,46 @@ namespace FactionGearCustomizer.UI.Panels
         private static readonly Color HeaderBgColor = new Color(0.15f, 0.15f, 0.18f);
         private static readonly Color ContentBgColor = new Color(0.12f, 0.12f, 0.14f, 0.95f);
         private static readonly Color BorderColor = new Color(0.35f, 0.35f, 0.4f);
-        private static readonly Color RemoveButtonColor = new Color(0.8f, 0.25f, 0.2f);
+
+        private const float HeaderHeight = 28f;
+        private const float RowHeight = 24f;
+        private const float Gap = 4f;
+        private const float CardPad = 6f;
 
         public static float GetCardHeight(SpecRequirementEdit item)
         {
             if (item.PoolType != ItemPoolType.None)
-            {
-                return 80f; // 物品池卡片更简洁
-            }
-            
-            float height = 36f;
-            float rowHeight = 24f;
-            float gap = 4f;
+                return HeaderHeight + Gap + RowHeight + Gap + RowHeight + CardPad * 2;
 
-            height += rowHeight + gap;
-
-            if (item.Thing != null && item.Thing.MadeFromStuff)
-                height += rowHeight + gap;
-
-            if (item.Thing != null && item.Thing.HasComp(typeof(CompQuality)))
-                height += rowHeight + gap;
-
-            height += rowHeight + gap;
-
-            if (item.SelectionMode != ApparelSelectionMode.AlwaysTake)
-                height += rowHeight + gap;
-
-            height += 12f;
-
-            return height;
+            float h = HeaderHeight + Gap; // header
+            h += RowHeight + Gap; // count range (always present)
+            if (item.Thing != null && item.Thing.MadeFromStuff) h += RowHeight + Gap; // material
+            if (item.Thing != null && item.Thing.HasComp(typeof(CompQuality))) h += RowHeight + Gap; // quality
+            h += RowHeight + Gap; // selection mode
+            if (item.SelectionMode != ApparelSelectionMode.AlwaysTake) h += RowHeight + Gap; // chance
+            return h + CardPad * 2;
         }
 
         public static void Draw(Listing_Standard ui, SpecRequirementEdit item, int index, Action onRemove, KindGearData kindData = null)
         {
             float cardHeight = GetCardHeight(item);
             Rect area = ui.GetRect(cardHeight);
-            
-            DrawCardBackground(area);
-            area = area.ContractedBy(6f);
+            DrawCardBg(area);
+            Rect inner = area.ContractedBy(CardPad);
 
             if (item.PoolType != ItemPoolType.None)
             {
-                DrawPoolHeader(area, item, onRemove);
-                DrawPoolContent(area, item, kindData);
+                DrawPoolCard(inner, item, onRemove, kindData);
             }
             else
             {
-                DrawHeader(area, item, onRemove, kindData);
-                DrawContent(area, item, index, kindData);
+                DrawItemCard(inner, item, onRemove, kindData);
             }
-            
-            ui.Gap(8f);
+
+            ui.Gap(Gap);
         }
 
-        private static void DrawCardBackground(Rect area)
+        private static void DrawCardBg(Rect area)
         {
             Widgets.DrawBoxSolid(area, ContentBgColor);
             GUI.color = BorderColor;
@@ -77,89 +63,192 @@ namespace FactionGearCustomizer.UI.Panels
             GUI.color = Color.white;
         }
 
-        private static void DrawHeader(Rect area, SpecRequirementEdit item, Action onRemove, KindGearData kindData)
+        // ── Normal item card ─────────────────────────────────
+        private static void DrawItemCard(Rect inner, SpecRequirementEdit item, Action onRemove, KindGearData kindData)
         {
-            Rect headerRect = new Rect(area.x, area.y + 2f, area.width, 28f);
-            Widgets.DrawBoxSolid(headerRect, HeaderBgColor);
+            // Header
+            Rect hdr = new Rect(inner.x, inner.y, inner.width, HeaderHeight);
+            Widgets.DrawBoxSolid(hdr, HeaderBgColor);
 
-            // Icon
-            Rect iconRect = new Rect(headerRect.x + 6f, headerRect.y + 4f, 20f, 20f);
-            Widgets.DrawBoxSolid(iconRect, new Color(0.3f, 0.3f, 0.35f));
-            if (item.Thing != null)
-            {
-                WidgetsUtils.DrawTextureFitted(iconRect, item.Thing.uiIcon, 1f);
-            }
+            Rect ico = new Rect(hdr.x + 4f, hdr.y + 4f, 20f, 20f);
+            Widgets.DrawBoxSolid(ico, new Color(0.3f, 0.3f, 0.35f));
+            if (item.Thing != null) WidgetsUtils.DrawTextureFitted(ico, item.Thing.uiIcon, 1f);
 
-            // Title / Item Selector
-            Rect titleRect = new Rect(iconRect.xMax + 8f, headerRect.y, headerRect.width - 60f, headerRect.height);
+            float titleW = hdr.xMax - 28f - (ico.xMax + 6f);
+            Rect title = new Rect(ico.xMax + 6f, hdr.y, titleW, hdr.height);
             string titleText = item.Thing?.LabelCap ?? LanguageManager.Get("SelectItem");
-            
-            if (Widgets.ButtonText(titleRect, titleText, false, true, true, TextAnchor.MiddleLeft))
+            if (Widgets.ButtonText(title, titleText, false, true, true, TextAnchor.MiddleLeft))
             {
+                string initialAmmoSet = null;
+                if (item.Thing != null && CECompat.IsCEActive)
+                    initialAmmoSet = CECompat.GetCaliberLabelForAmmo(item.Thing);
                 Find.WindowStack.Add(new Dialog_InventoryItemPicker(def =>
                 {
-                    if (kindData != null)
-                    {
-                        UndoManager.RecordState(kindData);
-                        kindData.isModified = true;
-                    }
+                    if (kindData != null) { UndoManager.RecordState(kindData); kindData.isModified = true; }
                     item.Thing = def;
                     FactionGearEditor.MarkDirty();
-                }));
+                }, initialAmmoSet));
             }
 
-            // Remove Button
-            Rect removeRect = new Rect(headerRect.xMax - 24f, headerRect.y + (headerRect.height - 24f) / 2f, 24f, 24f);
-            if (Widgets.ButtonImage(removeRect, TexButton.Delete, Color.white, GenUI.SubtleMouseoverColor))
-            {
+            Rect del = new Rect(hdr.xMax - 22f, hdr.y + 3f, 22f, 22f);
+            if (Widgets.ButtonImage(del, TexButton.Delete, Color.white, GenUI.SubtleMouseoverColor))
                 onRemove?.Invoke();
+
+            // Content rows
+            float y = hdr.yMax + Gap;
+
+            // Material (if applicable)
+            if (item.Thing != null && item.Thing.MadeFromStuff)
+            {
+                DrawMaterialRow(new Rect(inner.x, y, inner.width, RowHeight), item, kindData);
+                y += RowHeight + Gap;
+            }
+
+            // Quality (if applicable)
+            if (item.Thing != null && item.Thing.HasComp(typeof(CompQuality)))
+            {
+                DrawQualityRow(new Rect(inner.x, y, inner.width, RowHeight), item, kindData);
+                y += RowHeight + Gap;
+            }
+
+            // Count range
+            Rect countLbl = new Rect(inner.x, y, inner.width * 0.12f, RowHeight);
+            Widgets.Label(countLbl, LanguageManager.Get("Count") + ":");
+            Rect countRng = new Rect(inner.x + inner.width * 0.13f, y, inner.width * 0.87f, RowHeight);
+            DrawCountRange(countRng, item, kindData);
+            y += RowHeight + Gap;
+
+            // Selection mode
+            Rect modeLbl = new Rect(inner.x, y, inner.width * 0.18f, RowHeight);
+            Widgets.Label(modeLbl, LanguageManager.Get("SelectionMode") + ":");
+            Rect modeBtn = new Rect(inner.x + inner.width * 0.19f, y, inner.width * 0.81f, RowHeight);
+            DrawModeSelector(modeBtn, item, kindData);
+            y += RowHeight + Gap;
+
+            // Chance slider (if not AlwaysTake)
+            if (item.SelectionMode != ApparelSelectionMode.AlwaysTake)
+            {
+                Rect chanceLbl = new Rect(inner.x, y, inner.width * 0.12f, RowHeight);
+                Widgets.Label(chanceLbl, LanguageManager.Get("Chance") + ":");
+                Rect chanceSld = new Rect(inner.x + inner.width * 0.13f, y + 2f, inner.width * 0.87f, RowHeight - 4f);
+                float old = item.SelectionChance;
+                float val = Widgets.HorizontalSlider(chanceSld, item.SelectionChance, 0f, 1f, true, item.SelectionChance.ToString("P0"));
+                if (val != old)
+                {
+                    if (kindData != null) { UndoManager.RecordState(kindData); kindData.isModified = true; }
+                    item.SelectionChance = val;
+                    FactionGearEditor.MarkDirty();
+                }
             }
         }
 
-        private static void DrawContent(Rect area, SpecRequirementEdit item, int index, KindGearData kindData)
+        // ── Pool card ────────────────────────────────────────
+        private static void DrawPoolCard(Rect inner, SpecRequirementEdit item, Action onRemove, KindGearData kindData)
         {
-            float contentY = area.y + 36f;
-            float rowHeight = 24f;
-            float gap = 4f;
+            Rect hdr = new Rect(inner.x, inner.y, inner.width, HeaderHeight);
+            Widgets.DrawBoxSolid(hdr, HeaderBgColor);
 
-            // Row 1: Material (If applicable)
-            if (item.Thing != null && item.Thing.MadeFromStuff)
-            {
-                Rect matRect = new Rect(area.x, contentY, area.width, rowHeight);
-                DrawMaterialSelector(matRect, item, kindData);
-                contentY += rowHeight + gap;
-            }
+            Rect ico = new Rect(hdr.x + 4f, hdr.y + 4f, 20f, 20f);
+            Widgets.DrawBoxSolid(ico, new Color(0.3f, 0.3f, 0.35f));
+            Texture2D icon = GetPoolIcon(item.PoolType);
+            if (icon != null) WidgetsUtils.DrawTextureFitted(ico, icon, 1f);
 
-            // Row 2: Quality (If applicable)
-            if (item.Thing != null && item.Thing.HasComp(typeof(CompQuality)))
-            {
-                Rect qualRect = new Rect(area.x, contentY, area.width, rowHeight);
-                DrawQualitySelector(qualRect, item, kindData);
-                contentY += rowHeight + gap;
-            }
+            float titleW = hdr.xMax - 28f - (ico.xMax + 6f);
+            Rect title = new Rect(ico.xMax + 6f, hdr.y, titleW, hdr.height);
+            if (Widgets.ButtonText(title, GetPoolLabel(item.PoolType), false, true, true, TextAnchor.MiddleLeft))
+                Find.WindowStack.Add(new Dialog_EditPoolContent(item));
 
-            // Row 3: Count Range
-            Rect countRect = new Rect(area.x, contentY, area.width, rowHeight);
-            Widgets.Label(countRect.LeftHalf(), LanguageManager.Get("Count") + ":");
+            Rect del = new Rect(hdr.xMax - 22f, hdr.y + 3f, 22f, 22f);
+            if (Widgets.ButtonImage(del, TexButton.Delete, Color.white, GenUI.SubtleMouseoverColor))
+                onRemove?.Invoke();
+
+            // Content: count + mode
+            float y = hdr.yMax + Gap;
+            Rect countLbl = new Rect(inner.x, y, inner.width * 0.12f, RowHeight);
+            Widgets.Label(countLbl, LanguageManager.Get("Count") + ":");
+            Rect countRng = new Rect(inner.x + inner.width * 0.13f, y, inner.width * 0.87f, RowHeight);
             IntRange range = item.CountRange;
-            IntRange oldRange = item.CountRange;
-            int maxCount = GetMaxCountForItem(item.Thing);
-            Widgets.IntRange(countRect.RightHalf(), item.GetHashCode(), ref range, 1, maxCount);
-            if (range != oldRange)
+            Widgets.IntRange(countRng, item.GetHashCode(), ref range, 1, 100);
+            if (range != item.CountRange)
+            {
+                if (kindData != null) { UndoManager.RecordState(kindData); kindData.isModified = true; }
+                item.CountRange = range;
+                FactionGearEditor.MarkDirty();
+            }
+            y += RowHeight + Gap;
+
+            Rect modeLbl = new Rect(inner.x, y, inner.width * 0.18f, RowHeight);
+            Widgets.Label(modeLbl, LanguageManager.Get("SelectionMode") + ":");
+            Rect modeBtn = new Rect(inner.x + inner.width * 0.19f, y, inner.width * 0.81f, RowHeight);
+            DrawModeSelector(modeBtn, item, kindData);
+        }
+
+        // ── Shared helpers ───────────────────────────────────
+        private static void DrawMaterialRow(Rect rect, SpecRequirementEdit item, KindGearData kindData)
+        {
+            string label = item.Material == null ? LanguageManager.Get("RandomDefault") : LanguageManager.Get("MaterialSelect", item.Material.LabelCap);
+            if (Widgets.ButtonText(rect, label))
+            {
+                var options = new List<FloatMenuOption>();
+                options.Add(new FloatMenuOption(LanguageManager.Get("RandomDefault"), () =>
+                {
+                    if (kindData != null) { UndoManager.RecordState(kindData); kindData.isModified = true; }
+                    item.Material = null; FactionGearEditor.MarkDirty();
+                }));
+                if (item.Thing != null && item.Thing.MadeFromStuff)
+                {
+                    foreach (var stuff in GenStuff.AllowedStuffsFor(item.Thing))
+                    {
+                        ThingDef cap = stuff;
+                        options.Add(new FloatMenuOption(stuff.LabelCap, () =>
+                        {
+                            if (kindData != null) { UndoManager.RecordState(kindData); kindData.isModified = true; }
+                            item.Material = cap; FactionGearEditor.MarkDirty();
+                        }));
+                    }
+                }
+                Find.WindowStack.Add(new FloatMenu(options));
+            }
+        }
+
+        private static void DrawQualityRow(Rect rect, SpecRequirementEdit item, KindGearData kindData)
+        {
+            string label = item.Quality.HasValue
+                ? LanguageManager.Get("QualitySelect", GetQualityLabel(item.Quality.Value))
+                : LanguageManager.Get("QualitySelect", LanguageManager.Get("Default"));
+            if (Widgets.ButtonText(rect, label))
+            {
+                var options = new List<FloatMenuOption>();
+                options.Add(new FloatMenuOption(LanguageManager.Get("Default"), () =>
+                {
+                    if (kindData != null) { UndoManager.RecordState(kindData); kindData.isModified = true; }
+                    item.Quality = null; FactionGearEditor.MarkDirty();
+                }));
+                foreach (QualityCategory q in Enum.GetValues(typeof(QualityCategory)))
+                {
+                    QualityCategory cap = q;
+                    options.Add(new FloatMenuOption(GetQualityLabel(q), () =>
+                    {
+                        if (kindData != null) { UndoManager.RecordState(kindData); kindData.isModified = true; }
+                        item.Quality = cap; FactionGearEditor.MarkDirty();
+                    }));
+                }
+                Find.WindowStack.Add(new FloatMenu(options));
+            }
+        }
+
+        private static void DrawCountRange(Rect rect, SpecRequirementEdit item, KindGearData kindData)
+        {
+            IntRange range = item.CountRange;
+            int max = GetMaxCountForItem(item.Thing);
+            Widgets.IntRange(rect, item.GetHashCode(), ref range, 1, max);
+            if (range != item.CountRange)
             {
                 if (kindData != null)
                 {
-                    var validation = InventoryLimitValidator.ValidateItemCountRange(kindData, item, range);
-                    if (!validation.IsValid)
-                    {
-                        Messages.Message(LanguageManager.Get(validation.ErrorKey, validation.ErrorArgs), MessageTypeDefOf.RejectInput, false);
-                        range = oldRange;
-                    }
-                    else if (validation.IsWarning)
-                    {
-                        Messages.Message(validation.WarningMessage, MessageTypeDefOf.CautionInput, false);
-                    }
-
+                    var v = InventoryLimitValidator.ValidateItemCountRange(kindData, item, range);
+                    if (!v.IsValid) { Messages.Message(LanguageManager.Get(v.ErrorKey, v.ErrorArgs), MessageTypeDefOf.RejectInput, false); return; }
+                    if (v.IsWarning) Messages.Message(v.WarningMessage, MessageTypeDefOf.CautionInput, false);
                     UndoManager.RecordState(kindData);
                     kindData.isModified = true;
                 }
@@ -167,70 +256,22 @@ namespace FactionGearCustomizer.UI.Panels
                 FactionGearEditor.MarkDirty();
                 InventoryLimitValidator.InvalidateCache();
             }
-            contentY += rowHeight + gap;
-
-            // Row 4: Selection Mode
-            Rect modeRect = new Rect(area.x, contentY, area.width, rowHeight);
-            DrawModeSelector(modeRect, item, kindData);
-            contentY += rowHeight + gap;
-
-            // Row 5: Chance Slider
-            if (item.SelectionMode != ApparelSelectionMode.AlwaysTake)
-            {
-                Rect chanceRect = new Rect(area.x, contentY, area.width, rowHeight);
-                float oldChance = item.SelectionChance;
-                float newChance = Widgets.HorizontalSlider(chanceRect, item.SelectionChance, 0f, 1f, true, LanguageManager.Get("Chance") + ": " + item.SelectionChance.ToString("P0"));
-                if (newChance != oldChance)
-                {
-                    if (kindData != null)
-                    {
-                        UndoManager.RecordState(kindData);
-                        kindData.isModified = true;
-                    }
-                    item.SelectionChance = newChance;
-                    FactionGearEditor.MarkDirty();
-                }
-                
-                if (Mouse.IsOver(chanceRect))
-                {
-                    Widgets.DrawBoxSolid(chanceRect.ExpandedBy(2f), new Color(1f, 1f, 1f, 0.05f));
-                }
-            }
         }
 
-        private static void DrawMaterialSelector(Rect rect, SpecRequirementEdit item, KindGearData kindData)
+        private static void DrawModeSelector(Rect rect, SpecRequirementEdit item, KindGearData kindData)
         {
-            string label = item.Material == null ? LanguageManager.Get("RandomDefault") : LanguageManager.Get("MaterialSelect", item.Material.LabelCap);
+            string label = LanguageManager.Get("SelectionMode", item.SelectionMode.ToString());
             if (Widgets.ButtonText(rect, label))
             {
-                List<FloatMenuOption> options = new List<FloatMenuOption>();
-                options.Add(new FloatMenuOption(LanguageManager.Get("RandomDefault"), () => 
-                { 
-                    if (kindData != null)
-                    {
-                        UndoManager.RecordState(kindData);
-                        kindData.isModified = true;
-                    }
-                    item.Material = null; 
-                    FactionGearEditor.MarkDirty(); 
-                }));
-                
-                if (item.Thing != null && item.Thing.MadeFromStuff)
+                var options = new List<FloatMenuOption>();
+                foreach (ApparelSelectionMode m in Enum.GetValues(typeof(ApparelSelectionMode)))
                 {
-                    foreach (var stuff in GenStuff.AllowedStuffsFor(item.Thing))
+                    ApparelSelectionMode cap = m;
+                    options.Add(new FloatMenuOption(m.ToString(), () =>
                     {
-                        ThingDef capturedStuff = stuff;
-                        options.Add(new FloatMenuOption(stuff.LabelCap, () => 
-                        { 
-                            if (kindData != null)
-                            {
-                                UndoManager.RecordState(kindData);
-                                kindData.isModified = true;
-                            }
-                            item.Material = capturedStuff; 
-                            FactionGearEditor.MarkDirty(); 
-                        }));
-                    }
+                        if (kindData != null) { UndoManager.RecordState(kindData); kindData.isModified = true; }
+                        item.SelectionMode = cap; FactionGearEditor.MarkDirty();
+                    }));
                 }
                 Find.WindowStack.Add(new FloatMenu(options));
             }
@@ -251,147 +292,19 @@ namespace FactionGearCustomizer.UI.Panels
             }
         }
 
-        private static void DrawQualitySelector(Rect rect, SpecRequirementEdit item, KindGearData kindData)
-        {
-            string label = item.Quality.HasValue ? LanguageManager.Get("QualitySelect", GetQualityLabel(item.Quality.Value)) : LanguageManager.Get("QualitySelect", LanguageManager.Get("Default"));
-            if (Widgets.ButtonText(rect, label))
-            {
-                List<FloatMenuOption> options = new List<FloatMenuOption>();
-                options.Add(new FloatMenuOption(LanguageManager.Get("Default"), () => 
-                { 
-                    if (kindData != null)
-                    {
-                        UndoManager.RecordState(kindData);
-                        kindData.isModified = true;
-                    }
-                    item.Quality = null; 
-                    FactionGearEditor.MarkDirty(); 
-                }));
-                foreach (QualityCategory q in Enum.GetValues(typeof(QualityCategory)))
-                {
-                    QualityCategory capturedQ = q;
-                    options.Add(new FloatMenuOption(GetQualityLabel(q), () => 
-                    { 
-                        if (kindData != null)
-                        {
-                            UndoManager.RecordState(kindData);
-                            kindData.isModified = true;
-                        }
-                        item.Quality = capturedQ; 
-                        FactionGearEditor.MarkDirty(); 
-                    }));
-                }
-                Find.WindowStack.Add(new FloatMenu(options));
-            }
-        }
-
-        private static void DrawModeSelector(Rect rect, SpecRequirementEdit item, KindGearData kindData)
-        {
-            string label = LanguageManager.Get("SelectionMode", item.SelectionMode.ToString());
-            if (Widgets.ButtonText(rect, label))
-            {
-                List<FloatMenuOption> options = new List<FloatMenuOption>();
-                foreach (ApparelSelectionMode m in Enum.GetValues(typeof(ApparelSelectionMode)))
-                {
-                    ApparelSelectionMode capturedM = m;
-                    options.Add(new FloatMenuOption(m.ToString(), () => 
-                    { 
-                        if (kindData != null)
-                        {
-                            UndoManager.RecordState(kindData);
-                            kindData.isModified = true;
-                        }
-                        item.SelectionMode = capturedM; 
-                        FactionGearEditor.MarkDirty(); 
-                    }));
-                }
-                Find.WindowStack.Add(new FloatMenu(options));
-            }
-        }
-
-        private static void DrawPoolHeader(Rect area, SpecRequirementEdit item, Action onRemove)
-        {
-            Rect headerRect = new Rect(area.x, area.y + 2f, area.width, 28f);
-            Widgets.DrawBoxSolid(headerRect, HeaderBgColor);
-
-            // Icon
-            Rect iconRect = new Rect(headerRect.x + 6f, headerRect.y + 4f, 20f, 20f);
-            Widgets.DrawBoxSolid(iconRect, new Color(0.3f, 0.3f, 0.35f));
-            
-            // 显示通用图标
-            Texture2D icon = GetPoolIcon(item.PoolType);
-            if (icon != null)
-            {
-                WidgetsUtils.DrawTextureFitted(iconRect, icon, 1f);
-            }
-
-            // Title
-            Rect titleRect = new Rect(iconRect.xMax + 8f, headerRect.y, headerRect.width - 60f, headerRect.height);
-            string titleText = GetPoolLabel(item.PoolType);
-            
-            if (Widgets.ButtonText(titleRect, titleText, false, true, true, TextAnchor.MiddleLeft))
-            {
-                // 编辑物品池内容
-                EditPoolContent(item);
-            }
-
-            // Remove Button
-            Rect removeRect = new Rect(headerRect.xMax - 24f, headerRect.y + (headerRect.height - 24f) / 2f, 24f, 24f);
-            if (Widgets.ButtonImage(removeRect, TexButton.Delete, Color.white, GenUI.SubtleMouseoverColor))
-            {
-                onRemove?.Invoke();
-            }
-        }
-
-        private static void DrawPoolContent(Rect area, SpecRequirementEdit item, KindGearData kindData)
-        {
-            float contentY = area.y + 36f;
-            float rowHeight = 24f;
-            float gap = 4f;
-
-            // Count Range
-            Rect countRect = new Rect(area.x, contentY, area.width, rowHeight);
-            Widgets.Label(countRect.LeftHalf(), LanguageManager.Get("Count") + ":");
-            IntRange range = item.CountRange;
-            IntRange oldRange = item.CountRange;
-            Widgets.IntRange(countRect.RightHalf(), item.GetHashCode(), ref range, 1, 100);
-            if (range != oldRange)
-            {
-                if (kindData != null)
-                {
-                    UndoManager.RecordState(kindData);
-                    kindData.isModified = true;
-                }
-                item.CountRange = range;
-                FactionGearEditor.MarkDirty();
-            }
-            contentY += rowHeight + gap;
-
-            // Selection Mode
-            Rect modeRect = new Rect(area.x, contentY, area.width, rowHeight);
-            DrawModeSelector(modeRect, item, kindData);
-        }
-
         private static Texture2D GetPoolIcon(ItemPoolType poolType)
         {
             switch (poolType)
             {
                 case ItemPoolType.AnyFood:
-                case ItemPoolType.AnyMeal:
-                    return ThingDefOf.MealSimple.uiIcon;
+                case ItemPoolType.AnyMeal: return ThingDefOf.MealSimple.uiIcon;
                 case ItemPoolType.AnyRawFood:
-                case ItemPoolType.AnyVegetable:
-                    return ThingDefOf.RawPotatoes.uiIcon;
-                case ItemPoolType.AnyMeat:
-                    return ThingDefOf.Meat_Human.uiIcon;
-                case ItemPoolType.AnyMedicine:
-                    return ThingDefOf.MedicineHerbal.uiIcon;
-                case ItemPoolType.AnySocialDrug:
-                    return ThingDefOf.Beer.uiIcon;
-                case ItemPoolType.AnyHardDrug:
-                    return ThingDefOf.WakeUp.uiIcon;
-                default:
-                    return null;
+                case ItemPoolType.AnyVegetable: return ThingDefOf.RawPotatoes.uiIcon;
+                case ItemPoolType.AnyMeat: return ThingDefOf.Meat_Human.uiIcon;
+                case ItemPoolType.AnyMedicine: return ThingDefOf.MedicineHerbal.uiIcon;
+                case ItemPoolType.AnySocialDrug: return ThingDefOf.Beer.uiIcon;
+                case ItemPoolType.AnyHardDrug: return ThingDefOf.WakeUp.uiIcon;
+                default: return null;
             }
         }
 
@@ -399,31 +312,23 @@ namespace FactionGearCustomizer.UI.Panels
         {
             switch (poolType)
             {
-                case ItemPoolType.AnyFood:
-                    return LanguageManager.Get("Pool_AnyFood");
-                case ItemPoolType.AnyMeal:
-                    return LanguageManager.Get("Pool_AnyMeal");
-                case ItemPoolType.AnyRawFood:
-                    return LanguageManager.Get("Pool_AnyRawFood");
-                case ItemPoolType.AnyMeat:
-                    return LanguageManager.Get("Pool_AnyMeat");
-                case ItemPoolType.AnyVegetable:
-                    return LanguageManager.Get("Pool_AnyVegetable");
-                case ItemPoolType.AnyMedicine:
-                    return LanguageManager.Get("Pool_AnyMedicine");
-                case ItemPoolType.AnySocialDrug:
-                    return LanguageManager.Get("Pool_AnySocialDrug");
-                case ItemPoolType.AnyHardDrug:
-                    return LanguageManager.Get("Pool_AnyHardDrug");
-                default:
-                    return "Item Pool";
+                case ItemPoolType.AnyFood: return LanguageManager.Get("Pool_AnyFood");
+                case ItemPoolType.AnyMeal: return LanguageManager.Get("Pool_AnyMeal");
+                case ItemPoolType.AnyRawFood: return LanguageManager.Get("Pool_AnyRawFood");
+                case ItemPoolType.AnyMeat: return LanguageManager.Get("Pool_AnyMeat");
+                case ItemPoolType.AnyVegetable: return LanguageManager.Get("Pool_AnyVegetable");
+                case ItemPoolType.AnyMedicine: return LanguageManager.Get("Pool_AnyMedicine");
+                case ItemPoolType.AnySocialDrug: return LanguageManager.Get("Pool_AnySocialDrug");
+                case ItemPoolType.AnyHardDrug: return LanguageManager.Get("Pool_AnyHardDrug");
+                default: return "Item Pool";
             }
         }
 
-        private static void EditPoolContent(SpecRequirementEdit item)
+        private static int GetMaxCountForItem(ThingDef thingDef)
         {
-            // 创建一个详细的编辑对话框
-            Find.WindowStack.Add(new Dialog_EditPoolContent(item));
+            if (thingDef == null) return 50;
+            int max = CECompat.GetSuggestedMaxCount(thingDef, 50);
+            return max > 0 ? max : 50;
         }
 
         private class Dialog_EditPoolContent : Window
@@ -437,100 +342,65 @@ namespace FactionGearCustomizer.UI.Panels
             public Dialog_EditPoolContent(SpecRequirementEdit item)
             {
                 this.item = item;
-                this.tempPoolType = item.PoolType;
-                this.tempCountRange = item.CountRange;
-                this.tempSelectionMode = item.SelectionMode;
-                this.tempSelectionChance = item.SelectionChance;
-                this.closeOnCancel = true;
-                this.closeOnAccept = false;
-                this.doCloseButton = false;
-                this.doCloseX = true;
+                tempPoolType = item.PoolType;
+                tempCountRange = item.CountRange;
+                tempSelectionMode = item.SelectionMode;
+                tempSelectionChance = item.SelectionChance;
+                doCloseX = true;
             }
 
-            public override Vector2 InitialSize => new Vector2(400f, 350f);
+            public override Vector2 InitialSize => new Vector2(400f, 300f);
 
             public override void DoWindowContents(Rect inRect)
             {
-                // 标题
-                Rect titleRect = new Rect(inRect.x, inRect.y, inRect.width, 30f);
+                float y = inRect.y;
                 Text.Font = GameFont.Medium;
-                Widgets.Label(titleRect, LanguageManager.Get("EditPoolContents"));
+                Widgets.Label(new Rect(inRect.x, y, inRect.width, 30f), LanguageManager.Get("EditPoolContents"));
                 Text.Font = GameFont.Small;
-                
-                Listing_Standard listing = new Listing_Standard();
-                listing.Begin(new Rect(inRect.x, inRect.y + 40f, inRect.width, inRect.height - 40f));
+                y += 36f;
 
-                // 物品池类型
-                Rect poolTypeRect = listing.GetRect(32f);
-                Widgets.Label(poolTypeRect, LanguageManager.Get("PoolType") + ":");
-                poolTypeRect.x += 120f;
-                poolTypeRect.width -= 120f;
-                
-                if (Widgets.ButtonText(poolTypeRect, GetPoolLabel(tempPoolType)))
+                // Pool type
+                Widgets.Label(new Rect(inRect.x, y, 100f, 28f), LanguageManager.Get("PoolType") + ":");
+                if (Widgets.ButtonText(new Rect(inRect.x + 105f, y, inRect.width - 105f, 28f), GetPoolLabel(tempPoolType)))
                 {
-                    List<FloatMenuOption> options = new List<FloatMenuOption>();
-                    foreach (ItemPoolType type in Enum.GetValues(typeof(ItemPoolType)))
-                    {
-                        if (type != ItemPoolType.None)
-                        {
-                            options.Add(new FloatMenuOption(GetPoolLabel(type), () => { tempPoolType = type; }));
-                        }
-                    }
-                    Find.WindowStack.Add(new FloatMenu(options));
+                    var opts = new List<FloatMenuOption>();
+                    foreach (ItemPoolType t in Enum.GetValues(typeof(ItemPoolType)))
+                        if (t != ItemPoolType.None) opts.Add(new FloatMenuOption(GetPoolLabel(t), () => tempPoolType = t));
+                    Find.WindowStack.Add(new FloatMenu(opts));
                 }
+                y += 34f;
 
-                listing.Gap(8f);
+                // Count range
+                Widgets.Label(new Rect(inRect.x, y, 100f, 28f), LanguageManager.Get("Count") + ":");
+                Widgets.IntRange(new Rect(inRect.x + 105f, y, inRect.width - 105f, 28f), GetHashCode(), ref tempCountRange, 1, 100);
+                y += 34f;
 
-                // 数量范围
-                Rect countRect = listing.GetRect(32f);
-                Widgets.Label(countRect.LeftHalf(), LanguageManager.Get("Count") + ":");
-                Widgets.IntRange(countRect.RightHalf(), GetHashCode(), ref tempCountRange, 1, 100);
-
-                listing.Gap(8f);
-
-                // 选择模式
-                Rect modeRect = listing.GetRect(32f);
-                Widgets.Label(modeRect, LanguageManager.Get("SelectionMode") + ":");
-                modeRect.x += 120f;
-                modeRect.width -= 120f;
-                
-                if (Widgets.ButtonText(modeRect, tempSelectionMode.ToString()))
+                // Selection mode
+                Widgets.Label(new Rect(inRect.x, y, 100f, 28f), LanguageManager.Get("SelectionMode") + ":");
+                if (Widgets.ButtonText(new Rect(inRect.x + 105f, y, inRect.width - 105f, 28f), tempSelectionMode.ToString()))
                 {
-                    List<FloatMenuOption> options = new List<FloatMenuOption>();
-                    foreach (ApparelSelectionMode mode in Enum.GetValues(typeof(ApparelSelectionMode)))
-                    {
-                        options.Add(new FloatMenuOption(mode.ToString(), () => { tempSelectionMode = mode; }));
-                    }
-                    Find.WindowStack.Add(new FloatMenu(options));
+                    var opts = new List<FloatMenuOption>();
+                    foreach (ApparelSelectionMode m in Enum.GetValues(typeof(ApparelSelectionMode)))
+                        opts.Add(new FloatMenuOption(m.ToString(), () => tempSelectionMode = m));
+                    Find.WindowStack.Add(new FloatMenu(opts));
                 }
+                y += 34f;
 
-                listing.Gap(8f);
-
-                // 选择概率
+                // Chance
                 if (tempSelectionMode != ApparelSelectionMode.AlwaysTake)
                 {
-                    Rect chanceRect = listing.GetRect(32f);
-                    Widgets.Label(chanceRect, LanguageManager.Get("Chance") + ":");
-                    chanceRect.x += 120f;
-                    chanceRect.width -= 120f;
-                    tempSelectionChance = Widgets.HorizontalSlider(chanceRect, tempSelectionChance, 0f, 1f, true, tempSelectionChance.ToString("P0"));
+                    Widgets.Label(new Rect(inRect.x, y, 100f, 28f), LanguageManager.Get("Chance") + ":");
+                    tempSelectionChance = Widgets.HorizontalSlider(new Rect(inRect.x + 105f, y + 4f, inRect.width - 105f, 20f), tempSelectionChance, 0f, 1f, true, tempSelectionChance.ToString("P0"));
+                    y += 34f;
                 }
 
-                listing.Gap(20f);
-
-                // 按钮
-                Rect buttonRect = listing.GetRect(36f);
-                Rect cancelRect = new Rect(buttonRect.x, buttonRect.y, buttonRect.width / 2 - 5f, 36f);
-                Rect okRect = new Rect(buttonRect.x + buttonRect.width / 2 + 5f, buttonRect.y, buttonRect.width / 2 - 5f, 36f);
-
-                if (Widgets.ButtonText(cancelRect, LanguageManager.Get("Cancel")))
-                {
+                // Buttons
+                y += 10f;
+                float btnW = (inRect.width - 10f) / 2f;
+                if (Widgets.ButtonText(new Rect(inRect.x, y, btnW, 32f), LanguageManager.Get("Cancel")))
                     Close();
-                }
-
-                if (Widgets.ButtonText(okRect, LanguageManager.Get("OK")))
+                if (Widgets.ButtonText(new Rect(inRect.x + btnW + 10f, y, btnW, 32f), LanguageManager.Get("OK")))
                 {
-                    // 保存更改
                     item.PoolType = tempPoolType;
                     item.CountRange = tempCountRange;
                     item.SelectionMode = tempSelectionMode;
@@ -538,18 +408,7 @@ namespace FactionGearCustomizer.UI.Panels
                     FactionGearEditor.MarkDirty();
                     Close();
                 }
-
-                listing.End();
             }
-        }
-
-        private static int GetMaxCountForItem(ThingDef thingDef)
-        {
-            if (thingDef == null) return 50;
-            
-            int maxCount = CECompat.GetSuggestedMaxCount(thingDef, 50);
-            
-            return maxCount > 0 ? maxCount : 50;
         }
     }
 }

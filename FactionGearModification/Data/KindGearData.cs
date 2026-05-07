@@ -35,7 +35,7 @@ namespace FactionGearCustomizer
 
         // New fields ported from TotalControl
         public bool ForceNaked = false;
-        public bool ForceOnlySelected = false;
+        public bool ForceOnlySelected = true;
         public bool ForceOverrideHediffs = false;
         public bool OutfitFirstBudgetStrategy = true;
         public QualityCategory? ItemQuality = null;
@@ -97,7 +97,7 @@ namespace FactionGearCustomizer
             Scribe_Values.Look(ref isModified, "isModified", false);
 
             Scribe_Values.Look(ref ForceNaked, "forceNaked");
-            Scribe_Values.Look(ref ForceOnlySelected, "forceOnlySelected");
+            Scribe_Values.Look(ref ForceOnlySelected, "forceOnlySelected", true);
             Scribe_Values.Look(ref ForceOverrideHediffs, "forceOverrideHediffs");
             Scribe_Values.Look(ref OutfitFirstBudgetStrategy, "outfitFirstBudgetStrategy", true);
             Scribe_Values.Look(ref ForceIgnoreRestrictions, "forceIgnoreRestrictions");
@@ -226,7 +226,7 @@ namespace FactionGearCustomizer
             Label = null;
             
             ForceNaked = false;
-            ForceOnlySelected = false;
+            ForceOnlySelected = true;
             ForceOverrideHediffs = false;
             OutfitFirstBudgetStrategy = true;
             ForceIgnoreRestrictions = null;

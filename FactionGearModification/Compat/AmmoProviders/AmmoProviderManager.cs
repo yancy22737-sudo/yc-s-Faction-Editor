@@ -161,6 +161,25 @@ namespace FactionGearCustomizer.Compat.AmmoProviders
         }
 
         /// <summary>
+        /// 获取弹药对应的投射物ThingDef
+        /// </summary>
+        public static ThingDef GetProjectileForAmmo(ThingDef ammoDef)
+        {
+            if (!_initialized) Initialize();
+            if (ammoDef == null) return null;
+
+            foreach (var provider in ActiveProviders)
+            {
+                if (provider is CEAmmoProvider ceProvider)
+                {
+                    var projectile = ceProvider.GetProjectileForAmmo(ammoDef);
+                    if (projectile != null) return projectile;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
         /// 获取建议的弹药数量
         /// </summary>
         public static int GetSuggestedAmmoCount(ThingDef weaponDef, ThingDef ammoDef)

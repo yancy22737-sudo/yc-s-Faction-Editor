@@ -381,6 +381,7 @@
   <BatchApplied>Конфигурация применена к {0} видам.</BatchApplied>
   <BatchApplySource>Источник</BatchApplySource>
   <BatchCopyCategories>Копировать категории</BatchCopyCategories>
+  <BatchSkipAmmo>Пропустить боеприпасы</BatchSkipAmmo>
   <BatchTargetFaction>Целевая фракция</BatchTargetFaction>
   <BatchApplyNoCategorySelected>Пожалуйста, выберите хотя бы одну категорию для копирования.</BatchApplyNoCategorySelected>
   <NewFaction>Новая</NewFaction>
@@ -897,6 +898,21 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <Category_HardDrug>Тяжелые наркотики</Category_HardDrug>
   <Category_Ammo>Боеприпасы</Category_Ammo>
   <CategoryFilterTooltip>Фильтр по категории предмета</CategoryFilterTooltip>
+
+  <!-- Hediff Categories -->
+  <HediffCat_Implants>Импланты</HediffCat_Implants>
+  <HediffCat_MissingParts>Потерянные части</HediffCat_MissingParts>
+  <HediffCat_Debuffs>Дебаффы</HediffCat_Debuffs>
+  <HediffCat_Illnesses>Болезни</HediffCat_Illnesses>
+  <HediffCat_DrugHighs>Наркотическое опьянение</HediffCat_DrugHighs>
+  <HediffCat_Buffs>Баффы</HediffCat_Buffs>
+  <HediffCat_Other>Другое</HediffCat_Other>
+
+  <!-- Food Sub-categories -->
+  <FoodCat_Cooked>Приготовленная еда</FoodCat_Cooked>
+  <FoodCat_Raw>Сырая еда</FoodCat_Raw>
+  <FoodCat_Meat>Мясо</FoodCat_Meat>
+  <FoodCat_Vegetable>Овощи</FoodCat_Vegetable>
 
   <!-- Preview Save Confirmation -->
   <ConfirmSaveBeforePreview>У вас есть несохраненные изменения. Сохранить перед предпросмотром?</ConfirmSaveBeforePreview>

@@ -755,9 +755,12 @@ namespace FactionGearCustomizer.UI.Panels
                             var existingItem = currentCategory.FirstOrDefault(g => g.thingDefName == thingDef.defName);
                             if (existingItem != null)
                             {
+                                var removedDef = existingItem.ThingDef;
                                 currentCategory.Remove(existingItem);
                                 kindData.isModified = true;
                                 FactionGearEditor.MarkDirty();
+                                if (removedDef != null && removedDef.IsRangedWeapon)
+                                    TryRemoveCEAmmoForWeapon(kindData, removedDef);
                                 if (EditorSession.ExpandedGearItem == existingItem) EditorSession.ExpandedGearItem = null;
                             }
                         }

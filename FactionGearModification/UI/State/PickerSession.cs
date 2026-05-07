@@ -22,6 +22,7 @@ namespace FactionGearCustomizer
         public int LastModCount = 0;
         public HashSet<string> SelectedAmmoSets = new HashSet<string>();
         public int LastAmmoSetCount = 0;
+        public HashSet<string> SelectedFoodCategories = new HashSet<string>();
         public TechLevel? SelectedTechLevel = null;
         public ItemCategoryFilter? SelectedCategory = null;
         public string SortField = "MarketValue";

@@ -31,7 +31,10 @@ namespace FactionGearCustomizer
         
         private Pawn pendingInfoPawn = null;
 
-
+        // Group filter
+        private int selectedGroupIndex = 0;
+        private List<string> groupLabels = new List<string>();
+        private List<List<PawnKindDef>> groupKindLists = new List<List<PawnKindDef>>();
 
         public override Vector2 InitialSize => isMultiMode ? new Vector2(1100f, 750f) : new Vector2(450f, 650f);
 
@@ -57,6 +60,64 @@ namespace FactionGearCustomizer
             this.forcePause = true;
             this.draggable = true;
             this.resizeable = true;
+            if (isMultiMode)
+            {
+                BuildGroupFilterLists();
+            }
+        }
+
+        private void BuildGroupFilterLists()
+        {
+            groupLabels.Clear();
+            groupKindLists.Clear();
+
+            // "All" option
+            groupLabels.Add(LanguageManager.Get("CategoryAll"));
+            groupKindLists.Add(allKinds);
+
+            // Build group list from faction gear data
+            var settings = FactionGearCustomizerMod.Settings;
+            if (settings?.factionGearData != null)
+            {
+                foreach (var factionData in settings.factionGearData)
+                {
+                    if (factionData.factionDefName != factionDef.defName) continue;
+                    if (factionData.groupMakers == null) continue;
+
+                    foreach (var group in factionData.groupMakers)
+                    {
+                        string label = !string.IsNullOrEmpty(group.customLabel)
+                            ? group.customLabel
+                            : group.kindDefName ?? $"Group {groupLabels.Count}";
+
+                        var kindNames = new HashSet<string>();
+                        CollectKindNames(group.options, kindNames);
+                        CollectKindNames(group.traders, kindNames);
+                        CollectKindNames(group.carriers, kindNames);
+                        CollectKindNames(group.guards, kindNames);
+
+                        var matched = allKinds.Where(k => kindNames.Contains(k.defName)).ToList();
+                        if (matched.Count > 0)
+                        {
+                            groupLabels.Add($"{label} ({matched.Count})");
+                            groupKindLists.Add(matched);
+                        }
+                    }
+                }
+            }
+
+            // Default to first group (combat group) if available, otherwise "All"
+            selectedGroupIndex = groupLabels.Count > 1 ? 1 : 0;
+        }
+
+        private static void CollectKindNames(List<PawnGenOptionData> options, HashSet<string> result)
+        {
+            if (options == null) return;
+            foreach (var opt in options)
+            {
+                if (!string.IsNullOrEmpty(opt.kindDefName))
+                    result.Add(opt.kindDefName);
+            }
         }
 
         public override void PostOpen()
@@ -72,9 +133,18 @@ namespace FactionGearCustomizer
             }
         }
 
+        private List<PawnKindDef> GetFilteredKinds()
+        {
+            if (groupKindLists.Count > 0 && selectedGroupIndex >= 0 && selectedGroupIndex < groupKindLists.Count)
+                return groupKindLists[selectedGroupIndex];
+            return allKinds;
+        }
+
         private void GenerateAllPreviewPawns()
         {
             if (allKinds == null) return;
+
+            var filtered = GetFilteredKinds();
 
             // Clear existing
             foreach (var p in previewPawns.Values)
@@ -90,7 +160,7 @@ namespace FactionGearCustomizer
 
             generationQueue.Clear();
             pendingKinds.Clear();
-            foreach (var k in allKinds)
+            foreach (var k in filtered)
             {
                 generationQueue.Enqueue(k);
                 pendingKinds.Add(k);
@@ -249,51 +319,98 @@ namespace FactionGearCustomizer
 
         private void DoMultiWindowContents(Rect inRect)
         {
+            float y = inRect.y;
+
+            // Top row: faction name | progress | reroll
+            float rowH = 32f;
+            float rerollW = 100f;
+            float progressW = 160f;
+            float rightW = rerollW + 8f + (generationQueue.Count > 0 ? progressW + 8f : 0f);
+            float nameW = inRect.width - rightW;
+
+            // Faction name (left)
             Text.Font = GameFont.Medium;
-            Widgets.Label(new Rect(inRect.x, inRect.y, inRect.width - 150f, 30f), LanguageManager.Get("Preview") + ": " + factionDef.LabelCap);
-            
-            Rect refreshRect = new Rect(inRect.width - 140f, inRect.y, 140f, 30f);
-            if (Widgets.ButtonText(refreshRect, LanguageManager.Get("Reroll")))
-            {
-                GenerateAllPreviewPawns();
-            }
+            Widgets.Label(new Rect(inRect.x, y, nameW, rowH), LanguageManager.Get("Preview") + ": " + factionDef.LabelCap);
             Text.Font = GameFont.Small;
 
-            if (errorMessage != null)
-            {
-                 Widgets.Label(new Rect(inRect.x, inRect.y + 40f, inRect.width, 30f), errorMessage);
-                 return;
-            }
+            // Progress bar (right of name, before reroll)
             if (generationQueue.Count > 0)
             {
                 float progress = (float)generatedCount / totalToGenerate;
-                Rect progressRect = new Rect(inRect.x + 200f, inRect.y + 5f, inRect.width - 400f, 20f);
+                Rect progressRect = new Rect(inRect.x + nameW, y + 6f, progressW, 20f);
                 Widgets.FillableBar(progressRect, progress);
                 Text.Anchor = TextAnchor.MiddleCenter;
                 Widgets.Label(progressRect, $"{generatedCount}/{totalToGenerate}");
                 Text.Anchor = TextAnchor.UpperLeft;
             }
 
-            Rect outRect = new Rect(inRect.x, inRect.y + 40f, inRect.width, inRect.height - 40f);
-            
+            // Reroll button (far right)
+            Rect refreshRect = new Rect(inRect.xMax - rerollW, y, rerollW, rowH);
+            if (Widgets.ButtonText(refreshRect, LanguageManager.Get("Reroll")))
+            {
+                GenerateAllPreviewPawns();
+            }
+            y += rowH + 4f;
+
+            // Group filter dropdown (second row, compact)
+            if (groupLabels.Count > 1)
+            {
+                Rect labelRect = new Rect(inRect.x, y, 40f, 22f);
+                Rect dropdownRect = new Rect(inRect.x + 44f, y, 180f, 22f);
+
+                Text.Anchor = TextAnchor.MiddleLeft;
+                GUI.color = new Color(0.75f, 0.75f, 0.75f);
+                Text.Font = GameFont.Tiny;
+                Widgets.Label(labelRect, LanguageManager.Get("Group") + ":");
+                GUI.color = Color.white;
+                Text.Font = GameFont.Small;
+                Text.Anchor = TextAnchor.UpperLeft;
+
+                if (Widgets.ButtonText(dropdownRect, groupLabels[selectedGroupIndex]))
+                {
+                    List<FloatMenuOption> options = new List<FloatMenuOption>();
+                    for (int i = 0; i < groupLabels.Count; i++)
+                    {
+                        int captured = i;
+                        options.Add(new FloatMenuOption(groupLabels[i], () =>
+                        {
+                            selectedGroupIndex = captured;
+                            GenerateAllPreviewPawns();
+                        }));
+                    }
+                    Find.WindowStack.Add(new FloatMenu(options));
+                }
+                y += 26f;
+            }
+
+            if (errorMessage != null)
+            {
+                Widgets.Label(new Rect(inRect.x, y, inRect.width, 30f), errorMessage);
+                return;
+            }
+
+            Rect outRect = new Rect(inRect.x, y + 20f, inRect.width, inRect.height - (y - inRect.y) - 20f);
+
+            var filteredKinds = GetFilteredKinds();
+
             // Compact Grid Calculation
             float cardWidth = 160f;
             float cardHeight = 240f; // Adjusted for name + portrait
             float spacing = 8f;
             int columns = Mathf.FloorToInt((outRect.width - 16f) / (cardWidth + spacing));
             if (columns < 1) columns = 1;
-            
-            int rows = Mathf.CeilToInt((float)allKinds.Count / columns);
-            float viewHeight = rows * (cardHeight + spacing);
+
+            int gridRows = Mathf.CeilToInt((float)filteredKinds.Count / columns);
+            float viewHeight = gridRows * (cardHeight + spacing);
 
             Widgets.BeginScrollView(outRect, ref scrollPosition, new Rect(0, 0, outRect.width - 16f, viewHeight));
-            
-            for (int i = 0; i < allKinds.Count; i++)
+
+            for (int i = 0; i < filteredKinds.Count; i++)
             {
-                var k = allKinds[i];
+                var k = filteredKinds[i];
                 int col = i % columns;
                 int row = i / columns;
-                
+
                 Rect cardRect = new Rect(col * (cardWidth + spacing), row * (cardHeight + spacing), cardWidth, cardHeight);
                 DrawPawnCard(cardRect, k);
             }
@@ -403,12 +520,49 @@ namespace FactionGearCustomizer
                 }
 
                 // Raid points display - bottom left
+                float combatPower = k.combatPower;
+                // Check for group points override
+                var settings = FactionGearCustomizerMod.Settings;
+                if (settings?.factionGearData != null)
+                {
+                    foreach (var fd in settings.factionGearData)
+                    {
+                        if (fd.factionDefName != factionDef.defName) continue;
+                        if (fd.groupMakers == null) continue;
+                        foreach (var gm in fd.groupMakers)
+                        {
+                            if (gm.options == null) continue;
+                            foreach (var opt in gm.options)
+                            {
+                                if (opt.kindDefName == k.defName && opt.pointsOverride.HasValue)
+                                {
+                                    combatPower = opt.pointsOverride.Value;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
                 Rect raidPointsRect = new Rect(inner.x + 2f, inner.yMax - 18f, inner.width - 44f, 16f);
                 Text.Anchor = TextAnchor.LowerLeft;
                 Text.Font = GameFont.Tiny;
-                GUI.color = new Color(1f, 0.85f, 0.4f);
-                Widgets.Label(raidPointsRect, $"{LanguageManager.Get("RaidPoints")}: {(int)(k.combatPower)}");
                 GUI.color = Color.white;
+                Widgets.Label(raidPointsRect, $"点数：{(int)combatPower}");
+                GUI.color = Color.white;
+
+                // Carry weight display - above raid points
+                if (p.inventory != null)
+                {
+                    float mass = MassUtility.GearAndInventoryMass(p);
+                    float capacity = MassUtility.Capacity(p, null);
+                    float percent = capacity > 0f ? mass / capacity : 0f;
+                    Rect weightRect = new Rect(inner.x + 2f, inner.yMax - 32f, inner.width - 44f, 16f);
+                    Color weightColor = percent > 0.9f ? new Color(0.8f, 0.29f, 0.32f) : (percent > 0.75f ? new Color(1f, 0.69f, 0.1f) : new Color(0.2f, 0.76f, 0.57f));
+                    GUI.color = weightColor;
+                    Widgets.Label(weightRect, $"负重: {percent:P0}");
+                    GUI.color = Color.white;
+                }
+
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.UpperLeft;
 

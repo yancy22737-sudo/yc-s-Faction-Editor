@@ -217,7 +217,8 @@ namespace FactionGearCustomizer.UI.Panels
                     var factionDef = DefDatabase<FactionDef>.GetNamedSilentFail(EditorSession.SelectedFactionDefName);
                     if (factionDef != null && kindData != null)
                     {
-                        Find.WindowStack.Add(new Dialog_BatchApply(factionDef, kindData));
+                        var initialFlags = Dialog_BatchApply.GetDefaultFlagsForCategory(EditorSession.SelectedCategory);
+                        Find.WindowStack.Add(new Dialog_BatchApply(factionDef, kindData, initialFlags));
                     }
                 }
                 else
@@ -499,22 +500,26 @@ namespace FactionGearCustomizer.UI.Panels
                 else
                     height += 200f;
             }
-            else if (EditorSession.CurrentAdvancedTab == AdvancedTab.Hediffs && !kindData.ForcedHediffs.NullOrEmpty())
-            {
-                foreach (var item in kindData.ForcedHediffs)
-                    height += HediffCardUI.GetCardHeight(item) + 8f;
-                height += 100f;
-            }
             else if (EditorSession.CurrentAdvancedTab == AdvancedTab.Hediffs)
-                height = 200f;
-            else if (EditorSession.CurrentAdvancedTab == AdvancedTab.Items && !kindData.InventoryItems.NullOrEmpty())
             {
-                foreach (var item in kindData.InventoryItems)
-                    height += ItemCardUI.GetCardHeight(item) + 8f;
-                height += 100f;
+                height = 80f; // header: label + button row + gaps
+                if (!kindData.ForcedHediffs.NullOrEmpty())
+                {
+                    foreach (var item in kindData.ForcedHediffs)
+                        height += HediffCardUI.GetCardHeight(item) + 8f;
+                }
+                height += 40f; // bottom padding
             }
             else if (EditorSession.CurrentAdvancedTab == AdvancedTab.Items)
-                height = 200f;
+            {
+                height = 80f; // header: label + button row + gaps
+                if (!kindData.InventoryItems.NullOrEmpty())
+                {
+                    foreach (var item in kindData.InventoryItems)
+                        height += ItemCardUI.GetCardHeight(item) + 8f;
+                }
+                height += 40f; // bottom padding
+            }
             else if (EditorSession.CurrentAdvancedTab == AdvancedTab.General)
             {
                 bool isForceIgnore = kindData.ForceIgnoreRestrictions ?? FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
@@ -610,6 +615,7 @@ namespace FactionGearCustomizer.UI.Panels
                     EditorSession.SelectedCategory = category;
                     EditorSession.ExpandedGearItem = null;
                     EditorSession.CachedModSources = null;
+                    EditorSession.SelectedAmmoSets.Clear();
                     FactionGearEditor.GetUniqueModSources();
                     FactionGearEditor.CalculateBounds();
                 }
@@ -1318,6 +1324,7 @@ namespace FactionGearCustomizer.UI.Panels
                     {
                         EditorSession.SelectedCategory = cat;
                         EditorSession.ExpandedGearItem = null;
+                        EditorSession.SelectedAmmoSets.Clear();
                         FactionGearEditor.CalculateBounds();
                     }
                 }
@@ -1439,9 +1446,12 @@ namespace FactionGearCustomizer.UI.Panels
             if (Widgets.ButtonImage(removeRect, TexButton.Delete, Color.white, GenUI.SubtleMouseoverColor))
             {
                 UndoManager.RecordState(kindData);
+                var removedDef = gearItem.ThingDef;
                 GetCurrentCategoryGear(kindData).Remove(gearItem);
                 kindData.isModified = true;
                 FactionGearEditor.MarkDirty();
+                if (removedDef != null && removedDef.IsRangedWeapon)
+                    TryRemoveCEAmmoForWeapon(kindData, removedDef);
                 if (EditorSession.ExpandedGearItem == gearItem) EditorSession.ExpandedGearItem = null;
             }
             if (isExpanded)

@@ -390,6 +390,7 @@
   <BatchApplied>成功应用配置到 {0} 个兵种。</BatchApplied>
   <BatchApplySource>来源</BatchApplySource>
   <BatchCopyCategories>复制分类</BatchCopyCategories>
+  <BatchSkipAmmo>跳过弹药（不覆盖弹药）</BatchSkipAmmo>
   <BatchTargetFaction>目标派系</BatchTargetFaction>
   <BatchApplyNoCategorySelected>请至少选择一个分类进行复制。</BatchApplyNoCategorySelected>
   <NewFaction>添加</NewFaction>
@@ -901,6 +902,21 @@
   <Category_HardDrug>强烈成瘾品</Category_HardDrug>
   <Category_Ammo>弹药</Category_Ammo>
   <CategoryFilterTooltip>按物品类别筛选</CategoryFilterTooltip>
+
+  <!-- Hediff分类 -->
+  <HediffCat_Implants>植入物</HediffCat_Implants>
+  <HediffCat_MissingParts>缺失部位</HediffCat_MissingParts>
+  <HediffCat_Debuffs>减益</HediffCat_Debuffs>
+  <HediffCat_Illnesses>疾病</HediffCat_Illnesses>
+  <HediffCat_DrugHighs>药物兴奋</HediffCat_DrugHighs>
+  <HediffCat_Buffs>增益</HediffCat_Buffs>
+  <HediffCat_Other>其他</HediffCat_Other>
+
+  <!-- 食物子分类 -->
+  <FoodCat_Cooked>烹饪食物</FoodCat_Cooked>
+  <FoodCat_Raw>生食</FoodCat_Raw>
+  <FoodCat_Meat>肉类</FoodCat_Meat>
+  <FoodCat_Vegetable>蔬菜</FoodCat_Vegetable>
 
   <!-- 预览保存确认 -->
   <ConfirmSaveBeforePreview>你有未保存的修改。是否在预览前保存？</ConfirmSaveBeforePreview>

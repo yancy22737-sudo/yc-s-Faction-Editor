@@ -384,6 +384,7 @@ Applying this preset may cause missing items or errors. Continue?</MissingModsWa
   <BatchApplied>Applied config to {0} kinds.</BatchApplied>
   <BatchApplySource>Source</BatchApplySource>
   <BatchCopyCategories>Copy Categories</BatchCopyCategories>
+  <BatchSkipAmmo>Skip Ammo (don't override)</BatchSkipAmmo>
   <BatchTargetFaction>Target Faction</BatchTargetFaction>
   <BatchApplyNoCategorySelected>Please select at least one category to copy.</BatchApplyNoCategorySelected>
   <NewFaction>New</NewFaction>
@@ -901,6 +902,21 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <Category_HardDrug>Hard Drug</Category_HardDrug>
   <Category_Ammo>Ammo</Category_Ammo>
   <CategoryFilterTooltip>Filter by item category</CategoryFilterTooltip>
+
+  <!-- Hediff Categories -->
+  <HediffCat_Implants>Implants</HediffCat_Implants>
+  <HediffCat_MissingParts>Missing Parts</HediffCat_MissingParts>
+  <HediffCat_Debuffs>Debuffs</HediffCat_Debuffs>
+  <HediffCat_Illnesses>Illnesses</HediffCat_Illnesses>
+  <HediffCat_DrugHighs>Drug Highs</HediffCat_DrugHighs>
+  <HediffCat_Buffs>Buffs</HediffCat_Buffs>
+  <HediffCat_Other>Other</HediffCat_Other>
+
+  <!-- Food Sub-categories -->
+  <FoodCat_Cooked>Cooked</FoodCat_Cooked>
+  <FoodCat_Raw>Raw</FoodCat_Raw>
+  <FoodCat_Meat>Meat</FoodCat_Meat>
+  <FoodCat_Vegetable>Vegetable</FoodCat_Vegetable>
 
   <!-- Preview Save Confirmation -->
   <ConfirmSaveBeforePreview>You have unsaved changes. Save before preview?</ConfirmSaveBeforePreview>

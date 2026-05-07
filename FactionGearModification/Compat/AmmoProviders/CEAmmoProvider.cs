@@ -36,6 +36,7 @@ namespace FactionGearCustomizer.Compat.AmmoProviders
         private FieldInfo _ammoTypesField;
         private Type _ammoLinkType;
         private FieldInfo _ammoField;
+        private FieldInfo _projectileField;
         private Type _compAmmoUserType;
         private Type _ammoDefType;
         private StatDef _bulkStat;
@@ -69,6 +70,7 @@ namespace FactionGearCustomizer.Compat.AmmoProviders
                 if (_ammoLinkType != null)
                 {
                     _ammoField = AccessTools.Field(_ammoLinkType, "ammo");
+                    _projectileField = AccessTools.Field(_ammoLinkType, "projectile");
                 }
 
                 _compAmmoUserType = AccessTools.TypeByName("CombatExtended.CompAmmoUser");
@@ -158,6 +160,52 @@ namespace FactionGearCustomizer.Compat.AmmoProviders
             }
 
             return ammoList;
+        }
+
+        /// <summary>
+        /// 获取弹药对应的投射物ThingDef
+        /// </summary>
+        public ThingDef GetProjectileForAmmo(ThingDef ammoDef)
+        {
+            if (!IsActive || ammoDef == null) return null;
+            if (_compPropertiesAmmoUserType == null || _projectileField == null) return null;
+
+            try
+            {
+                // 遍历所有武器，找到使用此弹药的武器，然后从ammo link获取投射物
+                foreach (var weaponDef in DefDatabase<ThingDef>.AllDefs)
+                {
+                    if (weaponDef.comps == null) continue;
+                    CompProperties ammoUserProps = null;
+                    foreach (var comp in weaponDef.comps)
+                    {
+                        if (_compPropertiesAmmoUserType.IsAssignableFrom(comp.GetType()))
+                        {
+                            ammoUserProps = comp;
+                            break;
+                        }
+                    }
+                    if (ammoUserProps == null) continue;
+
+                    var ammoSet = _ammoSetField?.GetValue(ammoUserProps);
+                    if (ammoSet == null) continue;
+
+                    var ammoLinks = _ammoTypesField?.GetValue(ammoSet) as System.Collections.IList;
+                    if (ammoLinks == null) continue;
+
+                    foreach (var link in ammoLinks)
+                    {
+                        var linkAmmo = _ammoField?.GetValue(link) as ThingDef;
+                        if (linkAmmo == ammoDef)
+                        {
+                            return _projectileField?.GetValue(link) as ThingDef;
+                        }
+                    }
+                }
+            }
+            catch { }
+
+            return null;
         }
 
         public int GetSuggestedAmmoCount(ThingDef weaponDef, ThingDef ammoDef)

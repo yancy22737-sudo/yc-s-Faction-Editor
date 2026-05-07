@@ -159,27 +159,17 @@ namespace FactionGearCustomizer.UI.Panels
                 dirtyCache = false;
             }
 
-            // Calculate content height
-            float totalHeight = 0f;
+            // Fixed row height for compact single-line display
+            float rowHeight = 28f;
             float viewWidth = factionListOutRect.width - 16f;
-            foreach (var data in cachedFactionList)
-            {
-                float maxRowWidth = viewWidth - 62f; 
-                if (data.worldFaction != null) maxRowWidth -= 44f;
-                float height = Text.CalcHeight(data.displayName, maxRowWidth);
-                totalHeight += Mathf.Max(height + 8f, 32f);
-            }
-            
+            float totalHeight = cachedFactionList.Count * rowHeight;
+
             Rect factionListViewRect = new Rect(0, 0, viewWidth, totalHeight);
             Widgets.BeginScrollView(factionListOutRect, ref EditorSession.FactionListScrollPos, factionListViewRect);
-            
+
             float y = 0;
             foreach (var data in cachedFactionList)
             {
-                float maxRowWidth = factionListViewRect.width - 62f;
-                if (data.worldFaction != null) maxRowWidth -= 44f;
-
-                float rowHeight = Mathf.Max(Text.CalcHeight(data.displayName, maxRowWidth) + 8f, 32f);
                 Rect rowRect = new Rect(0, y, factionListViewRect.width, rowHeight);
 
                 // Handle Selection
@@ -233,6 +223,21 @@ namespace FactionGearCustomizer.UI.Panels
             Widgets.EndScrollView();
         }
 
+        private static string TruncateText(string text, float maxWidth)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+            if (Text.CalcSize(text).x <= maxWidth) return text;
+            string ellipsis = "...";
+            float ellipsisWidth = Text.CalcSize(ellipsis).x;
+            for (int i = text.Length - 1; i > 0; i--)
+            {
+                string truncated = text.Substring(0, i);
+                if (Text.CalcSize(truncated).x + ellipsisWidth <= maxWidth)
+                    return truncated + ellipsis;
+            }
+            return ellipsis;
+        }
+
         private static void DrawFactionRow(Rect rowRect, (FactionDef def, Faction worldFaction, bool isModified, string displayName, Color color, float priority) data, float rowHeight)
         {
             // Icon
@@ -266,13 +271,13 @@ namespace FactionGearCustomizer.UI.Panels
                             switch (relationKind)
                             {
                                 case FactionRelationKind.Ally:
-                                    nameColor = Color.green;
+                                    nameColor = new Color(0.45f, 0.75f, 0.45f);
                                     break;
                                 case FactionRelationKind.Hostile:
-                                    nameColor = Color.red;
+                                    nameColor = new Color(0.8f, 0.45f, 0.4f);
                                     break;
                                 case FactionRelationKind.Neutral:
-                                    nameColor = Color.cyan;
+                                    nameColor = new Color(0.5f, 0.7f, 0.75f);
                                     break;
                             }
                         }
@@ -284,15 +289,15 @@ namespace FactionGearCustomizer.UI.Panels
                 }
             }
 
-            // Name
+            // Name (single line with ellipsis)
             float nameX = iconRect.xMax + 6f;
             float nameWidth = rowRect.width - nameX - 4f;
-            
+
             Rect nameRect = new Rect(nameX, rowRect.y, nameWidth, rowHeight);
-            
+
             Text.Anchor = TextAnchor.MiddleLeft;
             GUI.color = nameColor;
-            Widgets.Label(nameRect, data.displayName);
+            Widgets.Label(nameRect, TruncateText(data.displayName, nameWidth));
             GUI.color = Color.white;
             Text.Anchor = TextAnchor.UpperLeft;
             

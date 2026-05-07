@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using FactionGearCustomizer.UI.Pickers;
 using FactionGearCustomizer.UI.Utils;
+using FactionGearCustomizer.Compat;
+using FactionGearCustomizer.Compat.AmmoProviders;
 using FactionGearCustomizer.Validation;
 using RimWorld;
 using UnityEngine;
@@ -27,6 +29,7 @@ namespace FactionGearCustomizer.UI
         private ThingPickerFilterState filterState;
         private bool filterDirty = true;
         private Vector2 scrollPos;
+        private static Dictionary<string, HashSet<ThingDef>> caliberToAmmoMap;
  
         private IntRange defaultCountRange = new IntRange(1, 1);
         private ApparelSelectionMode defaultMode = ApparelSelectionMode.AlwaysTake;
@@ -47,11 +50,18 @@ namespace FactionGearCustomizer.UI
             InitCommon();
         }
  
-        public Dialog_InventoryItemPicker(Action<ThingDef> onPickSingle)
+        public Dialog_InventoryItemPicker(Action<ThingDef> onPickSingle, string initialAmmoSet = null)
         {
             this.onPickSingle = onPickSingle;
             multiSelect = false;
             InitCommon();
+            if (!string.IsNullOrEmpty(initialAmmoSet))
+            {
+                filterState.SelectedCategory = ItemCategoryFilter.Ammo;
+                filterState.SelectedAmmoSets.Clear();
+                filterState.SelectedAmmoSets.Add(initialAmmoSet);
+                filterDirty = true;
+            }
         }
  
         private void InitCommon()
@@ -86,10 +96,13 @@ namespace FactionGearCustomizer.UI
             y = ThingPickerFilterBar.Draw(inRect, y, filterState, new ThingPickerFilterBarConfig
             {
                 AllMods = allMods,
-                AllAmmoSets = null,
-                ShowAmmoFilter = false,
+                AllAmmoSets = CECompat.IsCEActive ? CECompat.GetAllAmmoSetLabels(FactionGearManager.GetAllWeapons()) : null,
+                ShowAmmoFilter = CECompat.IsCEActive,
+                ShowFoodFilter = true,
+                FoodSubCategories = GetFoodSubCategories(),
                 ShowRangeDamage = false,
                 ShowCategoryFilter = true,
+                ShowSortRow = false,
                 SortOptions = GetSortOptions(),
                 IdSeed = GetHashCode(),
                 OnChanged = OnFilterChanged,
@@ -164,21 +177,30 @@ namespace FactionGearCustomizer.UI
         private void DrawSelectionRow(Rect inRect, ref float y)
         {
             Rect rowRect = new Rect(0f, y, inRect.width, 28f);
- 
-            float btnW = 110f;
-            Rect allRect = new Rect(rowRect.x, rowRect.y, btnW, rowRect.height);
-            Rect noneRect = new Rect(allRect.xMax + 6f, rowRect.y, btnW, rowRect.height);
-            Rect invertRect = new Rect(noneRect.xMax + 6f, rowRect.y, btnW, rowRect.height);
- 
+
+            float btnW = 80f;
+            float gap = 4f;
+            float x = rowRect.x;
+
+            // Select All
+            Rect allRect = new Rect(x, rowRect.y, btnW, rowRect.height);
             if (Widgets.ButtonText(allRect, LanguageManager.Get("SelectAll")))
             {
                 selected.Clear();
                 foreach (var def in filteredCandidates) selected.Add(def);
             }
+            x += btnW + gap;
+
+            // Select None
+            Rect noneRect = new Rect(x, rowRect.y, btnW, rowRect.height);
             if (Widgets.ButtonText(noneRect, LanguageManager.Get("SelectNone")))
             {
                 selected.Clear();
             }
+            x += btnW + gap;
+
+            // Invert
+            Rect invertRect = new Rect(x, rowRect.y, btnW, rowRect.height);
             if (Widgets.ButtonText(invertRect, LanguageManager.Get("Invert")))
             {
                 HashSet<ThingDef> next = new HashSet<ThingDef>();
@@ -188,14 +210,44 @@ namespace FactionGearCustomizer.UI
                 }
                 selected = next;
             }
- 
-            Rect dupRect = new Rect(invertRect.xMax + 18f, rowRect.y, 240f, rowRect.height);
+            x += btnW + gap;
+
+            // Sort button
+            string sortLabel = LanguageManager.Get("SortField_" + filterState.SortField, filterState.SortField);
+            string arrow = filterState.SortAscending ? " ▲" : " ▼";
+            Rect sortRect = new Rect(x, rowRect.y, 100f, rowRect.height);
+            if (Widgets.ButtonText(sortRect, sortLabel + arrow))
+            {
+                List<FloatMenuOption> options = new List<FloatMenuOption>();
+                foreach (string option in GetSortOptions())
+                {
+                    string captured = option;
+                    string label = LanguageManager.Get("SortField_" + captured, captured);
+                    options.Add(new FloatMenuOption(label, () =>
+                    {
+                        if (filterState.SortField == captured)
+                            filterState.SortAscending = !filterState.SortAscending;
+                        else
+                        {
+                            filterState.SortField = captured;
+                            filterState.SortAscending = false;
+                        }
+                        OnFilterChanged();
+                    }));
+                }
+                Find.WindowStack.Add(new FloatMenu(options));
+            }
+            x += sortRect.width + gap;
+
+            // Skip Existing checkbox
+            Rect dupRect = new Rect(x, rowRect.y, 160f, rowRect.height);
             Widgets.CheckboxLabeled(dupRect, LanguageManager.Get("SkipExistingItems"), ref skipExisting);
- 
+
+            // Selected count (right-aligned)
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(new Rect(rowRect.xMax - 220f, rowRect.y, 220f, rowRect.height), $"{LanguageManager.Get("Selected")}: {selected.Count}");
+            Widgets.Label(new Rect(rowRect.xMax - 120f, rowRect.y, 120f, rowRect.height), $"{LanguageManager.Get("Selected")}: {selected.Count}");
             Text.Anchor = TextAnchor.UpperLeft;
- 
+
             y += 34f;
         }
  
@@ -233,6 +285,15 @@ namespace FactionGearCustomizer.UI
             var cacheEntry = ThingDefCache.Get(def);
             string modName = cacheEntry?.ModSource ?? "";
             string tip = $"{cacheEntry?.LabelCap}\n{cacheEntry?.DefName}\n{modName}";
+
+            // CE ammo tooltip enhancement
+            if (CECompat.IsCEActive && filterState.SelectedCategory == ItemCategoryFilter.Ammo)
+            {
+                string ceInfo = CECompat.GetAmmoTooltipInfo(def);
+                if (!string.IsNullOrEmpty(ceInfo))
+                    tip += "\n\n" + ceInfo;
+            }
+
             TooltipHandler.TipRegion(rowRect, tip);
  
             Rect inner = rowRect.ContractedBy(4f, 2f);
@@ -476,17 +537,44 @@ namespace FactionGearCustomizer.UI
                 .Where(IsInventoryCandidate)
                 .OrderBy(t => t.LabelCap.ToString() ?? t.defName)
                 .ToList();
- 
+
             allMods = allCandidates.Select(FactionGearManager.GetModSource).Distinct().OrderBy(x => x).ToList();
             filterState.SyncAvailableMods(allMods);
- 
+
+            // Build caliber -> ammo item mapping for CE sub-filter
+            BuildCaliberToAmmoMap();
+
             if (multiSelect && targetList != null)
             {
                 existingDefNames = new HashSet<string>(targetList.Where(x => x?.Thing != null).Select(x => x.Thing.defName));
             }
- 
+
             filterDirty = true;
             EnsureFilterUpToDate();
+        }
+
+        private static void BuildCaliberToAmmoMap()
+        {
+            caliberToAmmoMap = new Dictionary<string, HashSet<ThingDef>>();
+            if (!CECompat.IsCEActive) return;
+
+            var allWeapons = FactionGearManager.GetAllWeapons();
+            foreach (var weapon in allWeapons)
+            {
+                string label = CECompat.GetAmmoSetLabel(weapon);
+                if (string.IsNullOrEmpty(label)) continue;
+
+                var ammoList = AmmoProviderManager.GetAllAvailableAmmo(weapon);
+                if (ammoList == null) continue;
+
+                if (!caliberToAmmoMap.ContainsKey(label))
+                    caliberToAmmoMap[label] = new HashSet<ThingDef>();
+
+                foreach (var ammo in ammoList)
+                {
+                    caliberToAmmoMap[label].Add(ammo);
+                }
+            }
         }
 
         private void OnFilterChanged()
@@ -547,10 +635,42 @@ namespace FactionGearCustomizer.UI
                 case ItemCategoryFilter.HardDrug:
                     return def.IsDrug && !def.IsMedicine && def.ingestible != null && def.ingestible.drugCategory == DrugCategory.Hard;
                 case ItemCategoryFilter.Ammo:
-                    return def.IsShell;
+                    return def.IsShell || AmmoProviderManager.IsAmmo(def);
                 default:
                     return true;
             }
+        }
+
+        private static List<string> GetFoodSubCategories()
+        {
+            return new List<string>
+            {
+                LanguageManager.Get("FoodCat_Cooked"),
+                LanguageManager.Get("FoodCat_Raw"),
+                LanguageManager.Get("FoodCat_Meat"),
+                LanguageManager.Get("FoodCat_Vegetable")
+            };
+        }
+
+        private static bool MatchesFoodSubCategory(ThingDef def, HashSet<string> selected)
+        {
+            if (def == null || !def.IsIngestible) return false;
+            var props = def.ingestible;
+            if (props == null) return false;
+
+            bool isMeat = props.foodType.HasFlag(FoodTypeFlags.Meat);
+            bool isVegetable = props.foodType.HasFlag(FoodTypeFlags.VegetableOrFruit);
+            bool isMeal = props.foodType.HasFlag(FoodTypeFlags.Meal);
+            bool isRaw = !isMeal && (props.foodType.HasFlag(FoodTypeFlags.AnimalProduct) || isMeat || isVegetable);
+
+            foreach (string cat in selected)
+            {
+                if (cat == LanguageManager.Get("FoodCat_Cooked") && isMeal) return true;
+                if (cat == LanguageManager.Get("FoodCat_Raw") && isRaw) return true;
+                if (cat == LanguageManager.Get("FoodCat_Meat") && isMeat) return true;
+                if (cat == LanguageManager.Get("FoodCat_Vegetable") && isVegetable) return true;
+            }
+            return false;
         }
 
         private List<ThingDef> ApplyFilterAndSort()
@@ -571,6 +691,30 @@ namespace FactionGearCustomizer.UI
             if (filterState.SelectedCategory.HasValue)
             {
                 items = items.Where(d => MatchesCategory(d, filterState.SelectedCategory.Value));
+            }
+
+            // Caliber sub-filter for Ammo category
+            if (filterState.SelectedCategory == ItemCategoryFilter.Ammo
+                && filterState.SelectedAmmoSets.Count > 0 && CECompat.IsCEActive
+                && caliberToAmmoMap != null)
+            {
+                // Collect all ammo ThingDefs matching selected calibers
+                var allowedAmmo = new HashSet<ThingDef>();
+                foreach (string caliber in filterState.SelectedAmmoSets)
+                {
+                    if (caliberToAmmoMap.TryGetValue(caliber, out var ammoSet))
+                    {
+                        foreach (var def in ammoSet) allowedAmmo.Add(def);
+                    }
+                }
+                items = items.Where(d => d != null && allowedAmmo.Contains(d));
+            }
+
+            // Food sub-filter
+            if (filterState.SelectedCategory == ItemCategoryFilter.Food
+                && filterState.SelectedFoodCategories.Count > 0)
+            {
+                items = items.Where(d => MatchesFoodSubCategory(d, filterState.SelectedFoodCategories));
             }
 
             items = items.Where(d => d.BaseMarketValue >= filterState.MarketValue.min && d.BaseMarketValue <= filterState.MarketValue.max);

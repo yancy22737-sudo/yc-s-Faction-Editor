@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FactionGearCustomizer.Compat;
 using RimWorld;
 using Verse;
 
@@ -33,9 +34,12 @@ namespace FactionGearCustomizer
                 var allWeapons = allDefs.Where(t => t.IsWeapon).ToList();
                 var processedWeapons = new HashSet<ThingDef>();
 
-                // 1. 远程武器：IsRangedWeapon (或者任何有 range > 0 Verb 的武�?
+                // 1. 远程武器：IsRangedWeapon (或者任何有 range > 0 Verb 的武?
                 cachedAllWeapons = allWeapons
-                    .Where(t => t.IsRangedWeapon || (t.Verbs != null && t.Verbs.Any(v => v.range > 0)))
+                    .Where(t => t.IsRangedWeapon
+                        || (t.Verbs != null && t.Verbs.Any(v => v.range > 0))
+                        || (t.Verbs != null && t.Verbs.Any(v => v.verbClass != null
+                            && v.verbClass.Name.Contains("Verb_LaunchProjectile"))))
                     .ToList();
                 foreach (var t in cachedAllWeapons) processedWeapons.Add(t);
 
@@ -198,10 +202,19 @@ namespace FactionGearCustomizer
             // 检查武器是否有Verbs属性
             if (weaponDef.Verbs != null && weaponDef.Verbs.Count > 0)
             {
-                // 返回第一个Verb的射�?                return weaponDef.Verbs[0].range;
+                // 返回第一个Verb的射?
+                float range = weaponDef.Verbs[0].range;
+                if (range > 0f) return range;
+
+                // CE可能修改了VerbProperties，尝试反射获取
+                if (CECompat.IsCEActive)
+                {
+                    float ceRange = CECompat.GetCERange(weaponDef);
+                    if (ceRange > 0f) return ceRange;
+                }
             }
 
-            // 对于没有Verbs的武器（如某些特殊武器），返�?
+            // 对于没有Verbs的武器（如某些特殊武器），返?
             return 0f;
         }
 

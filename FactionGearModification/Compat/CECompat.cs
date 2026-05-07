@@ -396,5 +396,145 @@ namespace FactionGearCustomizer.Compat
 
             return 0;
         }
+
+        private static Type _verbPropertiesCEType;
+
+        /// <summary>
+        /// 获取CE武器的射程（通过反射读取VerbPropertiesCE.range）
+        /// </summary>
+        public static float GetCERange(ThingDef weaponDef)
+        {
+            if (!IsCEActive || weaponDef == null) return 0f;
+            if (weaponDef.Verbs == null || weaponDef.Verbs.Count == 0) return 0f;
+
+            try
+            {
+                if (_verbPropertiesCEType == null)
+                    _verbPropertiesCEType = AccessTools.TypeByName("CombatExtended.VerbPropertiesCE");
+
+                var verbProps = weaponDef.Verbs[0];
+                if (_verbPropertiesCEType != null && _verbPropertiesCEType.IsAssignableFrom(verbProps.GetType()))
+                {
+                    var rangeField = AccessTools.Field(_verbPropertiesCEType, "range");
+                    if (rangeField != null)
+                    {
+                        return (float)rangeField.GetValue(verbProps);
+                    }
+                }
+            }
+            catch
+            {
+            }
+
+            return 0f;
+        }
+
+        private static Dictionary<ThingDef, string> _ammoToCaliberMap;
+
+        /// <summary>
+        /// 获取弹药物品对应的口径标签（反向查找）
+        /// </summary>
+        public static string GetCaliberLabelForAmmo(ThingDef ammoDef)
+        {
+            if (!IsCEActive || ammoDef == null) return null;
+
+            if (_ammoToCaliberMap == null)
+            {
+                _ammoToCaliberMap = new Dictionary<ThingDef, string>();
+                var allWeapons = FactionGearManager.GetAllWeapons();
+                foreach (var weapon in allWeapons)
+                {
+                    string label = GetAmmoSetLabel(weapon);
+                    if (string.IsNullOrEmpty(label)) continue;
+                    var ammoList = AmmoProviderManager.GetAllAvailableAmmo(weapon);
+                    if (ammoList == null) continue;
+                    foreach (var ammo in ammoList)
+                    {
+                        if (ammo != null && !_ammoToCaliberMap.ContainsKey(ammo))
+                            _ammoToCaliberMap[ammo] = label;
+                    }
+                }
+            }
+
+            _ammoToCaliberMap.TryGetValue(ammoDef, out string caliber);
+            return caliber;
+        }
+
+        /// <summary>
+        /// 清除弹药-口径缓存（在模组重载时调用）
+        /// </summary>
+        public static void ClearAmmoCaliberCache()
+        {
+            _ammoToCaliberMap = null;
+        }
+
+        /// <summary>
+        /// 获取CE弹药的tooltip信息（伤害、穿透等）
+        /// </summary>
+        public static string GetAmmoTooltipInfo(ThingDef ammoDef)
+        {
+            if (!IsCEActive || ammoDef == null) return null;
+
+            try
+            {
+                var sb = new System.Text.StringBuilder();
+
+                // 尝试通过ammo link获取投射物ThingDef
+                var projectileDef = AmmoProviderManager.GetProjectileForAmmo(ammoDef);
+
+                ProjectileProperties projProps = null;
+                if (projectileDef != null && projectileDef.projectile != null)
+                {
+                    projProps = projectileDef.projectile;
+                }
+                else if (ammoDef.projectile != null)
+                {
+                    projProps = ammoDef.projectile;
+                }
+
+                if (projProps != null)
+                {
+                    // 伤害信息 - 通过反射获取（兼容不同版本）
+                    try
+                    {
+                        var dmgField = projProps.GetType().GetField("damageAmountBase");
+                        if (dmgField != null)
+                        {
+                            int damage = (int)dmgField.GetValue(projProps);
+                            if (damage > 0)
+                            {
+                                var dmgDef = projProps.damageDef;
+                                string dmgLabel = dmgDef?.LabelCap ?? "伤害";
+                                sb.AppendLine($"伤害（平均）: {damage} ({dmgLabel})");
+                            }
+                        }
+                    }
+                    catch { }
+                }
+
+                // 穿透信息 - 通过stat获取
+                var sharpStat = DefDatabase<StatDef>.GetNamedSilentFail("ArmorPenetration_Sharp");
+                var bluntStat = DefDatabase<StatDef>.GetNamedSilentFail("ArmorPenetration_Blunt");
+
+                if (sharpStat != null)
+                {
+                    float sharpPen = ammoDef.GetStatValueAbstract(sharpStat);
+                    if (sharpPen > 0)
+                        sb.AppendLine($"利器穿透: {sharpPen:F2} mm RHA");
+                }
+                if (bluntStat != null)
+                {
+                    float bluntPen = ammoDef.GetStatValueAbstract(bluntStat);
+                    if (bluntPen > 0)
+                        sb.AppendLine($"钝器穿透: {bluntPen:F2} MPa");
+                }
+
+                return sb.Length > 0 ? sb.ToString().TrimEnd() : null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }

@@ -336,25 +336,9 @@ namespace FactionGearCustomizer
             // Original code used a fixed height for Faction List or ratio?
             // "float factionListHeight = innerRect.height * 0.6f;" in DrawLeftPanel
             // So we split leftPanel manually.
-            Widgets.DrawMenuSection(leftPanel);
-            Rect leftInner = leftPanel.ContractedBy(5f);
-            float factionHeight = leftInner.height * 0.6f;
-            Rect factionRect = new Rect(leftInner.x, leftInner.y, leftInner.width, factionHeight);
-
-            // Faction List
-            // Since FactionListPanel.Draw expects the container rect and draws a MenuSection,
-            // we should pass a rect that INCLUDES the border if we want it to look like before?
-            // Actually FactionListPanel.Draw calls Widgets.DrawMenuSection(rect).
-            // So we should pass a rect for the Faction List Panel.
-            // But wait, the original code had ONE MenuSection for the whole Left Panel, and then drew contents inside.
-            // My FactionListPanel.Draw draws a MenuSection.
-            // If I want to split it, I should probably change FactionListPanel to NOT draw MenuSection, or draw two MenuSections.
-            // Drawing two MenuSections (one for Faction, one for Kind) might look better or different.
-            // Let's stick to the component design: Panel draws its own section.
-
-            // Adjust rects for separate panels
-            Rect leftTopPanelRect = new Rect(leftPanel.x, leftPanel.y, leftPanel.width, leftPanel.height * 0.6f);
-            Rect leftBottomPanelRect = new Rect(leftPanel.x, leftTopPanelRect.yMax + 4f, leftPanel.width, leftPanel.height * 0.4f - 4f);
+            // Faction list on top (40%), kind list on bottom (60%)
+            Rect leftTopPanelRect = new Rect(leftPanel.x, leftPanel.y, leftPanel.width, leftPanel.height * 0.4f);
+            Rect leftBottomPanelRect = new Rect(leftPanel.x, leftTopPanelRect.yMax + 4f, leftPanel.width, leftPanel.height * 0.6f - 4f);
 
             FactionListPanel.Draw(leftTopPanelRect);
             KindListPanel.Draw(leftBottomPanelRect);

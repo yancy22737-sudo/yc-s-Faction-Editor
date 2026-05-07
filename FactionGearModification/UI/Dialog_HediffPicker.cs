@@ -80,7 +80,20 @@ namespace FactionGearCustomizer.UI
 
         private float DrawFilterBar(Rect inRect, float y)
         {
-            float height = 84f;
+            float buttonHeight = 24f;
+            float gap = 4f;
+            float catRows = 0f;
+            float innerWidth = inRect.width - 12f; // contracted by 6f
+            if (allCategories.Count > 0)
+            {
+                int totalCount = allCategories.Count + 1;
+                int maxPerRow = Mathf.Max(1, Mathf.FloorToInt((innerWidth + gap) / (80f + gap)));
+                catRows = Mathf.CeilToInt((float)totalCount / maxPerRow);
+            }
+            float filterHeight = catRows > 0 ? catRows * (buttonHeight + gap) : 0f;
+            // Listing content: search(24) + gap(4) + category buttons
+            float listingHeight = 24f + (filterHeight > 0 ? gap + filterHeight : 0f);
+            float height = listingHeight + 12f; // +12 for ContractedBy(6f) top+bottom
             Rect rect = new Rect(0f, y, inRect.width, height);
             Widgets.DrawMenuSection(rect);
 
@@ -120,28 +133,100 @@ namespace FactionGearCustomizer.UI
 
             listing.Gap(4f);
 
-            Rect row = listing.GetRect(24f);
-            string catText;
-            if (filterState.SelectedCategories.Count == 0 || filterState.SelectedCategories.Count == allCategories.Count)
+            // Category quick-filter buttons (like item picker style)
+            if (allCategories.Count > 0)
             {
-                catText = LanguageManager.Get("CategoryAll");
-            }
-            else if (filterState.SelectedCategories.Count == 1)
-            {
-                catText = filterState.SelectedCategories.First();
-            }
-            else
-            {
-                catText = LanguageManager.Get("CategoryCountSelected", filterState.SelectedCategories.Count);
-            }
-
-            if (Widgets.ButtonText(row, catText))
-            {
-                Find.WindowStack.Add(new Window_StringFilter(LanguageManager.Get("CategoryFilter"), allCategories, filterState.SelectedCategories, OnFilterChanged));
+                DrawCategoryButtons(listing);
             }
 
             listing.End();
             return y + height + 6f;
+        }
+
+        private void DrawCategoryButtons(Listing_Standard listing)
+        {
+            // Include "All" + each category
+            int totalCount = allCategories.Count + 1;
+            float rowWidth = listing.ColumnWidth;
+            float buttonHeight = 24f;
+            float gap = 4f;
+
+            // Calculate buttons per row (max ~6 per row)
+            int maxPerRow = Mathf.Max(1, Mathf.FloorToInt((rowWidth + gap) / (80f + gap)));
+            int rowCount = Mathf.CeilToInt((float)totalCount / maxPerRow);
+            float totalHeight = rowCount * (buttonHeight + gap);
+            Rect catRect = listing.GetRect(totalHeight);
+
+            float x = catRect.x;
+            float cy = catRect.y;
+            int count = 0;
+
+            // "All" button
+            bool allSelected = filterState.SelectedCategories.Count == 0 || filterState.SelectedCategories.Count == allCategories.Count;
+            DrawOneCategoryButton(new Rect(x, cy, 60f, buttonHeight), LanguageManager.Get("CategoryAll"), allSelected, () =>
+            {
+                filterState.SelectedCategories.Clear();
+                OnFilterChanged();
+            });
+            x += 60f + gap;
+            count++;
+
+            // Individual category buttons
+            for (int i = 0; i < allCategories.Count; i++)
+            {
+                string cat = allCategories[i];
+                float btnW = Mathf.Min(100f, rowWidth - x + catRect.x);
+                if (btnW < 40f || count >= maxPerRow)
+                {
+                    x = catRect.x;
+                    cy += buttonHeight + gap;
+                    count = 0;
+                    btnW = Mathf.Min(100f, rowWidth);
+                }
+
+                bool selected = filterState.SelectedCategories.Contains(cat);
+                DrawOneCategoryButton(new Rect(x, cy, btnW, buttonHeight), cat, selected, () =>
+                {
+                    if (filterState.SelectedCategories.Contains(cat))
+                        filterState.SelectedCategories.Remove(cat);
+                    else
+                        filterState.SelectedCategories.Add(cat);
+                    OnFilterChanged();
+                });
+                x += btnW + gap;
+                count++;
+            }
+        }
+
+        private static void DrawOneCategoryButton(Rect btnRect, string label, bool isSelected, Action onClick)
+        {
+            Color bgColor = isSelected ? new Color(0.3f, 0.5f, 0.3f) : new Color(0.2f, 0.2f, 0.22f);
+            Widgets.DrawBoxSolid(btnRect, bgColor);
+
+            if (isSelected)
+            {
+                GUI.color = Color.green;
+                Widgets.DrawBox(btnRect, 1);
+                GUI.color = Color.white;
+            }
+            else
+            {
+                GUI.color = new Color(0.4f, 0.4f, 0.45f);
+                Widgets.DrawBox(btnRect, 1);
+                GUI.color = Color.white;
+            }
+
+            Text.Anchor = TextAnchor.MiddleCenter;
+            Color textColor = isSelected ? Color.white : new Color(0.8f, 0.8f, 0.8f);
+            GUI.color = textColor;
+            Widgets.Label(btnRect, label.Length > 12 ? label.Substring(0, 10) + "..." : label);
+            GUI.color = Color.white;
+            Text.Anchor = TextAnchor.UpperLeft;
+
+            if (Widgets.ButtonInvisible(btnRect))
+            {
+                onClick();
+            }
         }
 
         private void DrawSelectionRow(Rect inRect, ref float y)
@@ -414,13 +499,13 @@ namespace FactionGearCustomizer.UI
         public static string GetHediffCategory(HediffDef def)
         {
             if (def == null) return "";
-            if (def.countsAsAddedPartOrImplant) return "Implants";
-            if (def.isBad && def.defName.Contains("Missing")) return "Missing Parts";
-            if (def.isBad) return "Debuffs";
-            if (def.makesSickThought) return "Illnesses";
-            if (def.defName.ToLower().Contains("high")) return "DrugHighs";
-            if (!def.isBad) return "Buffs";
-            return "Other";
+            if (def.countsAsAddedPartOrImplant) return LanguageManager.Get("HediffCat_Implants");
+            if (def.isBad && def.defName.Contains("Missing")) return LanguageManager.Get("HediffCat_MissingParts");
+            if (def.isBad) return LanguageManager.Get("HediffCat_Debuffs");
+            if (def.makesSickThought) return LanguageManager.Get("HediffCat_Illnesses");
+            if (def.defName.ToLower().Contains("high")) return LanguageManager.Get("HediffCat_DrugHighs");
+            if (!def.isBad) return LanguageManager.Get("HediffCat_Buffs");
+            return LanguageManager.Get("HediffCat_Other");
         }
     }
 }

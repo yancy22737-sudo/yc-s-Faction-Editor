@@ -4,6 +4,7 @@ using System.Linq;
 using RimWorld;
 using UnityEngine;
 using Verse;
+using FactionGearCustomizer.Compat.AmmoProviders;
 using FactionGearCustomizer.Managers;
 using FactionGearCustomizer.Utils;
 
@@ -45,15 +46,17 @@ namespace FactionGearCustomizer.UI
 
         // ── Copy flags ────────────────────────────────────────
         private GearCopyFlags copyFlags = GearCopyFlags.All;
+        private bool skipAmmo = false;
 
         public override Vector2 InitialSize => new Vector2(520f, 780f);
 
         // ── Constructor ───────────────────────────────────────
-        public Dialog_BatchApply(FactionDef faction, KindGearData source)
+        public Dialog_BatchApply(FactionDef faction, KindGearData source, GearCopyFlags initialFlags = GearCopyFlags.All)
         {
             this.sourceFaction = faction;
             this.sourceData = source;
             this.targetFaction = faction;
+            this.copyFlags = initialFlags;
             this.doCloseX = true;
             this.forcePause = true;
             this.absorbInputAroundWindow = true;
@@ -64,6 +67,19 @@ namespace FactionGearCustomizer.UI
                 .ToList();
 
             RefreshKindList();
+        }
+
+        public static GearCopyFlags GetDefaultFlagsForCategory(GearCategory category)
+        {
+            switch (category)
+            {
+                case GearCategory.Weapons: return GearCopyFlags.Ranged;
+                case GearCategory.MeleeWeapons: return GearCopyFlags.Melee;
+                case GearCategory.Armors: return GearCopyFlags.Armors;
+                case GearCategory.Apparel: return GearCopyFlags.Clothes;
+                case GearCategory.Others: return GearCopyFlags.Others;
+                default: return GearCopyFlags.All;
+            }
         }
 
         // ── Helpers ───────────────────────────────────────────
@@ -125,7 +141,7 @@ namespace FactionGearCustomizer.UI
             if (searchText != oldSearch) scrollPos = Vector2.zero;
             y += 30f;
 
-            // ── Select All / None ─────────────────────────────
+            // ── Select All / None / Skip Ammo ──────────────────
             Rect btnRow = new Rect(inRect.x, y, inRect.width, 24f);
             if (Widgets.ButtonText(new Rect(btnRow.x, btnRow.y, 100f, 24f),
                     LanguageManager.Get("SelectAll")))
@@ -138,6 +154,10 @@ namespace FactionGearCustomizer.UI
             {
                 selectedKinds.Clear();
             }
+
+            // Skip ammo checkbox (right of Select None)
+            Rect skipAmmoRect = new Rect(btnRow.x + 220f, btnRow.y, 200f, 24f);
+            Widgets.CheckboxLabeled(skipAmmoRect, LanguageManager.Get("BatchSkipAmmo"), ref skipAmmo);
 
             // Selected count (right-aligned)
             Text.Anchor = TextAnchor.MiddleRight;
@@ -335,7 +355,7 @@ namespace FactionGearCustomizer.UI
             // Partial copy
             foreach (var target in targets)
             {
-                CopyPartial(sourceData, target, copyFlags);
+                CopyPartial(sourceData, target, copyFlags, skipAmmo);
                 target.isModified = true;
             }
 
@@ -363,7 +383,7 @@ namespace FactionGearCustomizer.UI
         /// <paramref name="src"/> into <paramref name="dst"/>, leaving all other fields
         /// untouched.
         /// </summary>
-        private static void CopyPartial(KindGearData src, KindGearData dst, GearCopyFlags flags)
+        private static void CopyPartial(KindGearData src, KindGearData dst, GearCopyFlags flags, bool skipAmmo = false)
         {
             if (ReferenceEquals(src, dst)) return;
 
@@ -495,8 +515,10 @@ namespace FactionGearCustomizer.UI
                     dst.InventoryItems = new List<SpecRequirementEdit>();
                     foreach (var item in src.InventoryItems)
                     {
-                        if (item != null)
-                            dst.InventoryItems.Add(CloneSpecReq(item));
+                        if (item == null) continue;
+                        if (skipAmmo && item.Thing != null && AmmoProviderManager.IsAmmo(item.Thing))
+                            continue;
+                        dst.InventoryItems.Add(CloneSpecReq(item));
                     }
                 }
                 else
