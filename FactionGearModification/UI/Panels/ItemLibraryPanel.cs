@@ -586,10 +586,27 @@ namespace FactionGearCustomizer.UI.Panels
             catch { return 0f; }
         }
 
+        private static HashSet<string> _turretGunDefNames;
+        private static void EnsureTurretGunCache()
+        {
+            if (_turretGunDefNames != null) return;
+            _turretGunDefNames = new HashSet<string>();
+            foreach (var def in DefDatabase<ThingDef>.AllDefs)
+            {
+                if (def.building?.turretGunDef != null)
+                    _turretGunDefNames.Add(def.building.turretGunDef.defName);
+            }
+        }
+
         private static bool IsTurretOrMechanoidWeapon(ThingDef thingDef)
         {
             if (thingDef == null) return false;
             
+            // 检查是否被炮塔建筑引用 (最可靠的方式)
+            EnsureTurretGunCache();
+            if (_turretGunDefNames.Contains(thingDef.defName))
+                return true;
+
             // 直接检查特定 DefName - 确保这些武器被过滤
             string defName = thingDef.defName;
             
@@ -616,10 +633,15 @@ namespace FactionGearCustomizer.UI.Panels
                 return true;
             }
             
-            // 地狱球炮和霰弹枪
+            // 地狱球炮、霰弹枪、脊刺炮、蒸发器、歼灭者、投石器、地狱火炮
             if (defName == "Gun_HellsphereCannon" ||         // 地狱球炮
                 defName == "Gun_Scattergun" ||               // 霰弹枪
-                defName == "Gun_BeamGraser")                 // Beam graser (mech weapon)
+                defName == "Gun_BeamGraser" ||               // Beam graser (mech weapon)
+                defName.Contains("Spiner") ||                // 脊刺炮
+                defName.Contains("Vaporizer") ||             // 蒸发器
+                defName.Contains("Annihilator") ||           // 歼灭者
+                defName.Contains("Slugthrower") ||           // 投石器
+                defName.Contains("InfernoCannon"))           // 地狱火炮
             {
                 return true;
             }
@@ -627,11 +649,14 @@ namespace FactionGearCustomizer.UI.Panels
             // 检查 weaponTags
             if (thingDef.weaponTags != null)
             {
-                bool hasTurretTag = thingDef.weaponTags.Any(tag => 
-                    tag == "TurretGun" || 
+                bool hasTurretTag = thingDef.weaponTags.Any(tag =>
+                    tag == "TurretGun" ||
                     tag == "Artillery" ||
-                    tag.StartsWith("MechanoidGun") || 
+                    tag.StartsWith("MechanoidGun") ||
                     tag.StartsWith("MechGun") ||
+                    tag.StartsWith("MechWeapon") ||
+                    tag == "GunHeavy" ||
+                    tag == "GunTurret_Manned" ||
                     tag == "BeamGraserGun" ||
                     tag == "HellsphereCannonGun" ||
                     tag == "SentryDroneGunShortRange" ||

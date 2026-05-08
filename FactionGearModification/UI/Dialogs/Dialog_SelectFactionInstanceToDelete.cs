@@ -135,7 +135,7 @@ namespace FactionGearCustomizer.UI.Dialogs
                 Faction playerFaction = Find.FactionManager?.OfPlayer;
                 if (playerFaction != null)
                 {
-                    FactionRelation relation = instance.RelationWith(playerFaction, false);
+                    FactionRelation relation = instance.RelationWith(playerFaction, true);
                     if (relation != null)
                     {
                         goodwill = instance.PlayerGoodwill;

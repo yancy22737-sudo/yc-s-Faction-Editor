@@ -61,7 +61,7 @@ namespace FactionGearCustomizer
         public static bool LayerPreviewHidden = true;
         
         // Turret/Mechanoid Weapon Filter State
-        public static bool HideTurretMechanoidWeapons = false;
+        public static bool HideTurretMechanoidWeapons = true;
         
         // Clipboard
         public static KindGearData CopiedKindGearData = null;
@@ -92,7 +92,7 @@ namespace FactionGearCustomizer
             SelectedModSources.Clear();
             SelectedAmmoSets.Clear();
             SelectedTechLevel = null;
-            HideTurretMechanoidWeapons = false;
+            HideTurretMechanoidWeapons = true;
             
             // Reset ranges to full bounds
             RangeFilter = new FloatRange(MinRange, MaxRange);

@@ -22,16 +22,23 @@ namespace FactionGearCustomizer
 
         public static void Prefix(ref PawnGenerationRequest request)
         {
-            // 应用异种设置（在 Pawn 生成前）
-            if (ModsConfig.BiotechActive && request.KindDef != null && request.Faction != null)
+            try
             {
-                ApplyXenotypeSettings(request.Faction, request.KindDef, ref request);
-            }
+                // 应用异种设置（在 Pawn 生成前）
+                if (ModsConfig.BiotechActive && request.KindDef != null && request.Faction != null)
+                {
+                    ApplyXenotypeSettings(request.Faction, request.KindDef, ref request);
+                }
 
-            // 应用年龄限制（在 Pawn 生成前）
-            if (request.KindDef != null && request.Faction != null)
+                // 应用年龄限制（在 Pawn 生成前）
+                if (request.KindDef != null && request.Faction != null)
+                {
+                    ApplyAgeSettings(ref request);
+                }
+            }
+            catch (Exception ex)
             {
-                ApplyAgeSettings(ref request);
+                Log.Warning($"[FactionGearCustomizer] Error in Prefix for {request.KindDef?.defName}: {ex.Message}");
             }
         }
 

@@ -5,6 +5,7 @@ using UnityEngine;
 using Verse;
 using RimWorld;
 using FactionGearModification.UI;
+using FactionGearCustomizer.Utils;
 
 namespace FactionGearCustomizer
 {
@@ -36,6 +37,12 @@ namespace FactionGearCustomizer
         private List<string> groupLabels = new List<string>();
         private List<List<PawnKindDef>> groupKindLists = new List<List<PawnKindDef>>();
 
+        // Seed-based random kind selection
+        private int seed;
+        private string seedBuffer;
+        private List<PawnKindDef> displayedKinds;
+        private const int DEFAULT_DISPLAY_COUNT = 10;
+
         public override Vector2 InitialSize => isMultiMode ? new Vector2(1100f, 750f) : new Vector2(450f, 650f);
 
         public FactionGearPreviewWindow(PawnKindDef kindDef, FactionDef factionDef)
@@ -62,7 +69,10 @@ namespace FactionGearCustomizer
             this.resizeable = true;
             if (isMultiMode)
             {
+                this.seed = Rand.Int;
+                this.seedBuffer = seed.ToString();
                 BuildGroupFilterLists();
+                SelectKindsForCurrentSeed();
             }
         }
 
@@ -133,11 +143,51 @@ namespace FactionGearCustomizer
             }
         }
 
-        private List<PawnKindDef> GetFilteredKinds()
+        private List<PawnKindDef> GetBaseKindList()
         {
             if (groupKindLists.Count > 0 && selectedGroupIndex >= 0 && selectedGroupIndex < groupKindLists.Count)
                 return groupKindLists[selectedGroupIndex];
             return allKinds;
+        }
+
+        private List<PawnKindDef> GetFilteredKinds()
+        {
+            if (displayedKinds != null && displayedKinds.Count > 0)
+                return displayedKinds;
+            return GetBaseKindList();
+        }
+
+        private void SelectKindsForCurrentSeed()
+        {
+            var source = GetBaseKindList();
+            if (source == null || source.Count == 0) return;
+
+            // 如果种类数不超过默认显示数，全部显示
+            if (source.Count <= DEFAULT_DISPLAY_COUNT)
+            {
+                displayedKinds = new List<PawnKindDef>(source);
+                return;
+            }
+
+            Rand.PushState();
+            try
+            {
+                Rand.Seed = seed;
+                var pool = new List<PawnKindDef>(source);
+                displayedKinds = new List<PawnKindDef>();
+                int count = Mathf.Min(DEFAULT_DISPLAY_COUNT, pool.Count);
+
+                for (int i = 0; i < count; i++)
+                {
+                    int idx = Rand.Range(0, pool.Count);
+                    displayedKinds.Add(pool[idx]);
+                    pool.RemoveAt(idx);
+                }
+            }
+            finally
+            {
+                Rand.PopState();
+            }
         }
 
         private void GenerateAllPreviewPawns()
@@ -284,10 +334,10 @@ namespace FactionGearCustomizer
             }
 
             PawnGenerationRequest request = new PawnGenerationRequest(
-                kDef, 
-                faction, 
-                PawnGenerationContext.NonPlayer, 
-                -1, 
+                kDef,
+                faction,
+                PawnGenerationContext.NonPlayer,
+                -1,
                 true, // forceGenerateNewPawn
                 false, // newborn
                 false, // allowDead
@@ -300,9 +350,20 @@ namespace FactionGearCustomizer
                 false, // allowFood
                 false // allowAddictions
             );
-            
-            // Gear application is handled by Patch_GeneratePawn.Postfix.
-            return PawnGenerator.GeneratePawn(request);
+
+            // 使用种子驱动随机装备/特征
+            Rand.PushState();
+            Rand.Seed = seed ^ kDef.GetHashCode();
+            Pawn result;
+            try
+            {
+                result = PawnGenerator.GeneratePawn(request);
+            }
+            finally
+            {
+                Rand.PopState();
+            }
+            return result;
         }
 
         public override void DoWindowContents(Rect inRect)
@@ -321,34 +382,69 @@ namespace FactionGearCustomizer
         {
             float y = inRect.y;
 
-            // Top row: faction name | progress | reroll
+            // Top row: faction name | progress | seed | reroll
             float rowH = 32f;
             float rerollW = 100f;
-            float progressW = 160f;
-            float rightW = rerollW + 8f + (generationQueue.Count > 0 ? progressW + 8f : 0f);
-            float nameW = inRect.width - rightW;
+            float seedW = 90f;
 
-            // Faction name (left)
-            Text.Font = GameFont.Medium;
-            Widgets.Label(new Rect(inRect.x, y, nameW, rowH), LanguageManager.Get("Preview") + ": " + factionDef.LabelCap);
-            Text.Font = GameFont.Small;
-
-            // Progress bar (right of name, before reroll)
-            if (generationQueue.Count > 0)
-            {
-                float progress = (float)generatedCount / totalToGenerate;
-                Rect progressRect = new Rect(inRect.x + nameW, y + 6f, progressW, 20f);
-                Widgets.FillableBar(progressRect, progress);
-                Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(progressRect, $"{generatedCount}/{totalToGenerate}");
-                Text.Anchor = TextAnchor.UpperLeft;
-            }
-
-            // Reroll button (far right)
+            // Reroll + Seed input (far right)
             Rect refreshRect = new Rect(inRect.xMax - rerollW, y, rerollW, rowH);
+            Rect seedRect = new Rect(refreshRect.x - seedW - 4f, y + 4f, seedW, 24f);
+            seedBuffer = Widgets.TextField(seedRect, seedBuffer ?? "");
+
             if (Widgets.ButtonText(refreshRect, LanguageManager.Get("Reroll")))
             {
+                seed = Rand.Int;
+                seedBuffer = seed.ToString();
+                SelectKindsForCurrentSeed();
                 GenerateAllPreviewPawns();
+            }
+
+            // Faction name (left, 固定宽度，超出加省略号)
+            float nameW = Mathf.Min(300f, inRect.width * 0.3f);
+            Text.Font = GameFont.Medium;
+            string factionName;
+            if (Current.ProgramState == ProgramState.Playing && EditorSession.UseInGameNames && Find.FactionManager != null)
+            {
+                var instance = Find.FactionManager.FirstFactionOfDef(factionDef);
+                factionName = instance != null
+                    ? DefDisplayNameUtility.GetSafeFactionDisplayName(instance, "FactionGearPreviewWindow.DrawMulti")
+                    : DefDisplayNameUtility.GetSafeFactionDisplayName(factionDef, "FactionGearPreviewWindow.DrawMulti");
+            }
+            else
+            {
+                factionName = DefDisplayNameUtility.GetSafeFactionDisplayName(factionDef, "FactionGearPreviewWindow.DrawMulti");
+            }
+            string fullName = LanguageManager.Get("Preview") + ": " + factionName;
+            string displayName = fullName;
+            if (Text.CalcSize(fullName).x > nameW)
+            {
+                for (int ci = fullName.Length - 1; ci > 0; ci--)
+                {
+                    if (Text.CalcSize(fullName.Substring(0, ci) + "...").x <= nameW)
+                    {
+                        displayName = fullName.Substring(0, ci) + "...";
+                        break;
+                    }
+                }
+            }
+            Widgets.Label(new Rect(inRect.x, y, nameW, rowH), displayName);
+            Text.Font = GameFont.Small;
+
+            // Progress bar (name 和 seed 之间)
+            if (generationQueue.Count > 0)
+            {
+                float progressX = inRect.x + nameW + 4f;
+                float progressW = seedRect.x - progressX - 4f;
+                if (progressW > 60f)
+                {
+                    float progress = (float)generatedCount / totalToGenerate;
+                    Rect progressRect = new Rect(progressX, y + 6f, progressW, 20f);
+                    Widgets.FillableBar(progressRect, progress);
+                    Text.Anchor = TextAnchor.MiddleCenter;
+                    Widgets.Label(progressRect, $"{generatedCount}/{totalToGenerate}");
+                    Text.Anchor = TextAnchor.UpperLeft;
+                }
             }
             y += rowH + 4f;
 
@@ -375,6 +471,7 @@ namespace FactionGearCustomizer
                         options.Add(new FloatMenuOption(groupLabels[i], () =>
                         {
                             selectedGroupIndex = captured;
+                            displayedKinds = null; // 清除种子选择，使用组列表
                             GenerateAllPreviewPawns();
                         }));
                     }

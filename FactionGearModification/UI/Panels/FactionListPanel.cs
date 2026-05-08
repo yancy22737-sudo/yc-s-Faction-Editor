@@ -263,7 +263,7 @@ namespace FactionGearCustomizer.UI.Panels
                     // 检查玩家派系是否存在
                     if (playerFaction != null && playerFaction != data.worldFaction)
                     {
-                        FactionRelation relation = data.worldFaction.RelationWith(playerFaction, false);
+                        FactionRelation relation = data.worldFaction.RelationWith(playerFaction, true);
                         if (relation != null)
                         {
                             FactionRelationKind relationKind = data.worldFaction.PlayerRelationKind;

@@ -194,7 +194,7 @@ namespace FactionGearCustomizer.Managers
 
             if (!string.IsNullOrEmpty(data.Label))
             {
-                faction.label = data.Label;
+                // 只修改游戏内实例名称（Faction.Name），不修改 def 级别的 label
                 if (Current.Game != null && Find.FactionManager != null)
                 {
                     foreach (var f in Find.FactionManager.AllFactions)
@@ -379,6 +379,20 @@ namespace FactionGearCustomizer.Managers
 
         private static FieldInfo checkNaturalGoodwillField;
 
+        /// <summary>
+        /// 确保派系与玩家派系存在关系，避免 "null relation with PlayerColony" 报错
+        /// </summary>
+        private static void EnsureRelationWithPlayer(Faction faction)
+        {
+            if (faction == null || faction.IsPlayer) return;
+            var playerFaction = Find.FactionManager?.OfPlayer;
+            if (playerFaction == null) return;
+            if (faction.RelationWith(playerFaction, true) == null)
+            {
+                faction.TryMakeInitialRelationsWith(playerFaction);
+            }
+        }
+
         private static void ApplyFactionRelation(Faction faction, FactionRelationKind relationKind)
         {
             if (faction == null || faction.IsPlayer) return;
@@ -389,6 +403,8 @@ namespace FactionGearCustomizer.Managers
             if (playerFaction == null) return;
 
             InitializeReflectionFields();
+
+            EnsureRelationWithPlayer(faction);
 
             float currentGoodwill = faction.PlayerGoodwill;
             FactionRelationKind currentKind = faction.PlayerRelationKind;
@@ -524,7 +540,7 @@ namespace FactionGearCustomizer.Managers
             if (faction == null || !originalFactionData.ContainsKey(faction)) return;
 
             var original = originalFactionData[faction];
-            faction.label = original.Label;
+            // 不复原 def 级别的 label，因为已不再修改它
             faction.description = original.Description;
             faction.colorSpectrum = original.ColorSpectrum != null ? new List<Color>(original.ColorSpectrum) : null;
             faction.factionIconPath = original.IconPath;
@@ -760,6 +776,7 @@ namespace FactionGearCustomizer.Managers
 
             if (Find.FactionManager?.OfPlayer != null)
             {
+                EnsureRelationWithPlayer(faction);
                 snapshot.PlayerGoodwill = (int)faction.PlayerGoodwill;
                 snapshot.PlayerRelationKind = faction.PlayerRelationKind;
             }
@@ -803,9 +820,11 @@ namespace FactionGearCustomizer.Managers
 
             InitializeReflectionFields();
 
+            EnsureRelationWithPlayer(faction);
+
             try
             {
-                FactionRelation relation = faction.RelationWith(playerFaction);
+                FactionRelation relation = faction.RelationWith(playerFaction, true);
                 if (relation == null) return;
 
                 int goodwillDelta = goodwill - (int)faction.PlayerGoodwill;

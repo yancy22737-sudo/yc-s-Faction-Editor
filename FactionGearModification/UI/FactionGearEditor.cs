@@ -111,6 +111,25 @@ namespace FactionGearCustomizer
                 }
             }
 
+            // 从群组数据中读取非人类种族（机械族、动物等），
+            // 这些种族不会出现在 kindGearData 中（被 KindListPanel 的 Humanlike 过滤器阻止），
+            // 也可能尚未写入 pawnGroupMakers（ApplyFactionChanges 未运行时）
+            if (factionData?.groupMakers != null)
+            {
+                foreach (var group in factionData.groupMakers)
+                {
+                    if (group == null) continue;
+                    foreach (var opt in group.options)
+                        TryAddKind(DefDatabase<PawnKindDef>.GetNamedSilentFail(opt.kindDefName));
+                    foreach (var opt in group.traders)
+                        TryAddKind(DefDatabase<PawnKindDef>.GetNamedSilentFail(opt.kindDefName));
+                    foreach (var opt in group.carriers)
+                        TryAddKind(DefDatabase<PawnKindDef>.GetNamedSilentFail(opt.kindDefName));
+                    foreach (var opt in group.guards)
+                        TryAddKind(DefDatabase<PawnKindDef>.GetNamedSilentFail(opt.kindDefName));
+                }
+            }
+
             list.Sort((a, b) => DefDisplayNameUtility.ComparePawnKinds(a, b, "FactionGearEditor.GetFactionKinds"));
             
             // 存储到缓存
