@@ -397,85 +397,83 @@ namespace FactionGearModification.UI
 
         public static RenderTexture GetPortrait(Pawn pawn, Vector2 size, Rot4 rotation, Vector3 cameraOffset = default(Vector3), float cameraZoom = 1f)
         {
-            if (pawn == null)
+            if (pawn == null) return null;
+
+            RenderTexture firstResult = null;
+
+            // 第一次：保护模式，Milira hair 节点受保护（hairDef==null 时跳过防止崩溃）
+            FactionGearCustomizer.Patches.Patch_MiliraHairGraphicFor.IsRenderingPortrait = true;
+            try
             {
+                firstResult = RenderPortraitInternal(pawn, size, rotation, cameraOffset, cameraZoom);
+            }
+            catch
+            {
+                SetPortraitDirty(pawn);
+            }
+            finally
+            {
+                FactionGearCustomizer.Patches.Patch_MiliraHairGraphicFor.IsRenderingPortrait = false;
+            }
+
+            // 第二次：无保护模式（同游戏内渲染），Milira 头发节点正常运行。
+            // 机械体等在此模式下能正确渲染头发装饰。
+            SetPortraitDirty(pawn);
+            try
+            {
+                var secondResult = RenderPortraitInternal(pawn, size, rotation, cameraOffset, cameraZoom);
+                if (secondResult != null) return secondResult;
+            }
+            catch { }
+
+            return firstResult;
+        }
+
+        private static RenderTexture RenderPortraitInternal(Pawn pawn, Vector2 size, Rot4 rotation, Vector3 cameraOffset, float cameraZoom)
+        {
+            var portraitsCache = GetPortraitsCacheType();
+            if (portraitsCache == null)
+            {
+                Log.WarningOnce("[FactionGearModification] PortraitsCache type not found", 9812380);
                 return null;
             }
 
-            // Milira 头发渲染 null 路径问题已由 Harmony Prefix 补丁 (Patch_MiliraHairGraphicFor)
-            // 在底层拦截，无需在此处做特殊处理。
-
-            try
+            if (portraitsCacheGetMethod == null)
             {
-                var portraitsCache = GetPortraitsCacheType();
-                if (portraitsCache == null)
+                var methods = AccessTools.GetDeclaredMethods(portraitsCache);
+                foreach (var m in methods)
                 {
-                    Log.WarningOnce("[FactionGearModification] PortraitsCache type not found", 9812380);
-                    return null;
-                }
-
-                if (portraitsCacheGetMethod == null)
-                {
-                    var methods = AccessTools.GetDeclaredMethods(portraitsCache);
-                    foreach (var m in methods)
+                    if (m.Name == "Get")
                     {
-                        if (m.Name == "Get")
+                        var p = m.GetParameters();
+                        if (p.Length >= 2 && p[0].ParameterType == typeof(Pawn) && p[1].ParameterType == typeof(Vector2))
                         {
-                            var p = m.GetParameters();
-                            if (p.Length >= 2 && p[0].ParameterType == typeof(Pawn) && p[1].ParameterType == typeof(Vector2))
-                            {
-                                portraitsCacheGetMethod = m;
-                                break;
-                            }
+                            portraitsCacheGetMethod = m;
+                            break;
                         }
                     }
                 }
+            }
 
-                if (portraitsCacheGetMethod != null)
-                {
-                    var p = portraitsCacheGetMethod.GetParameters();
-                    object[] args = new object[p.Length];
-                    args[0] = pawn;
-                    args[1] = size;
-                    if (p.Length > 2) args[2] = rotation;
-                    if (p.Length > 3) args[3] = cameraOffset;
-                    if (p.Length > 4) args[4] = cameraZoom;
-                    
-                    for (int i = 5; i < args.Length; i++)
-                    {
-                        var param = p[i];
-                        if (param.HasDefaultValue) args[i] = param.DefaultValue;
-                        else if (param.ParameterType.IsValueType) args[i] = Activator.CreateInstance(param.ParameterType);
-                        else args[i] = null;
-                    }
+            if (portraitsCacheGetMethod == null) return null;
 
-                    return (RenderTexture)portraitsCacheGetMethod.Invoke(null, args);
-                }
-            }
-            catch (TargetInvocationException tex)
+            var parameters = portraitsCacheGetMethod.GetParameters();
+            object[] args = new object[parameters.Length];
+            args[0] = pawn;
+            args[1] = size;
+            if (parameters.Length > 2) args[2] = rotation;
+            if (parameters.Length > 3) args[3] = cameraOffset;
+            if (parameters.Length > 4) args[4] = cameraZoom;
+
+            for (int i = 5; i < args.Length; i++)
             {
-                Exception inner = tex.InnerException ?? tex;
-                string errorKey = pawn.def?.defName ?? "UnknownPawn";
-                
-                if (!loggedPawnRenderErrors.Contains(errorKey))
-                {
-                    loggedPawnRenderErrors.Add(errorKey);
-                    Log.Warning($"[FactionGearModification] 渲染肖像时出错 ({errorKey}): {inner.Message}");
-                }
-                
-                SetPortraitDirty(pawn);
+                var param = parameters[i];
+                if (param.HasDefaultValue) args[i] = param.DefaultValue;
+                else if (param.ParameterType.IsValueType) args[i] = Activator.CreateInstance(param.ParameterType);
+                else args[i] = null;
             }
-            catch (Exception ex)
-            {
-                string errorKey = pawn.def?.defName ?? "UnknownPawn";
-                
-                if (!loggedPawnRenderErrors.Contains(errorKey))
-                {
-                    loggedPawnRenderErrors.Add(errorKey);
-                    Log.Warning($"[FactionGearModification] 获取肖像失败 ({errorKey}): {ex.Message}");
-                }
-            }
-            return null;
+
+            return (RenderTexture)portraitsCacheGetMethod.Invoke(null, args);
         }
 
         private static MethodInfo portraitsCacheSetDirtyMethod;

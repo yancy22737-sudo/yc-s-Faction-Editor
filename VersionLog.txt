@@ -1,4 +1,13 @@
-﻿v1.5.7
+﻿v1.5.7-hotfix
+- Fix: Milira 机械体在预览窗口肖像渲染崩溃（ArgumentNullException），重写安全补丁覆盖所有 Hair 变体节点，肖像用双重渲染策略确保机械体头发正常显示。
+- Fix: 预览窗口群组筛选下拉菜单回退到原版 pawnGroupMakers，无自定义群组时不再空白。
+- Fix: 预览窗口群组筛选行始终可见（仅"All"时灰色不可点击）。
+- Fix: 预览窗口进度条计数修正（totalToGenerate 使用筛选后数量）。
+- Fix: 预览窗口肖像渲染失败时显示占位符（种族图标+提示），武器/点数/负重/InfoCard 加 try-catch 保护。
+- Fix: GearApplier.SafeLogError 防崩溃日志（Milira Name.ToStringFull 异常不传播）。
+- Fix: GearApplier.ApplyHediffs 增加 forcedHediff null 检查。
+
+v1.5.7
 - Feat: 预览窗口支持群组筛选下拉框，默认选中战斗群组。
 - Feat: 预览负重显示颜色优化（绿#33C192/黄#FFAF1A/红#CC4B53），袭击点数读取群组覆盖值。
 - Feat: CE环境下弹药tooltip自动显示伤害、利器/钝器穿透。

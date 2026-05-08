@@ -115,24 +115,41 @@ namespace FactionGearCustomizer
 
                     if (ShouldApplyKindData(kindData))
                     {
+                        bool isMilira = faction.def?.defName?.Contains("Milira") == true;
+                        if (isMilira)
+                            Log.Warning($"[FactionGearCustomizer] DIAG: ApplyCustomGear for MILIRA pawn kind={kindDefName} ForceOnlySelected={kindData.ForceOnlySelected} ForceNaked={kindData.ForceNaked} ForceOverrideHediffs={kindData.ForceOverrideHediffs}");
+
                         try { ApplyInventory(pawn, kindData); }
-                        catch (Exception ex) { Log.Error($"[FactionGearCustomizer] ApplyInventory failed for {pawn?.Name?.ToStringFull ?? "null"}: {ex}"); }
+                        catch (Exception ex) { SafeLogError("ApplyInventory", pawn, ex); }
 
                         try { ApplyWeapons(pawn, kindData); }
-                        catch (Exception ex) { Log.Error($"[FactionGearCustomizer] ApplyWeapons failed for {pawn?.Name?.ToStringFull ?? "null"}: {ex}"); }
+                        catch (Exception ex) { SafeLogError("ApplyWeapons", pawn, ex); }
 
                         try { ApplyApparel(pawn, kindData); }
-                        catch (Exception ex) { Log.Error($"[FactionGearCustomizer] ApplyApparel failed for {pawn?.Name?.ToStringFull ?? "null"}: {ex}"); }
+                        catch (Exception ex) { SafeLogError("ApplyApparel", pawn, ex); }
 
                         try { ApplyHediffs(pawn, kindData); }
-                        catch (Exception ex) { Log.Error($"[FactionGearCustomizer] ApplyHediffs failed for {pawn?.Name?.ToStringFull ?? "null"}: {ex}"); }
+                        catch (Exception ex) { SafeLogError("ApplyHediffs", pawn, ex); }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Log.Error($"[FactionGearCustomizer] Error in ApplyCustomGear for pawn {pawn?.Name?.ToStringFull ?? "Unknown"} (kindDef={pawn?.kindDef?.defName ?? "null"}, faction={faction?.def?.defName ?? "null"}). Pawn may be in a partially modified state. {ex}");
+                SafeLogError("ApplyCustomGear", pawn, ex);
             }
+        }
+
+        private static void SafeLogError(string method, Pawn pawn, Exception ex)
+        {
+            string pawnLabel;
+            try { pawnLabel = pawn?.Name?.ToStringFull; }
+            catch { pawnLabel = null; }
+            if (string.IsNullOrEmpty(pawnLabel))
+            {
+                try { pawnLabel = pawn?.kindDef?.defName; }
+                catch { pawnLabel = "Unknown"; }
+            }
+            Log.Error($"[FactionGearCustomizer] {method} failed for {pawnLabel ?? "Unknown"}: {ex}");
         }
 
         private static bool ShouldApplyKindData(KindGearData kindData)
@@ -403,6 +420,7 @@ namespace FactionGearCustomizer
 
             foreach (var forcedHediff in kindData.ForcedHediffs)
             {
+                if (forcedHediff == null) continue;
                 if (!Rand.Chance(forcedHediff.chance)) continue;
 
                 if (forcedHediff.IsPool)

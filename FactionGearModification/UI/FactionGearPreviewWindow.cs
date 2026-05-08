@@ -85,38 +85,91 @@ namespace FactionGearCustomizer
             groupLabels.Add(LanguageManager.Get("CategoryAll"));
             groupKindLists.Add(allKinds);
 
-            // Build group list from faction gear data
+            // Try custom group makers first, fall back to vanilla pawnGroupMakers
             var settings = FactionGearCustomizerMod.Settings;
+            List<PawnGroupMakerData> customGroups = null;
+
             if (settings?.factionGearData != null)
             {
-                foreach (var factionData in settings.factionGearData)
+                foreach (var fd in settings.factionGearData)
                 {
-                    if (factionData.factionDefName != factionDef.defName) continue;
-                    if (factionData.groupMakers == null) continue;
-
-                    foreach (var group in factionData.groupMakers)
+                    if (fd.factionDefName == factionDef.defName && fd.groupMakers != null && fd.groupMakers.Count > 0)
                     {
-                        string label = !string.IsNullOrEmpty(group.customLabel)
-                            ? group.customLabel
-                            : group.kindDefName ?? $"Group {groupLabels.Count}";
-
-                        var kindNames = new HashSet<string>();
-                        CollectKindNames(group.options, kindNames);
-                        CollectKindNames(group.traders, kindNames);
-                        CollectKindNames(group.carriers, kindNames);
-                        CollectKindNames(group.guards, kindNames);
-
-                        var matched = allKinds.Where(k => kindNames.Contains(k.defName)).ToList();
-                        if (matched.Count > 0)
-                        {
-                            groupLabels.Add($"{label} ({matched.Count})");
-                            groupKindLists.Add(matched);
-                        }
+                        customGroups = fd.groupMakers;
+                        break;
                     }
                 }
             }
 
-            // Default to first group (combat group) if available, otherwise "All"
+            if (customGroups != null)
+            {
+                foreach (var group in customGroups)
+                {
+                    if (group == null) continue;
+
+                    string label = !string.IsNullOrEmpty(group.customLabel)
+                        ? group.customLabel
+                        : group.kindDefName ?? $"Group {groupLabels.Count}";
+
+                    var kindNames = new HashSet<string>();
+                    CollectKindNames(group.options, kindNames);
+                    CollectKindNames(group.traders, kindNames);
+                    CollectKindNames(group.carriers, kindNames);
+                    CollectKindNames(group.guards, kindNames);
+
+                    var matched = allKinds.Where(k => kindNames.Contains(k.defName)).ToList();
+                    if (matched.Count > 0)
+                    {
+                        groupLabels.Add($"{label} ({matched.Count})");
+                        groupKindLists.Add(matched);
+                    }
+                }
+            }
+            else if (factionDef.pawnGroupMakers != null)
+            {
+                // Fallback to vanilla pawnGroupMakers
+                foreach (var maker in factionDef.pawnGroupMakers)
+                {
+                    if (maker == null || maker.kindDef == null) continue;
+
+                    string label = maker.kindDef.label;
+                    if (string.IsNullOrEmpty(label))
+                        label = maker.kindDef.defName;
+                    if (string.IsNullOrEmpty(label))
+                        label = $"Group {groupLabels.Count}";
+
+                    var kindNames = new HashSet<string>();
+                    if (maker.options != null)
+                    {
+                        foreach (var opt in maker.options)
+                            if (opt?.kind != null) kindNames.Add(opt.kind.defName);
+                    }
+                    if (maker.traders != null)
+                    {
+                        foreach (var opt in maker.traders)
+                            if (opt?.kind != null) kindNames.Add(opt.kind.defName);
+                    }
+                    if (maker.carriers != null)
+                    {
+                        foreach (var opt in maker.carriers)
+                            if (opt?.kind != null) kindNames.Add(opt.kind.defName);
+                    }
+                    if (maker.guards != null)
+                    {
+                        foreach (var opt in maker.guards)
+                            if (opt?.kind != null) kindNames.Add(opt.kind.defName);
+                    }
+
+                    var matched = allKinds.Where(k => kindNames.Contains(k.defName)).ToList();
+                    if (matched.Count > 0)
+                    {
+                        groupLabels.Add($"{label} ({matched.Count})");
+                        groupKindLists.Add(matched);
+                    }
+                }
+            }
+
+            // Default to first group if available, otherwise "All"
             selectedGroupIndex = groupLabels.Count > 1 ? 1 : 0;
         }
 
@@ -215,7 +268,7 @@ namespace FactionGearCustomizer
                 generationQueue.Enqueue(k);
                 pendingKinds.Add(k);
             }
-            totalToGenerate = allKinds.Count;
+            totalToGenerate = filtered.Count;
             generatedCount = 0;
 
             Faction faction = GetFaction();
@@ -255,11 +308,11 @@ namespace FactionGearCustomizer
                     {
                         if (previewPawns.TryGetValue(k, out var existing) && existing != null && !existing.Destroyed)
                         {
-                            SafeClearApparel(existing);
-                            existing.Destroy();
+                            try { SafeClearApparel(existing); } catch { }
+                            try { existing.Destroy(); } catch { }
                         }
                         previewPawns[k] = p;
-                        WidgetsUtils.SetPortraitDirty(p);
+                        try { WidgetsUtils.SetPortraitDirty(p); } catch { }
                     }
                     else
                     {
@@ -449,7 +502,7 @@ namespace FactionGearCustomizer
             y += rowH + 4f;
 
             // Group filter dropdown (second row, compact)
-            if (groupLabels.Count > 1)
+            bool hasMultipleGroups = groupLabels.Count > 1;
             {
                 Rect labelRect = new Rect(inRect.x, y, 40f, 22f);
                 Rect dropdownRect = new Rect(inRect.x + 44f, y, 180f, 22f);
@@ -462,7 +515,13 @@ namespace FactionGearCustomizer
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.UpperLeft;
 
-                if (Widgets.ButtonText(dropdownRect, groupLabels[selectedGroupIndex]))
+                if (!hasMultipleGroups)
+                {
+                    GUI.color = Color.gray;
+                    Widgets.ButtonText(dropdownRect, groupLabels[selectedGroupIndex], active: false);
+                    GUI.color = Color.white;
+                }
+                else if (Widgets.ButtonText(dropdownRect, groupLabels[selectedGroupIndex]))
                 {
                     List<FloatMenuOption> options = new List<FloatMenuOption>();
                     for (int i = 0; i < groupLabels.Count; i++)
@@ -471,7 +530,7 @@ namespace FactionGearCustomizer
                         options.Add(new FloatMenuOption(groupLabels[i], () =>
                         {
                             selectedGroupIndex = captured;
-                            displayedKinds = null; // 清除种子选择，使用组列表
+                            displayedKinds = null;
                             GenerateAllPreviewPawns();
                         }));
                     }
@@ -595,80 +654,115 @@ namespace FactionGearCustomizer
                     catch (Exception drawEx)
                     {
                         Log.Warning($"[FactionGearCustomizer] 绘制肖像纹理失败：{drawEx.Message}");
+                        image = null;
                     }
+                }
+
+                if (image == null)
+                {
+                    // 渲染失败时显示占位符，避免空白区域
+                    Widgets.DrawBoxSolid(portraitRect, new Color(0.12f, 0.12f, 0.12f, 0.7f));
+                    if (k.race?.uiIcon != null)
+                    {
+                        try
+                        {
+                            Rect iconRect = new Rect(portraitRect.center.x - 24f, portraitRect.center.y - 24f, 48f, 48f);
+                            WidgetsUtils.DrawTextureFitted(iconRect, k.race.uiIcon, 1f);
+                        }
+                        catch { }
+                    }
+                    Text.Anchor = TextAnchor.MiddleCenter;
+                    Text.Font = GameFont.Tiny;
+                    GUI.color = Color.gray;
+                    Widgets.Label(new Rect(portraitRect.x, portraitRect.yMax - 22f, portraitRect.width, 20f), LanguageManager.Get("PreviewFailed_NoPawn"));
+                    GUI.color = Color.white;
+                    Text.Font = GameFont.Small;
+                    Text.Anchor = TextAnchor.UpperLeft;
                 }
 
                 // Draw Weapon Thumbnail
-                if (p.equipment != null && p.equipment.Primary != null)
+                try
                 {
-                    Thing weapon = p.equipment.Primary;
-                    Rect weaponRect = new Rect(inner.xMax - 40f, inner.yMax - 40f, 36f, 36f);
-                    
-                    // Draw background for weapon to make it visible
-                    Widgets.DrawBoxSolid(weaponRect, new Color(0f, 0f, 0f, 0.5f));
-                    
-                    // Draw icon
-                    if (weapon.def.uiIcon != null)
+                    if (p.equipment != null && p.equipment.Primary != null)
                     {
-                        WidgetsUtils.DrawTextureFitted(weaponRect, weapon.def.uiIcon, 1f);
+                        Thing weapon = p.equipment.Primary;
+                        Rect weaponRect = new Rect(inner.xMax - 40f, inner.yMax - 40f, 36f, 36f);
+                        Widgets.DrawBoxSolid(weaponRect, new Color(0f, 0f, 0f, 0.5f));
+                        if (weapon.def?.uiIcon != null)
+                        {
+                            WidgetsUtils.DrawTextureFitted(weaponRect, weapon.def.uiIcon, 1f);
+                        }
+                        TooltipHandler.TipRegion(weaponRect, weapon.LabelCap);
                     }
-                    
-                    TooltipHandler.TipRegion(weaponRect, weapon.LabelCap);
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning($"[FactionGearCustomizer] 绘制武器缩略图失败 ({k.defName}): {ex.Message}");
                 }
 
                 // Raid points display - bottom left
-                float combatPower = k.combatPower;
-                // Check for group points override
-                var settings = FactionGearCustomizerMod.Settings;
-                if (settings?.factionGearData != null)
+                try
                 {
-                    foreach (var fd in settings.factionGearData)
+                    float combatPower = k.combatPower;
+                    var settings = FactionGearCustomizerMod.Settings;
+                    if (settings?.factionGearData != null)
                     {
-                        if (fd.factionDefName != factionDef.defName) continue;
-                        if (fd.groupMakers == null) continue;
-                        foreach (var gm in fd.groupMakers)
+                        foreach (var fd in settings.factionGearData)
                         {
-                            if (gm.options == null) continue;
-                            foreach (var opt in gm.options)
+                            if (fd.factionDefName != factionDef.defName) continue;
+                            if (fd.groupMakers == null) continue;
+                            foreach (var gm in fd.groupMakers)
                             {
-                                if (opt.kindDefName == k.defName && opt.pointsOverride.HasValue)
+                                if (gm.options == null) continue;
+                                foreach (var opt in gm.options)
                                 {
-                                    combatPower = opt.pointsOverride.Value;
-                                    break;
+                                    if (opt.kindDefName == k.defName && opt.pointsOverride.HasValue)
+                                    {
+                                        combatPower = opt.pointsOverride.Value;
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
+                    Rect raidPointsRect = new Rect(inner.x + 2f, inner.yMax - 18f, inner.width - 44f, 16f);
+                    Text.Anchor = TextAnchor.LowerLeft;
+                    Text.Font = GameFont.Tiny;
+                    Widgets.Label(raidPointsRect, $"点数：{(int)combatPower}");
+                    Text.Anchor = TextAnchor.UpperLeft;
                 }
-                Rect raidPointsRect = new Rect(inner.x + 2f, inner.yMax - 18f, inner.width - 44f, 16f);
-                Text.Anchor = TextAnchor.LowerLeft;
-                Text.Font = GameFont.Tiny;
-                GUI.color = Color.white;
-                Widgets.Label(raidPointsRect, $"点数：{(int)combatPower}");
-                GUI.color = Color.white;
+                catch { }
 
                 // Carry weight display - above raid points
-                if (p.inventory != null)
+                try
                 {
-                    float mass = MassUtility.GearAndInventoryMass(p);
-                    float capacity = MassUtility.Capacity(p, null);
-                    float percent = capacity > 0f ? mass / capacity : 0f;
-                    Rect weightRect = new Rect(inner.x + 2f, inner.yMax - 32f, inner.width - 44f, 16f);
-                    Color weightColor = percent > 0.9f ? new Color(0.8f, 0.29f, 0.32f) : (percent > 0.75f ? new Color(1f, 0.69f, 0.1f) : new Color(0.2f, 0.76f, 0.57f));
-                    GUI.color = weightColor;
-                    Widgets.Label(weightRect, $"负重: {percent:P0}");
-                    GUI.color = Color.white;
+                    if (p.inventory != null)
+                    {
+                        float mass = MassUtility.GearAndInventoryMass(p);
+                        float capacity = MassUtility.Capacity(p, null);
+                        float percent = capacity > 0f ? mass / capacity : 0f;
+                        Rect weightRect = new Rect(inner.x + 2f, inner.yMax - 32f, inner.width - 44f, 16f);
+                        Color weightColor = percent > 0.9f ? new Color(0.8f, 0.29f, 0.32f) : (percent > 0.75f ? new Color(1f, 0.69f, 0.1f) : new Color(0.2f, 0.76f, 0.57f));
+                        GUI.color = weightColor;
+                        Widgets.Label(weightRect, $"负重: {percent:P0}");
+                        GUI.color = Color.white;
+                    }
                 }
+                catch { }
 
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.UpperLeft;
 
                 // 点击显示装备详情
-                Rect infoButtonRect = new Rect(rect.xMax - 30f, rect.y + 30f, 26f, 26f);
-                if (Widgets.InfoCardButton(infoButtonRect.x, infoButtonRect.y, p))
+                try
                 {
-                    pendingInfoPawn = p;
+                    Rect infoButtonRect = new Rect(rect.xMax - 30f, rect.y + 30f, 26f, 26f);
+                    if (Widgets.InfoCardButton(infoButtonRect.x, infoButtonRect.y, p))
+                    {
+                        pendingInfoPawn = p;
+                    }
                 }
+                catch { }
 
                 // 提示点击可以查看详情
                 if (Mouse.IsOver(rect))
