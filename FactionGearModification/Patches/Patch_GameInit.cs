@@ -46,12 +46,16 @@ namespace FactionGearCustomizer.Patches
                 {
                     // 确保存档有唯一标识符（在检测存档切换之前）
                     EnsureSaveIdentifierExists();
-                    
+
                     // 检查是否切换了存档
                     HandleSaveSwitch();
-                    
+
                     // 同步存档设置到全局设置
                     SyncSaveSettingsToGlobal();
+
+                    // 确保设置被应用到 FactionDef（修复存档加载后自定义群组不生效）
+                    FactionDefManager.ApplyAllSettings();
+
                     CheckAndShowFirstTimePrompt();
                 }, "CheckingFactionGearSettings", false, null);
             }

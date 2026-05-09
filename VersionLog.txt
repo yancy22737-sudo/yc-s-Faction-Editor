@@ -1,4 +1,10 @@
-﻿v1.5.7-hotfix
+﻿v1.5.8
+- Fix: 机械族Boss（Apocriton/War Queen/Diabolus等）在自定义群组中无法生成的问题。原版RimWorld会通过内部机制过滤掉这些Boss，现已通过Patch PawnGroupMakerUtility.GeneratePawns强制追加。
+- Fix: 存档加载后自定义群组设置可能不生效，现在加载存档后自动调用ApplyAllSettings。
+- Fix: 派系预览窗口群组筛选器rll不随机的问题，改用加权随机选取模拟突袭生成逻辑。
+- Fix: 群组编辑器添加/删除兵种后编辑器预览缓存不刷新，现在自动刷新。
+
+v1.5.7-hotfix
 - Fix: Milira 机械体在预览窗口肖像渲染崩溃（ArgumentNullException），重写安全补丁覆盖所有 Hair 变体节点，肖像用双重渲染策略确保机械体头发正常显示。
 - Fix: 预览窗口群组筛选下拉菜单回退到原版 pawnGroupMakers，无自定义群组时不再空白。
 - Fix: 预览窗口群组筛选行始终可见（仅"All"时灰色不可点击）。

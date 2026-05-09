@@ -36,6 +36,7 @@ namespace FactionGearCustomizer
         private int selectedGroupIndex = 0;
         private List<string> groupLabels = new List<string>();
         private List<List<PawnKindDef>> groupKindLists = new List<List<PawnKindDef>>();
+        private List<Dictionary<PawnKindDef, float>> groupKindWeights = new List<Dictionary<PawnKindDef, float>>();
 
         // Seed-based random kind selection
         private int seed;
@@ -80,10 +81,12 @@ namespace FactionGearCustomizer
         {
             groupLabels.Clear();
             groupKindLists.Clear();
+            groupKindWeights.Clear();
 
-            // "All" option
+            // "All" option (no weights)
             groupLabels.Add(LanguageManager.Get("CategoryAll"));
             groupKindLists.Add(allKinds);
+            groupKindWeights.Add(null);
 
             // Try custom group makers first, fall back to vanilla pawnGroupMakers
             var settings = FactionGearCustomizerMod.Settings;
@@ -112,22 +115,24 @@ namespace FactionGearCustomizer
                         : group.kindDefName ?? $"Group {groupLabels.Count}";
 
                     var kindNames = new HashSet<string>();
-                    CollectKindNames(group.options, kindNames);
-                    CollectKindNames(group.traders, kindNames);
-                    CollectKindNames(group.carriers, kindNames);
-                    CollectKindNames(group.guards, kindNames);
+                    var weights = new Dictionary<PawnKindDef, float>();
+                    CollectKindNamesAndWeights(group.options, kindNames, weights);
+                    CollectKindNamesAndWeights(group.traders, kindNames, weights);
+                    CollectKindNamesAndWeights(group.carriers, kindNames, weights);
+                    CollectKindNamesAndWeights(group.guards, kindNames, weights);
 
                     var matched = allKinds.Where(k => kindNames.Contains(k.defName)).ToList();
                     if (matched.Count > 0)
                     {
                         groupLabels.Add($"{label} ({matched.Count})");
                         groupKindLists.Add(matched);
+                        groupKindWeights.Add(weights);
                     }
                 }
             }
             else if (factionDef.pawnGroupMakers != null)
             {
-                // Fallback to vanilla pawnGroupMakers
+                // Fallback to vanilla pawnGroupMakers (no weights available)
                 foreach (var maker in factionDef.pawnGroupMakers)
                 {
                     if (maker == null || maker.kindDef == null) continue;
@@ -165,6 +170,7 @@ namespace FactionGearCustomizer
                     {
                         groupLabels.Add($"{label} ({matched.Count})");
                         groupKindLists.Add(matched);
+                        groupKindWeights.Add(null);
                     }
                 }
             }
@@ -180,6 +186,22 @@ namespace FactionGearCustomizer
             {
                 if (!string.IsNullOrEmpty(opt.kindDefName))
                     result.Add(opt.kindDefName);
+            }
+        }
+
+        private static void CollectKindNamesAndWeights(List<PawnGenOptionData> options, HashSet<string> kindNames, Dictionary<PawnKindDef, float> weights)
+        {
+            if (options == null) return;
+            foreach (var opt in options)
+            {
+                if (string.IsNullOrEmpty(opt.kindDefName)) continue;
+                kindNames.Add(opt.kindDefName);
+                var kind = DefDatabase<PawnKindDef>.GetNamedSilentFail(opt.kindDefName);
+                if (kind != null && opt.selectionWeight > 0f)
+                {
+                    float w = weights.TryGetValue(kind, out var existing) ? existing : 0f;
+                    weights[kind] = w + opt.selectionWeight;
+                }
             }
         }
 
@@ -215,26 +237,49 @@ namespace FactionGearCustomizer
             var source = GetBaseKindList();
             if (source == null || source.Count == 0) return;
 
-            // 如果种类数不超过默认显示数，全部显示
-            if (source.Count <= DEFAULT_DISPLAY_COUNT)
-            {
-                displayedKinds = new List<PawnKindDef>(source);
-                return;
-            }
-
             Rand.PushState();
             try
             {
                 Rand.Seed = seed;
-                var pool = new List<PawnKindDef>(source);
                 displayedKinds = new List<PawnKindDef>();
-                int count = Mathf.Min(DEFAULT_DISPLAY_COUNT, pool.Count);
 
-                for (int i = 0; i < count; i++)
+                // 获取当前群组的权重表
+                Dictionary<PawnKindDef, float> weights = null;
+                if (selectedGroupIndex >= 0 && selectedGroupIndex < groupKindWeights.Count)
+                    weights = groupKindWeights[selectedGroupIndex];
+
+                if (weights != null && weights.Count > 0)
                 {
-                    int idx = Rand.Range(0, pool.Count);
-                    displayedKinds.Add(pool[idx]);
-                    pool.RemoveAt(idx);
+                    // 加权随机选取（有放回），模拟突袭生成
+                    float totalWeight = 0f;
+                    foreach (var kv in weights) totalWeight += kv.Value;
+
+                    if (totalWeight > 0.0001f)
+                    {
+                        for (int i = 0; i < DEFAULT_DISPLAY_COUNT; i++)
+                        {
+                            float roll = Rand.Value * totalWeight;
+                            float cur = 0f;
+                            foreach (var kv in weights)
+                            {
+                                cur += kv.Value;
+                                if (roll <= cur)
+                                {
+                                    displayedKinds.Add(kv.Key);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // 无权重时使用均匀随机选取（有放回）
+                    for (int i = 0; i < DEFAULT_DISPLAY_COUNT; i++)
+                    {
+                        int idx = Rand.Range(0, source.Count);
+                        displayedKinds.Add(source[idx]);
+                    }
                 }
             }
             finally
@@ -530,7 +575,7 @@ namespace FactionGearCustomizer
                         options.Add(new FloatMenuOption(groupLabels[i], () =>
                         {
                             selectedGroupIndex = captured;
-                            displayedKinds = null;
+                            SelectKindsForCurrentSeed();
                             GenerateAllPreviewPawns();
                         }));
                     }

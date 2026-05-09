@@ -17,6 +17,10 @@ namespace FactionGearCustomizer.Managers
         private static Dictionary<FactionDef, OriginalFactionData> originalFactionData = new Dictionary<FactionDef, OriginalFactionData>();
         private static Dictionary<PawnKindDef, string> originalKindLabels = new Dictionary<PawnKindDef, string>();
         private static Dictionary<Faction, OriginalFactionInstanceData> originalFactionInstanceData = new Dictionary<Faction, OriginalFactionInstanceData>();
+        private static Dictionary<PawnKindDef, float> originalGenerateCommonalities = new Dictionary<PawnKindDef, float>();
+        private static FieldInfo generateCommonalityField = null;
+        private static bool generateCommonalityOnThingDef = false;
+        private static bool generateCommonalityFieldLookedUp = false;
 
         // 标记是否已保存所有原始数据（游戏启动时只保存一次）
         private static bool hasSavedAllOriginalData = false;
@@ -319,6 +323,14 @@ namespace FactionGearCustomizer.Managers
                 }
                 
                 LogUtils.DebugLog($"Applied {faction.pawnGroupMakers.Count} pawnGroupMakers to faction {faction.defName}");
+
+                foreach (var maker in faction.pawnGroupMakers)
+                {
+                    EnsureAllKindsCanGenerate(maker.options);
+                    EnsureAllKindsCanGenerate(maker.traders);
+                    EnsureAllKindsCanGenerate(maker.carriers);
+                    EnsureAllKindsCanGenerate(maker.guards);
+                }
             }
             else
             {
@@ -548,7 +560,7 @@ namespace FactionGearCustomizer.Managers
             {
                 factionIconField.SetValue(faction, original.Icon);
             }
-            
+
             if (ModsConfig.BiotechActive && faction.humanlikeFaction)
             {
                 if (original.XenotypeChances != null)
@@ -567,6 +579,8 @@ namespace FactionGearCustomizer.Managers
             {
                 faction.pawnGroupMakers = new List<PawnGroupMaker>(original.PawnGroupMakers);
             }
+
+            RestoreGenerateCommonalities();
 
             if (cachedDescriptionField != null)
             {
@@ -868,5 +882,120 @@ namespace FactionGearCustomizer.Managers
                 Log.Warning($"[FactionGearCustomizer] Error restoring relation change: {ex.Message}");
             }
         }
+
+        /// <summary>
+        /// 确保自定义群组中的兵种可以被生成。
+        /// 通过反射访问 PawnKindDef.generateCommonality（原版中机械族Boss等为0），
+        /// 若字段存在且值为0则覆盖为非零值。
+        /// </summary>
+        private static void EnsureAllKindsCanGenerate(List<PawnGenOption> options)
+        {
+            if (options == null) return;
+
+            if (generateCommonalityField == null && !generateCommonalityFieldLookedUp)
+            {
+                generateCommonalityFieldLookedUp = true;
+                // Try field names on PawnKindDef
+                string[] candidateNames = { "generateCommonality", "baseCommonality", "commonality",
+                    "ignoreCommonality", "ignoreGroupCommonality" };
+                foreach (var name in candidateNames)
+                {
+                    generateCommonalityField = typeof(PawnKindDef).GetField(name,
+                        System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    if (generateCommonalityField != null)
+                    {
+                        LogUtils.DebugLog($"Found PawnKindDef field: {name} ({generateCommonalityField.FieldType.Name}).");
+                        break;
+                    }
+                }
+                // Also try on PawnKindDef.race (ThingDef)
+                if (generateCommonalityField == null)
+                {
+                    foreach (var name in candidateNames)
+                    {
+                        generateCommonalityField = typeof(Verse.ThingDef).GetField(name,
+                            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                        if (generateCommonalityField != null)
+                        {
+                            generateCommonalityOnThingDef = true;
+                            LogUtils.DebugLog($"Found ThingDef field: {name} ({generateCommonalityField.FieldType.Name}). Will override via kind.race.");
+                            break;
+                        }
+                    }
+                }
+                // Also try ignoreGroupCommonality separately (likely a bool on ThingDef)
+                if (generateCommonalityField == null || generateCommonalityField.Name != "ignoreGroupCommonality")
+                {
+                    var igcField = typeof(Verse.ThingDef).GetField("ignoreGroupCommonality",
+                        System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    if (igcField != null)
+                    {
+                        Log.Message($"[FactionGearCustomizer] Found ThingDef.ignoreGroupCommonality ({igcField.FieldType.Name}). Checking...");
+                        // If this is a bool, log its value for boss mechs
+                        foreach (var opt in options)
+                        {
+                            if (opt.kind?.race != null && opt.kind.defName.StartsWith("Mech_"))
+                            {
+                                var igcVal = igcField.GetValue(opt.kind.race);
+                                Log.Message($"[FactionGearCustomizer] {opt.kind.defName}.race.ignoreGroupCommonality = {igcVal}");
+                            }
+                        }
+                    }
+                }
+                if (generateCommonalityField == null)
+                {
+                    Log.Warning("[FactionGearCustomizer] No generateCommonality-like field found on PawnKindDef or ThingDef. " +
+                        "Boss mech spawning fix will be inactive.");
+                }
+            }
+
+            if (generateCommonalityField == null) return;
+
+            foreach (var opt in options)
+            {
+                if (opt.kind == null) continue;
+                try
+                {
+                    object target = generateCommonalityOnThingDef ? (object)opt.kind.race : opt.kind;
+                    if (target == null) continue;
+                    float value = (float)generateCommonalityField.GetValue(target);
+                    if (value <= 0f)
+                    {
+                        if (!originalGenerateCommonalities.ContainsKey(opt.kind))
+                            originalGenerateCommonalities[opt.kind] = value;
+                        generateCommonalityField.SetValue(target, 0.1f);
+                        LogUtils.DebugLog($"Override generateCommonality for {opt.kind.defName}: {value} → 0.1");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning($"[FactionGearCustomizer] Failed to override generateCommonality for {opt.kind.defName}: {ex.Message}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// 恢复所有被覆盖的 generateCommonality 到原始值
+        /// </summary>
+        private static void RestoreGenerateCommonalities()
+        {
+            if (generateCommonalityField == null) return;
+
+            foreach (var kv in originalGenerateCommonalities)
+            {
+                try
+                {
+                    object target = generateCommonalityOnThingDef ? (object)kv.Key.race : kv.Key;
+                    if (target != null)
+                        generateCommonalityField.SetValue(target, kv.Value);
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning($"[FactionGearCustomizer] Failed to restore generateCommonality for {kv.Key.defName}: {ex.Message}");
+                }
+            }
+            originalGenerateCommonalities.Clear();
+        }
+
     }
 }

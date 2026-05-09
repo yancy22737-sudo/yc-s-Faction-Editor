@@ -192,6 +192,7 @@ namespace FactionGearCustomizer.UI
                     {
                         list.Add(new PawnGenOptionData { kindDefName = kind.defName, selectionWeight = 10f });
                     }
+                    FactionGearEditor.MarkDirty();
                 }, factionDef, null, traderFilter));
             }
 
@@ -271,6 +272,7 @@ namespace FactionGearCustomizer.UI
                     UndoManager.RecordState(groupData);
                     list.RemoveAt(i);
                     i--;
+                    FactionGearEditor.MarkDirty();
                 }
 
                 Text.Font = GameFont.Small;

@@ -11,26 +11,87 @@ using FactionGearCustomizer.Utils;
 
 namespace FactionGearCustomizer
 {
+    /// <summary>
+    /// Force-generate mechanoid bosses from custom group makers during raids.
+    /// Vanilla RimWorld filters out boss mechs (Apocriton, War Queen, Diabolus)
+    /// from PawnGroupMaker-based generation. This patch appends them after normal generation.
+    /// </summary>
+    [HarmonyPatch(typeof(PawnGroupMakerUtility), "GeneratePawns")]
+    public static class Patch_PawnGroupMakerUtility_GeneratePawns_Fix
+    {
+        public static void Postfix(PawnGroupMakerParms parms, ref IEnumerable<Pawn> __result)
+        {
+            if (parms.faction?.def == null || __result == null) return;
+            var data = FactionGearCustomizerMod.Settings?.TryGetFactionData(parms.faction.def.defName);
+            if (data?.groupMakers == null) return;
+
+            var bosses = new List<(PawnKindDef kind, float cost)>();
+            var seen = new HashSet<string>();
+            foreach (var gm in data.groupMakers)
+            {
+                if (gm.options == null) continue;
+                foreach (var opt in gm.options)
+                {
+                    if (!opt.kindDefName.StartsWith("Mech_")) continue;
+                    if (seen.Contains(opt.kindDefName)) continue;
+                    seen.Add(opt.kindDefName);
+                    var kind = DefDatabase<PawnKindDef>.GetNamedSilentFail(opt.kindDefName);
+                    if (kind != null)
+                        bosses.Add((kind, kind.combatPower));
+                }
+            }
+            if (bosses.Count == 0) return;
+
+            var original = __result;
+            __result = WrapWithBosses(original, parms.faction, bosses);
+        }
+
+        private static IEnumerable<Pawn> WrapWithBosses(IEnumerable<Pawn> original, Faction faction, List<(PawnKindDef kind, float cost)> bosses)
+        {
+            foreach (var pawn in original)
+                yield return pawn;
+
+            foreach (var b in bosses)
+            {
+                Pawn p = null;
+                try
+                {
+                    var request = new PawnGenerationRequest(b.kind, faction,
+                        PawnGenerationContext.NonPlayer, -1, true, false, false, false,
+                        true, 1f, false, true, true, false, false);
+                    p = PawnGenerator.GeneratePawn(request);
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning($"[FactionGearCustomizer] Failed to force-generate {b.kind.defName}: {ex.Message}");
+                }
+                if (p != null)
+                {
+                    LogUtils.DebugLog($"Force-generated mech boss: {p.kindDef.defName} for {faction.Name}");
+                    yield return p;
+                }
+            }
+        }
+    }
+
     [HarmonyPatch(typeof(PawnGenerator), "GeneratePawn", new Type[] { typeof(PawnGenerationRequest) })]
     [HarmonyPriority(Priority.Low)]
     public static class Patch_GeneratePawn
     {
         [ThreadStatic]
         private static bool isApplyingGear;
-        
+
         private const float DefaultMaxAge = 999f;
 
         public static void Prefix(ref PawnGenerationRequest request)
         {
             try
             {
-                // 应用异种设置（在 Pawn 生成前）
                 if (ModsConfig.BiotechActive && request.KindDef != null && request.Faction != null)
                 {
                     ApplyXenotypeSettings(request.Faction, request.KindDef, ref request);
                 }
 
-                // 应用年龄限制（在 Pawn 生成前）
                 if (request.KindDef != null && request.Faction != null)
                 {
                     ApplyAgeSettings(ref request);
@@ -49,8 +110,6 @@ namespace FactionGearCustomizer
                 return;
             }
 
-            // 在世界生成阶段，玩家派系尚未创建，Faction.OfPlayer 会报错
-            // 因此跳过此阶段的装备应用
             if (Current.ProgramState != ProgramState.Playing)
             {
                 return;
@@ -78,10 +137,9 @@ namespace FactionGearCustomizer
         {
             if (faction == null || kindDef == null || !faction.def.humanlikeFaction) return;
 
-            // 从 GameComponent 获取数据（与 ApplyAllSettings 保持一致）
             var gameComponent = FactionGearGameComponent.Instance;
             var saveData = gameComponent?.GetActiveFactionGearData();
-            
+
             FactionGearData factionData;
             if (saveData != null)
             {
@@ -91,11 +149,10 @@ namespace FactionGearCustomizer
             {
                 factionData = FactionGearCustomizerMod.Settings?.TryGetFactionData(faction.def.defName);
             }
-            
+
             var kindData = factionData?.GetKindData(kindDef.defName);
             if (!ShouldApplyXenotypeSettings(factionData, kindData)) return;
 
-            // Ensure XenotypeSet exists, otherwise create it (fixes preview issues for factions without default xenotypes)
             FactionDefManager.EnsureXenotypeSetExists(faction.def);
 
             ApplyFactionXenotypeSettings(faction, factionData);
@@ -105,8 +162,6 @@ namespace FactionGearCustomizer
                 ApplyKindXenotypeSettings(faction, kindData);
             }
 
-            // 检查当前应用后的异种设置是否包含非暴力异种
-            // 如果包含，且请求要求暴力，则放宽限制，允许生成非暴力 Pawn（避免生成失败）
             if (request.MustBeCapableOfViolence)
             {
                 var chances = FactionDefManager.GetXenotypeChances(faction.def.xenotypeSet);
@@ -117,8 +172,7 @@ namespace FactionGearCustomizer
                     {
                         if (chance.xenotype != null && chance.chance > 0)
                         {
-                            // 检查基因是否包含 IncapableOfViolence 或者 xenotype 本身不能作为战斗人员生成
-                            if (!chance.xenotype.canGenerateAsCombatant || 
+                            if (!chance.xenotype.canGenerateAsCombatant ||
                                 (chance.xenotype.genes != null && chance.xenotype.genes.Any(g => g.defName == "ViolenceDisabled")))
                             {
                                 hasNonViolenceXenotype = true;
@@ -139,11 +193,11 @@ namespace FactionGearCustomizer
         private static bool HasKindXenotypeSettings(KindGearData kindData)
         {
             if (kindData == null || !kindData.isModified) return false;
-            
+
             if (!string.IsNullOrEmpty(kindData.ForcedXenotype)) return true;
             if (kindData.DisableXenotypeChances) return true;
             if (kindData.XenotypeChances != null && kindData.XenotypeChances.Count > 0) return true;
-            
+
             return false;
         }
 
@@ -168,7 +222,6 @@ namespace FactionGearCustomizer
                 FactionDefManager.SetXenotypeChances(faction.def.xenotypeSet, chances);
             }
 
-            // 强制异种：最高优先级
             if (!string.IsNullOrEmpty(kindData.ForcedXenotype))
             {
                 XenotypeDef forcedXeno = DefDatabase<XenotypeDef>.GetNamedSilentFail(kindData.ForcedXenotype);
@@ -181,7 +234,6 @@ namespace FactionGearCustomizer
                 return;
             }
 
-            // 禁用异种概率控制：禁用派系级别设置，应用兵种自定义概率
             if (kindData.DisableXenotypeChances)
             {
                 if (kindData.XenotypeChances != null && kindData.XenotypeChances.Count > 0)
@@ -197,7 +249,6 @@ namespace FactionGearCustomizer
                 return;
             }
 
-            // 自定义异种概率
             if (kindData.XenotypeChances != null && kindData.XenotypeChances.Count > 0)
             {
                 ReplaceWithCustomChances(chances, kindData.XenotypeChances);
@@ -273,36 +324,28 @@ namespace FactionGearCustomizer
             }
             else
             {
-                // If no original data, we should probably clear it, effectively making it Baseliner-only
-                // unless the faction is supposed to have some default generation which we don't know about.
-                // But since we are here, we are assuming control.
                 LogUtils.DebugLog($"Cleared xenotype chances for {faction.def.defName} (no original data)");
             }
         }
 
-        /// <summary>
-        /// 应用年龄限制设置到 PawnGenerationRequest
-        /// </summary>
         private static void ApplyAgeSettings(ref PawnGenerationRequest request)
         {
             if (request.KindDef == null || request.Faction == null) return;
 
-            // 获取运行时生效的数据：存档优先，其次全局设置
             var factionData = GetRuntimeFactionData(request.Faction);
             if (factionData == null) return;
 
             string kindDefName = request.KindDef.defName;
-            
+
             float? minAge = null;
             float? maxAge = null;
 
-            // 1. 优先检查兵种专属配置（KindGearData）
             var kindData = factionData.GetKindData(kindDefName);
             if (kindData != null)
             {
                 if (kindData.MinAge.HasValue) minAge = kindData.MinAge.Value;
                 if (kindData.MaxAge.HasValue) maxAge = kindData.MaxAge.Value;
-                
+
                 if (minAge.HasValue || maxAge.HasValue)
                 {
                     ApplyAgeToRequest(ref request, minAge, maxAge, kindDefName);
@@ -312,7 +355,6 @@ namespace FactionGearCustomizer
 
             if (factionData?.groupMakers == null || factionData.groupMakers.Count == 0) return;
 
-            // 2. 在所有群组中查找该兵种的年龄设置（兼容旧逻辑）
             foreach (var groupMaker in factionData.groupMakers)
             {
                 if (groupMaker?.options == null) continue;
@@ -321,13 +363,11 @@ namespace FactionGearCustomizer
                 {
                     if (option?.kindDefName == kindDefName)
                     {
-                        // 找到匹配的配置
                         if (option.minAge.HasValue)
                             minAge = option.minAge.Value;
                         if (option.maxAge.HasValue)
                             maxAge = option.maxAge.Value;
 
-                        // 如果找到了年龄设置，应用它
                         if (minAge.HasValue || maxAge.HasValue)
                         {
                             ApplyAgeToRequest(ref request, minAge, maxAge, kindDefName);
@@ -336,7 +376,6 @@ namespace FactionGearCustomizer
                     }
                 }
 
-                // 同时检查 traders, carriers, guards
                 CheckAgeInList(groupMaker.traders, kindDefName, ref minAge, ref maxAge);
                 CheckAgeInList(groupMaker.carriers, kindDefName, ref minAge, ref maxAge);
                 CheckAgeInList(groupMaker.guards, kindDefName, ref minAge, ref maxAge);
@@ -400,9 +439,6 @@ namespace FactionGearCustomizer
             return maxMinAge > 0f ? maxMinAge : 18f;
         }
 
-        /// <summary>
-        /// 在列表中检查年龄设置
-        /// </summary>
         private static void CheckAgeInList(System.Collections.Generic.List<PawnGenOptionData> list, string kindDefName, ref float? minAge, ref float? maxAge)
         {
             if (list == null) return;
