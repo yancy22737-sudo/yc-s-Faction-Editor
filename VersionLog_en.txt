@@ -1,3 +1,14 @@
+v1.5.9
+- Update: Unified all icon assets to UI/Logo.png, removed duplicate icon files.
+- Update: MainButton narrowed to icon-only mode (minimized), no text label.
+- Update: build.ps1 now backs up and restores Logo.png to prevent overwrites during deploy.
+
+v1.5.8
+- Fix: Mechanoid bosses (Apocriton/War Queen/Diabolus) failing to spawn in custom groups.
+- Fix: Custom group settings not applying after save-load.
+- Fix: Preview group filter reroll not randomizing.
+- Fix: Group editor add/remove not refreshing preview cache.
+
 v1.5.7
 - Feat: Preview window supports group filter dropdown, defaults to combat group.
 - Feat: Preview carry weight color improved (green #33C192 / yellow #FFAF1A / red #CC4B53), raid points read from group override.

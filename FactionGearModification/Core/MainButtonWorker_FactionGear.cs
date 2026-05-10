@@ -1,7 +1,6 @@
 using RimWorld;
 using Verse;
 using FactionGearCustomizer.UI;
-using UnityEngine;
 
 namespace FactionGearCustomizer
 {

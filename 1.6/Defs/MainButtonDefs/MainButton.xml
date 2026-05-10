@@ -2,11 +2,12 @@
 <Defs>
   <MainButtonDef>
     <defName>FactionGear_MainButton</defName>
-    <label>Faction Editor</label>
-    <description>Open yc’s Faction Editor.</description>  
+    <label>Factions</label>
+    <description>Open yc’s Faction Editor.</description>
     <tabWindowClass>FactionGearCustomizer.UI.FactionGearMainTabWindow</tabWindowClass>
     <order>99</order>
-    <iconPath>UI/Buttons/MainButtons/FactionGearEdit</iconPath>
+    <minimized>True</minimized>
+    <iconPath>UI/Logo</iconPath>
     <workerClass>FactionGearCustomizer.MainButtonWorker_FactionGear</workerClass>
   </MainButtonDef>
 </Defs>

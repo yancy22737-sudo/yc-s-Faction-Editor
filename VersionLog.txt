@@ -1,4 +1,9 @@
-﻿v1.5.8
+﻿v1.5.9
+- Update: 统一图标资源，全部指向 UI/Logo.png，移除冗余图标文件。
+- Update: MainButton 收窄为图标模式（minimized），底部标签栏仅显示 Logo 无文字。
+- Update: build.ps1 增加 Logo.png 备份还原机制，防止部署覆盖。
+
+v1.5.8
 - Fix: 机械族Boss（Apocriton/War Queen/Diabolus等）在自定义群组中无法生成的问题。原版RimWorld会通过内部机制过滤掉这些Boss，现已通过Patch PawnGroupMakerUtility.GeneratePawns强制追加。
 - Fix: 存档加载后自定义群组设置可能不生效，现在加载存档后自动调用ApplyAllSettings。
 - Fix: 派系预览窗口群组筛选器rll不随机的问题，改用加权随机选取模拟突袭生成逻辑。
