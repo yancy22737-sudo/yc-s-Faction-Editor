@@ -42,6 +42,7 @@ namespace FactionGearCustomizer.UI
 
         // Group Buffers
         private List<PawnGroupMakerData> bufferGroups;
+        private bool groupsModified = false;
 
         // Player Relation Buffer
         private FactionRelationKind? bufferPlayerRelation;
@@ -197,7 +198,7 @@ namespace FactionGearCustomizer.UI
             // Group List
             Widgets.DrawLineHorizontal(0, curY, viewWidth);
             curY += 10f;
-            GroupListPanel.Draw(new Rect(0, curY, viewWidth, groupListHeight), ref bufferGroups, factionDef);
+            GroupListPanel.Draw(new Rect(0, curY, viewWidth, groupListHeight), ref bufferGroups, factionDef, () => groupsModified = true);
             
             Widgets.EndScrollView();
 
@@ -827,12 +828,16 @@ namespace FactionGearCustomizer.UI
             if (factionModified)
             {
                 factionData.isModified = true;
+                // If groups haven't been intentionally modified, strip stale groupMakers
+                // to prevent corrupted data from re-infecting faction.pawnGroupMakers.
+                if (!groupsModified) factionData.groupMakers = null;
                 FactionDefManager.ApplyFactionChanges(factionDef, factionData);
             }
 
             // Apply relation changes immediately even if no other faction changes
             if (relationChanged && Current.Game != null && Find.FactionManager != null)
             {
+                if (!groupsModified) factionData.groupMakers = null;
                 FactionDefManager.ApplyFactionChanges(factionDef, factionData);
             }
 
@@ -848,7 +853,8 @@ namespace FactionGearCustomizer.UI
             // Since we are not tracking "isDirty" for groups per se, we can compare with current applied?
             // Let's just always save bufferGroups to factionData.groupMakers if they exist.
             
-            if (bufferGroups != null)
+            // Only save groupMakers if the user actually modified the Groups tab
+            if (groupsModified && bufferGroups != null)
             {
                 // We should check if it's different from current to set isModified flag correctly
                 // But setting isModified = true is safe.

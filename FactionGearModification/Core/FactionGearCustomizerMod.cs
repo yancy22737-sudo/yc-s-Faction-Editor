@@ -30,14 +30,9 @@ namespace FactionGearCustomizer
             HarmonyInstance = new Harmony("FactionGearCustomizer");
             PatchAllSafely();
 
-            // 在静态构造函数中清理缓存，确保每次游戏启动时都是干净状态
-            FactionDefManager.ClearOriginalDataCache();
-
-            // 延迟保存原始数据，等待DefDatabase完全加载
-            LongEventHandler.QueueLongEvent(() =>
-            {
-                FactionDefManager.SaveAllOriginalData();
-            }, "SavingFactionOriginalData", false, null);
+            // NOTE: SaveAllOriginalData + ApplyAllSettings are handled by Startup.cs
+            // (StaticConstructorOnStartup). Do NOT ClearOriginalDataCache here —
+            // it would destroy the pristine vanilla data captured by Startup.
 
             // 延迟应用 Milira 兼容性补丁（需要等待 Milira 程序集加载完成）
             Patch_MiliraHairGraphicFor.SchedulePatch();

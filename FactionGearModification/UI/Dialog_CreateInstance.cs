@@ -206,10 +206,14 @@ namespace FactionGearCustomizer.UI
                                 LanguageManager.Get("ConfirmCreateSettlement"),
                                 LanguageManager.Get("Confirm"),
                                 () => {
-                                    // Ensure we're in a stable state before opening FactionSpawnWindow
                                     if (Current.Game != null && Find.World != null)
                                     {
-                                        Find.WindowStack.Add(new FactionSpawnWindow(faction));
+                                        Verse.LongEventHandler.ExecuteWhenFinished(() =>
+                                        {
+                                            SwitchToWorldTab();
+                                            CloseAllWindowsFromThisMod();
+                                            Find.WindowStack.Add(new FactionSpawnWindow(faction));
+                                        });
                                     }
                                 },
                                 LanguageManager.Get("Cancel"),
@@ -229,6 +233,41 @@ namespace FactionGearCustomizer.UI
                 null,
                 null
             ));
+        }
+
+        private static void SwitchToWorldTab()
+        {
+            if (Find.MainTabsRoot != null && MainButtonDefOf.World != null)
+            {
+                try
+                {
+                    if (Find.MainTabsRoot.OpenTab != MainButtonDefOf.World)
+                    {
+                        Find.MainTabsRoot.SetCurrentTab(MainButtonDefOf.World);
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    Log.Warning($"[FactionGearCustomizer] Failed to switch to World tab: {ex.Message}");
+                }
+            }
+        }
+
+        private void CloseAllWindowsFromThisMod()
+        {
+            if (Find.WindowStack?.Windows == null) return;
+
+            var windows = Find.WindowStack.Windows;
+            var asm = GetType().Assembly;
+            for (int i = windows.Count - 1; i >= 0; i--)
+            {
+                var w = windows[i];
+                if (w == null) continue;
+                if (w.GetType().Assembly == asm)
+                {
+                    Find.WindowStack.TryRemove(w, false);
+                }
+            }
         }
 
         /// <summary>

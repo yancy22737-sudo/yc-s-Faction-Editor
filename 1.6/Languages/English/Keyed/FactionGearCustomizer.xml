@@ -528,7 +528,7 @@ Warnings:
   <PawnGroupKind_Gorehulks>Gorehulks</PawnGroupKind_Gorehulks>
   <PawnGroupKind_Devourers>Devourers</PawnGroupKind_Devourers>
   <PawnGroupKind_Noctols>Noctols</PawnGroupKind_Noctols>
-  <PawnGroupKind_SightstealersNoctols>Sightstealers & Noctols</PawnGroupKind_SightstealersNoctols>
+  <PawnGroupKind_SightstealersNoctols>Sightstealers &amp; Noctols</PawnGroupKind_SightstealersNoctols>
   <PawnGroupKind_Chimeras>Chimeras</PawnGroupKind_Chimeras>
   <CannotSettleHere>Cannot settle here</CannotSettleHere>
   <ImportIconTitle>Import Icon</ImportIconTitle>

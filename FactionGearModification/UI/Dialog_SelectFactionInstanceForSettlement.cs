@@ -118,6 +118,7 @@ namespace FactionGearCustomizer.UI
                     {
                         if (Current.Game != null && Find.World != null)
                         {
+                            SwitchToWorldTab();
                             CloseAllWindowsFromThisMod();
                             Find.WindowStack.Add(new FactionSpawnWindow(factionToSpawn));
                         }
@@ -185,6 +186,24 @@ namespace FactionGearCustomizer.UI
                 null,
                 null
             ));
+        }
+
+        private static void SwitchToWorldTab()
+        {
+            if (Find.MainTabsRoot != null && MainButtonDefOf.World != null)
+            {
+                try
+                {
+                    if (Find.MainTabsRoot.OpenTab != MainButtonDefOf.World)
+                    {
+                        Find.MainTabsRoot.SetCurrentTab(MainButtonDefOf.World);
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    Log.Warning($"[FactionGearCustomizer] Failed to switch to World tab: {ex.Message}");
+                }
+            }
         }
 
         private void CloseAllWindowsFromThisMod()

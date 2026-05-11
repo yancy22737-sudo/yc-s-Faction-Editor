@@ -37,22 +37,6 @@ namespace FactionGearCustomizer.UI
         public override void PostOpen()
         {
             base.PostOpen();
-
-            // Safety checks before switching tabs
-            if (Find.MainTabsRoot != null && MainButtonDefOf.World != null)
-            {
-                try
-                {
-                    if (Find.MainTabsRoot.OpenTab != MainButtonDefOf.World)
-                    {
-                        Find.MainTabsRoot.SetCurrentTab(MainButtonDefOf.World);
-                    }
-                }
-                catch (System.Exception ex)
-                {
-                    Log.Warning($"[FactionGearCustomizer] Failed to switch to World tab: {ex.Message}");
-                }
-            }
         }
 
         public override void PreClose()

@@ -304,32 +304,130 @@ namespace FactionGearCustomizer.Managers
             if (data.groupMakers != null && data.groupMakers.Count > 0)
             {
                 LogUtils.DebugLog($"Applying groupMakers for {faction.defName}, count: {data.groupMakers.Count}");
-                
-                if (faction.pawnGroupMakers == null) faction.pawnGroupMakers = new List<PawnGroupMaker>();
-                else faction.pawnGroupMakers.Clear();
 
+                // Collect original group kinds from the stored pristine backup (not current state)
+                var originalByKind = new Dictionary<string, PawnGroupMaker>();
+                OriginalFactionData originalStored = null;
+                originalFactionData.TryGetValue(faction, out originalStored);
+                if (originalStored?.PawnGroupMakers != null)
+                {
+                    foreach (var m in originalStored.PawnGroupMakers)
+                    {
+                        if (m.kindDef != null && !originalByKind.ContainsKey(m.kindDef.defName))
+                            originalByKind[m.kindDef.defName] = m;
+                    }
+                }
+                // Fallback: if no pristine backup, use current pawnGroupMakers
+                if (originalByKind.Count == 0 && faction.pawnGroupMakers != null)
+                {
+                    foreach (var m in faction.pawnGroupMakers)
+                    {
+                        if (m.kindDef != null && !originalByKind.ContainsKey(m.kindDef.defName))
+                            originalByKind[m.kindDef.defName] = m;
+                    }
+                }
+
+                // Build candidate list from custom data
+                var candidates = new List<PawnGroupMaker>();
+                var candidateKinds = new HashSet<string>();
                 foreach (var gData in data.groupMakers)
                 {
                     var maker = gData.ToPawnGroupMaker();
                     if (maker != null)
                     {
-                        faction.pawnGroupMakers.Add(maker);
-                        LogUtils.DebugLog($"Added pawnGroupMaker: {gData.kindDefName}");
+                        candidates.Add(maker);
+                        if (maker.kindDef != null)
+                            candidateKinds.Add(maker.kindDef.defName);
+                        LogUtils.DebugLog($"  Candidate: {gData.kindDefName}");
                     }
                     else
                     {
-                        Log.Warning($"[FactionGearCustomizer] Failed to create PawnGroupMaker for kindDefName: {gData?.kindDefName}");
+                        Log.Warning($"[FactionGearCustomizer] Failed to convert PawnGroupMaker '{gData?.kindDefName}' for {faction.defName}");
                     }
                 }
-                
-                LogUtils.DebugLog($"Applied {faction.pawnGroupMakers.Count} pawnGroupMakers to faction {faction.defName}");
 
-                foreach (var maker in faction.pawnGroupMakers)
+                // Check which original kinds are missing from the custom data
+                var missingKinds = new List<string>();
+                foreach (var kv in originalByKind)
                 {
-                    EnsureAllKindsCanGenerate(maker.options);
-                    EnsureAllKindsCanGenerate(maker.traders);
-                    EnsureAllKindsCanGenerate(maker.carriers);
-                    EnsureAllKindsCanGenerate(maker.guards);
+                    if (!candidateKinds.Contains(kv.Key))
+                        missingKinds.Add(kv.Key);
+                }
+
+                if (missingKinds.Count > 0 || originalByKind.Count == 0)
+                {
+                    Log.Warning($"[FactionGearCustomizer] Auto-resetting corrupted groupMakers for {faction.defName} — missing: {string.Join(", ", missingKinds)}");
+
+                    // Clear corrupted groupMakers from settings
+                    data.groupMakers = null;
+
+                    // Also clear from save-level data
+                    var gameComponent = FactionGearGameComponent.Instance;
+                    var saveData = gameComponent?.savedFactionGearData;
+                    if (saveData != null)
+                    {
+                        var saveEntry = saveData.FirstOrDefault(f => f.factionDefName == faction.defName);
+                        if (saveEntry != null)
+                            saveEntry.groupMakers = null;
+                    }
+
+                    // Re-evaluate isModified (if groupMakers was the only change, unmark)
+                    if (data.IsEffectivelyDefault())
+                        data.isModified = false;
+
+                    // Restore original pawnGroupMakers from pristine backup
+                    if (originalByKind.Count > 0)
+                    {
+                        faction.pawnGroupMakers = originalByKind.Values.ToList();
+                    }
+
+                    Log.Warning($"[FactionGearCustomizer] Corrupted groupMakers for {faction.defName} have been auto-reset. Missing kinds: {string.Join(", ", missingKinds.Count > 0 ? (IEnumerable<string>)missingKinds : new[] {"(all)"})}");
+                }
+                else
+                {
+                    // All original kinds are covered — safe to apply
+                    faction.pawnGroupMakers = new List<PawnGroupMaker>();
+                    foreach (var m in candidates)
+                        faction.pawnGroupMakers.Add(m);
+
+                    // Post-apply: verify Combat group actually has usable pawn options.
+                    // If all pawn refs are stale (mod removed/updated), the Combat group
+                    // exists but with empty options, breaking raid generation.
+                    var combatGroup = faction.pawnGroupMakers.FirstOrDefault(m => m.kindDef?.defName == "Combat");
+                    if (combatGroup != null && (combatGroup.options == null || combatGroup.options.Count == 0))
+                    {
+                        Log.Warning($"[FactionGearCustomizer] Combat group for {faction.defName} has no usable pawns after conversion — nuking custom groupMakers.");
+                        data.groupMakers = null;
+                        var gc = FactionGearGameComponent.Instance;
+                        var sd = gc?.savedFactionGearData;
+                        if (sd != null) { var e = sd.FirstOrDefault(f => f.factionDefName == faction.defName); if (e != null) e.groupMakers = null; }
+                        if (data.IsEffectivelyDefault()) data.isModified = false;
+                        if (originalByKind.Count > 0) faction.pawnGroupMakers = originalByKind.Values.ToList();
+                    }
+                    else
+                    {
+                        // Fix: inherited vanilla maxTotalPoints can be too restrictive
+                        // (e.g. Rakinia Combat group has maxTotalPoints=1000, but raids
+                        // regularly request 1500+ points). Auto-expand to unlimited.
+                        foreach (var maker in faction.pawnGroupMakers)
+                        {
+                            if (maker.maxTotalPoints > 0 && maker.maxTotalPoints < 10000)
+                            {
+                                Log.Warning($"[FactionGearCustomizer] {faction.defName} {maker.kindDef?.defName} group maxTotalPoints={maker.maxTotalPoints} too restrictive — setting to unlimited.");
+                                maker.maxTotalPoints = 9999999f;
+                            }
+                        }
+
+                        LogUtils.DebugLog($"Applied {faction.pawnGroupMakers.Count} groupMakers to {faction.defName}");
+
+                        foreach (var maker in faction.pawnGroupMakers)
+                        {
+                            EnsureAllKindsCanGenerate(maker.options);
+                            EnsureAllKindsCanGenerate(maker.traders);
+                            EnsureAllKindsCanGenerate(maker.carriers);
+                            EnsureAllKindsCanGenerate(maker.guards);
+                        }
+                    }
                 }
             }
             else
@@ -680,6 +778,102 @@ namespace FactionGearCustomizer.Managers
                         }
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Validate and repair corrupted groupMakers data.
+        /// If a faction's custom groupMakers are missing kinds that exist in
+        /// the pristine backup (or the def's current pawnGroupMakers), nuke the
+        /// corrupted custom data immediately.
+        /// </summary>
+        private static void RepairCorruptedGroupMakersIfNeeded(FactionGearData factionData)
+        {
+            var factionDef = DefDatabase<FactionDef>.GetNamedSilentFail(factionData.factionDefName);
+            if (factionDef == null) return;
+
+            // Build reference set of expected group kinds
+            var expectedKinds = new HashSet<string>();
+
+            // Prefer pristine backup from game start
+            OriginalFactionData originalStored = null;
+            originalFactionData.TryGetValue(factionDef, out originalStored);
+            if (originalStored?.PawnGroupMakers != null)
+            {
+                foreach (var m in originalStored.PawnGroupMakers)
+                    if (m.kindDef != null)
+                        expectedKinds.Add(m.kindDef.defName);
+            }
+
+            // Fallback: use current def state
+            if (expectedKinds.Count == 0 && factionDef.pawnGroupMakers != null)
+            {
+                foreach (var m in factionDef.pawnGroupMakers)
+                    if (m.kindDef != null)
+                        expectedKinds.Add(m.kindDef.defName);
+            }
+
+            if (expectedKinds.Count == 0) return; // No reference available, can't validate
+
+            // Build set of kinds in custom data, and check converted Combat group usability
+            var customKinds = new HashSet<string>();
+            bool combatGroupUnusable = false;
+            foreach (var gData in factionData.groupMakers)
+            {
+                if (!string.IsNullOrEmpty(gData.kindDefName))
+                    customKinds.Add(gData.kindDefName);
+                var maker = gData.ToPawnGroupMaker();
+                if (maker?.kindDef != null)
+                {
+                    customKinds.Add(maker.kindDef.defName);
+                    // Check if Combat group converts to something with no usable pawns
+                    if (maker.kindDef.defName == "Combat" && (maker.options == null || maker.options.Count == 0))
+                        combatGroupUnusable = true;
+                }
+            }
+
+            // Combat group exists in name but has no usable pawns after conversion
+            if (customKinds.Contains("Combat") && combatGroupUnusable)
+            {
+                expectedKinds.Add("Combat");
+                Log.Warning($"[FactionGearCustomizer] Combat group for {factionData.factionDefName} exists but has no usable pawn options after conversion. Will repair.");
+            }
+
+            // Check if all expected kinds are present
+            expectedKinds.ExceptWith(customKinds);
+            if (expectedKinds.Count > 0)
+            {
+                Log.Warning($"[FactionGearCustomizer] Repairing corrupted groupMakers for {factionData.factionDefName} — missing kinds: {string.Join(", ", expectedKinds)}");
+
+                // Nuke corrupted groupMakers from this factionData
+                factionData.groupMakers = null;
+
+                // Also nuke from all storage locations
+                var gc = FactionGearGameComponent.Instance;
+                var sd = gc?.savedFactionGearData;
+                if (sd != null)
+                {
+                    var entry = sd.FirstOrDefault(f => f.factionDefName == factionData.factionDefName);
+                    if (entry != null) entry.groupMakers = null;
+                }
+                var gs = FactionGearCustomizerMod.Settings?.factionGearData;
+                if (gs != null)
+                {
+                    var entry = gs.FirstOrDefault(f => f.factionDefName == factionData.factionDefName);
+                    if (entry != null) entry.groupMakers = null;
+                }
+
+                // Restore factionDef.pawnGroupMakers from pristine backup
+                if (originalStored?.PawnGroupMakers != null)
+                {
+                    factionDef.pawnGroupMakers = new List<PawnGroupMaker>(originalStored.PawnGroupMakers);
+                }
+
+                // Re-evaluate isModified
+                if (factionData.IsEffectivelyDefault())
+                    factionData.isModified = false;
+
+                Log.Warning($"[FactionGearCustomizer] Corrupted groupMakers for {factionData.factionDefName} auto-repaired.");
             }
         }
 

@@ -21,7 +21,7 @@ namespace FactionGearCustomizer.UI.Panels
             return listY + listHeight + 20f; // Add padding
         }
 
-        public static void Draw(Rect rect, ref List<PawnGroupMakerData> groups, FactionDef factionDef)
+        public static void Draw(Rect rect, ref List<PawnGroupMakerData> groups, FactionDef factionDef, Action onModified = null)
         {
             Widgets.DrawMenuSection(rect);
             Rect innerRect = rect.ContractedBy(10f);
@@ -81,6 +81,7 @@ namespace FactionGearCustomizer.UI.Panels
                         }
 
                         groupList.Add(newGroup);
+                        onModified?.Invoke();
                     }));
                 }
                 Find.WindowStack.Add(new FloatMenu(options));
@@ -112,6 +113,7 @@ namespace FactionGearCustomizer.UI.Panels
                 if (newLabel != group.customLabel)
                 {
                     group.customLabel = InputValidator.SanitizeName(newLabel);
+                    onModified?.Invoke();
                 }
 
                 bool hasFocus = GUI.GetNameOfFocusedControl() == controlName;
@@ -121,7 +123,9 @@ namespace FactionGearCustomizer.UI.Panels
                 // Commonality
                 Widgets.Label(new Rect(row.x + 5f, row.y + 31f, 80f, 20f), LanguageManager.Get("Commonality") + ":");
                 string buffer = group.commonality.ToString();
+                float prevCommonality = group.commonality;
                 Widgets.TextFieldNumeric(new Rect(row.x + 90f, row.y + 31f, 60f, 20f), ref group.commonality, ref buffer);
+                if (group.commonality != prevCommonality) onModified?.Invoke();
 
                 string kindText = GetKindDisplayText(kind, group?.kindDefName);
                 if (!string.IsNullOrWhiteSpace(kindText))
@@ -143,6 +147,7 @@ namespace FactionGearCustomizer.UI.Panels
                 if (Widgets.ButtonText(new Rect(btnX + btnW + btnGap, row.y + 8f, btnW, 30f), LanguageManager.Get("Edit")))
                 {
                     Find.WindowStack.Add(new Dialog_EditPawnGroup(group, factionDef));
+                    onModified?.Invoke();
                 }
                 
                 if (Widgets.ButtonText(new Rect(btnX + (btnW + btnGap) * 2f, row.y + 8f, btnW, 30f), LanguageManager.Get("Remove")))
@@ -151,14 +156,15 @@ namespace FactionGearCustomizer.UI.Panels
                     {
                         groups.RemoveAt(i);
                         i--;
+                        onModified?.Invoke();
                     }
                     else
                     {
                         var groupToRemove = group;
                         Find.WindowStack.Add(new Dialog_ConfirmDeleteGroup(
                             LanguageManager.Get("ConfirmDeleteGroup"),
-                            () => { 
-                                if (groupToRemove != null) groupList.Remove(groupToRemove);
+                            () => {
+                                if (groupToRemove != null) { groupList.Remove(groupToRemove); onModified?.Invoke(); }
                             },
                             LanguageManager.Get("DeleteGroup")
                         ));

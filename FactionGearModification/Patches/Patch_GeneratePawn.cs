@@ -12,6 +12,36 @@ using FactionGearCustomizer.Utils;
 namespace FactionGearCustomizer
 {
     /// <summary>
+    /// Vanilla CanGenerateFrom rejects faction combat pawns at tiles without
+    /// settlements (requires wild animals or a settlement at the target tile).
+    /// Custom group makers replace vanilla groups entirely, so faction pawns
+    /// can never pass this check. This patch re-evaluates CanGenerateFrom
+    /// without the tile constraint for factions with custom groupMakers.
+    /// </summary>
+    [HarmonyPatch(typeof(PawnGroupMaker), "CanGenerateFrom")]
+    public static class Patch_CanGenerateFrom_TileBypass
+    {
+        public static void Postfix(PawnGroupMaker __instance, PawnGroupMakerParms parms, ref bool __result)
+        {
+            if (__result) return;
+            if (parms.tile == -1) return;
+            if (parms.faction?.def == null) return;
+            if (__instance.options.NullOrEmpty()) return;
+
+            var data = FactionGearCustomizerMod.Settings?.TryGetFactionData(parms.faction.def.defName);
+            if (data?.groupMakers == null || data.groupMakers.Count == 0) return;
+
+            // Re-check non-tile conditions
+            if (parms.points > 0f && __instance.maxTotalPoints > 0f && parms.points > __instance.maxTotalPoints)
+                return;
+            if (parms.generateFightersOnly && !__instance.options.Any(o => o.kind.isFighter))
+                return;
+
+            __result = true;
+        }
+    }
+
+    /// <summary>
     /// Force-generate mechanoid bosses from custom group makers during raids.
     /// Vanilla RimWorld filters out boss mechs (Apocriton, War Queen, Diabolus)
     /// from PawnGroupMaker-based generation. This patch appends them after normal generation.

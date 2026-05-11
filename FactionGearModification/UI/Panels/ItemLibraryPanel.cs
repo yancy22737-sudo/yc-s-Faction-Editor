@@ -851,6 +851,7 @@ namespace FactionGearCustomizer.UI.Panels
         private static void TryAutoAddCEAmmo(KindGearData kindData, ThingDef weaponDef)
         {
             if (kindData == null) return;
+            if (kindData.InventoryItems == null) kindData.InventoryItems = new List<SpecRequirementEdit>();
             // 使用新的 AmmoProviderManager 统一处理
             AmmoProviderManager.TryAutoAddAmmo(weaponDef, kindData.InventoryItems);
         }

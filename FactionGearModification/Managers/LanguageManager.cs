@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,290 +7,251 @@ using Verse;
 
 namespace FactionGearCustomizer
 {
-    /// <summary>
-    /// Legacy wrapper kept to preserve existing call sites while preferring RimWorld's
-    /// native translation pipeline and providing deterministic file-based fallback.
-    /// </summary>
     public static class LanguageManager
     {
-        private static readonly Dictionary<string, Dictionary<string, string>> FallbackCache =
-            new Dictionary<string, Dictionary<string, string>>();
+        private static Dictionary<string, string> strings = new Dictionary<string, string>();
+        private static string currentLanguage = "English";
 
-        private static readonly Dictionary<string, string[]> LanguageAliases =
-            new Dictionary<string, string[]>
-            {
-                { "ChineseTraditional", new[] { "ChineseTraditional", "ChineseTraditional繁體中文", "ChineseTraditionalChineseTraditional", "ChineseTraditionalChinese", "ChineseTraditionalTraditional", "ChineseTraditionalzhhant", "ChineseTraditionalzhtw", "ChineseTraditionalcht", "ChineseTraditionaltc", "ChineseTraditionaltraditionalchinese", "ChineseTraditionalchinesetraditional", "ChineseTraditionalhant", "ChineseTraditionalzhtraditional", "ChineseTraditional繁体中文", "ChineseTraditionaltraditional" } },
-                { "ChineseSimplified", new[] { "ChineseSimplified", "ChineseSimplified简体中文", "ChineseSimplifiedChineseSimplified", "ChineseSimplifiedChinese", "ChineseSimplifiedSimplified", "ChineseSimplifiedzhhans", "ChineseSimplifiedzhcn", "ChineseSimplifiedchs", "ChineseSimplifiedsc", "ChineseSimplifiedsimplifiedchinese", "ChineseSimplifiedchinesesimplified", "ChineseSimplifiedhans", "ChineseSimplifiedzhsimplified", "ChineseSimplified简体", "ChineseSimplifiedsimplified" } },
-                { "English", new[] { "English", "EnglishEnglish", "Englishen", "Englishenus", "Englishengb" } }
-            };
-
-        private static readonly Dictionary<string, string> NormalizedAliasMap =
-            BuildNormalizedAliasMap();
-
-        private static ModContentPack modContent;
-        private static string lastLanguageToken;
-        private static string[] activeFallbackLanguages = new[] { "English" };
-
-        public static string CurrentLanguage =>
-            LanguageDatabase.activeLanguage?.folderName ?? "English";
-
-        public static IEnumerable<string> AvailableLanguages
+        private static readonly Dictionary<string, string[]> LanguageAliases = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
         {
-            get
-            {
-                string root = GetLanguageRoot();
-                if (string.IsNullOrWhiteSpace(root) || !Directory.Exists(root))
-                {
-                    return new[] { "English" };
-                }
+            { "Russian", new[] { "Russian (Русский)", "Русский", "ru", "ru-ru" } },
+            { "English", new[] { "English (English)", "en", "en-us", "en-gb" } },
+            { "ChineseSimplified", new[] { "Chinese (Simplified)", "ChineseSimplified (简体中文)", "简体中文", "zh-hans", "zh-cn" } },
+            { "ChineseTraditional", new[] { "Chinese (Traditional)", "ChineseTraditional (繁體中文)", "繁體中文", "zh-hant", "zh-tw" } }
+        };
 
-                return Directory.GetDirectories(root)
-                    .Select(Path.GetFileName)
-                    .Where(folderName => !string.IsNullOrWhiteSpace(folderName))
-                    .Distinct()
-                    .OrderBy(folderName => folderName)
-                    .ToArray();
-            }
-        }
+        private static bool dataLoaded = false;
+        private static string lastGameLanguage = null;
+        private static string cachedModPath = null;
+
+        public static string CurrentLanguage => currentLanguage;
 
         public static void Initialize(ModContentPack content = null)
         {
             if (content != null)
+                cachedModPath = content.RootDir;
+        }
+
+        private static void EnsureLoaded()
+        {
+            string gameLanguage = LanguageDatabase.activeLanguage?.folderName ?? "English";
+            if (dataLoaded && lastGameLanguage == gameLanguage) return;
+
+            try
             {
-                modContent = content;
+                currentLanguage = ResolveLanguageOrFallback(gameLanguage);
+                LoadStrings(currentLanguage);
+                lastGameLanguage = gameLanguage;
+                dataLoaded = true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[FactionGearCustomizer] Failed to init language '{gameLanguage}': {ex}");
+                strings.Clear();
+                dataLoaded = true;
+            }
+        }
+
+        private static void LoadStrings(string language)
+        {
+            strings.Clear();
+
+            string modPath = GetModPath();
+            if (string.IsNullOrEmpty(modPath))
+            {
+                Log.Error("[FactionGearCustomizer] GetModPath returned null — cannot load language files");
+                return;
             }
 
-            FallbackCache.Clear();
-            lastLanguageToken = null;
-            activeFallbackLanguages = new[] { "English" };
+            string xmlPath = GetKeyedFilePath(modPath, language);
+            if (xmlPath == null)
+            {
+                Log.Error($"[FactionGearCustomizer] Keyed file not found for language '{language}' in mod: {modPath}");
+                return;
+            }
+
+            try
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.Load(xmlPath);
+
+                XmlNode root = doc.SelectSingleNode("LanguageData");
+                if (root == null)
+                {
+                    Log.Error($"[FactionGearCustomizer] No LanguageData root in: {xmlPath}");
+                    return;
+                }
+
+                int count = 0;
+                foreach (XmlNode node in root.ChildNodes)
+                {
+                    if (node.NodeType == XmlNodeType.Element)
+                    {
+                        strings[node.Name] = node.InnerText;
+                        count++;
+                    }
+                }
+                Log.Message($"[FactionGearCustomizer] Loaded {count} keys for '{language}'");
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[FactionGearCustomizer] XML parse error for '{xmlPath}': {ex.Message}");
+            }
         }
 
         public static string Get(string key)
         {
             if (string.IsNullOrWhiteSpace(key))
-            {
                 return "MISSING_KEY";
-            }
 
-            EnsureLanguageState();
-            foreach (string language in activeFallbackLanguages)
-            {
-                if (!TryGetFromFallbackFile(language, key, out string value))
-                {
-                    continue;
-                }
+            EnsureLoaded();
 
-                if (!string.IsNullOrWhiteSpace(value))
-                {
-                    return value;
-                }
-            }
+            if (strings.TryGetValue(key, out string value) && !string.IsNullOrWhiteSpace(value))
+                return value;
 
-            return key.Translate().ToString();
+            string fallback = key.Translate();
+            if (fallback != key && !string.IsNullOrWhiteSpace(fallback))
+                return fallback;
+
+            return key;
         }
 
         public static string Get(string key, params object[] args)
         {
-            if (string.IsNullOrWhiteSpace(key))
-            {
-                return "MISSING_KEY";
-            }
-
-            string translated = Get(key);
+            string format = Get(key);
             if (args == null || args.Length == 0)
-            {
-                return translated;
-            }
+                return format;
 
-            try
-            {
-                return string.Format(translated, args);
-            }
-            catch
-            {
-                return translated;
-            }
+            try { return string.Format(format, args); }
+            catch { return format; }
         }
 
-        public static void SetLanguage(string language)
+        private static string ResolveLanguageOrFallback(string requestedLanguage)
         {
-            Log.Warning("[FactionGearCustomizer] LanguageManager.SetLanguage is obsolete. Use RimWorld language settings instead.");
+            string modPath = GetModPath();
+            if (string.IsNullOrEmpty(modPath)) return "English";
+
+            string resolved = ResolveLanguageFolderName(modPath, requestedLanguage);
+            return !string.IsNullOrEmpty(resolved) ? resolved : "English";
         }
 
-        private static void EnsureLanguageState()
+        private static string GetKeyedFilePath(string modPath, string language)
         {
-            string currentToken = CurrentLanguage;
-            if (string.Equals(lastLanguageToken, currentToken))
+            foreach (string root in GetLanguageRoots(modPath))
             {
-                return;
+                string path = Path.Combine(root, language, "Keyed", "FactionGearCustomizer.xml");
+                if (File.Exists(path)) return path;
             }
-
-            lastLanguageToken = currentToken;
-            string current = ResolveCanonicalLanguage(currentToken);
-            if (string.Equals(current, "ChineseTraditional"))
-            {
-                activeFallbackLanguages = new[] { "ChineseTraditional", "ChineseSimplified", "English" };
-                return;
-            }
-
-            activeFallbackLanguages = string.Equals(current, "English")
-                ? new[] { "English" }
-                : new[] { current, "English" };
+            return null;
         }
 
-        private static bool TryGetFromFallbackFile(string language, string key, out string value)
+        private static IEnumerable<string> GetLanguageRoots(string modPath)
         {
-            value = null;
-            Dictionary<string, string> data = GetLanguageFallbackData(language);
-            return data != null && data.TryGetValue(key, out value);
+            return new[]
+            {
+                Path.Combine(modPath, "1.6", "Languages"),
+                Path.Combine(modPath, "Languages"),
+                Path.Combine(modPath, "1.6", "Language"),
+                Path.Combine(modPath, "Language")
+            };
         }
 
-        private static Dictionary<string, string> GetLanguageFallbackData(string language)
+        private static bool HasKeyedFile(string modPath, string language)
         {
-            string canonicalLanguage = ResolveCanonicalLanguage(language);
-            if (string.IsNullOrWhiteSpace(canonicalLanguage))
+            return GetKeyedFilePath(modPath, language) != null;
+        }
+
+        private static string ResolveLanguageFolderName(string modPath, string requestedLanguage)
+        {
+            if (string.IsNullOrWhiteSpace(requestedLanguage)) return null;
+
+            if (HasKeyedFile(modPath, requestedLanguage))
+                return requestedLanguage;
+
+            foreach (string candidate in GetLanguageCandidates(requestedLanguage))
             {
-                return null;
+                if (HasKeyedFile(modPath, candidate))
+                    return candidate;
             }
 
-            if (FallbackCache.TryGetValue(canonicalLanguage, out Dictionary<string, string> cached))
+            string normalized = NormalizeLanguageToken(requestedLanguage);
+            if (string.IsNullOrEmpty(normalized)) return null;
+
+            foreach (string folder in GetAvailableLanguages(modPath))
             {
-                return cached;
+                if (NormalizeLanguageToken(folder) == normalized)
+                    return folder;
             }
 
-            string path = GetKeyedFilePath(canonicalLanguage);
-            var data = new Dictionary<string, string>();
-            if (!File.Exists(path))
-            {
-                FallbackCache[canonicalLanguage] = data;
-                return data;
-            }
+            return null;
+        }
 
-            try
+        private static IEnumerable<string> GetAvailableLanguages(string modPath)
+        {
+            var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (string root in GetLanguageRoots(modPath))
             {
-                var document = new XmlDocument();
-                document.Load(path);
-                XmlNode root = document.SelectSingleNode("LanguageData");
-                if (root == null)
+                if (!Directory.Exists(root)) continue;
+                foreach (string dir in Directory.GetDirectories(root))
                 {
-                    FallbackCache[canonicalLanguage] = data;
-                    return data;
-                }
-
-                foreach (XmlNode node in root.ChildNodes)
-                {
-                    if (node.NodeType != XmlNodeType.Element)
-                    {
-                        continue;
-                    }
-
-                    data[node.Name] = node.InnerText;
+                    string folderName = Path.GetFileName(dir);
+                    string keyedPath = Path.Combine(dir, "Keyed", "FactionGearCustomizer.xml");
+                    if (File.Exists(keyedPath) && !string.IsNullOrWhiteSpace(folderName))
+                        names.Add(folderName);
                 }
             }
-            catch (XmlException ex)
-            {
-                Log.Warning($"[FactionGearCustomizer] Failed to parse fallback language file '{path}': {ex.Message}");
-            }
-            catch (IOException ex)
-            {
-                Log.Warning($"[FactionGearCustomizer] Failed to read fallback language file '{path}': {ex.Message}");
-            }
 
-            FallbackCache[canonicalLanguage] = data;
-            return data;
+            if (names.Count == 0) names.Add("English");
+            return names.OrderBy(x => x).ToArray();
         }
 
-        private static string GetKeyedFilePath(string language)
+        private static IEnumerable<string> GetLanguageCandidates(string requestedLanguage)
         {
-            return Path.Combine(GetLanguageRoot(), language, "Keyed", "FactionGearCustomizer.xml");
-        }
+            var candidates = new List<string>();
+            string trimmed = requestedLanguage?.Trim();
+            if (string.IsNullOrEmpty(trimmed)) return candidates;
 
-        private static string GetLanguageRoot()
-        {
-            if (modContent == null)
+            candidates.Add(trimmed);
+
+            int bracketIndex = trimmed.IndexOf(" (", StringComparison.Ordinal);
+            if (bracketIndex > 0)
+                candidates.Add(trimmed.Substring(0, bracketIndex).Trim());
+
+            foreach (var pair in LanguageAliases)
             {
-                return string.Empty;
+                if (pair.Key.Equals(trimmed, StringComparison.OrdinalIgnoreCase) ||
+                    pair.Value.Any(v => v.Equals(trimmed, StringComparison.OrdinalIgnoreCase)))
+                {
+                    candidates.Add(pair.Key);
+                    candidates.AddRange(pair.Value);
+                }
             }
 
-            return Path.Combine(modContent.RootDir, "1.6", "Languages");
-        }
-
-        private static string ResolveCanonicalLanguage(string language)
-        {
-            if (string.IsNullOrWhiteSpace(language))
-            {
-                return string.Empty;
-            }
-
-            string normalized = NormalizeLanguageToken(language);
-            if (LooksLikeTraditionalChinese(normalized))
-            {
-                return "ChineseTraditional";
-            }
-
-            if (LooksLikeSimplifiedChinese(normalized))
-            {
-                return "ChineseSimplified";
-            }
-
-            if (NormalizedAliasMap.TryGetValue(normalized, out string canonical))
-            {
-                return canonical;
-            }
-
-            return language.Trim();
+            return candidates
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct(StringComparer.OrdinalIgnoreCase);
         }
 
         private static string NormalizeLanguageToken(string value)
         {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                return string.Empty;
-            }
-
-            return new string(value
-                .Where(char.IsLetterOrDigit)
+            if (string.IsNullOrWhiteSpace(value)) return string.Empty;
+            var chars = value.Where(char.IsLetterOrDigit)
                 .Select(char.ToLowerInvariant)
-                .ToArray());
+                .ToArray();
+            return new string(chars);
         }
 
-        private static bool LooksLikeTraditionalChinese(string normalized)
+        private static string GetModPath()
         {
-            return normalized.Contains("zhtw") ||
-                   normalized.Contains("zhhant") ||
-                   normalized.Contains("traditionalchinese") ||
-                   normalized.Contains("chinesetraditional") ||
-                   (normalized.Contains("traditional") && normalized.Contains("chinese")) ||
-                   normalized.Contains("cht") ||
-                   normalized.Contains("tc") ||
-                   normalized.Contains("hant");
-        }
+            if (!string.IsNullOrEmpty(cachedModPath))
+                return cachedModPath;
 
-        private static bool LooksLikeSimplifiedChinese(string normalized)
-        {
-            return normalized.Contains("zhcn") ||
-                   normalized.Contains("zhhans") ||
-                   normalized.Contains("simplifiedchinese") ||
-                   normalized.Contains("chinesesimplified") ||
-                   (normalized.Contains("simplified") && normalized.Contains("chinese")) ||
-                   normalized.Contains("chs") ||
-                   normalized.Contains("sc") ||
-                   normalized.Contains("hans");
-        }
+            var mod = LoadedModManager.RunningMods.FirstOrDefault(
+                m => m.PackageId == "yancy.factiongearcustomizer");
+            if (mod != null)
+                cachedModPath = mod.RootDir;
 
-        private static Dictionary<string, string> BuildNormalizedAliasMap()
-        {
-            var map = new Dictionary<string, string>();
-            foreach (var pair in LanguageAliases)
-            {
-                map[NormalizeLanguageToken(pair.Key)] = pair.Key;
-                foreach (string alias in pair.Value)
-                {
-                    map[NormalizeLanguageToken(alias)] = pair.Key;
-                }
-            }
-
-            return map;
+            return cachedModPath;
         }
     }
 }
