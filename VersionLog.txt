@@ -1,4 +1,15 @@
-﻿v1.5.9
+﻿v1.6.0
+- Fix: 删除 ClearOriginalDataCache() + 重复 SaveAllOriginalData()，防止 pristine 数据被 ApplyAllSettings 污染后覆盖。
+- Fix: maxTotalPoints < 10000 的 Combat 组自动展开为 9999999；groupsModified=false 时清理旧损坏数据。
+- Fix: 新增 Patch_CanGenerateFrom_TileBypass — 对自定义群组派系，绕过 vanilla 的 tile 检查（解决"no usable PawnGroupMakers"错误）。
+
+v1.5.10
+- Fix: CE 环境下编辑器添加武器时弹药不自动添加到物品栏——InventoryItems 默认 null 导致 TryAutoAddAmmo 静默失败。
+- Fix: 英文 Keyed XML 第 531 行 & 未转义（& → &amp;）导致整个语言文件解析失败，非中文语言键全部失效。
+- Refactor: LanguageManager 恢复为自定义加载 + key.Translate() 兜底架构，移除 80fa7b3 引入的有缺陷的 fallback 链系统。
+- Add: CLAUDE.md 加入 XML 特殊字符转义规则。
+
+v1.5.9
 - Update: 统一图标资源，全部指向 UI/Logo.png，移除冗余图标文件。
 - Update: MainButton 收窄为图标模式（minimized），底部标签栏仅显示 Logo 无文字。
 - Update: build.ps1 增加 Logo.png 备份还原机制，防止部署覆盖。

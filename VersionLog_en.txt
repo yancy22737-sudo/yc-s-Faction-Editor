@@ -1,3 +1,14 @@
+v1.6.0
+- Fix: Removed ClearOriginalDataCache() + duplicate SaveAllOriginalData() to prevent pristine data from being overwritten by polluted ApplyAllSettings results.
+- Fix: Combat groups with maxTotalPoints < 10000 auto-expanded to 9999999; corrupted old data cleaned when groupsModified=false.
+- Fix: Added Patch_CanGenerateFrom_TileBypass — bypasses vanilla tile check for custom group factions (fixes "no usable PawnGroupMakers" error).
+
+v1.5.10
+- Fix: CE ammo not auto-added to editor inventory when equipping weapons — InventoryItems defaulted to null, causing TryAutoAddAmmo to silently return.
+- Fix: English Keyed XML line 531 had unescaped & (& → &amp;), breaking the entire language file and causing all non-Chinese translation keys to fail.
+- Refactor: LanguageManager restored to custom loading + key.Translate() fallback, removing the flawed fallback-chain system introduced in 80fa7b3.
+- Add: CLAUDE.md with XML escape rules for language files.
+
 v1.5.9
 - Update: Unified all icon assets to UI/Logo.png, removed duplicate icon files.
 - Update: MainButton narrowed to icon-only mode (minimized), no text label.
