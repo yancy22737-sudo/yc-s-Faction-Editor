@@ -356,10 +356,14 @@ namespace FactionGearCustomizer.UI
             // Icon Path
             listing.Label(LanguageManager.Get("FactionIconPath"));
             Rect iconPathRect = listing.GetRect(30f);
-            bufferIconPath = Widgets.TextField(new Rect(iconPathRect.x, iconPathRect.y, iconPathRect.width - 80f, 30f), bufferIconPath);
-            if (Widgets.ButtonText(new Rect(iconPathRect.width - 75f, iconPathRect.y, 75f, 30f), LanguageManager.Get("Browse")))
+            bufferIconPath = Widgets.TextField(new Rect(iconPathRect.x, iconPathRect.y, iconPathRect.width - 165f, 30f), bufferIconPath);
+            if (Widgets.ButtonText(new Rect(iconPathRect.x + iconPathRect.width - 160f, iconPathRect.y, 75f, 30f), LanguageManager.Get("Browse")))
             {
                 Find.WindowStack.Add(new Dialog_TextureBrowser((path) => bufferIconPath = path));
+            }
+            if (Widgets.ButtonText(new Rect(iconPathRect.x + iconPathRect.width - 80f, iconPathRect.y, 75f, 30f), LanguageManager.Get("HandDraw")))
+            {
+                Find.WindowStack.Add(new Window_DrawingBoard((path) => bufferIconPath = path));
             }
             listing.Gap();
 
@@ -702,29 +706,29 @@ namespace FactionGearCustomizer.UI
                     kindLabelBuffers[kind.defName] = sanitized;
                 }
 
-                // Xenotype Edit Button (Biotech DLC)
-                if (ModsConfig.BiotechActive)
+                // Edit Button (Biotech DLC) — hover only
+                if (ModsConfig.BiotechActive && Mouse.IsOver(row))
                 {
-                    Rect xenoBtnRect = new Rect(row.x + row.width * 0.86f, row.y + 5f, 55f, 30f);
+                    Rect editBtnRect = new Rect(row.x + row.width * 0.86f, row.y + 5f, 55f, 30f);
                     var kindData = factionData.GetKindData(kind.defName);
-                    bool hasXenoSettings = kindData != null &&
+                    bool hasSettings = kindData != null &&
                         (kindData.DisableXenotypeChances ||
                          (kindData.XenotypeChances != null && kindData.XenotypeChances.Count > 0) ||
                          !string.IsNullOrEmpty(kindData.ForcedXenotype));
 
-                    if (hasXenoSettings)
+                    if (hasSettings)
                     {
                         GUI.color = Color.cyan;
                     }
 
-                    if (Widgets.ButtonText(xenoBtnRect, LanguageManager.Get("XenoButtonLabel")))
+                    if (Widgets.ButtonText(editBtnRect, LanguageManager.Get("XenoButtonLabel")))
                     {
                         var dataToEdit = factionData.GetOrCreateKindData(kind.defName);
                         Find.WindowStack.Add(new Dialog_KindXenotypeEditor(kind, dataToEdit, factionDef.defName));
                     }
 
                     GUI.color = Color.white;
-                    TooltipHandler.TipRegion(xenoBtnRect, LanguageManager.Get("KindXenotypeTooltip"));
+                    TooltipHandler.TipRegion(editBtnRect, LanguageManager.Get("KindXenotypeTooltip"));
                 }
 
                 y += rowHeight;

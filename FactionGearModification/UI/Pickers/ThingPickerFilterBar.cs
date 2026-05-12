@@ -445,8 +445,7 @@ namespace FactionGearCustomizer.UI.Pickers
             }
             else if (state.SelectedMods.Count == 1)
             {
-                string s = state.SelectedMods.First();
-                modText = s.Length > 10 ? s.Substring(0, 8) + "..." : s;
+                modText = state.SelectedMods.First();
             }
             else
             {

@@ -211,57 +211,60 @@ namespace FactionGearCustomizer.UI.Panels
                 Widgets.Label(new Rect(labelRect.x, labelRect.y + 6f, labelRect.width, 20f), labelText);
             }
 
-            // Copy/Paste Buttons
-            float btnSize = 20f;
-            float btnSpacing = 4f;
-            float btnX = rowRect.width - (btnSize * 2 + btnSpacing + 4f); // Align to right
-            float btnY = rowRect.y + (rowRect.height - btnSize) / 2f;
-
-            // Copy
-            Texture2D kindCopyTex = TexCache.CopyTex ?? Widgets.CheckboxOnTex;
-            Rect copyBtnRect = new Rect(btnX, btnY, btnSize, btnSize);
-            if (Widgets.ButtonImage(copyBtnRect, kindCopyTex))
+            // Copy/Paste Buttons — hover only
+            if (Mouse.IsOver(rowRect))
             {
-                if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName) && !string.IsNullOrEmpty(kindDef.defName))
-                {
-                    var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
-                    var kindData = factionData.GetOrCreateKindData(kindDef.defName);
-                    EditorSession.CopiedKindGearData = kindData.DeepCopy();
-                    Messages.Message("Copied gear from " + labelText, MessageTypeDefOf.NeutralEvent, false);
-                }
-            }
-            TooltipHandler.TipRegion(copyBtnRect, "Copy this KindDef's gear");
+                float btnSize = 20f;
+                float btnSpacing = 4f;
+                float btnX = rowRect.width - (btnSize * 2 + btnSpacing + 4f);
+                float btnY = rowRect.y + (rowRect.height - btnSize) / 2f;
 
-            // Paste
-            btnX += btnSize + btnSpacing;
-            Texture2D kindPasteTex = TexCache.PasteTex ?? Widgets.CheckboxOnTex;
-            Rect pasteBtnRect = new Rect(btnX, btnY, btnSize, btnSize);
-
-            if (EditorSession.CopiedKindGearData != null)
-            {
-                if (Widgets.ButtonImage(pasteBtnRect, kindPasteTex))
+                // Copy
+                Texture2D kindCopyTex = TexCache.CopyTex ?? Widgets.CheckboxOnTex;
+                Rect copyBtnRect = new Rect(btnX, btnY, btnSize, btnSize);
+                if (Widgets.ButtonImage(copyBtnRect, kindCopyTex))
                 {
                     if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName) && !string.IsNullOrEmpty(kindDef.defName))
                     {
                         var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
-                        var targetKindData = factionData.GetOrCreateKindData(kindDef.defName);
-                        if (targetKindData != null)
-                        {
-                            UndoManager.RecordState(targetKindData);
-                            targetKindData.CopyFrom(EditorSession.CopiedKindGearData);
-                            targetKindData.isModified = true;
-                            FactionGearEditor.MarkDirty(); // Notify editor
-                            Messages.Message("Pasted gear to " + labelText, MessageTypeDefOf.NeutralEvent, false);
-                        }
+                        var kindData = factionData.GetOrCreateKindData(kindDef.defName);
+                        EditorSession.CopiedKindGearData = kindData.DeepCopy();
+                        Messages.Message("Copied gear from " + labelText, MessageTypeDefOf.NeutralEvent, false);
                     }
                 }
-                TooltipHandler.TipRegion(pasteBtnRect, "Paste gear to this KindDef");
-            }
-            else
-            {
-                GUI.color = new Color(1f, 1f, 1f, 0.3f);
-                Widgets.ButtonImage(pasteBtnRect, kindPasteTex);
-                GUI.color = Color.white;
+                TooltipHandler.TipRegion(copyBtnRect, LanguageManager.Get("CopyKindTooltip"));
+
+                // Paste
+                btnX += btnSize + btnSpacing;
+                Texture2D kindPasteTex = TexCache.PasteTex ?? Widgets.CheckboxOnTex;
+                Rect pasteBtnRect = new Rect(btnX, btnY, btnSize, btnSize);
+
+                if (EditorSession.CopiedKindGearData != null)
+                {
+                    if (Widgets.ButtonImage(pasteBtnRect, kindPasteTex))
+                    {
+                        if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName) && !string.IsNullOrEmpty(kindDef.defName))
+                        {
+                            var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
+                            var targetKindData = factionData.GetOrCreateKindData(kindDef.defName);
+                            if (targetKindData != null)
+                            {
+                                UndoManager.RecordState(targetKindData);
+                                targetKindData.CopyFrom(EditorSession.CopiedKindGearData);
+                                targetKindData.isModified = true;
+                                FactionGearEditor.MarkDirty();
+                                Messages.Message("Pasted gear to " + labelText, MessageTypeDefOf.NeutralEvent, false);
+                            }
+                        }
+                    }
+                    TooltipHandler.TipRegion(pasteBtnRect, LanguageManager.Get("PasteKindTooltip"));
+                }
+                else
+                {
+                    GUI.color = new Color(1f, 1f, 1f, 0.3f);
+                    Widgets.ButtonImage(pasteBtnRect, kindPasteTex);
+                    GUI.color = Color.white;
+                }
             }
         }
 
@@ -270,51 +273,7 @@ namespace FactionGearCustomizer.UI.Panels
             var factionDef = DefDatabase<FactionDef>.GetNamedSilentFail(EditorSession.SelectedFactionDefName);
             if (factionDef == null) return;
 
-            // 获取当前派系已有的兵种
-            var existingKinds = GetKindsToDraw();
-            var existingKindNames = new HashSet<string>(existingKinds.Select(k => k.defName));
-
-            // 打开兵种选择器，排除已有的兵种和非人类单位
-            Find.WindowStack.Add(new Dialog_PawnKindPicker((selectedKinds) => {
-                if (selectedKinds != null && selectedKinds.Count > 0)
-                {
-                    var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
-                    int addedCount = 0;
-                    int skippedCount = 0;
-
-                    foreach (var kind in selectedKinds)
-                    {
-                        // 禁止添加非人类单位
-                        if (kind.RaceProps == null || !kind.RaceProps.Humanlike)
-                        {
-                            skippedCount++;
-                            continue;
-                        }
-                        
-                        if (!existingKindNames.Contains(kind.defName))
-                        {
-                            // 为该兵种创建设置数据
-                            var kindData = factionData.GetOrCreateKindData(kind.defName);
-                            kindData.isModified = true;
-                            addedCount++;
-                        }
-                    }
-
-                    if (addedCount > 0)
-                    {
-                        // 清除缓存以刷新列表
-                        ClearCache();
-                        FactionGearEditor.ClearFactionKindsCache();
-                        FactionGearEditor.MarkDirty();
-                        Messages.Message(LanguageManager.Get("AddedPawnKinds", addedCount), MessageTypeDefOf.PositiveEvent, false);
-                    }
-                    
-                    if (skippedCount > 0)
-                    {
-                        Messages.Message(LanguageManager.Get("SkippedNonHumanKinds", skippedCount), MessageTypeDefOf.RejectInput, false);
-                    }
-                }
-            }, factionDef, existingKindNames));
+            Find.WindowStack.Add(new Window_FactionGroupEditor(factionDef));
         }
     }
 }

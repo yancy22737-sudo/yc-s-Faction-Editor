@@ -1,3 +1,12 @@
+v1.6.1
+- Add: Enhanced color picker with visual 2D color field, hue slider, RGB sliders, preset palette, and color history.
+- Add: Pixel drawing board for custom faction icons — brush/eraser tools, undo stack, flood fill, quick palette, resizable canvas.
+- Add: Window_FactionGroupEditor — standalone faction group editor, accessible from kind list "+" button.
+- Add: Kind editor window redesigned with vanilla-style UI; kind list copy/paste hover-only with language key tooltips.
+- Fix: Mod source cache now invalidates on category switch, preventing missing mod filter entries.
+- Fix: Mod name truncation removed from mod filter button, allowing full names to display.
+- Fix: Hediff picker now sorts by market value; market value column shown in rows; defaults to "All Categories".
+
 v1.6.0
 - Fix: Removed ClearOriginalDataCache() + duplicate SaveAllOriginalData() to prevent pristine data from being overwritten by polluted ApplyAllSettings results.
 - Fix: Combat groups with maxTotalPoints < 10000 auto-expanded to 9999999; corrupted old data cleaned when groupsModified=false.

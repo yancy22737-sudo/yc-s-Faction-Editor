@@ -175,6 +175,23 @@
   <WeightMechanicsTooltip>权重机制：在边缘世界中, 装备权重作为选择权重, 而非100%被选择。高权重的装备将优先被选择穿戴。</WeightMechanicsTooltip>
   <ColorPicker>颜色选择器</ColorPicker>
   <ColorPickerApply>应用</ColorPickerApply>
+  <ColorPresets>常用色板</ColorPresets>
+  <ColorHistory>历史记录</ColorHistory>
+  <DrawingBoard>绘图板</DrawingBoard>
+  <CurrentColor>当前颜色</CurrentColor>
+  <MoreColors>更多颜色...</MoreColors>
+  <BrushSize>画笔大小</BrushSize>
+  <Undo>撤销</Undo>
+  <HandDraw>手绘</HandDraw>
+  <CanvasSize>画布大小</CanvasSize>
+  <Zoom>缩放</Zoom>
+  <ImportTemplate>导入模板</ImportTemplate>
+  <ShowTemplate>显示模板</ShowTemplate>
+  <TemplateScale>模板缩放</TemplateScale>
+  <ImportTemplateTooltip>导入当前派系头像作为绘制模板</ImportTemplateTooltip>
+  <NoTemplateFound>未找到可用的模板</NoTemplateFound>
+  <NoHistory>无记录</NoHistory>
+  <Fill>填充</Fill>
   <UnsavedChanges>未保存的更改</UnsavedChanges>
   <UnsavedChangesMessage>您有未保存的更改。是否要保存？</UnsavedChangesMessage>
   <Discard>放弃</Discard>
@@ -371,9 +388,11 @@
   <DisableXenotypeChances>禁用异种人概率控制</DisableXenotypeChances>
   <AddXenotype>添加异种人</AddXenotype>
   <AllXenotypesAdded>已添加所有异种人。</AllXenotypesAdded>
-  <KindXenotypeSettings>兵种异种设置</KindXenotypeSettings>
-  <KindXenotypeTooltip>为当前兵种设置独立的异种生成概率，可覆盖派系统一设置。</KindXenotypeTooltip>
-  <XenoButtonLabel>异种</XenoButtonLabel>
+  <KindXenotypeSettings>兵种编辑</KindXenotypeSettings>
+  <KindXenotypeTooltip>编辑兵种的异种生成、年龄限制等设置。</KindXenotypeTooltip>
+  <XenoButtonLabel>编辑</XenoButtonLabel>
+  <CopyKindTooltip>复制此兵种的装备配置</CopyKindTooltip>
+  <PasteKindTooltip>粘贴装备配置到此兵种</PasteKindTooltip>
   <ForcedXenotype>强制异种</ForcedXenotype>
   <ForcedXenotypeTooltip>强制指定该兵种只能生成此异种，忽略概率设置。</ForcedXenotypeTooltip>
   <SelectXenotype>选择异种人</SelectXenotype>
@@ -424,6 +443,7 @@
   <Category_Mechanoid>机械族</Category_Mechanoid>
   <Category_Other>其他</Category_Other>
   <AddGroup>添加群组</AddGroup>
+  <FactionGroupEditorTitle>派系群组编辑 - {0}</FactionGroupEditorTitle>
   <Group>群组</Group>
   <GroupName>群组名称</GroupName>
   <GroupDefaultName>{0} #{1}</GroupDefaultName>

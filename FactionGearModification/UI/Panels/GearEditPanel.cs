@@ -464,9 +464,15 @@ namespace FactionGearCustomizer.UI.Panels
             if (EditorSession.CurrentAdvancedTab == AdvancedTab.Apparel || EditorSession.CurrentAdvancedTab == AdvancedTab.Weapons)
             {
                 if (EditorSession.CurrentAdvancedTab == AdvancedTab.Apparel && EditorSession.SelectedCategory != GearCategory.Apparel && EditorSession.SelectedCategory != GearCategory.Armors)
+                {
                     EditorSession.SelectedCategory = GearCategory.Apparel;
+                    EditorSession.CachedModSources = null;
+                }
                 if (EditorSession.CurrentAdvancedTab == AdvancedTab.Weapons && EditorSession.SelectedCategory != GearCategory.Weapons && EditorSession.SelectedCategory != GearCategory.MeleeWeapons)
+                {
                     EditorSession.SelectedCategory = GearCategory.Weapons;
+                    EditorSession.CachedModSources = null;
+                }
 
                 var gearItems = GetCurrentCategoryGear(kindData);
                 foreach (var item in gearItems)
@@ -1325,6 +1331,8 @@ namespace FactionGearCustomizer.UI.Panels
                         EditorSession.SelectedCategory = cat;
                         EditorSession.ExpandedGearItem = null;
                         EditorSession.SelectedAmmoSets.Clear();
+                        EditorSession.CachedModSources = null;
+                        FactionGearEditor.GetUniqueModSources();
                         FactionGearEditor.CalculateBounds();
                     }
                 }

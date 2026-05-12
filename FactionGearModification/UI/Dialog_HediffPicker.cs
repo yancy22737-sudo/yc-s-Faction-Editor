@@ -54,6 +54,7 @@ namespace FactionGearCustomizer.UI
             draggable = true;
             resizeable = true;
             filterState = PickerSession.Hediffs;
+            filterState.SelectedCategories.Clear();
             BuildCandidates();
         }
 
@@ -232,11 +233,11 @@ namespace FactionGearCustomizer.UI
         private void DrawSelectionRow(Rect inRect, ref float y)
         {
             Rect rowRect = new Rect(0f, y, inRect.width, 28f);
+            float gap = 4f;
 
-            float btnW = 110f;
-            Rect allRect = new Rect(rowRect.x, rowRect.y, btnW, rowRect.height);
-            Rect noneRect = new Rect(allRect.xMax + 6f, rowRect.y, btnW, rowRect.height);
-            Rect invertRect = new Rect(noneRect.xMax + 6f, rowRect.y, btnW, rowRect.height);
+            Rect allRect = new Rect(rowRect.x, rowRect.y, 90f, rowRect.height);
+            Rect noneRect = new Rect(allRect.xMax + gap, rowRect.y, 90f, rowRect.height);
+            Rect invertRect = new Rect(noneRect.xMax + gap, rowRect.y, 70f, rowRect.height);
 
             if (Widgets.ButtonText(allRect, LanguageManager.Get("SelectAll")))
             {
@@ -257,11 +258,21 @@ namespace FactionGearCustomizer.UI
                 selected = next;
             }
 
-            Rect dupRect = new Rect(invertRect.xMax + 18f, rowRect.y, 240f, rowRect.height);
+            // Sort toggle (MarketValue asc/desc only)
+            string sortLabel = LanguageManager.Get("SortField_MarketValue", "市场价值");
+            string arrow = filterState.SortAscending ? " ▲" : " ▼";
+            Rect sortRect = new Rect(invertRect.xMax + gap, rowRect.y, 110f, rowRect.height);
+            if (Widgets.ButtonText(sortRect, sortLabel + arrow))
+            {
+                filterState.SortAscending = !filterState.SortAscending;
+                OnFilterChanged();
+            }
+
+            Rect dupRect = new Rect(sortRect.xMax + 8f, rowRect.y, 150f, rowRect.height);
             Widgets.CheckboxLabeled(dupRect, LanguageManager.Get("SkipExistingItems"), ref skipExisting);
 
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(new Rect(rowRect.xMax - 220f, rowRect.y, 220f, rowRect.height), $"{LanguageManager.Get("Selected")}: {selected.Count}");
+            Widgets.Label(new Rect(rowRect.xMax - 115f, rowRect.y, 115f, rowRect.height), $"{LanguageManager.Get("Selected")}: {selected.Count}");
             Text.Anchor = TextAnchor.UpperLeft;
 
             y += 34f;
@@ -319,10 +330,17 @@ namespace FactionGearCustomizer.UI
                 x += 28f;
             }
 
-            Rect leftRect = new Rect(x, inner.y, inner.width - (x - inner.x) - 160f, inner.height);
-            Rect rightRect = new Rect(leftRect.xMax + 6f, inner.y, 154f, inner.height);
+            Rect leftRect = new Rect(x, inner.y, inner.width - (x - inner.x) - 190f, inner.height);
+            Rect valueRect = new Rect(leftRect.xMax + 4f, inner.y, 80f, inner.height);
+            Rect rightRect = new Rect(valueRect.xMax + 4f, inner.y, 106f, inner.height);
 
             Widgets.Label(leftRect, def.LabelCap.ToString());
+
+            // Market value
+            float marketValue = GetHediffMarketValue(def);
+            Text.Anchor = TextAnchor.MiddleCenter;
+            GUI.color = Color.white;
+            Widgets.Label(valueRect, marketValue > 0 ? marketValue.ToStringMoney("F0") : "-");
 
             Text.Anchor = TextAnchor.MiddleRight;
             GUI.color = Color.gray;
@@ -487,13 +505,20 @@ namespace FactionGearCustomizer.UI
                 });
             }
 
-            return items.OrderBy(d => d.LabelCap.ToString() ?? d.defName).ToList();
+            return filterState.SortAscending
+                ? items.OrderBy(d => GetHediffMarketValue(d)).ThenBy(d => d.LabelCap.ToString() ?? d.defName).ToList()
+                : items.OrderByDescending(d => GetHediffMarketValue(d)).ThenBy(d => d.LabelCap.ToString() ?? d.defName).ToList();
         }
 
         private static bool IsCandidate(HediffDef h)
         {
             if (h == null) return false;
             return true;
+        }
+
+        private static float GetHediffMarketValue(HediffDef def)
+        {
+            return def?.spawnThingOnRemoved?.BaseMarketValue ?? 0f;
         }
 
         public static string GetHediffCategory(HediffDef def)

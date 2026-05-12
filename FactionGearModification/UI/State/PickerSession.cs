@@ -77,6 +77,8 @@ namespace FactionGearCustomizer
         public string SearchText = "";
         public HashSet<string> SelectedCategories = new HashSet<string>();
         public int LastCategoryCount = 0;
+        public string SortField = "MarketValue";
+        public bool SortAscending = false;
 
         public void SyncAvailableCategories(List<string> allCategories)
         {

@@ -176,6 +176,23 @@ Recommended: Enable for full control.</ForceOnlySelectedTooltip>
   <WeightMechanicsTooltip>Weight mechanics: In RimWorld, gear weight acts as selection weight, not 100% selection. Higher weight gear is prioritized but not guaranteed.</WeightMechanicsTooltip>
   <ColorPicker>Color Picker</ColorPicker>
   <ColorPickerApply>Apply</ColorPickerApply>
+  <ColorPresets>Presets</ColorPresets>
+  <ColorHistory>History</ColorHistory>
+  <DrawingBoard>Drawing Board</DrawingBoard>
+  <CurrentColor>Current Color</CurrentColor>
+  <MoreColors>More Colors...</MoreColors>
+  <BrushSize>Brush Size</BrushSize>
+  <Undo>Undo</Undo>
+  <HandDraw>Hand Draw</HandDraw>
+  <CanvasSize>Canvas Size</CanvasSize>
+  <Zoom>Zoom</Zoom>
+  <ImportTemplate>Import Template</ImportTemplate>
+  <ShowTemplate>Show Template</ShowTemplate>
+  <TemplateScale>Template Scale</TemplateScale>
+  <ImportTemplateTooltip>Import current faction icon as a drawing template</ImportTemplateTooltip>
+  <NoTemplateFound>No template available to import</NoTemplateFound>
+  <NoHistory>No history</NoHistory>
+  <Fill>Fill</Fill>
   <UnsavedChanges>Unsaved Changes</UnsavedChanges>
   <UnsavedChangesMessage>You have unsaved changes. Save them?</UnsavedChangesMessage>
   <Discard>Discard</Discard>
@@ -365,9 +382,11 @@ Applying this preset may cause missing items or errors. Continue?</MissingModsWa
   <DisableXenotypeChances>Disable Xenotype Chance Control</DisableXenotypeChances>
   <AddXenotype>Add Xenotype</AddXenotype>
   <AllXenotypesAdded>All xenotypes added.</AllXenotypesAdded>
-  <KindXenotypeSettings>Kind Xenotype Settings</KindXenotypeSettings>
-  <KindXenotypeTooltip>Set independent xenotype spawn chances for this pawn kind, overriding faction-level settings.</KindXenotypeTooltip>
-  <XenoButtonLabel>Xeno</XenoButtonLabel>
+  <KindXenotypeSettings>Kind Edit</KindXenotypeSettings>
+  <KindXenotypeTooltip>Edit xenotype generation, age limits, and other settings for this kind.</KindXenotypeTooltip>
+  <XenoButtonLabel>Edit</XenoButtonLabel>
+  <CopyKindTooltip>Copy this kind's gear configuration</CopyKindTooltip>
+  <PasteKindTooltip>Paste gear configuration to this kind</PasteKindTooltip>
   <ForcedXenotype>Forced Xenotype</ForcedXenotype>
   <ForcedXenotypeTooltip>Force this pawn kind to only spawn with this xenotype, ignoring chance settings.</ForcedXenotypeTooltip>
   <SelectXenotype>Select Xenotype</SelectXenotype>
@@ -418,6 +437,7 @@ Applying this preset may cause missing items or errors. Continue?</MissingModsWa
   <Category_Mechanoid>Mechanoid</Category_Mechanoid>
   <Category_Other>Other</Category_Other>
   <AddGroup>Add Group</AddGroup>
+  <FactionGroupEditorTitle>Faction Group Editor - {0}</FactionGroupEditorTitle>
   <Group>Group</Group>
   <GroupName>Group Name</GroupName>
   <GroupDefaultName>{0} #{1}</GroupDefaultName>

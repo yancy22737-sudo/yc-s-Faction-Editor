@@ -259,8 +259,7 @@ namespace FactionGearCustomizer.UI.Panels
             }
             else if (EditorSession.SelectedModSources.Count == 1)
             {
-                string s = EditorSession.SelectedModSources.First();
-                modButtonText = s.Length > 10 ? s.Substring(0, 8) + "..." : s;
+                modButtonText = EditorSession.SelectedModSources.First();
             }
             else
             {
