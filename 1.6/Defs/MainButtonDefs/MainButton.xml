@@ -7,7 +7,7 @@
     <tabWindowClass>FactionGearCustomizer.UI.FactionGearMainTabWindow</tabWindowClass>
     <order>99</order>
     <minimized>True</minimized>
-    <iconPath>UI/Buttons/MainButtons/MainButton</iconPath>
+    <iconPath>UI/MainButton</iconPath>
     <workerClass>FactionGearCustomizer.MainButtonWorker_FactionGear</workerClass>
   </MainButtonDef>
 </Defs>
