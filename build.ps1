@@ -34,24 +34,9 @@ Copy-Item "$sourceRoot\About" "$destRoot" -Recurse -Force
 
 Write-Host "Copying 1.6... (includes Languages folder)"
 
-# Preserve game-mod Logo.png — backup before copy, restore after
-$logoDest = "$destRoot\1.6\Textures\UI\Logo.png"
-$logoBackup = "$env:TEMP\FGC_Logo_backup.png"
-$hadLogo = Test-Path $logoDest
-if ($hadLogo) { Copy-Item $logoDest $logoBackup -Force }
-
 Copy-Item "$sourceRoot\1.6" "$destRoot" -Recurse -Force
 
-# Restore the game-mod Logo.png as the canonical copy
-if ($hadLogo -and (Test-Path $logoBackup)) {
-    $logoDir = Split-Path $logoDest -Parent
-    if (-not (Test-Path $logoDir)) { New-Item -ItemType Directory -Path $logoDir -Force }
-    Copy-Item $logoBackup $logoDest -Force
-    Remove-Item $logoBackup -Force
-    Write-Host "  Logo.png preserved from game mod folder"
-}
-
-Write-Host "Cleaning up stale icon files (superseded by Logo.png)..."
+Write-Host "Cleaning up stale icon files..."
 @(
     "$destRoot\1.6\Textures\UI\Buttons\MainButtons\FactionGearEdit.png",
     "$destRoot\1.6\Textures\UI\FactionGearCustomizer_ModIcon.png"
