@@ -18,7 +18,7 @@ namespace FactionGearCustomizer.UI.Panels
 
         static TopBarPanel()
         {
-            logo = ContentFinder<Texture2D>.Get("UI/Logo", false);
+            logo = ContentFinder<Texture2D>.Get("UI/FactionGearLogo", false);
         }
 
         public static void Draw(Rect inRect)
