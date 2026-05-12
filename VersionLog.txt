@@ -1,4 +1,16 @@
-﻿v1.6.0
+﻿v1.6.1
+- Add: 颜色选择器全面增强——2D可视化色域、色相滑条、RGB滑条、32色常用色板、持久化取色历史记录。
+- Add: 像素绘图板——支持画笔/橡皮擦、泛洪填充、撤销、快捷色板、可调画布大小，保存为派系自定义图标。
+- Add: 独立派系群组编辑窗口(Window_FactionGroupEditor)，从兵种列表"+"按钮进入，包含群组编辑和兵种列表。
+- Redesign: 兵种编辑界面(Dialog_KindXenotypeEditor)改为原版风格UI。
+- Add: Hediff选择器新增市场价值排序及市场价值字段显示，默认选择"全部类别"。
+- Fix: Mod筛选器切换分类后缓存未刷新导致缺少mod选项。
+- Fix: Mod名称按钮截断过激，改为自动适应；ModFilter窗口长名称单行省略号显示。
+- Fix: 兵种列表复制/粘贴按钮改为悬停显示，tooltip使用语言键。
+- Fix: 派系编辑窗口"异种"按钮改名"编辑"并悬停显示；修复图标路径浏览/手绘按钮重叠。
+- Fix: Mod筛选器名称自适应、派系群组编辑窗口UI布局修正、调色器按钮遮挡修正等多项UI修复。
+
+v1.6.0
 - Fix: 删除 ClearOriginalDataCache() + 重复 SaveAllOriginalData()，防止 pristine 数据被 ApplyAllSettings 污染后覆盖。
 - Fix: maxTotalPoints < 10000 的 Combat 组自动展开为 9999999；groupsModified=false 时清理旧损坏数据。
 - Fix: 新增 Patch_CanGenerateFrom_TileBypass — 对自定义群组派系，绕过 vanilla 的 tile 检查（解决"no usable PawnGroupMakers"错误）。

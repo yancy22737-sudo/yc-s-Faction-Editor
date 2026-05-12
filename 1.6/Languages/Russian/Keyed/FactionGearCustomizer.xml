@@ -173,6 +173,23 @@
   <WeightMechanicsTooltip>Механика веса: В RimWorld вес снаряжения действует как вес выбора, а не 100% вероятность. Снаряжение с бóльшим весом имеет приоритет, но это не гарантировано.</WeightMechanicsTooltip>
   <ColorPicker>Выбор цвета</ColorPicker>
   <ColorPickerApply>Применить</ColorPickerApply>
+  <ColorPresets>Пресеты</ColorPresets>
+  <ColorHistory>История</ColorHistory>
+  <DrawingBoard>Рисование</DrawingBoard>
+  <CurrentColor>Текущий цвет</CurrentColor>
+  <MoreColors>Больше цветов...</MoreColors>
+  <BrushSize>Размер кисти</BrushSize>
+  <Undo>Отмена</Undo>
+  <HandDraw>Рисовать</HandDraw>
+  <CanvasSize>Размер холста</CanvasSize>
+  <Zoom>Масштаб</Zoom>
+  <ImportTemplate>Импорт шаблона</ImportTemplate>
+  <ShowTemplate>Показать шаблон</ShowTemplate>
+  <TemplateScale>Масштаб шаблона</TemplateScale>
+  <ImportTemplateTooltip>Импортировать текущую иконку фракции как шаблон для рисования</ImportTemplateTooltip>
+  <NoTemplateFound>Шаблон не найден</NoTemplateFound>
+  <NoHistory>Нет истории</NoHistory>
+  <Fill>Заливка</Fill>
   <UnsavedChanges>Несохраненные изменения</UnsavedChanges>
   <UnsavedChangesMessage>У вас есть несохраненные изменения. Сохранить их?</UnsavedChangesMessage>
   <Discard>Отменить изменения</Discard>
@@ -362,9 +379,9 @@
   <DisableXenotypeChances>Отключить управление шансами ксенотипов</DisableXenotypeChances>
   <AddXenotype>Добавить ксенотип</AddXenotype>
   <AllXenotypesAdded>Все ксенотипы добавлены.</AllXenotypesAdded>
-  <KindXenotypeSettings>Настройки ксенотипов вида</KindXenotypeSettings>
-  <KindXenotypeTooltip>Установите независимые шансы появления ксенотипов для этого вида пешек, переопределяя настройки уровня фракции.</KindXenotypeTooltip>
-  <XenoButtonLabel>Ксено</XenoButtonLabel>
+  <KindXenotypeSettings>Редактирование вида</KindXenotypeSettings>
+  <KindXenotypeTooltip>Редактировать ксенотипы, возраст и другие настройки для этого вида.</KindXenotypeTooltip>
+  <XenoButtonLabel>Ред.</XenoButtonLabel>
   <ForcedXenotype>Принудительный ксенотип</ForcedXenotype>
   <ForcedXenotypeTooltip>Заставить этот вид пешек появляться только с этим ксенотипом, игнорируя настройки шансов.</ForcedXenotypeTooltip>
   <SelectXenotype>Выбрать ксенотип</SelectXenotype>
@@ -384,6 +401,8 @@
   <BatchSkipAmmo>Пропустить боеприпасы</BatchSkipAmmo>
   <BatchTargetFaction>Целевая фракция</BatchTargetFaction>
   <BatchApplyNoCategorySelected>Пожалуйста, выберите хотя бы одну категорию для копирования.</BatchApplyNoCategorySelected>
+  <CopyKindTooltip>Копировать конфигурацию снаряжения этого вида</CopyKindTooltip>
+  <PasteKindTooltip>Вставить конфигурацию снаряжения в этот вид</PasteKindTooltip>
   <NewFaction>Новая</NewFaction>
   <NewFactionTooltip>Создать новую фракцию. Доступно только в игре.</NewFactionTooltip>
   <CreateFaction>Создать фракцию</CreateFaction>
@@ -415,6 +434,7 @@
   <Category_Mechanoid>Механоиды</Category_Mechanoid>
   <Category_Other>Прочее</Category_Other>
   <AddGroup>Добавить группу</AddGroup>
+  <FactionGroupEditorTitle>Редактор групп фракции - {0}</FactionGroupEditorTitle>
   <Group>Группа</Group>
   <GroupName>Имя группы</GroupName>
   <GroupDefaultName>{0} #{1}</GroupDefaultName>
