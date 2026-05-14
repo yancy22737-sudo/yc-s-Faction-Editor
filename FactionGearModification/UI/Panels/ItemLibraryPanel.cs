@@ -835,7 +835,7 @@ namespace FactionGearCustomizer.UI.Panels
                 {
                      if (EditorSession.CurrentAdvancedTab == AdvancedTab.Apparel && !thingDef.IsApparel) canAdd = false;
                      else if (EditorSession.CurrentAdvancedTab == AdvancedTab.Weapons && !thingDef.IsWeapon) canAdd = false;
-                     else if (EditorSession.CurrentAdvancedTab == AdvancedTab.General || EditorSession.CurrentAdvancedTab == AdvancedTab.Hediffs) canAdd = false;
+                     else if (EditorSession.CurrentAdvancedTab == AdvancedTab.General || EditorSession.CurrentAdvancedTab == AdvancedTab.Hediffs || EditorSession.CurrentAdvancedTab == AdvancedTab.Skills || EditorSession.CurrentAdvancedTab == AdvancedTab.Traits || EditorSession.CurrentAdvancedTab == AdvancedTab.Genes) canAdd = false;
                 }
 
                 if (canAdd)

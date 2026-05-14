@@ -17,14 +17,18 @@ namespace FactionGearCustomizer
         Advanced 
     }
 
-    public enum AdvancedTab 
-    { 
-        General, 
-        Apparel, 
-        Weapons, 
+    public enum AdvancedTab
+    {
+        General,
+        Apparel,
+        Weapons,
         Hediffs,
         Items,
-        Groups
+        Groups,
+        Skills,
+        Traits,
+        Genes,
+        Appearance
     }
 
     public enum PawnGroupType

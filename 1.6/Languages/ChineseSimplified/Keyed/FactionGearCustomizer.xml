@@ -42,7 +42,7 @@
   <Default>默认</Default>
   <RandomDefault>随机材质</RandomDefault>
   <SelectedGear>已选装备</SelectedGear>
-  <AdvancedSettings>高级设置</AdvancedSettings>
+  <AdvancedSettings>高级</AdvancedSettings>
   <LayerPreview>层级预览</LayerPreview>
   <GeneralOverrides>常规覆盖</GeneralOverrides>
   <SpecificApparelAdvanced>指定服装( 高级) </SpecificApparelAdvanced>
@@ -226,7 +226,7 @@
   <ForceIgnore>强制忽略</ForceIgnore>
   <ForceIgnoreTooltip>强制移除冲突的服装/武器并忽略预算限制。单位将尝试装备配置列表中的所有可能物品, 允许您忽略限制并始终创建神级单位。</ForceIgnoreTooltip>
   <AmmoProtection>弹药保护</AmmoProtection>
-  <AmmoProtectionTooltip>开启后模组不生成弹药，由CE自行处理当前武器的弹药生成，防止多重弹药来源导致翻倍或混搭。关闭后模组与CE各自生成一组弹药。</AmmoProtectionTooltip>
+  <AmmoProtectionTooltip>开启后只保留模组生成的弹药，防止CE等多重弹药来源导致翻倍或混搭。关闭后模组与CE各自生成一组弹药。</AmmoProtectionTooltip>
   <ForceIgnoreGlobal>全局强制忽略</ForceIgnoreGlobal>
   <ForceIgnoreGlobalTooltip>全局设置：强制移除冲突的服装/武器并忽略预算限制。作为所有兵种的默认设置，可被局部设置覆盖。</ForceIgnoreGlobalTooltip>
   <ForceIgnoreLocal>局部强制忽略</ForceIgnoreLocal>
@@ -1052,6 +1052,62 @@
   <P2_OpenSettings>设置</P2_OpenSettings>
   <P2_ResetSuccess>已恢复默认派系数据</P2_ResetSuccess>
   <P2_NotInGameWarning>[提示] 当前不在游戏中，某些功能（如应用到存档）不可用</P2_NotInGameWarning>
+
+  <!-- Skills -->
+  <Skills>技能</Skills>
+  <ForcedSkills>技能等级</ForcedSkills>
+  <SkillLevel>等级</SkillLevel>
+  <ForceOverrideSkills>覆盖技能</ForceOverrideSkills>
+  <SkillRandomRange>随机范围</SkillRandomRange>
+  <SkillsAddedMessage>已添加 {0} 个技能，跳过 {1} 个重复。</SkillsAddedMessage>
+  <BaseLevel>基础等级</BaseLevel>
+  <RandomRange>随机范围</RandomRange>
+  <SkillMin>最小值</SkillMin>
+  <SkillMax>最大值</SkillMax>
+  <Passion>兴趣度</Passion>
+  <SkillEditTitle>编辑技能</SkillEditTitle>
+  <ClearSkillsTooltip>清除该兵种的所有技能</ClearSkillsTooltip>
+
+  <!-- Traits -->
+  <Traits>特性</Traits>
+  <ForcedTraits>强制特性</ForcedTraits>
+  <AddTrait>添加特性</AddTrait>
+  <TraitPickerTitle>添加特性</TraitPickerTitle>
+  <Degree>等级</Degree>
+  <ForceOverrideTraits>覆写特性</ForceOverrideTraits>
+  <TraitsAddedMessage>已添加 {0} 个特性，跳过 {1} 个重复。</TraitsAddedMessage>
+  <ClearTraitsTooltip>清除该兵种的所有特性</ClearTraitsTooltip>
+
+  <!-- Genes -->
+  <Genes>基因</Genes>
+  <ForcedGenes>强制基因</ForcedGenes>
+  <AddGene>添加基因</AddGene>
+  <GenePickerTitle>添加基因</GenePickerTitle>
+  <GeneEndogene>内源</GeneEndogene>
+  <ForceOverrideGenes>覆写</ForceOverrideGenes>
+  <GenesAddedMessage>已添加 {0} 个基因，跳过 {1} 个重复。</GenesAddedMessage>
+  <ClearGenesTooltip>清除该兵种的所有基因</ClearGenesTooltip>
+
+  <!-- Appearance -->
+  <Appearance>外观</Appearance>
+  <EditAppearance>编辑外观</EditAppearance>
+  <AppearanceEditorTitle>编辑外观</AppearanceEditorTitle>
+  <SkinColor>肤色</SkinColor>
+  <HairColor>发色</HairColor>
+  <ForceOverrideAppearance>覆盖外观</ForceOverrideAppearance>
+  <ClearAppearanceTooltip>清除该兵种的外观设置</ClearAppearanceTooltip>
+  <AppearanceTab_Shape>体型</AppearanceTab_Shape>
+  <AppearanceTab_Hair>发型</AppearanceTab_Hair>
+  <AppearanceTab_Skin>肤色</AppearanceTab_Skin>
+  <AppearanceTab_Genes>基因</AppearanceTab_Genes>
+  <AppearanceTab_Body>身体</AppearanceTab_Body>
+  <AppearanceTab_Head>头部</AppearanceTab_Head>
+  <AppearanceTab_Beard>胡须</AppearanceTab_Beard>
+  <Random>随机</Random>
+
+  <!-- Ideology -->
+  <IdeologySettings>意识形态设置</IdeologySettings>
+  <SelectIdeology>选择意识形态</SelectIdeology>
 
   <!-- 炮塔/机械族武器过滤 -->
   <HideTurretMechanoidWeaponsTooltip>隐藏物品库中的炮塔和机械族武器</HideTurretMechanoidWeaponsTooltip>

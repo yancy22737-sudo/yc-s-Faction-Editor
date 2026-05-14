@@ -153,6 +153,16 @@ namespace FactionGearCustomizer
                     try
                     {
                         isApplyingGear = true;
+
+                        var kindData = GetKindData(faction, request.KindDef);
+                        if (kindData != null)
+                        {
+                            TraitApplicationService.ApplyTraits(__result, kindData);
+                            SkillApplicationService.ApplySkills(__result, kindData);
+                            GeneApplicationService.ApplyGenes(__result, kindData);
+                            AppearanceApplicationService.ApplyAppearance(__result, kindData);
+                        }
+
                         GearApplier.ApplyCustomGear(__result, faction);
                     }
                     finally
@@ -498,6 +508,13 @@ namespace FactionGearCustomizer
             }
 
             return FactionGearCustomizerMod.Settings?.TryGetFactionData(faction.def.defName);
+        }
+
+        private static KindGearData GetKindData(Faction faction, PawnKindDef kindDef)
+        {
+            if (faction?.def == null || kindDef == null) return null;
+            var factionData = GetRuntimeFactionData(faction);
+            return factionData?.GetKindData(kindDef.defName);
         }
     }
 }

@@ -28,6 +28,9 @@ namespace FactionGearCustomizer
         // Pawn Group Makers (Raids, Caravans, etc.)
         public List<PawnGroupMakerData> groupMakers = new List<PawnGroupMakerData>();
 
+        // Ideology (Ideology DLC)
+        public string IdeoName = null;
+
         // Player Relation Override (Ally/Neutral/Hostile)
         public FactionRelationKind? PlayerRelationOverride;
 
@@ -62,6 +65,7 @@ namespace FactionGearCustomizer
             if (groupMakers == null) groupMakers = new List<PawnGroupMakerData>();
 
             Scribe_Values.Look(ref PlayerRelationOverride, "playerRelationOverride");
+            Scribe_Values.Look(ref IdeoName, "ideoName");
 
             if (kindGearData == null)
                 kindGearData = new List<KindGearData>();
@@ -116,6 +120,7 @@ namespace FactionGearCustomizer
             DisableXenotypeChances = false;
             groupMakers?.Clear();
             PlayerRelationOverride = null;
+            IdeoName = null;
         }
         
         // 添加或更新兵种数据
@@ -227,6 +232,7 @@ namespace FactionGearCustomizer
                 Color.HasValue ||
                 DisableXenotypeChances ||
                 PlayerRelationOverride.HasValue ||
+                !string.IsNullOrEmpty(IdeoName) ||
                 (XenotypeChances?.Count ?? 0) > 0 ||
                 (groupMakers?.Count ?? 0) > 0;
 
@@ -243,6 +249,7 @@ namespace FactionGearCustomizer
             copy.IconPath = this.IconPath;
             copy.Color = this.Color;
             copy.PlayerRelationOverride = this.PlayerRelationOverride;
+            copy.IdeoName = this.IdeoName;
             copy.DisableXenotypeChances = this.DisableXenotypeChances;
             
             if (this.XenotypeChances != null)

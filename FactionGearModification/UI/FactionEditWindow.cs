@@ -44,6 +44,9 @@ namespace FactionGearCustomizer.UI
         private List<PawnGroupMakerData> bufferGroups;
         private bool groupsModified = false;
 
+        // Ideology Buffer
+        private string bufferIdeoName;
+
         // Player Relation Buffer
         private FactionRelationKind? bufferPlayerRelation;
 
@@ -101,6 +104,17 @@ namespace FactionGearCustomizer.UI
                         }
                     }
                 }
+            }
+
+            // Initialize Ideology: use saved value, or read from runtime faction
+            bufferIdeoName = factionData.IdeoName;
+            if (string.IsNullOrEmpty(bufferIdeoName) && ModsConfig.IdeologyActive
+                && Current.Game != null && Find.FactionManager != null)
+            {
+                var rtFaction = Find.FactionManager.AllFactions
+                    .FirstOrDefault(f => f.def == factionDef && !f.IsPlayer);
+                if (rtFaction?.ideos?.PrimaryIdeo != null)
+                    bufferIdeoName = rtFaction.ideos.PrimaryIdeo.name;
             }
 
             // Initialize Group Buffers
@@ -480,6 +494,51 @@ namespace FactionGearCustomizer.UI
                 }
             }
 
+            // Ideology Settings
+            if (ModsConfig.IdeologyActive && factionDef.humanlikeFaction)
+            {
+                listing.GapLine();
+                listing.Label($"<b>{LanguageManager.Get("IdeologySettings")}</b>");
+                Rect ideoRow = listing.GetRect(36f);
+
+                // Icon preview
+                Ideo currentIdeo = null;
+                if (!string.IsNullOrEmpty(bufferIdeoName) && Find.IdeoManager != null)
+                    currentIdeo = Find.IdeoManager.IdeosListForReading.FirstOrDefault(i => i.name == bufferIdeoName);
+
+                if (currentIdeo?.Icon != null)
+                {
+                    Rect iconRect = new Rect(ideoRow.x, ideoRow.y, 32f, 32f);
+                    GUI.DrawTexture(iconRect, currentIdeo.Icon, ScaleMode.ScaleToFit);
+                    TooltipHandler.TipRegion(iconRect, currentIdeo.name + "\n" + (currentIdeo.description ?? ""));
+                }
+
+                float labelX = currentIdeo?.Icon != null ? 38f : 0f;
+                string displayName = string.IsNullOrEmpty(bufferIdeoName)
+                    ? LanguageManager.Get("None")
+                    : bufferIdeoName;
+                Widgets.Label(new Rect(ideoRow.x + labelX, ideoRow.y + 2f, 160f, 28f), displayName);
+
+                float btnX = ideoRow.x + labelX + 165f;
+                if (Widgets.ButtonText(new Rect(btnX, ideoRow.y + 2f, 150f, 28f), LanguageManager.Get("SelectIdeology")))
+                {
+                    List<FloatMenuOption> options = new List<FloatMenuOption>();
+                    options.Add(new FloatMenuOption(LanguageManager.Get("None"), () => bufferIdeoName = null));
+                    if (Find.IdeoManager != null)
+                    {
+                        foreach (var ideo in Find.IdeoManager.IdeosListForReading)
+                        {
+                            var captured = ideo;
+                            options.Add(new FloatMenuOption(ideo.name, () => bufferIdeoName = captured.name));
+                        }
+                    }
+                    Find.WindowStack.Add(new FloatMenu(options));
+                }
+
+                if (!string.IsNullOrEmpty(bufferIdeoName) && Widgets.ButtonText(new Rect(btnX + 155f, ideoRow.y + 2f, 80f, 28f), LanguageManager.Get("Clear")))
+                    bufferIdeoName = null;
+            }
+
             // World Operations
             listing.GapLine();
             listing.Label($"<b>{LanguageManager.Get("WorldOperations")}</b>");
@@ -819,6 +878,13 @@ namespace FactionGearCustomizer.UI
                 {
                     factionModified = true;
                 }
+            }
+
+            // Ideology
+            if (factionData.IdeoName != bufferIdeoName)
+            {
+                factionData.IdeoName = bufferIdeoName;
+                factionModified = true;
             }
 
             // Player Relation Override

@@ -74,6 +74,23 @@ namespace FactionGearCustomizer
         // Force specific xenotype (ignores chances, forces this xenotype)
         public string ForcedXenotype = null;
 
+        // Skills
+        public List<ForcedSkill> ForcedSkills = null;
+        public bool ForceOverrideSkills = false;
+        public int SkillRandomRange = 0; // global random jitter ±N
+
+        // Traits
+        public List<ForcedTrait> ForcedTraits = null;
+        public bool ForceOverrideTraits = false;
+
+        // Genes (Biotech DLC)
+        public List<ForcedGene> ForcedGenes = null;
+        public bool ForceOverrideGenes = false;
+
+        // Appearance
+        public ForcedAppearance ForcedAppearance = null;
+        public bool ForceOverrideAppearance = false;
+
         // Age Settings
         public float? MinAge = null;
         public float? MaxAge = null;
@@ -164,6 +181,15 @@ namespace FactionGearCustomizer
             Scribe_Collections.Look(ref SpecificWeapons, "specificWeapons", LookMode.Deep);
             Scribe_Collections.Look(ref InventoryItems, "inventoryItems", LookMode.Deep);
             Scribe_Collections.Look(ref ForcedHediffs, "forcedHediffs", LookMode.Deep);
+            Scribe_Collections.Look(ref ForcedSkills, "forcedSkills", LookMode.Deep);
+            Scribe_Values.Look(ref ForceOverrideSkills, "forceOverrideSkills", false);
+            Scribe_Values.Look(ref SkillRandomRange, "skillRandomRange", 0);
+            Scribe_Collections.Look(ref ForcedTraits, "forcedTraits", LookMode.Deep);
+            Scribe_Values.Look(ref ForceOverrideTraits, "forceOverrideTraits", false);
+            Scribe_Collections.Look(ref ForcedGenes, "forcedGenes", LookMode.Deep);
+            Scribe_Values.Look(ref ForceOverrideGenes, "forceOverrideGenes", false);
+            Scribe_Deep.Look(ref ForcedAppearance, "forcedAppearance");
+            Scribe_Values.Look(ref ForceOverrideAppearance, "forceOverrideAppearance", false);
 
             // Xenotype Settings
             Scribe_Collections.Look(ref XenotypeChances, "xenotypeChances", LookMode.Value, LookMode.Value);
@@ -213,6 +239,28 @@ namespace FactionGearCustomizer
                     item?.ResolveReferences();
                 }
             }
+            if (ForcedSkills != null)
+            {
+                foreach (var item in ForcedSkills)
+                {
+                    item?.ResolveReferences();
+                }
+            }
+            if (ForcedTraits != null)
+            {
+                foreach (var item in ForcedTraits)
+                {
+                    item?.ResolveReferences();
+                }
+            }
+            if (ForcedGenes != null)
+            {
+                foreach (var item in ForcedGenes)
+                {
+                    item?.ResolveReferences();
+                }
+            }
+            ForcedAppearance?.ResolveReferences();
         }
 
         public void ResetToDefault()
@@ -253,7 +301,16 @@ namespace FactionGearCustomizer
             SpecificWeapons = null;
             InventoryItems = null;
             ForcedHediffs = null;
-            
+            ForcedSkills = null;
+            ForceOverrideSkills = false;
+            SkillRandomRange = 0;
+            ForcedTraits = null;
+            ForceOverrideTraits = false;
+            ForcedGenes = null;
+            ForceOverrideGenes = false;
+            ForcedAppearance = null;
+            ForceOverrideAppearance = false;
+
             // Xenotype Settings
             XenotypeChances?.Clear();
             DisableXenotypeChances = false;
@@ -303,6 +360,15 @@ namespace FactionGearCustomizer
                 !(SpecificWeapons?.Count ?? 0).Equals(0) ||
                 !(InventoryItems?.Count ?? 0).Equals(0) ||
                 !(ForcedHediffs?.Count ?? 0).Equals(0) ||
+                !(ForcedSkills?.Count ?? 0).Equals(0) ||
+                ForceOverrideSkills ||
+                SkillRandomRange != 0 ||
+                !(ForcedTraits?.Count ?? 0).Equals(0) ||
+                ForceOverrideTraits ||
+                !(ForcedGenes?.Count ?? 0).Equals(0) ||
+                ForceOverrideGenes ||
+                ForcedAppearance != null ||
+                ForceOverrideAppearance ||
                 !(XenotypeChances?.Count ?? 0).Equals(0);
 
             return !hasGear && !hasOverrides;
@@ -349,6 +415,69 @@ namespace FactionGearCustomizer
             copy.ForcedXenotype = this.ForcedXenotype;
             copy.MinAge = this.MinAge;
             copy.MaxAge = this.MaxAge;
+
+            if (this.ForcedSkills != null)
+            {
+                copy.ForcedSkills = new List<ForcedSkill>();
+                foreach (var item in this.ForcedSkills)
+                {
+                    if (item == null) continue;
+                    copy.ForcedSkills.Add(new ForcedSkill
+                    {
+                        SkillDef = item.SkillDef,
+                        level = item.level,
+                        minLevel = item.minLevel,
+                        maxLevel = item.maxLevel,
+                        chance = item.chance,
+                        passion = item.passion
+                    });
+                }
+            }
+            if (this.ForcedTraits != null)
+            {
+                copy.ForcedTraits = new List<ForcedTrait>();
+                foreach (var item in this.ForcedTraits)
+                {
+                    if (item == null) continue;
+                    copy.ForcedTraits.Add(new ForcedTrait
+                    {
+                        TraitDef = item.TraitDef,
+                        degree = item.degree,
+                        chance = item.chance
+                    });
+                }
+            }
+            copy.ForceOverrideTraits = this.ForceOverrideTraits;
+            if (this.ForcedGenes != null)
+            {
+                copy.ForcedGenes = new List<ForcedGene>();
+                foreach (var item in this.ForcedGenes)
+                {
+                    if (item == null) continue;
+                    copy.ForcedGenes.Add(new ForcedGene
+                    {
+                        GeneDef = item.GeneDef,
+                        asEndogene = item.asEndogene,
+                        chance = item.chance
+                    });
+                }
+            }
+            copy.ForceOverrideGenes = this.ForceOverrideGenes;
+            if (this.ForcedAppearance != null)
+            {
+                copy.ForcedAppearance = new ForcedAppearance
+                {
+                    hairDefName = this.ForcedAppearance.hairDefName,
+                    beardDefName = this.ForcedAppearance.beardDefName,
+                    bodyTypeDefName = this.ForcedAppearance.bodyTypeDefName,
+                    headTypeDefName = this.ForcedAppearance.headTypeDefName,
+                    skinColor = this.ForcedAppearance.skinColor,
+                    hairColor = this.ForcedAppearance.hairColor,
+                    tattooDefNames = this.ForcedAppearance.tattooDefNames != null
+                        ? new List<string>(this.ForcedAppearance.tattooDefNames) : null,
+                    chance = this.ForcedAppearance.chance
+                };
+            }
 
             if (this.TechHediffTags != null) copy.TechHediffTags = new List<string>(this.TechHediffTags);
             if (this.TechHediffDisallowedTags != null) copy.TechHediffDisallowedTags = new List<string>(this.TechHediffDisallowedTags);
@@ -497,6 +626,75 @@ namespace FactionGearCustomizer
             this.ForcedXenotype = source.ForcedXenotype;
             this.MinAge = source.MinAge;
             this.MaxAge = source.MaxAge;
+
+            if (source.ForcedSkills != null)
+            {
+                this.ForcedSkills = new List<ForcedSkill>();
+                foreach (var item in source.ForcedSkills)
+                {
+                    if (item == null) continue;
+                    this.ForcedSkills.Add(new ForcedSkill
+                    {
+                        SkillDef = item.SkillDef,
+                        level = item.level,
+                        minLevel = item.minLevel,
+                        maxLevel = item.maxLevel,
+                        chance = item.chance,
+                        passion = item.passion
+                    });
+                }
+            }
+            else this.ForcedSkills = null;
+
+            if (source.ForcedTraits != null)
+            {
+                this.ForcedTraits = new List<ForcedTrait>();
+                foreach (var item in source.ForcedTraits)
+                {
+                    if (item == null) continue;
+                    this.ForcedTraits.Add(new ForcedTrait
+                    {
+                        TraitDef = item.TraitDef,
+                        degree = item.degree,
+                        chance = item.chance
+                    });
+                }
+            }
+            else this.ForcedTraits = null;
+            this.ForceOverrideTraits = source.ForceOverrideTraits;
+
+            if (source.ForcedGenes != null)
+            {
+                this.ForcedGenes = new List<ForcedGene>();
+                foreach (var item in source.ForcedGenes)
+                {
+                    if (item == null) continue;
+                    this.ForcedGenes.Add(new ForcedGene
+                    {
+                        GeneDef = item.GeneDef,
+                        asEndogene = item.asEndogene,
+                        chance = item.chance
+                    });
+                }
+            }
+            else this.ForcedGenes = null;
+            this.ForceOverrideGenes = source.ForceOverrideGenes;
+            if (source.ForcedAppearance != null)
+            {
+                this.ForcedAppearance = new ForcedAppearance
+                {
+                    hairDefName = source.ForcedAppearance.hairDefName,
+                    beardDefName = source.ForcedAppearance.beardDefName,
+                    bodyTypeDefName = source.ForcedAppearance.bodyTypeDefName,
+                    headTypeDefName = source.ForcedAppearance.headTypeDefName,
+                    skinColor = source.ForcedAppearance.skinColor,
+                    hairColor = source.ForcedAppearance.hairColor,
+                    tattooDefNames = source.ForcedAppearance.tattooDefNames != null
+                        ? new List<string>(source.ForcedAppearance.tattooDefNames) : null,
+                    chance = source.ForcedAppearance.chance
+                };
+            }
+            else this.ForcedAppearance = null;
 
             this.TechHediffTags = source.TechHediffTags == null ? null : new List<string>(source.TechHediffTags);
             this.TechHediffDisallowedTags = source.TechHediffDisallowedTags == null ? null : new List<string>(source.TechHediffDisallowedTags);

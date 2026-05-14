@@ -6,6 +6,7 @@ using UnityEngine;
 using Verse;
 using FactionGearModification.UI;
 using FactionGearCustomizer.UI;
+using FactionGearCustomizer.UI.Dialogs;
 using FactionGearCustomizer.Compat;
 
 namespace FactionGearCustomizer.UI.Panels
@@ -447,16 +448,26 @@ namespace FactionGearCustomizer.UI.Panels
             var factionData = FactionGearCustomizerMod.Settings.GetOrCreateFactionData(EditorSession.SelectedFactionDefName);
             var kindData = factionData.GetOrCreateKindData(EditorSession.SelectedKindDefName);
 
-            Rect tabRect = new Rect(rect.x, rect.y, rect.width, 24f);
-            float tabWidth = rect.width / 5f;
+            // Row 1: core tabs
+            Rect tabRow1 = new Rect(rect.x, rect.y, rect.width, 24f);
+            float row1TabW = rect.width / 5f;
+            DrawAdvTab(new Rect(tabRow1.x, tabRow1.y, row1TabW, tabRow1.height), LanguageManager.Get("General"), AdvancedTab.General);
+            DrawAdvTab(new Rect(tabRow1.x + row1TabW, tabRow1.y, row1TabW, tabRow1.height), LanguageManager.Get("Apparel"), AdvancedTab.Apparel);
+            DrawAdvTab(new Rect(tabRow1.x + row1TabW * 2, tabRow1.y, row1TabW, tabRow1.height), LanguageManager.Get("Weapons"), AdvancedTab.Weapons);
+            DrawAdvTab(new Rect(tabRow1.x + row1TabW * 3, tabRow1.y, row1TabW, tabRow1.height), LanguageManager.Get("Hediffs"), AdvancedTab.Hediffs);
+            DrawAdvTab(new Rect(tabRow1.x + row1TabW * 4, tabRow1.y, row1TabW, tabRow1.height), LanguageManager.Get("Items"), AdvancedTab.Items);
 
-            DrawAdvTab(new Rect(tabRect.x, tabRect.y, tabWidth, tabRect.height), LanguageManager.Get("General"), AdvancedTab.General);
-            DrawAdvTab(new Rect(tabRect.x + tabWidth, tabRect.y, tabWidth, tabRect.height), LanguageManager.Get("Apparel"), AdvancedTab.Apparel);
-            DrawAdvTab(new Rect(tabRect.x + tabWidth * 2, tabRect.y, tabWidth, tabRect.height), LanguageManager.Get("Weapons"), AdvancedTab.Weapons);
-            DrawAdvTab(new Rect(tabRect.x + tabWidth * 3, tabRect.y, tabWidth, tabRect.height), LanguageManager.Get("Hediffs"), AdvancedTab.Hediffs);
-            DrawAdvTab(new Rect(tabRect.x + tabWidth * 4, tabRect.y, tabWidth, tabRect.height), LanguageManager.Get("Items"), AdvancedTab.Items);
+            // Row 2: character tabs
+            Rect tabRow2 = new Rect(rect.x, rect.y + 28f, rect.width, 24f);
+            int row2Count = ModsConfig.BiotechActive ? 4 : 3;
+            float row2TabW = rect.width / row2Count;
+            DrawAdvTab(new Rect(tabRow2.x, tabRow2.y, row2TabW, tabRow2.height), LanguageManager.Get("Skills"), AdvancedTab.Skills);
+            DrawAdvTab(new Rect(tabRow2.x + row2TabW, tabRow2.y, row2TabW, tabRow2.height), LanguageManager.Get("Traits"), AdvancedTab.Traits);
+            DrawAdvTab(new Rect(tabRow2.x + row2TabW * 2, tabRow2.y, row2TabW, tabRow2.height), LanguageManager.Get("Appearance"), AdvancedTab.Appearance);
+            if (ModsConfig.BiotechActive)
+                DrawAdvTab(new Rect(tabRow2.x + row2TabW * 3, tabRow2.y, row2TabW, tabRow2.height), LanguageManager.Get("Genes"), AdvancedTab.Genes);
 
-            Rect contentRect = new Rect(rect.x, rect.y + 30f, rect.width, rect.height - 30f);
+            Rect contentRect = new Rect(rect.x, rect.y + 56f, rect.width, rect.height - 56f);
 
             float height = 500f;
 
@@ -526,6 +537,51 @@ namespace FactionGearCustomizer.UI.Panels
                 }
                 height += 40f; // bottom padding
             }
+            else if (EditorSession.CurrentAdvancedTab == AdvancedTab.Skills)
+            {
+                height = 60f; // header
+                if (kindData.ForceOverrideSkills) // toggle row + range row + skills
+                {
+                    height += 60f; // override row + range row
+                    int count = kindData.ForcedSkills?.Count ?? 12;
+                    height += count * 32f + 10f;
+                }
+            }
+            else if (EditorSession.CurrentAdvancedTab == AdvancedTab.Traits)
+            {
+                height = 100f;
+                if (!kindData.ForcedTraits.NullOrEmpty())
+                {
+                    foreach (var item in kindData.ForcedTraits)
+                        height += TraitCardUI.GetCardHeight(item) + 8f;
+                }
+                height += 40f;
+            }
+            else if (EditorSession.CurrentAdvancedTab == AdvancedTab.Appearance)
+            {
+                height = 60f; // header + override row
+                if (kindData.ForceOverrideAppearance && kindData.ForcedAppearance != null)
+                {
+                    height += 30f; // edit/clear button row
+                    int lines = 0;
+                    if (kindData.ForcedAppearance.HairDef != null) lines++;
+                    if (kindData.ForcedAppearance.BeardDef != null) lines++;
+                    if (kindData.ForcedAppearance.BodyTypeDef != null) lines++;
+                    if (kindData.ForcedAppearance.HeadTypeDef != null) lines++;
+                    if (kindData.ForcedAppearance.skinColor.HasValue) lines++;
+                    height += lines * 24f + 40f;
+                }
+            }
+            else if (EditorSession.CurrentAdvancedTab == AdvancedTab.Genes)
+            {
+                height = 100f;
+                if (!kindData.ForcedGenes.NullOrEmpty())
+                {
+                    foreach (var item in kindData.ForcedGenes)
+                        height += GeneCardUI.GetCardHeight(item) + 8f;
+                }
+                height += 40f;
+            }
             else if (EditorSession.CurrentAdvancedTab == AdvancedTab.General)
             {
                 bool isForceIgnore = kindData.ForceIgnoreRestrictions ?? FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
@@ -562,6 +618,19 @@ namespace FactionGearCustomizer.UI.Panels
                     break;
                 case AdvancedTab.Items:
                     DrawAdvancedItems(ui, kindData);
+                    break;
+                case AdvancedTab.Skills:
+                    try { DrawAdvancedSkills(ui, kindData); }
+                    catch (System.Exception ex) { Log.Error("[FGC] Skills tab draw error: " + ex); }
+                    break;
+                case AdvancedTab.Traits:
+                    DrawAdvancedTraits(ui, kindData);
+                    break;
+                case AdvancedTab.Appearance:
+                    DrawAdvancedAppearance(ui, kindData);
+                    break;
+                case AdvancedTab.Genes:
+                    DrawAdvancedGenes(ui, kindData);
                     break;
             }
 
@@ -1042,6 +1111,267 @@ namespace FactionGearCustomizer.UI.Panels
                     {
                         UndoManager.RecordState(kindData);
                         kindData.InventoryItems.RemoveAt(index);
+                        kindData.isModified = true;
+                        FactionGearEditor.MarkDirty();
+                    });
+                }
+            }
+        }
+
+        private static void DrawAdvancedSkills(Listing_Standard ui, KindGearData kindData)
+        {
+            // Override toggle
+            Rect overrideRow = ui.GetRect(28f);
+            bool ov = kindData.ForceOverrideSkills;
+            Widgets.CheckboxLabeled(new Rect(overrideRow.x, overrideRow.y, 160f, 28f), LanguageManager.Get("ForceOverrideSkills"), ref ov);
+            if (ov != kindData.ForceOverrideSkills) { kindData.ForceOverrideSkills = ov; FactionGearEditor.MarkDirty(); }
+            if (!kindData.ForceOverrideSkills) { ui.Gap(8f); return; }
+
+            // Global random range
+            Rect rangeRow = ui.GetRect(28f);
+            Widgets.Label(new Rect(rangeRow.x, rangeRow.y, 120f, 28f), LanguageManager.Get("SkillRandomRange") + ": ±" + kindData.SkillRandomRange);
+            int nr = Mathf.RoundToInt(Widgets.HorizontalSlider(new Rect(rangeRow.x + 130f, rangeRow.y, 120f, 28f), kindData.SkillRandomRange, 0f, 10f, false, null, "0", "10"));
+            if (nr != kindData.SkillRandomRange) { kindData.SkillRandomRange = nr; FactionGearEditor.MarkDirty(); }
+            ui.Gap(4f);
+
+            // Stable vanilla skill order
+            string[] orderedSkillNames =
+            {
+                "Shooting", "Melee", "Construction", "Mining", "Cooking",
+                "Plants", "Animals", "Crafting", "Artistic", "Medical", "Social", "Intellectual"
+            };
+
+            // Init skills using stable vanilla skill names in a fixed order, with robust Medical fallback
+            if (kindData.ForcedSkills == null)
+                kindData.ForcedSkills = new List<ForcedSkill>();
+            if (kindData.ForcedSkills.Count == 0)
+            {
+                foreach (var name in orderedSkillNames)
+                {
+                    SkillDef def = DefDatabase<SkillDef>.GetNamedSilentFail(name);
+                    if (def == null && name == "Medical")
+                    {
+                        def = DefDatabase<SkillDef>.AllDefs.FirstOrDefault(d =>
+                            (d.defName ?? "").Equals("Medical", System.StringComparison.OrdinalIgnoreCase) ||
+                            (d.defName ?? "").Equals("Medicine", System.StringComparison.OrdinalIgnoreCase) ||
+                            (d.defName ?? "").IndexOf("med", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                            (d.label ?? "").IndexOf("medical", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                            (d.label ?? "").IndexOf("medicine", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                            (d.LabelCap.ToString()).IndexOf("医", System.StringComparison.OrdinalIgnoreCase) >= 0);
+                    }
+                    if (def != null)
+                    {
+                        kindData.ForcedSkills.Add(new ForcedSkill
+                        {
+                            SkillDef = def,
+                            skillDefName = def.defName,
+                            level = 0,
+                            minLevel = 0,
+                            maxLevel = 20,
+                            chance = 1f
+                        });
+                    }
+                }
+            }
+            // Ensure required vanilla skills exist even in old presets/saves
+
+            foreach (var name in orderedSkillNames)
+            {
+                bool exists = kindData.ForcedSkills.Any(s =>
+                    (s.skillDefName ?? "").Equals(name, System.StringComparison.OrdinalIgnoreCase) ||
+                    (name == "Medical" && ((s.skillDefName ?? "").Equals("Medicine", System.StringComparison.OrdinalIgnoreCase) ||
+                                            (s.skillDefName ?? "").Equals("Medical", System.StringComparison.OrdinalIgnoreCase))));
+                if (!exists)
+                {
+                    SkillDef def = DefDatabase<SkillDef>.GetNamedSilentFail(name);
+                    if (def == null && name == "Medical")
+                    {
+                        def = DefDatabase<SkillDef>.AllDefs.FirstOrDefault(d =>
+                            (d.defName ?? "").Equals("Medical", System.StringComparison.OrdinalIgnoreCase) ||
+                            (d.defName ?? "").Equals("Medicine", System.StringComparison.OrdinalIgnoreCase) ||
+                            (d.defName ?? "").IndexOf("med", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                            (d.label ?? "").IndexOf("medical", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                            (d.label ?? "").IndexOf("medicine", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                            (d.LabelCap.ToString()).IndexOf("医", System.StringComparison.OrdinalIgnoreCase) >= 0);
+                    }
+                    if (def != null)
+                    {
+                        kindData.ForcedSkills.Add(new ForcedSkill { SkillDef = def, skillDefName = def.defName, level = 0, minLevel = 0, maxLevel = 20, chance = 1f });
+                    }
+                }
+            }
+
+            // Stable display order
+            var orderMap = new System.Collections.Generic.Dictionary<string, int>
+            {
+                { "Shooting", 0 }, { "Melee", 1 }, { "Construction", 2 }, { "Mining", 3 }, { "Cooking", 4 },
+                { "Plants", 5 }, { "Animals", 6 }, { "Crafting", 7 }, { "Artistic", 8 }, { "Medical", 9 },
+                { "Medicine", 9 }, { "Social", 10 }, { "Intellectual", 11 }
+            };
+            kindData.ForcedSkills = kindData.ForcedSkills
+                .OrderBy(s => orderMap.TryGetValue(s.skillDefName ?? "", out var idx) ? idx : 999)
+                .ToList();
+
+            for (int i = 0; i < kindData.ForcedSkills.Count; i++)
+            {
+                try
+                {
+                    var item = kindData.ForcedSkills[i];
+                    SkillCardUI.Draw(ui, item, i, () => { Find.WindowStack.Add(new Dialog_SkillEditor(item)); });
+                }
+                catch (System.Exception ex) { Log.Error("[FGC] Skill row " + i + " error: " + ex); }
+            }
+        }
+
+        private static void DrawAdvancedTraits(Listing_Standard ui, KindGearData kindData)
+        {
+            WidgetsUtils.Label(ui, $"<b>{LanguageManager.Get("ForcedTraits")}</b>");
+            Rect buttonRow = ui.GetRect(28f);
+            Rect addButtonRect = new Rect(buttonRow.x, buttonRow.y, buttonRow.width - 205f, buttonRow.height);
+            Rect overrideRect = new Rect(buttonRow.x + buttonRow.width - 200f, buttonRow.y, 120f, buttonRow.height);
+            Rect clearButtonRect = new Rect(buttonRow.xMax - 75f, buttonRow.y, 75f, buttonRow.height);
+
+            if (Widgets.ButtonText(addButtonRect, LanguageManager.Get("AddTrait")))
+            {
+                UndoManager.RecordState(kindData);
+                if (kindData.ForcedTraits == null) kindData.ForcedTraits = new List<ForcedTrait>();
+                Find.WindowStack.Add(new Dialog_TraitPicker(kindData.ForcedTraits));
+            }
+
+            bool overrideVal = kindData.ForceOverrideTraits;
+            Widgets.CheckboxLabeled(overrideRect, LanguageManager.Get("ForceOverrideTraits"), ref overrideVal);
+            if (overrideVal != kindData.ForceOverrideTraits)
+            {
+                kindData.ForceOverrideTraits = overrideVal;
+                FactionGearEditor.MarkDirty();
+            }
+
+            if (Widgets.ButtonText(clearButtonRect, LanguageManager.Get("Clear"), true, false, !kindData.ForcedTraits.NullOrEmpty()))
+            {
+                if (kindData.ForcedTraits != null)
+                {
+                    UndoManager.RecordState(kindData);
+                    kindData.ForcedTraits.Clear();
+                    kindData.isModified = true;
+                    FactionGearEditor.MarkDirty();
+                }
+            }
+            TooltipHandler.TipRegion(clearButtonRect, LanguageManager.Get("ClearTraitsTooltip"));
+
+            if (!kindData.ForcedTraits.NullOrEmpty())
+            {
+                for (int i = 0; i < kindData.ForcedTraits.Count; i++)
+                {
+                    var item = kindData.ForcedTraits[i];
+                    int index = i;
+                    TraitCardUI.Draw(ui, item, index, () =>
+                    {
+                        UndoManager.RecordState(kindData);
+                        kindData.ForcedTraits.RemoveAt(index);
+                        kindData.isModified = true;
+                        FactionGearEditor.MarkDirty();
+                    });
+                }
+            }
+        }
+
+        private static void DrawAdvancedAppearance(Listing_Standard ui, KindGearData kindData)
+        {
+            // Override toggle
+            Rect ovRow = ui.GetRect(28f);
+            bool ov = kindData.ForceOverrideAppearance;
+            Widgets.CheckboxLabeled(new Rect(ovRow.x, ovRow.y, 160f, 28f), LanguageManager.Get("ForceOverrideAppearance"), ref ov);
+            if (ov != kindData.ForceOverrideAppearance) { kindData.ForceOverrideAppearance = ov; FactionGearEditor.MarkDirty(); }
+            if (!kindData.ForceOverrideAppearance) { return; }
+
+            Rect buttonRow = ui.GetRect(28f);
+            Rect editBtnRect = new Rect(buttonRow.x, buttonRow.y, buttonRow.width - 80f, buttonRow.height);
+            Rect clearBtnRect = new Rect(buttonRow.xMax - 75f, buttonRow.y, 75f, buttonRow.height);
+
+            if (Widgets.ButtonText(editBtnRect, LanguageManager.Get("EditAppearance")))
+            {
+                UndoManager.RecordState(kindData);
+                if (kindData.ForcedAppearance == null)
+                    kindData.ForcedAppearance = new ForcedAppearance();
+                Find.WindowStack.Add(new Dialog_AppearanceEditor(kindData.ForcedAppearance));
+            }
+
+            if (Widgets.ButtonText(clearBtnRect, LanguageManager.Get("Clear"), true, false, kindData.ForcedAppearance != null))
+            {
+                UndoManager.RecordState(kindData);
+                kindData.ForcedAppearance = null;
+                kindData.isModified = true;
+                FactionGearEditor.MarkDirty();
+            }
+
+            // Show summary if appearance is configured
+            if (kindData.ForcedAppearance != null)
+            {
+                ui.Gap(6f);
+                var app = kindData.ForcedAppearance;
+                if (app.HairDef != null)
+                    Widgets.Label(ui.GetRect(22f), "  Hair: " + app.HairDef.LabelCap);
+                if (app.BeardDef != null)
+                    Widgets.Label(ui.GetRect(22f), "  Beard: " + app.BeardDef.LabelCap);
+                if (app.BodyTypeDef != null)
+                    Widgets.Label(ui.GetRect(22f), "  Body: " + app.BodyTypeDef.LabelCap);
+                if (app.HeadTypeDef != null)
+                    Widgets.Label(ui.GetRect(22f), "  Head: " + app.HeadTypeDef.LabelCap);
+                if (app.skinColor.HasValue)
+                {
+                    Rect colorRow = ui.GetRect(22f);
+                    Widgets.Label(new Rect(colorRow.x, colorRow.y, 80f, 22f), "  Skin Color:");
+                    Widgets.DrawBoxSolid(new Rect(colorRow.x + 80f, colorRow.y + 2f, 30f, 18f), app.skinColor.Value);
+                }
+                Widgets.Label(ui.GetRect(22f), "  Chance: " + (app.chance * 100f).ToString("F0") + "%");
+            }
+        }
+
+        private static void DrawAdvancedGenes(Listing_Standard ui, KindGearData kindData)
+        {
+            WidgetsUtils.Label(ui, $"<b>{LanguageManager.Get("ForcedGenes")}</b>");
+            Rect buttonRow = ui.GetRect(28f);
+            Rect addButtonRect = new Rect(buttonRow.x, buttonRow.y, buttonRow.width - 160f, buttonRow.height);
+            Rect overrideRect = new Rect(buttonRow.x + buttonRow.width - 155f, buttonRow.y, 80f, buttonRow.height);
+            Rect clearButtonRect = new Rect(buttonRow.xMax - 75f, buttonRow.y, 75f, buttonRow.height);
+
+            if (Widgets.ButtonText(addButtonRect, LanguageManager.Get("AddGene")))
+            {
+                UndoManager.RecordState(kindData);
+                if (kindData.ForcedGenes == null) kindData.ForcedGenes = new List<ForcedGene>();
+                Find.WindowStack.Add(new Dialog_GenePicker(kindData.ForcedGenes));
+            }
+
+            bool overrideVal = kindData.ForceOverrideGenes;
+            Widgets.CheckboxLabeled(overrideRect, LanguageManager.Get("ForceOverrideGenes"), ref overrideVal);
+            if (overrideVal != kindData.ForceOverrideGenes)
+            {
+                kindData.ForceOverrideGenes = overrideVal;
+                FactionGearEditor.MarkDirty();
+            }
+
+            if (Widgets.ButtonText(clearButtonRect, LanguageManager.Get("Clear"), true, false, !kindData.ForcedGenes.NullOrEmpty()))
+            {
+                if (kindData.ForcedGenes != null)
+                {
+                    UndoManager.RecordState(kindData);
+                    kindData.ForcedGenes.Clear();
+                    kindData.isModified = true;
+                    FactionGearEditor.MarkDirty();
+                }
+            }
+            TooltipHandler.TipRegion(clearButtonRect, LanguageManager.Get("ClearGenesTooltip"));
+
+            if (!kindData.ForcedGenes.NullOrEmpty())
+            {
+                for (int i = 0; i < kindData.ForcedGenes.Count; i++)
+                {
+                    var item = kindData.ForcedGenes[i];
+                    int index = i;
+                    GeneCardUI.Draw(ui, item, index, () =>
+                    {
+                        UndoManager.RecordState(kindData);
+                        kindData.ForcedGenes.RemoveAt(index);
                         kindData.isModified = true;
                         FactionGearEditor.MarkDirty();
                     });

@@ -227,7 +227,7 @@ Recommended: Enable for full control.</ForceOnlySelectedTooltip>
   <ForceIgnore>Force Ignore</ForceIgnore>
   <ForceIgnoreTooltip>Force remove conflicting apparel/weapons and ignore budget limits. Pawns will attempt to equip all possible items from config list, allowing you to bypass restrictions and always create god-tier units.</ForceIgnoreTooltip>
   <AmmoProtection>Ammo Protection</AmmoProtection>
-  <AmmoProtectionTooltip>When enabled, the mod will not generate ammo — CE handles ammo generation for the current weapon on its own, preventing duplicate or mixed ammo from multiple sources. When disabled, the mod also generates a set of ammo alongside CE.</AmmoProtectionTooltip>
+  <AmmoProtectionTooltip>When enabled, only mod-generated ammo is kept, preventing CE and other sources from causing duplicate or mixed ammo. When disabled, the mod and CE each generate their own set of ammo.</AmmoProtectionTooltip>
   <ForceIgnoreGlobal>Global Force Ignore</ForceIgnoreGlobal>
   <ForceIgnoreGlobalTooltip>Global setting: Force remove conflicting apparel/weapons and ignore budget limits. Used as default for all pawn kinds, can be overridden by local settings.</ForceIgnoreGlobalTooltip>
   <ForceIgnoreLocal>Local Force Ignore</ForceIgnoreLocal>
@@ -1053,6 +1053,62 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <P2_ResetSuccess>Faction data reset to default</P2_ResetSuccess>
   <P2_NotInGameWarning>[Note] Not currently in game, some features (e.g., apply to save) are unavailable</P2_NotInGameWarning>
   
+  <!-- Skills -->
+  <Skills>Skills</Skills>
+  <ForcedSkills>Forced Skills</ForcedSkills>
+  <SkillLevel>Level</SkillLevel>
+  <ForceOverrideSkills>Override Skills</ForceOverrideSkills>
+  <SkillRandomRange>Random Range</SkillRandomRange>
+  <SkillsAddedMessage>Added {0} skills, skipped {1} duplicates.</SkillsAddedMessage>
+  <BaseLevel>Base Level</BaseLevel>
+  <RandomRange>Random Range</RandomRange>
+  <SkillMin>Min</SkillMin>
+  <SkillMax>Max</SkillMax>
+  <Passion>Passion</Passion>
+  <SkillEditTitle>Edit Skill</SkillEditTitle>
+  <ClearSkillsTooltip>Clear all skills for this pawn kind</ClearSkillsTooltip>
+
+  <!-- Traits -->
+  <Traits>Traits</Traits>
+  <ForcedTraits>Forced Traits</ForcedTraits>
+  <AddTrait>Add Trait</AddTrait>
+  <TraitPickerTitle>Add Traits</TraitPickerTitle>
+  <Degree>Degree</Degree>
+  <ForceOverrideTraits>Override Traits</ForceOverrideTraits>
+  <TraitsAddedMessage>Added {0} traits, skipped {1} duplicates.</TraitsAddedMessage>
+  <ClearTraitsTooltip>Clear all traits for this pawn kind</ClearTraitsTooltip>
+
+  <!-- Genes -->
+  <Genes>Genes</Genes>
+  <ForcedGenes>Forced Genes</ForcedGenes>
+  <AddGene>Add Gene</AddGene>
+  <GenePickerTitle>Add Genes</GenePickerTitle>
+  <GeneEndogene>Endogene</GeneEndogene>
+  <ForceOverrideGenes>Override Genes</ForceOverrideGenes>
+  <GenesAddedMessage>Added {0} genes, skipped {1} duplicates.</GenesAddedMessage>
+  <ClearGenesTooltip>Clear all genes for this pawn kind</ClearGenesTooltip>
+
+  <!-- Appearance -->
+  <Appearance>Appearance</Appearance>
+  <EditAppearance>Edit Appearance</EditAppearance>
+  <AppearanceEditorTitle>Edit Appearance</AppearanceEditorTitle>
+  <SkinColor>Skin Color</SkinColor>
+  <HairColor>Hair Color</HairColor>
+  <ForceOverrideAppearance>Override Appearance</ForceOverrideAppearance>
+  <ClearAppearanceTooltip>Clear appearance settings for this pawn kind</ClearAppearanceTooltip>
+  <AppearanceTab_Shape>Shape</AppearanceTab_Shape>
+  <AppearanceTab_Hair>Hair</AppearanceTab_Hair>
+  <AppearanceTab_Skin>Skin</AppearanceTab_Skin>
+  <AppearanceTab_Genes>Genes</AppearanceTab_Genes>
+  <AppearanceTab_Body>Body</AppearanceTab_Body>
+  <AppearanceTab_Head>Head</AppearanceTab_Head>
+  <AppearanceTab_Beard>Beard</AppearanceTab_Beard>
+  <Random>Random</Random>
+
+  <!-- Ideology -->
+  <IdeologySettings>Ideology Settings</IdeologySettings>
+  <SelectIdeology>Select Ideology</SelectIdeology>
+
   <!-- Turret/Mechanoid Weapon Filter -->
   <HideTurretMechanoidWeaponsTooltip>Hide turret and mechanoid weapons from the item library</HideTurretMechanoidWeaponsTooltip>
 
