@@ -140,7 +140,10 @@ namespace FactionGearCustomizer.UI.Dialogs
                 if (Widgets.ButtonInvisible(cell)) onSelect(opt);
                 Texture tex = getIcon(opt);
                 if (tex != null) GUI.DrawTexture(texR, tex, ScaleMode.ScaleToFit);
-                TooltipHandler.TipRegion(cell, getLabel(opt));
+                string tip = getLabel(opt);
+                if (opt is Def def && def.modContentPack != null)
+                    tip += "\n\n" + LanguageManager.Get("FromMod") + ": " + Truncate(def.modContentPack.Name, 40f);
+                TooltipHandler.TipRegion(cell, tip);
             }
             Widgets.EndScrollView();
         }
@@ -199,6 +202,16 @@ namespace FactionGearCustomizer.UI.Dialogs
                 TooltipHandler.TipRegion(cell, gene.LabelCap + "\n" + (gene.description ?? ""));
             }
             Widgets.EndScrollView();
+        }
+
+        private static string Truncate(string text, float maxW)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+            if (Text.CalcSize(text).x <= maxW) return text;
+            for (int i = text.Length - 1; i > 0; i--)
+                if (Text.CalcSize(text.Substring(0, i) + "...").x <= maxW)
+                    return text.Substring(0, i) + "...";
+            return "...";
         }
 
         private static Texture2D GetBodyTex(BodyTypeDef def)

@@ -8,7 +8,6 @@ namespace FactionGearCustomizer.Managers
         public static void ApplyAppearance(Pawn pawn, KindGearData kindData)
         {
             if (pawn?.story == null || kindData == null) return;
-            if (!kindData.ForceOverrideAppearance) return;
             if (kindData.ForcedAppearance == null) return;
 
             var app = kindData.ForcedAppearance;

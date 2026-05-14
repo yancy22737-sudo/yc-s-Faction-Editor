@@ -109,19 +109,29 @@ namespace FactionGearCustomizer.UI.Dialogs
                 }
                 TooltipHandler.TipRegion(ir, infoTip);
 
+                string modSource = t.modContentPack != null ? t.modContentPack.Name : "Unknown";
+                modSource = Truncate(modSource, 78f);
+
                 float cx = row.x + 26f;
                 if (exists && skipExisting)
                 {
                     GUI.color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
-                    Widgets.Label(new Rect(cx, row.y, row.width - cx - 4f, RowHeight), label + " (" + LanguageManager.Get("AlreadyAdded") + ")");
+                    Widgets.Label(new Rect(cx, row.y, row.width - cx - 90f, RowHeight), label + " (" + LanguageManager.Get("AlreadyAdded") + ")");
                     GUI.color = Color.white;
                 }
                 else
                 {
                     bool sel = selected.Contains(t);
-                    Widgets.CheckboxLabeled(new Rect(cx, row.y, row.width - cx - 4f, RowHeight), label, ref sel, false);
+                    Widgets.CheckboxLabeled(new Rect(cx, row.y, row.width - cx - 90f, RowHeight), label, ref sel, false);
                     if (sel != selected.Contains(t)) { if (sel) selected.Add(t); else selected.Remove(t); }
                 }
+
+                // Mod source column (same pattern as item pickers)
+                GUI.color = Color.gray;
+                Text.Anchor = TextAnchor.MiddleRight;
+                Widgets.Label(new Rect(row.x + row.width - 84f, row.y, 80f, RowHeight), modSource);
+                Text.Anchor = TextAnchor.UpperLeft;
+                GUI.color = Color.white;
 
                 // Tooltip: safe pure-text path (no preview pawn mutation on hover)
                 string rowTip = label;
@@ -142,6 +152,16 @@ namespace FactionGearCustomizer.UI.Dialogs
                 TooltipHandler.TipRegion(row, rowTip);
             }
             Widgets.EndScrollView();
+        }
+
+        private static string Truncate(string text, float maxW)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+            if (Text.CalcSize(text).x <= maxW) return text;
+            for (int i = text.Length - 1; i > 0; i--)
+                if (Text.CalcSize(text.Substring(0, i) + "...").x <= maxW)
+                    return text.Substring(0, i) + "...";
+            return "...";
         }
 
         private void DrawBottom(Rect inRect)

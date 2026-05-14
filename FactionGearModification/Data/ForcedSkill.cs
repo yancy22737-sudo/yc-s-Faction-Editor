@@ -11,6 +11,7 @@ namespace FactionGearCustomizer
         public int maxLevel = 20;
         public float chance = 1f;
         public Passion passion = Passion.None;
+        public bool enabled = false;
 
         [Unsaved]
         private SkillDef cachedSkillDef;
@@ -38,6 +39,7 @@ namespace FactionGearCustomizer
             Scribe_Values.Look(ref maxLevel, "maxLevel", 20);
             Scribe_Values.Look(ref chance, "chance", 1f);
             Scribe_Values.Look(ref passion, "passion", Passion.None);
+            Scribe_Values.Look(ref enabled, "enabled", false);
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {

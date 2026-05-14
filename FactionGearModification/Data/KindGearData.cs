@@ -478,6 +478,7 @@ namespace FactionGearCustomizer
                     chance = this.ForcedAppearance.chance
                 };
             }
+            copy.ForceOverrideAppearance = this.ForceOverrideAppearance;
 
             if (this.TechHediffTags != null) copy.TechHediffTags = new List<string>(this.TechHediffTags);
             if (this.TechHediffDisallowedTags != null) copy.TechHediffDisallowedTags = new List<string>(this.TechHediffDisallowedTags);
@@ -695,6 +696,7 @@ namespace FactionGearCustomizer
                 };
             }
             else this.ForcedAppearance = null;
+            this.ForceOverrideAppearance = source.ForceOverrideAppearance;
 
             this.TechHediffTags = source.TechHediffTags == null ? null : new List<string>(source.TechHediffTags);
             this.TechHediffDisallowedTags = source.TechHediffDisallowedTags == null ? null : new List<string>(source.TechHediffDisallowedTags);

@@ -24,6 +24,16 @@ namespace FactionGearCustomizer.UI.Panels
 
             float x = row.x;
 
+            // Enable toggle
+            bool en = item.enabled;
+            Widgets.Checkbox(new Vector2(x + 2f, row.y + 4f), ref en, 20f, false, true);
+            if (en != item.enabled)
+            {
+                item.enabled = en;
+                FactionGearEditor.MarkDirty();
+            }
+            x += 24f;
+
             // Passion icon (pawn-editor style)
             Texture2D pi = BaseContent.GreyTex;
             if (item.passion == Passion.Major && SkillUI.PassionMajorIcon != null) pi = SkillUI.PassionMajorIcon;
@@ -48,6 +58,7 @@ namespace FactionGearCustomizer.UI.Panels
             if (Widgets.ButtonText(new Rect(x, row.y + 4f, 18f, 20f), "-"))
             {
                 item.level = Mathf.Max(0, item.level - 1);
+                item.enabled = true;
                 item.minLevel = Mathf.Min(item.minLevel, item.level);
                 item.maxLevel = Mathf.Max(item.maxLevel, item.level);
                 FactionGearEditor.MarkDirty();
@@ -68,6 +79,7 @@ namespace FactionGearCustomizer.UI.Panels
             if (Widgets.ButtonText(new Rect(x, row.y + 4f, 18f, 20f), "+"))
             {
                 item.level = Mathf.Min(20, item.level + 1);
+                item.enabled = true;
                 item.minLevel = Mathf.Min(item.minLevel, item.level);
                 item.maxLevel = Mathf.Max(item.maxLevel, item.level);
                 FactionGearEditor.MarkDirty();

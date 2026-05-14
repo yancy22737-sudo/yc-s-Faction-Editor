@@ -457,15 +457,14 @@ namespace FactionGearCustomizer.UI.Panels
             DrawAdvTab(new Rect(tabRow1.x + row1TabW * 3, tabRow1.y, row1TabW, tabRow1.height), LanguageManager.Get("Hediffs"), AdvancedTab.Hediffs);
             DrawAdvTab(new Rect(tabRow1.x + row1TabW * 4, tabRow1.y, row1TabW, tabRow1.height), LanguageManager.Get("Items"), AdvancedTab.Items);
 
-            // Row 2: character tabs
+            // Row 2: character tabs (Skills hidden)
             Rect tabRow2 = new Rect(rect.x, rect.y + 28f, rect.width, 24f);
-            int row2Count = ModsConfig.BiotechActive ? 4 : 3;
+            int row2Count = ModsConfig.BiotechActive ? 3 : 2;
             float row2TabW = rect.width / row2Count;
-            DrawAdvTab(new Rect(tabRow2.x, tabRow2.y, row2TabW, tabRow2.height), LanguageManager.Get("Skills"), AdvancedTab.Skills);
-            DrawAdvTab(new Rect(tabRow2.x + row2TabW, tabRow2.y, row2TabW, tabRow2.height), LanguageManager.Get("Traits"), AdvancedTab.Traits);
-            DrawAdvTab(new Rect(tabRow2.x + row2TabW * 2, tabRow2.y, row2TabW, tabRow2.height), LanguageManager.Get("Appearance"), AdvancedTab.Appearance);
+            DrawAdvTab(new Rect(tabRow2.x, tabRow2.y, row2TabW, tabRow2.height), LanguageManager.Get("Traits"), AdvancedTab.Traits);
+            DrawAdvTab(new Rect(tabRow2.x + row2TabW, tabRow2.y, row2TabW, tabRow2.height), LanguageManager.Get("Appearance"), AdvancedTab.Appearance);
             if (ModsConfig.BiotechActive)
-                DrawAdvTab(new Rect(tabRow2.x + row2TabW * 3, tabRow2.y, row2TabW, tabRow2.height), LanguageManager.Get("Genes"), AdvancedTab.Genes);
+                DrawAdvTab(new Rect(tabRow2.x + row2TabW * 2, tabRow2.y, row2TabW, tabRow2.height), LanguageManager.Get("Genes"), AdvancedTab.Genes);
 
             Rect contentRect = new Rect(rect.x, rect.y + 56f, rect.width, rect.height - 56f);
 
@@ -537,16 +536,6 @@ namespace FactionGearCustomizer.UI.Panels
                 }
                 height += 40f; // bottom padding
             }
-            else if (EditorSession.CurrentAdvancedTab == AdvancedTab.Skills)
-            {
-                height = 60f; // header
-                if (kindData.ForceOverrideSkills) // toggle row + range row + skills
-                {
-                    height += 60f; // override row + range row
-                    int count = kindData.ForcedSkills?.Count ?? 12;
-                    height += count * 32f + 10f;
-                }
-            }
             else if (EditorSession.CurrentAdvancedTab == AdvancedTab.Traits)
             {
                 height = 100f;
@@ -560,7 +549,7 @@ namespace FactionGearCustomizer.UI.Panels
             else if (EditorSession.CurrentAdvancedTab == AdvancedTab.Appearance)
             {
                 height = 60f; // header + override row
-                if (kindData.ForceOverrideAppearance && kindData.ForcedAppearance != null)
+                if (kindData.ForcedAppearance != null)
                 {
                     height += 30f; // edit/clear button row
                     int lines = 0;
@@ -618,10 +607,6 @@ namespace FactionGearCustomizer.UI.Panels
                     break;
                 case AdvancedTab.Items:
                     DrawAdvancedItems(ui, kindData);
-                    break;
-                case AdvancedTab.Skills:
-                    try { DrawAdvancedSkills(ui, kindData); }
-                    catch (System.Exception ex) { Log.Error("[FGC] Skills tab draw error: " + ex); }
                     break;
                 case AdvancedTab.Traits:
                     DrawAdvancedTraits(ui, kindData);
@@ -1125,7 +1110,7 @@ namespace FactionGearCustomizer.UI.Panels
             bool ov = kindData.ForceOverrideSkills;
             Widgets.CheckboxLabeled(new Rect(overrideRow.x, overrideRow.y, 160f, 28f), LanguageManager.Get("ForceOverrideSkills"), ref ov);
             if (ov != kindData.ForceOverrideSkills) { kindData.ForceOverrideSkills = ov; FactionGearEditor.MarkDirty(); }
-            if (!kindData.ForceOverrideSkills) { ui.Gap(8f); return; }
+            // Do NOT early-return; allow editing and visibility even when not enabled
 
             // Global random range
             Rect rangeRow = ui.GetRect(28f);
@@ -1201,22 +1186,22 @@ namespace FactionGearCustomizer.UI.Panels
                 }
             }
 
-            // Stable display order
+            // Stable display order without replacing the original list reference
             var orderMap = new System.Collections.Generic.Dictionary<string, int>
             {
                 { "Shooting", 0 }, { "Melee", 1 }, { "Construction", 2 }, { "Mining", 3 }, { "Cooking", 4 },
                 { "Plants", 5 }, { "Animals", 6 }, { "Crafting", 7 }, { "Artistic", 8 }, { "Medical", 9 },
                 { "Medicine", 9 }, { "Social", 10 }, { "Intellectual", 11 }
             };
-            kindData.ForcedSkills = kindData.ForcedSkills
+            var ordered = kindData.ForcedSkills
                 .OrderBy(s => orderMap.TryGetValue(s.skillDefName ?? "", out var idx) ? idx : 999)
                 .ToList();
 
-            for (int i = 0; i < kindData.ForcedSkills.Count; i++)
+            for (int i = 0; i < ordered.Count; i++)
             {
                 try
                 {
-                    var item = kindData.ForcedSkills[i];
+                    var item = ordered[i];
                     SkillCardUI.Draw(ui, item, i, () => { Find.WindowStack.Add(new Dialog_SkillEditor(item)); });
                 }
                 catch (System.Exception ex) { Log.Error("[FGC] Skill row " + i + " error: " + ex); }
@@ -1282,7 +1267,6 @@ namespace FactionGearCustomizer.UI.Panels
             bool ov = kindData.ForceOverrideAppearance;
             Widgets.CheckboxLabeled(new Rect(ovRow.x, ovRow.y, 160f, 28f), LanguageManager.Get("ForceOverrideAppearance"), ref ov);
             if (ov != kindData.ForceOverrideAppearance) { kindData.ForceOverrideAppearance = ov; FactionGearEditor.MarkDirty(); }
-            if (!kindData.ForceOverrideAppearance) { return; }
 
             Rect buttonRow = ui.GetRect(28f);
             Rect editBtnRect = new Rect(buttonRow.x, buttonRow.y, buttonRow.width - 80f, buttonRow.height);
@@ -1307,6 +1291,12 @@ namespace FactionGearCustomizer.UI.Panels
             // Show summary if appearance is configured
             if (kindData.ForcedAppearance != null)
             {
+                if (!kindData.ForceOverrideAppearance)
+                {
+                    GUI.color = Color.gray;
+                    Widgets.Label(ui.GetRect(22f), "  (Configured but not enabled)");
+                    GUI.color = Color.white;
+                }
                 ui.Gap(6f);
                 var app = kindData.ForcedAppearance;
                 if (app.HairDef != null)

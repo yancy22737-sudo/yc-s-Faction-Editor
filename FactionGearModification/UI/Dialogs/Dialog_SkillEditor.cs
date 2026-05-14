@@ -42,6 +42,7 @@ namespace FactionGearCustomizer.UI.Dialogs
                 if (newLevel != skill.level)
                 {
                     skill.level = newLevel;
+                    skill.enabled = true;
                     FactionGearEditor.MarkDirty();
                 }
                 y += 34f;
@@ -58,6 +59,7 @@ namespace FactionGearCustomizer.UI.Dialogs
                 if (newMin != skill.minLevel)
                 {
                     skill.minLevel = Mathf.Min(newMin, skill.maxLevel);
+                    skill.enabled = true;
                     FactionGearEditor.MarkDirty();
                 }
                 y += 32f;
@@ -70,6 +72,7 @@ namespace FactionGearCustomizer.UI.Dialogs
                 if (newMax != skill.maxLevel)
                 {
                     skill.maxLevel = Mathf.Max(newMax, skill.minLevel);
+                    skill.enabled = true;
                     FactionGearEditor.MarkDirty();
                 }
                 y += 36f;
@@ -85,6 +88,7 @@ namespace FactionGearCustomizer.UI.Dialogs
                     if (Widgets.ButtonText(btnR, pNames[i], true, true, true))
                     {
                         skill.passion = p;
+                        skill.enabled = true;
                         FactionGearEditor.MarkDirty();
                     }
                     if (isActive) Widgets.DrawHighlight(btnR);
@@ -99,6 +103,7 @@ namespace FactionGearCustomizer.UI.Dialogs
                 if (System.Math.Abs(newChance - skill.chance) > 0.001f)
                 {
                     skill.chance = newChance;
+                    skill.enabled = true;
                     FactionGearEditor.MarkDirty();
                 }
 

@@ -186,17 +186,19 @@ namespace FactionGearCustomizer.UI.Dialogs
             }
 
             float labelX = iconRect.xMax + 4f;
+            string modSource = gene.modContentPack != null ? gene.modContentPack.Name : "Unknown";
+            modSource = Truncate(modSource, 78f);
             if (alreadyExists && skipExisting)
             {
                 GUI.color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
-                Widgets.Label(new Rect(labelX, row.y, row.width - labelX - 90f, RowHeight),
+                Widgets.Label(new Rect(labelX, row.y, row.width - labelX - 170f, RowHeight),
                     gene.LabelCap + " (" + LanguageManager.Get("AlreadyAdded") + ")");
                 GUI.color = Color.white;
             }
             else
             {
                 bool isSel = selected.Contains(gene);
-                Widgets.CheckboxLabeled(new Rect(labelX, row.y, row.width - labelX - 90f, RowHeight), gene.LabelCap, ref isSel, false);
+                Widgets.CheckboxLabeled(new Rect(labelX, row.y, row.width - labelX - 170f, RowHeight), gene.LabelCap, ref isSel, false);
                 if (isSel != selected.Contains(gene))
                 {
                     if (isSel) selected.Add(gene);
@@ -204,8 +206,15 @@ namespace FactionGearCustomizer.UI.Dialogs
                 }
             }
 
+            // Mod source column
+            GUI.color = Color.gray;
+            Text.Anchor = TextAnchor.MiddleRight;
+            Widgets.Label(new Rect(row.x + row.width - 165f, row.y, 80f, RowHeight), modSource);
+            Text.Anchor = TextAnchor.UpperLeft;
+            GUI.color = Color.white;
+
             // Metabolism + Complexity
-            float rightX = row.x + row.width - 85f;
+            float rightX = row.x + row.width - 80f;
             float met = gene.biostatMet;
             string metStr = met > 0 ? $"+{met:F0}" : $"{met:F0}";
             Color metColor = met > 0 ? new Color(1f, 0.4f, 0.3f) : (met < 0 ? new Color(0.3f, 0.85f, 0.3f) : Color.gray);
@@ -234,6 +243,16 @@ namespace FactionGearCustomizer.UI.Dialogs
             TooltipHandler.TipRegion(row, tip);
 
             y += RowHeight;
+        }
+
+        private static string Truncate(string text, float maxW)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+            if (Text.CalcSize(text).x <= maxW) return text;
+            for (int i = text.Length - 1; i > 0; i--)
+                if (Text.CalcSize(text.Substring(0, i) + "...").x <= maxW)
+                    return text.Substring(0, i) + "...";
+            return "...";
         }
 
         private void DrawBottomMulti(Rect inRect)

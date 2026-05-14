@@ -25,7 +25,10 @@ namespace FactionGearCustomizer.UI
         Hediffs = 1 << 5,
         Items = 1 << 6,
         General = 1 << 7,
-        All = Ranged | Melee | Armors | Clothes | Others | Hediffs | Items | General
+        Traits = 1 << 9,
+        Genes = 1 << 10,
+        Appearance = 1 << 11,
+        All = Ranged | Melee | Armors | Clothes | Others | Hediffs | Items | General | Traits | Genes | Appearance
     }
 
     public class Dialog_BatchApply : Window
@@ -236,6 +239,9 @@ namespace FactionGearCustomizer.UI
                 (GearCopyFlags.Hediffs, "Hediffs"),
                 (GearCopyFlags.Items,   "Items"),
                 (GearCopyFlags.General, "General"),
+                (GearCopyFlags.Traits,  "Traits"),
+                (GearCopyFlags.Genes,   "Genes"),
+                (GearCopyFlags.Appearance, "Appearance"),
             };
 
             float colW = width / 4f;
@@ -260,8 +266,9 @@ namespace FactionGearCustomizer.UI
                 col++;
             }
 
-            // Advance y by 2 rows
-            y = startY + (flags.Length > 4 ? rowH * 2 : rowH) + 2f;
+            // Advance y by 3 rows (11 flags, 4 per row)
+            int rows = (flags.Length + 3) / 4;
+            y = startY + rows * rowH + 2f;
 
             // "All" / "None" quick buttons
             float btnW = 54f;
@@ -525,6 +532,72 @@ namespace FactionGearCustomizer.UI
                 {
                     dst.InventoryItems = null;
                 }
+            }
+
+            // ── Traits ──────────────────────────────
+            if ((flags & GearCopyFlags.Traits) != 0)
+            {
+                if (src.ForcedTraits != null)
+                {
+                    dst.ForcedTraits = new List<ForcedTrait>();
+                    foreach (var item in src.ForcedTraits)
+                    {
+                        if (item == null) continue;
+                        dst.ForcedTraits.Add(new ForcedTrait
+                        {
+                            TraitDef = item.TraitDef,
+                            traitDefName = item.traitDefName,
+                            degree = item.degree,
+                            chance = item.chance
+                        });
+                    }
+                }
+                else dst.ForcedTraits = null;
+                dst.ForceOverrideTraits = src.ForceOverrideTraits;
+            }
+
+            // ── Genes ───────────────────────────────
+            if ((flags & GearCopyFlags.Genes) != 0)
+            {
+                if (src.ForcedGenes != null)
+                {
+                    dst.ForcedGenes = new List<ForcedGene>();
+                    foreach (var item in src.ForcedGenes)
+                    {
+                        if (item == null) continue;
+                        dst.ForcedGenes.Add(new ForcedGene
+                        {
+                            GeneDef = item.GeneDef,
+                            geneDefName = item.geneDefName,
+                            asEndogene = item.asEndogene,
+                            chance = item.chance
+                        });
+                    }
+                }
+                else dst.ForcedGenes = null;
+                dst.ForceOverrideGenes = src.ForceOverrideGenes;
+            }
+
+            // ── Appearance ──────────────────────────
+            if ((flags & GearCopyFlags.Appearance) != 0)
+            {
+                if (src.ForcedAppearance != null)
+                {
+                    dst.ForcedAppearance = new ForcedAppearance
+                    {
+                        hairDefName = src.ForcedAppearance.hairDefName,
+                        beardDefName = src.ForcedAppearance.beardDefName,
+                        bodyTypeDefName = src.ForcedAppearance.bodyTypeDefName,
+                        headTypeDefName = src.ForcedAppearance.headTypeDefName,
+                        skinColor = src.ForcedAppearance.skinColor,
+                        hairColor = src.ForcedAppearance.hairColor,
+                        tattooDefNames = src.ForcedAppearance.tattooDefNames != null
+                            ? new List<string>(src.ForcedAppearance.tattooDefNames) : null,
+                        chance = src.ForcedAppearance.chance
+                    };
+                }
+                else dst.ForcedAppearance = null;
+                dst.ForceOverrideAppearance = src.ForceOverrideAppearance;
             }
 
             // ── General/Advanced ──────────────────────────────
