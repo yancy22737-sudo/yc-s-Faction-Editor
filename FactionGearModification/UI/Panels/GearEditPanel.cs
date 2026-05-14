@@ -771,6 +771,17 @@ namespace FactionGearCustomizer.UI.Panels
                     kindData.isModified = true;
                     FactionGearEditor.MarkDirty();
                 }
+
+                if (CECompat.IsCEActive)
+                {
+                    bool ammoProtection = FactionGearCustomizerMod.Settings.ammoProtection;
+                    ui.CheckboxLabeled(LanguageManager.Get("AmmoProtection"), ref ammoProtection, LanguageManager.Get("AmmoProtectionTooltip"));
+                    if (ammoProtection != FactionGearCustomizerMod.Settings.ammoProtection)
+                    {
+                        FactionGearCustomizerMod.Settings.ammoProtection = ammoProtection;
+                        FactionGearCustomizerMod.Settings.Write();
+                    }
+                }
             }
 
             ui.Gap();

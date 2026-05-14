@@ -55,6 +55,9 @@ namespace FactionGearCustomizer
         // [New] Enable debug logging
         public bool enableDebugLog = false;
 
+        // [New] Ammo protection — when CE is active, remove ammo that doesn't match equipped weapons
+        public bool ammoProtection = false;
+
         // [Phase 2] 剧本配置 - 用于游戏开始前配置派系
         public ScenarioFactionConfig scenarioFactionConfig;
 
@@ -68,6 +71,7 @@ namespace FactionGearCustomizer
             Scribe_Values.Look(ref suppressDeleteGroupConfirmation, "suppressDeleteGroupConfirmation", false);
             Scribe_Values.Look(ref autoSaveBeforePreview, "autoSaveBeforePreview", false);
             Scribe_Values.Look(ref enableDebugLog, "enableDebugLog", false);
+            Scribe_Values.Look(ref ammoProtection, "ammoProtection", false);
             Scribe_Collections.Look(ref dismissedDialogs, "dismissedDialogs", LookMode.Value);
             if (dismissedDialogs == null) dismissedDialogs = new HashSet<string>();
             Scribe_Values.Look(ref currentPresetName, "currentPresetName", null);
@@ -223,6 +227,7 @@ namespace FactionGearCustomizer
             copy.forceIgnoreRestrictions = this.forceIgnoreRestrictions;
             copy.ShowInMainTab = this.ShowInMainTab;
             copy.enableDebugLog = this.enableDebugLog;
+            copy.ammoProtection = this.ammoProtection;
             foreach (var faction in this.factionGearData)
             {
                 copy.factionGearData.Add(faction.DeepCopy());
@@ -242,6 +247,7 @@ namespace FactionGearCustomizer
             this.forceIgnoreRestrictions = source.forceIgnoreRestrictions;
             this.ShowInMainTab = source.ShowInMainTab;
             this.enableDebugLog = source.enableDebugLog;
+            this.ammoProtection = source.ammoProtection;
             this.factionGearData.Clear();
             foreach (var faction in source.factionGearData)
             {

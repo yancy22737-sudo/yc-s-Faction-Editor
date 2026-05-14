@@ -226,6 +226,8 @@ Recommended: Enable for full control.</ForceOnlySelectedTooltip>
   <EnableDebugLogTooltip>When enabled, detailed debug log messages will be output during gameplay for troubleshooting. Recommended to enable only when needed to avoid large log files.</EnableDebugLogTooltip>
   <ForceIgnore>Force Ignore</ForceIgnore>
   <ForceIgnoreTooltip>Force remove conflicting apparel/weapons and ignore budget limits. Pawns will attempt to equip all possible items from config list, allowing you to bypass restrictions and always create god-tier units.</ForceIgnoreTooltip>
+  <AmmoProtection>Ammo Protection</AmmoProtection>
+  <AmmoProtectionTooltip>When enabled, the mod will not generate ammo — CE handles ammo generation for the current weapon on its own, preventing duplicate or mixed ammo from multiple sources. When disabled, the mod also generates a set of ammo alongside CE.</AmmoProtectionTooltip>
   <ForceIgnoreGlobal>Global Force Ignore</ForceIgnoreGlobal>
   <ForceIgnoreGlobalTooltip>Global setting: Force remove conflicting apparel/weapons and ignore budget limits. Used as default for all pawn kinds, can be overridden by local settings.</ForceIgnoreGlobalTooltip>
   <ForceIgnoreLocal>Local Force Ignore</ForceIgnoreLocal>

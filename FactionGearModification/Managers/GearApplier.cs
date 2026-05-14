@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FactionGearCustomizer.Core;
 using FactionGearCustomizer.Compat;
+using FactionGearCustomizer.Compat.AmmoProviders;
 using FactionGearCustomizer.Managers;
 using RimWorld;
 using UnityEngine;
@@ -124,6 +125,9 @@ namespace FactionGearCustomizer
 
                         try { ApplyWeapons(pawn, kindData); }
                         catch (Exception ex) { SafeLogError("ApplyWeapons", pawn, ex); }
+
+                        try { CleanupCEAmmo(pawn); }
+                        catch (Exception ex) { SafeLogError("CleanupCEAmmo", pawn, ex); }
 
                         try { ApplyApparel(pawn, kindData); }
                         catch (Exception ex) { SafeLogError("ApplyApparel", pawn, ex); }
@@ -839,9 +843,8 @@ namespace FactionGearCustomizer
                              pawn.equipment.Remove(pawn.equipment.Primary);
                         }
                         pawn.equipment.AddEquipment(weapon);
-                        
-                        // CE 兼容性：为需要弹药的武器生成弹药
-                        if (CECompat.WeaponNeedsAmmo(weapon))
+
+                        if (!FactionGearCustomizerMod.Settings.ammoProtection && CECompat.WeaponNeedsAmmo(weapon))
                         {
                             CECompat.GenerateAndAddAmmoForWeapon(pawn, weapon);
                         }
@@ -911,9 +914,8 @@ namespace FactionGearCustomizer
                                     }
                                 }
                                 pawn.equipment.AddEquipment(wc);
-                                
-                                // CE 兼容性：为需要弹药的武器生成弹药
-                                if (CECompat.WeaponNeedsAmmo(wc))
+
+                                if (!FactionGearCustomizerMod.Settings.ammoProtection && CECompat.WeaponNeedsAmmo(wc))
                                 {
                                     CECompat.GenerateAndAddAmmoForWeapon(pawn, wc);
                                 }
@@ -951,9 +953,8 @@ namespace FactionGearCustomizer
                                     }
                                 }
                                 pawn.equipment.AddEquipment(wc);
-                                
-                                // CE 兼容性：为需要弹药的武器生成弹药（某些近战武器可能需要）
-                                if (CECompat.WeaponNeedsAmmo(wc))
+
+                                if (!FactionGearCustomizerMod.Settings.ammoProtection && CECompat.WeaponNeedsAmmo(wc))
                                 {
                                     CECompat.GenerateAndAddAmmoForWeapon(pawn, wc);
                                 }
@@ -962,6 +963,50 @@ namespace FactionGearCustomizer
                     }
                 }
             }
+        }
+
+        public static void CleanupCEAmmo(Pawn pawn)
+        {
+            if (!CECompat.IsCEActive) return;
+            if (!FactionGearCustomizerMod.Settings.ammoProtection) return;
+            if (pawn?.equipment == null || pawn.inventory?.innerContainer == null) return;
+
+            var equippedWeapons = pawn.equipment.AllEquipmentListForReading
+                .Where(eq => CECompat.WeaponNeedsAmmo(eq))
+                .ToList();
+
+            // 没有需要弹药的武器 → 清空全部 CE 弹药
+            if (equippedWeapons.Count == 0)
+            {
+                var toRemove = new List<Thing>();
+                foreach (var item in pawn.inventory.innerContainer)
+                    if (item?.def != null && CECompat.IsCEAmmo(item.def))
+                        toRemove.Add(item);
+                foreach (var item in toRemove)
+                    item.Destroy();
+                return;
+            }
+
+            // 收集已装备武所有兼容弹药类型
+            var allowedAmmo = new HashSet<ThingDef>();
+            foreach (var weapon in equippedWeapons)
+            {
+                var ammoList = AmmoProviderManager.GetAllAvailableAmmo(weapon.def);
+                if (ammoList == null) continue;
+                foreach (var ammo in ammoList)
+                    if (ammo != null) allowedAmmo.Add(ammo);
+            }
+
+            if (allowedAmmo.Count == 0) return;
+
+            // 只移除与当前武器不兼容的弹药（旧武器遗留），CE 会为当前武器自动生成
+            var itemsToRemove = new List<Thing>();
+            foreach (var item in pawn.inventory.innerContainer)
+                if (item?.def != null && CECompat.IsCEAmmo(item.def) && !allowedAmmo.Contains(item.def))
+                    itemsToRemove.Add(item);
+
+            foreach (var item in itemsToRemove)
+                item.Destroy();
         }
 
         private static void ApplyApparel(Pawn pawn, KindGearData kindData)
