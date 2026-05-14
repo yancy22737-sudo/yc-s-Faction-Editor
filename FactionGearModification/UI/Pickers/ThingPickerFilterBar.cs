@@ -113,12 +113,11 @@ namespace FactionGearCustomizer.UI.Pickers
                 h += 24f;
             }
 
-            // DrawRanges (only when ShowRangeDamage)
+            // DrawRanges (only when ShowRangeDamage) - Range + Damage on same row
             if (cfg.ShowRangeDamage)
             {
                 h += 4f; // Gap before ranges
-                h += 24f; // Range row
-                h += 24f; // Damage row
+                h += 24f; // Single row for Range + Damage
             }
 
             return h + 12f; // +12 for ContractedBy(6f) top+bottom
@@ -534,8 +533,33 @@ namespace FactionGearCustomizer.UI.Pickers
         private static void DrawRanges(Listing_Standard listing, ThingPickerFilterState state, ThingPickerFilterBarConfig cfg)
         {
             if (!cfg.ShowRangeDamage) return;
-            DrawRange(listing, cfg.IdSeed + 101, ref state.Range, 0f, Mathf.Max(1f, state.MaxRange), LanguageManager.Get("Range"), ToStringStyle.FloatOne, cfg.OnChanged);
-            DrawRange(listing, cfg.IdSeed + 102, ref state.Damage, 0f, Mathf.Max(1f, state.MaxDamage), LanguageManager.Get("Damage"), ToStringStyle.FloatOne, cfg.OnChanged);
+            Rect rowRect = listing.GetRect(24f);
+            WidgetsUtils.SplitRow2(rowRect, 4f, 0.5f, out Rect rangeRect, out Rect damageRect);
+            DrawRangeInRect(rangeRect, cfg.IdSeed + 101, ref state.Range, 0f, Mathf.Max(1f, state.MaxRange), LanguageManager.Get("Range"), ToStringStyle.FloatOne, cfg.OnChanged);
+            DrawRangeInRect(damageRect, cfg.IdSeed + 102, ref state.Damage, 0f, Mathf.Max(1f, state.MaxDamage), LanguageManager.Get("Damage"), ToStringStyle.FloatOne, cfg.OnChanged);
+        }
+
+        private static void DrawRangeInRect(Rect rect, int id, ref FloatRange range, float min, float max, string label, ToStringStyle style, Action onChanged)
+        {
+            Rect labelRect = new Rect(rect.x, rect.y, 40f, rect.height);
+            Rect sliderRect = new Rect(rect.x + 42f, rect.y, rect.width - 42f, rect.height);
+
+            Text.Anchor = TextAnchor.MiddleLeft;
+            Text.Font = GameFont.Tiny;
+            GUI.color = new Color(0.75f, 0.75f, 0.75f);
+            Widgets.Label(labelRect, label);
+            GUI.color = Color.white;
+            Text.Font = GameFont.Small;
+            Text.Anchor = TextAnchor.UpperLeft;
+
+            FloatRange next = range;
+            WidgetsUtils.FloatRange(sliderRect, id, ref next, min, max, null, style);
+            TooltipHandler.TipRegion(rect, LanguageManager.Get("RangeFilterTooltip", label));
+            if (Math.Abs(next.min - range.min) > 0.0001f || Math.Abs(next.max - range.max) > 0.0001f)
+            {
+                range = next;
+                onChanged?.Invoke();
+            }
         }
 
         private static void DrawRange(Listing_Standard listing, int id, ref FloatRange range, float min, float max, string label, ToStringStyle style, Action onChanged)

@@ -872,7 +872,10 @@ namespace FactionGearCustomizer.UI.Panels
             if (ui.ButtonText(LanguageManager.Get("AddNewWeapon")))
             {
                 if (kindData.SpecificWeapons == null) kindData.SpecificWeapons = new List<SpecRequirementEdit>();
-                Find.WindowStack.Add(new Dialog_WeaponPicker(kindData.SpecificWeapons, kindData));
+                var filter = EditorSession.SelectedCategory == GearCategory.MeleeWeapons
+                    ? Dialog_WeaponPicker.WeaponFilterMode.MeleeOnly
+                    : Dialog_WeaponPicker.WeaponFilterMode.RangedOnly;
+                Find.WindowStack.Add(new Dialog_WeaponPicker(kindData.SpecificWeapons, kindData, filter));
             }
             if (!kindData.SpecificWeapons.NullOrEmpty())
             {

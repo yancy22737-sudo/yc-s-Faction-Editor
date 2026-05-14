@@ -351,13 +351,16 @@ namespace FactionGearCustomizer.UI.Panels
 
             listing.Gap(4f);
 
-            // Range Filters
+            // Market Value filter (full row)
             DrawRangeFilter(listing, ref EditorSession.MarketValueFilter, EditorSession.MinMarketValue, EditorSession.MaxMarketValue, LanguageManager.Get("Value"), ToStringStyle.Money);
 
+            // Range + Damage on same row
             if (EditorSession.SelectedCategory == GearCategory.Weapons || EditorSession.SelectedCategory == GearCategory.MeleeWeapons)
             {
-                DrawRangeFilter(listing, ref EditorSession.RangeFilter, 0f, EditorSession.MaxRange, LanguageManager.Get("Range"), ToStringStyle.FloatOne);
-                DrawRangeFilter(listing, ref EditorSession.DamageFilter, 0f, EditorSession.MaxDamage, LanguageManager.Get("Damage"), ToStringStyle.FloatOne);
+                Rect rangeDmgRow = listing.GetRect(28f);
+                WidgetsUtils.SplitRow2(rangeDmgRow, 4f, 0.5f, out Rect rangeRect, out Rect damageRect);
+                DrawCompactRangeFilter(rangeRect, ref EditorSession.RangeFilter, 0f, EditorSession.MaxRange, LanguageManager.Get("Range"), ToStringStyle.FloatOne);
+                DrawCompactRangeFilter(damageRect, ref EditorSession.DamageFilter, 0f, EditorSession.MaxDamage, LanguageManager.Get("Damage"), ToStringStyle.FloatOne);
             }
             GUI.color = Color.white;
 
@@ -366,13 +369,15 @@ namespace FactionGearCustomizer.UI.Panels
         
         private static void OpenModFilterMenu()
         {
-            if (EditorSession.CachedModSources == null) 
+            if (EditorSession.CachedModSources == null)
                 EditorSession.CachedModSources = FactionGearEditor.GetUniqueModSources();
 
             Find.WindowStack.Add(new Window_ModFilter(
-                EditorSession.CachedModSources, 
-                EditorSession.SelectedModSources, 
+                EditorSession.CachedModSources,
+                EditorSession.SelectedModSources,
                 () => {
+                    filteredItemsCache.Clear();
+                    EditorSession.CachedFilteredItems = null;
                     FactionGearEditor.CalculateBounds();
                 }
             ));
@@ -394,6 +399,20 @@ namespace FactionGearCustomizer.UI.Panels
                     FactionGearEditor.CalculateBounds();
                 }
             ));
+        }
+
+        private static void DrawCompactRangeFilter(Rect rect, ref FloatRange range, float min, float max, string label, ToStringStyle style)
+        {
+            Rect labelRect = new Rect(rect.x, rect.y, 40f, rect.height);
+            Text.Anchor = TextAnchor.MiddleLeft;
+            Text.Font = GameFont.Tiny;
+            Widgets.Label(labelRect, label);
+            Text.Font = GameFont.Small;
+            Text.Anchor = TextAnchor.UpperLeft;
+
+            Rect sliderRect = new Rect(labelRect.xMax + 2f, rect.y, rect.width - 42f, rect.height);
+            WidgetsUtils.FloatRange(sliderRect, label.GetHashCode(), ref range, min, max, null, style);
+            TooltipHandler.TipRegion(sliderRect, LanguageManager.Get("RangeFilterTooltip", label));
         }
 
         private static void DrawRangeFilter(Listing_Standard listing, ref FloatRange range, float min, float max, string label, ToStringStyle style)
@@ -600,52 +619,8 @@ namespace FactionGearCustomizer.UI.Panels
         private static bool IsTurretOrMechanoidWeapon(ThingDef thingDef)
         {
             if (thingDef == null) return false;
-            
-            // 检查是否被炮塔建筑引用 (最可靠的方式)
-            EnsureTurretGunCache();
-            if (_turretGunDefNames.Contains(thingDef.defName))
-                return true;
 
-            // 直接检查特定 DefName - 确保这些武器被过滤
-            string defName = thingDef.defName;
-            
-            // 电荷类武器 (Charge Weapons)
-            if (defName == "Gun_ChargeBlasterHeavyTurret" ||  // 轻型电荷爆裂炮
-                defName == "Gun_ChargeBlasterLight" ||       // 轻型电荷冲击炮
-                defName.Contains("ChargeBlaster"))           // 其他电荷爆裂炮变体
-            {
-                return true;
-            }
-            
-            // 脉冲射线炮类 (Pulse Rifles)
-            if (defName.Contains("PulseRifle") ||            // 脉冲射线炮
-                defName.Contains("Pulse_Rifle"))             // 脉冲射线炮变体
-            {
-                return true;
-            }
-            
-            // 射线炮类 (Ray Guns)
-            if (defName.Contains("RayGun") ||                // 射线炮
-                defName.Contains("Ray_Gun") ||               // 射线炮变体
-                defName.Contains("AreaRay"))                 // 广域射线炮
-            {
-                return true;
-            }
-            
-            // 地狱球炮、霰弹枪、脊刺炮、蒸发器、歼灭者、投石器、地狱火炮
-            if (defName == "Gun_HellsphereCannon" ||         // 地狱球炮
-                defName == "Gun_Scattergun" ||               // 霰弹枪
-                defName == "Gun_BeamGraser" ||               // Beam graser (mech weapon)
-                defName.Contains("Spiner") ||                // 脊刺炮
-                defName.Contains("Vaporizer") ||             // 蒸发器
-                defName.Contains("Annihilator") ||           // 歼灭者
-                defName.Contains("Slugthrower") ||           // 投石器
-                defName.Contains("InfernoCannon"))           // 地狱火炮
-            {
-                return true;
-            }
-            
-            // 检查 weaponTags
+            // 检查 weaponTags - 有明确炮塔/机械族标签的优先过滤
             if (thingDef.weaponTags != null)
             {
                 bool hasTurretTag = thingDef.weaponTags.Any(tag =>
@@ -654,23 +629,85 @@ namespace FactionGearCustomizer.UI.Panels
                     tag.StartsWith("MechanoidGun") ||
                     tag.StartsWith("MechGun") ||
                     tag.StartsWith("MechWeapon") ||
-                    tag == "GunHeavy" ||
-                    tag == "GunTurret_Manned" ||
                     tag == "BeamGraserGun" ||
                     tag == "HellsphereCannonGun" ||
                     tag == "SentryDroneGunShortRange" ||
                     tag == "SentryDroneGunLongRange" ||
-                    tag == "InfernoCannonGun");
-                
+                    tag == "InfernoCannonGun" ||
+                    tag == "GunHeavy" && !thingDef.IsWeapon ||
+                    tag == "GunTurret_Manned");
+
                 if (hasTurretTag) return true;
             }
-            
+
             // 检查 destroyOnDrop 属性 - 炮塔武器通常会在掉落时销毁
             if (thingDef.destroyOnDrop)
+                return true;
+
+            // 直接检查特定 DefName - 确保这些已知的机械族/炮塔武器被过滤
+            string defName = thingDef.defName;
+
+            // 电荷类武器 (Charge Weapons)
+            if (defName == "Gun_ChargeBlasterHeavyTurret" ||
+                defName == "Gun_ChargeBlasterLight" ||
+                defName.Contains("ChargeBlaster"))
             {
                 return true;
             }
-            
+
+            // 脉冲射线炮类 (Pulse Rifles)
+            if (defName.Contains("PulseRifle") ||
+                defName.Contains("Pulse_Rifle"))
+            {
+                return true;
+            }
+
+            // 射线炮类 (Ray Guns)
+            if (defName.Contains("RayGun") ||
+                defName.Contains("Ray_Gun") ||
+                defName.Contains("AreaRay"))
+            {
+                return true;
+            }
+
+            // 地狱球炮、霰弹枪、脊刺炮、蒸发器、歼灭者、投石器、地狱火炮
+            if (defName == "Gun_HellsphereCannon" ||
+                defName == "Gun_Scattergun" ||
+                defName == "Gun_BeamGraser" ||
+                defName.Contains("Spiner") ||
+                defName.Contains("Vaporizer") ||
+                defName.Contains("Annihilator") ||
+                defName.Contains("Slugthrower") ||
+                defName.Contains("InfernoCannon"))
+            {
+                return true;
+            }
+
+            // 检查是否被炮塔建筑引用 - 放在最后作为辅助判断
+            // 仅当武器同时不具备正常武器特征时才过滤
+            EnsureTurretGunCache();
+            if (_turretGunDefNames.Contains(thingDef.defName))
+            {
+                // 如果武器有正常的 weaponTags（非炮塔/机械族标签）且 destroyOnDrop == false，
+                // 说明该武器也可以被普通 pawn 装备，不应过滤
+                if (thingDef.weaponTags != null && !thingDef.destroyOnDrop)
+                {
+                    bool hasNormalTag = thingDef.weaponTags.Any(tag =>
+                        !tag.StartsWith("Turret") &&
+                        !tag.StartsWith("Mechanoid") &&
+                        !tag.StartsWith("MechGun") &&
+                        !tag.StartsWith("MechWeapon") &&
+                        tag != "Artillery" &&
+                        tag != "BeamGraserGun" &&
+                        tag != "HellsphereCannonGun" &&
+                        tag != "SentryDroneGunShortRange" &&
+                        tag != "SentryDroneGunLongRange" &&
+                        tag != "InfernoCannonGun");
+                    if (hasNormalTag) return false;
+                }
+                return true;
+            }
+
             return false;
         }
 

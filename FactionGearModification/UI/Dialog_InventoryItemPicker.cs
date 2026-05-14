@@ -295,9 +295,9 @@ namespace FactionGearCustomizer.UI
             }
 
             TooltipHandler.TipRegion(rowRect, tip);
- 
+
             Rect inner = rowRect.ContractedBy(4f, 2f);
- 
+
             float x = inner.x;
             if (multiSelect)
             {
@@ -312,7 +312,7 @@ namespace FactionGearCustomizer.UI
                 }
                 x = cbRect.xMax + 6f;
             }
- 
+
             Rect iconRect = new Rect(x, inner.y + 2f, 20f, 20f);
             if (def.uiIcon != null) Widgets.DrawTextureFitted(iconRect, def.uiIcon, 1f);
             x = iconRect.xMax + 8f;
@@ -323,19 +323,33 @@ namespace FactionGearCustomizer.UI
                 x += 28f;
             }
 
+            // Right area: market value + gap + mod name
+            float marketValueWidth = 65f;
+            float gapWidth = 14f;
+            float modNameWidth = 140f;
+            float rightAreaWidth = marketValueWidth + gapWidth + modNameWidth;
             Rect labelRect = new Rect(x, inner.y, inner.width - (x - inner.x), inner.height);
-            Rect rightRect = labelRect.RightPartPixels(210f);
-            Rect leftRect = new Rect(labelRect.x, labelRect.y, labelRect.width - 210f, labelRect.height);
- 
+            Rect valueRect = new Rect(labelRect.xMax - rightAreaWidth, inner.y, marketValueWidth, inner.height);
+            Rect modRect = new Rect(valueRect.xMax + gapWidth, inner.y, modNameWidth, inner.height);
+            Rect leftRect = new Rect(labelRect.x, labelRect.y, labelRect.width - rightAreaWidth, labelRect.height);
+
             string label = cacheEntry?.LabelCap ?? def.defName;
             Widgets.Label(leftRect, label);
- 
+
+            Text.Anchor = TextAnchor.MiddleRight;
+            Text.Font = GameFont.Tiny;
+            Widgets.Label(valueRect, $"${def.BaseMarketValue:F0}");
+            Text.Anchor = TextAnchor.UpperLeft;
+            Text.Font = GameFont.Small;
+
+            // Truncated mod name
+            string truncatedMod = TruncateModName(modName, modNameWidth);
             Text.Anchor = TextAnchor.MiddleRight;
             GUI.color = Color.gray;
-            Widgets.Label(rightRect, modName);
+            Widgets.Label(modRect, truncatedMod);
             GUI.color = Color.white;
             Text.Anchor = TextAnchor.UpperLeft;
- 
+
             if (multiSelect && existingDefNames != null && existingDefNames.Contains(def.defName))
             {
                 Rect tagRect = new Rect(rowRect.xMax - 88f, rowRect.y + 4f, 80f, 20f);
@@ -343,7 +357,7 @@ namespace FactionGearCustomizer.UI
                 Widgets.Label(tagRect, LanguageManager.Get("AlreadyAdded"));
                 GUI.color = Color.white;
             }
- 
+
             if (Widgets.ButtonInvisible(rowRect))
             {
                 if (!multiSelect)
@@ -357,6 +371,23 @@ namespace FactionGearCustomizer.UI
                     else selected.Add(def);
                 }
             }
+        }
+
+        private static string TruncateModName(string modName, float maxWidth)
+        {
+            if (string.IsNullOrEmpty(modName) || maxWidth <= 0f) return modName ?? "";
+            if (Text.CalcSize(modName).x <= maxWidth) return modName;
+
+            int lo = 0, hi = modName.Length;
+            while (lo < hi)
+            {
+                int mid = (lo + hi + 1) / 2;
+                if (Text.CalcSize(modName.Substring(0, mid) + "...").x <= maxWidth)
+                    lo = mid;
+                else
+                    hi = mid - 1;
+            }
+            return lo > 0 ? modName.Substring(0, lo) + "..." : "...";
         }
  
         private void DrawBottomButtonsMulti(Rect inRect)

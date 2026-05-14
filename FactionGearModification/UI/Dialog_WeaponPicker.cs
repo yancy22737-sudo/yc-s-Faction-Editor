@@ -17,6 +17,9 @@ namespace FactionGearCustomizer.UI
         private readonly List<SpecRequirementEdit> targetList;
         private readonly KindGearData kindData;
         private readonly bool multiSelect;
+        private readonly WeaponFilterMode weaponFilter;
+
+        public enum WeaponFilterMode { All, RangedOnly, MeleeOnly }
 
         private List<ThingDef> allCandidates = new List<ThingDef>();
         private List<ThingDef> filteredCandidates = new List<ThingDef>();
@@ -41,10 +44,11 @@ namespace FactionGearCustomizer.UI
 
         public override Vector2 InitialSize => new Vector2(820f, 780f);
 
-        public Dialog_WeaponPicker(List<SpecRequirementEdit> targetList, KindGearData kindData)
+        public Dialog_WeaponPicker(List<SpecRequirementEdit> targetList, KindGearData kindData, WeaponFilterMode weaponFilter = WeaponFilterMode.All)
         {
             this.targetList = targetList;
             this.kindData = kindData;
+            this.weaponFilter = weaponFilter;
             multiSelect = true;
             InitCommon();
         }
@@ -52,6 +56,7 @@ namespace FactionGearCustomizer.UI
         public Dialog_WeaponPicker(Action<ThingDef> onPickSingle)
         {
             this.onPickSingle = onPickSingle;
+            this.weaponFilter = WeaponFilterMode.All;
             multiSelect = false;
             InitCommon();
         }
@@ -90,7 +95,8 @@ namespace FactionGearCustomizer.UI
                 AllMods = allMods,
                 AllAmmoSets = allAmmoSets,
                 ShowAmmoFilter = CECompat.IsCEActive,
-                ShowRangeDamage = true,
+                ShowRangeDamage = weaponFilter != WeaponFilterMode.MeleeOnly,
+                ShowSortRow = !multiSelect,
                 SortOptions = GetSortOptions(),
                 IdSeed = GetHashCode(),
                 OnChanged = OnFilterChanged,
@@ -112,7 +118,11 @@ namespace FactionGearCustomizer.UI
 
         private List<string> GetSortOptions()
         {
-            return new List<string> { "Name", "MarketValue", "TechLevel", "ModSource", "Range", "Accuracy", "Damage", "DPS" };
+            var options = new List<string> { "Name", "MarketValue", "TechLevel", "ModSource" };
+            if (weaponFilter != WeaponFilterMode.MeleeOnly)
+                options.AddRange(new[] { "Range", "Accuracy" });
+            options.AddRange(new[] { "Damage", "DPS" });
+            return options;
         }
 
         private void DrawDefaultsRow(Rect inRect, ref float y)
@@ -161,9 +171,15 @@ namespace FactionGearCustomizer.UI
             Rect rowRect = new Rect(0f, y, inRect.width, 28f);
 
             float btnW = 110f;
-            Rect allRect = new Rect(rowRect.x, rowRect.y, btnW, rowRect.height);
-            Rect noneRect = new Rect(allRect.xMax + 6f, rowRect.y, btnW, rowRect.height);
-            Rect invertRect = new Rect(noneRect.xMax + 6f, rowRect.y, btnW, rowRect.height);
+            float gap = 6f;
+            float x = rowRect.x;
+
+            Rect allRect = new Rect(x, rowRect.y, btnW, rowRect.height);
+            x += btnW + gap;
+            Rect noneRect = new Rect(x, rowRect.y, btnW, rowRect.height);
+            x += btnW + gap;
+            Rect invertRect = new Rect(x, rowRect.y, btnW, rowRect.height);
+            x += btnW + gap;
 
             if (Widgets.ButtonText(allRect, LanguageManager.Get("SelectAll")))
             {
@@ -184,11 +200,38 @@ namespace FactionGearCustomizer.UI
                 selected = next;
             }
 
-            Rect dupRect = new Rect(invertRect.xMax + 18f, rowRect.y, 240f, rowRect.height);
+            // Sort button
+            string sortLabel = LanguageManager.Get("SortField_" + filterState.SortField, filterState.SortField);
+            string arrow = filterState.SortAscending ? " ▲" : " ▼";
+            Rect sortRect = new Rect(x, rowRect.y, 100f, rowRect.height);
+            if (Widgets.ButtonText(sortRect, sortLabel + arrow))
+            {
+                List<FloatMenuOption> options = new List<FloatMenuOption>();
+                foreach (string option in GetSortOptions())
+                {
+                    string captured = option;
+                    string label = LanguageManager.Get("SortField_" + captured, captured);
+                    options.Add(new FloatMenuOption(label, () =>
+                    {
+                        if (filterState.SortField == captured)
+                            filterState.SortAscending = !filterState.SortAscending;
+                        else
+                        {
+                            filterState.SortField = captured;
+                            filterState.SortAscending = false;
+                        }
+                        OnFilterChanged();
+                    }));
+                }
+                Find.WindowStack.Add(new FloatMenu(options));
+            }
+            x += sortRect.width + 12f;
+
+            Rect dupRect = new Rect(x, rowRect.y, 200f, rowRect.height);
             Widgets.CheckboxLabeled(dupRect, LanguageManager.Get("SkipExistingItems"), ref skipExisting);
 
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(new Rect(rowRect.xMax - 220f, rowRect.y, 220f, rowRect.height), $"{LanguageManager.Get("Selected")}: {selected.Count}");
+            Widgets.Label(new Rect(rowRect.xMax - 180f, rowRect.y, 180f, rowRect.height), $"{LanguageManager.Get("Selected")}: {selected.Count}");
             Text.Anchor = TextAnchor.UpperLeft;
 
             y += 34f;
@@ -257,16 +300,30 @@ namespace FactionGearCustomizer.UI
                 x += 28f;
             }
 
+            // Right area: market value + gap + mod name
+            float marketValueWidth = 65f;
+            float gapWidth = 14f;
+            float modNameWidth = 140f;
+            float rightAreaWidth = marketValueWidth + gapWidth + modNameWidth;
             Rect labelRect = new Rect(x, inner.y, inner.width - (x - inner.x), inner.height);
-            Rect rightRect = labelRect.RightPartPixels(210f);
-            Rect leftRect = new Rect(labelRect.x, labelRect.y, labelRect.width - 210f, labelRect.height);
+            Rect valueRect = new Rect(labelRect.xMax - rightAreaWidth, inner.y, marketValueWidth, inner.height);
+            Rect modRect = new Rect(valueRect.xMax + gapWidth, inner.y, modNameWidth, inner.height);
+            Rect leftRect = new Rect(labelRect.x, labelRect.y, labelRect.width - rightAreaWidth, labelRect.height);
 
             string label = cacheEntry?.LabelCap ?? def.defName;
             Widgets.Label(leftRect, label);
 
             Text.Anchor = TextAnchor.MiddleRight;
+            Text.Font = GameFont.Tiny;
+            Widgets.Label(valueRect, $"${def.BaseMarketValue:F0}");
+            Text.Anchor = TextAnchor.UpperLeft;
+            Text.Font = GameFont.Small;
+
+            // Truncated mod name
+            string truncatedMod = TruncateModName(modName, modNameWidth);
+            Text.Anchor = TextAnchor.MiddleRight;
             GUI.color = Color.gray;
-            Widgets.Label(rightRect, modName);
+            Widgets.Label(modRect, truncatedMod);
             GUI.color = Color.white;
             Text.Anchor = TextAnchor.UpperLeft;
 
@@ -291,6 +348,23 @@ namespace FactionGearCustomizer.UI
                     else selected.Add(def);
                 }
             }
+        }
+
+        private static string TruncateModName(string modName, float maxWidth)
+        {
+            if (string.IsNullOrEmpty(modName) || maxWidth <= 0f) return modName ?? "";
+            if (Text.CalcSize(modName).x <= maxWidth) return modName;
+
+            int lo = 0, hi = modName.Length;
+            while (lo < hi)
+            {
+                int mid = (lo + hi + 1) / 2;
+                if (Text.CalcSize(modName.Substring(0, mid) + "...").x <= maxWidth)
+                    lo = mid;
+                else
+                    hi = mid - 1;
+            }
+            return lo > 0 ? modName.Substring(0, lo) + "..." : "...";
         }
 
         private void DrawBottomButtonsMulti(Rect inRect)
@@ -382,8 +456,15 @@ namespace FactionGearCustomizer.UI
 
         private void BuildCandidates()
         {
-            allCandidates = DefDatabase<ThingDef>.AllDefs
-                .Where(t => t != null && t.IsWeapon)
+            IEnumerable<ThingDef> query = DefDatabase<ThingDef>.AllDefs
+                .Where(t => t != null && t.IsWeapon);
+
+            if (weaponFilter == WeaponFilterMode.RangedOnly)
+                query = query.Where(t => t.IsRangedWeapon);
+            else if (weaponFilter == WeaponFilterMode.MeleeOnly)
+                query = query.Where(t => t.IsMeleeWeapon);
+
+            allCandidates = query
                 .OrderBy(t => t.LabelCap.ToString() ?? t.defName)
                 .ToList();
 
