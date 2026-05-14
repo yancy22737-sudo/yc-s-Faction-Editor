@@ -1,18 +1,18 @@
 ﻿v1.6.4
-- Add: 特性编辑tab — 添加/删除特性，概率滑条，原生翻译tooltip，Info按钮，等级选择器。
-- Add: 基因编辑tab — 基因选择器(分类分组+图标+代谢显示)，Info按钮，内源/异源切换，概率滑条。
-- Add: 外观编辑tab — Shape/Hair/Skin/Genes子标签，发型/胡须/体型/头型图标网格，肤色/发色调色器。
-- Add: 派系编辑新增意识形态选择(仅Ideology DLC)，图标预览，默认读取运行时派系意识形态。
-- Add: TraitPreviewPawnCache — 基于后台虚构pawn的Trait.TipString原生信息展示。
-- Add: 特性/基因/外观列表显示来源mod列(长名称省略号截断，不换行)。
-- UI: 高级模式双行tab布局 — Row1(General/Apparel/Weapons/Hediffs/Items) · Row2(Traits/Appearance/Genes)。
-- UI: 高级设置→高级(中文标签更新)；所有删除按钮统一为垃圾桶图标。
-- Batch Apply: 新增Traits/Genes/Appearance分类复制，修复checkbox布局遮挡。
-- Fix: ForceOverrideAppearance在DeepCopy/CopyFrom中缺失导致Apply To Others/Batch Apply外观无效。
-- Internal: KindGearData扩展ForcedSkills/ForcedTraits/ForcedGenes/ForcedAppearance完整生命周期(ExposeData/DeepCopy/CopyFrom/Reset)。
+- Add: Trait editing tab — add/remove traits, chance slider, native translated tooltip, Info button, degree selector.
+- Add: Gene editing tab — gene picker (category grouping + icons + metabolism display), Info button, endogene/xenogene toggle, chance slider.
+- Add: Appearance editing tab — Shape/Hair/Skin/Genes sub-tabs, icon grids for hair/beard/body/head, skin/hair color picker with mod color picker.
+- Add: Ideology selector in Faction Edit (Ideology DLC only), icon preview, auto-reads from runtime faction.
+- Add: TraitPreviewPawnCache — backend virtual pawn for native Trait.TipString display.
+- Add: Mod source column in trait/gene/appearance lists (truncated with ellipsis, no line wrap).
+- UI: Two-row advanced tab layout — Row1(General/Apparel/Weapons/Hediffs/Items) · Row2(Traits/Appearance/Genes).
+- UI: All delete buttons unified to trash can icon.
+- Batch Apply: Added Traits/Genes/Appearance category copy flags. Fixed checkbox layout overlap with All/None buttons.
+- Fix: ForceOverrideAppearance missing from DeepCopy/CopyFrom caused Apply To Others/Batch Apply to not copy appearance override setting.
+- Internal: KindGearData extended with full lifecycle (ExposeData/DeepCopy/CopyFrom/Reset) for ForcedSkills/ForcedTraits/ForcedGenes/ForcedAppearance.
 
 v1.6.3
-- Add: 技能/特性/基因/外观编辑系统框架（技能已隐藏，后续版本开放）。
+- Add: Skills/traits/genes/appearance editing framework (skills hidden, to be enabled in future release).
 
 v1.6.2
 - Fix: Item Library 取消选择所有mod后缓存未清除导致仍显示mod被选中。
