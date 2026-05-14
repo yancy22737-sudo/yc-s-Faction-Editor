@@ -1,3 +1,28 @@
+v1.6.4
+- Add: Trait editing tab — add/remove traits, chance slider, native translated tooltip, Info button, degree selector.
+- Add: Gene editing tab — gene picker (category grouping + icons + metabolism display), Info button, endogene/xenogene toggle, chance slider.
+- Add: Appearance editing tab — Shape/Hair/Skin/Genes sub-tabs, icon grids for hair/beard/body/head, skin/hair color picker.
+- Add: Ideology selector in Faction Edit (Ideology DLC only), icon preview, auto-reads from runtime faction.
+- Add: TraitPreviewPawnCache — backend virtual pawn for native Trait.TipString display.
+- Add: Mod source column in trait/gene/appearance lists (truncated with ellipsis, no wrap).
+- UI: Two-row advanced tab layout — Row1(General/Apparel/Weapons/Hediffs/Items) · Row2(Traits/Appearance/Genes).
+- UI: All delete buttons unified to trash can icon.
+- Batch Apply: Added Traits/Genes/Appearance category copy flags. Fixed checkbox layout overlap.
+- Fix: ForceOverrideAppearance missing from DeepCopy/CopyFrom caused Apply To Others/Batch Apply to not copy appearance override.
+- Internal: KindGearData extended with full lifecycle for ForcedSkills/ForcedTraits/ForcedGenes/ForcedAppearance.
+
+v1.6.3
+- Add: Skills/traits/genes/appearance editing framework (skills hidden, to be enabled in future release).
+
+v1.6.2
+- Fix: Item Library mod filter cache not cleared after deselecting all mods.
+- Fix: Normal weapons (e.g. MilkorMGL) incorrectly filtered as turret/mechanoid — added normal weaponTag bypass after turretGun cache hit.
+- Fix: Long mod names overflow in picker lists — added single-line ellipsis truncation.
+- Add: Market value column in all Item Picker lists.
+- Fix: Melee weapon picker could add ranged weapons — added RangedOnly/MeleeOnly filter mode.
+- Fix: Ranged/melee tabs shared the same weapon adder — now passes appropriate filter per tab.
+- UI: Range/damage sliders merged into one row. Sort controls moved to selection row.
+
 v1.6.1
 - Add: Enhanced color picker with visual 2D color field, hue slider, RGB sliders, preset palette, and color history.
 - Add: Pixel drawing board for custom faction icons — brush/eraser tools, undo stack, flood fill, quick palette, resizable canvas.
