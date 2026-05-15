@@ -106,6 +106,12 @@ namespace FactionGearCustomizer
                     newFactionData.XenotypeChances = faction.XenotypeChances != null ? new Dictionary<string, float>(faction.XenotypeChances) : null;
                     newFactionData.DisableXenotypeChances = faction.DisableXenotypeChances;
                     newFactionData.PlayerRelationOverride = faction.PlayerRelationOverride;
+                    newFactionData.ReplaceVanillaTradeStock = faction.ReplaceVanillaTradeStock;
+                    newFactionData.CustomTradeStock = faction.CustomTradeStock?.Select(e => e.DeepCopy()).ToList();
+                    if (faction.CustomTradeStockByType != null) { newFactionData.CustomTradeStockByType = new Dictionary<string, List<TradeStockEntry>>(); foreach (var kv in faction.CustomTradeStockByType) newFactionData.CustomTradeStockByType[kv.Key] = kv.Value.Select(e => e.DeepCopy()).ToList(); }
+                    if (faction.ReplaceVanillaByType != null) newFactionData.ReplaceVanillaByType = new Dictionary<string, bool>(faction.ReplaceVanillaByType);
+                    newFactionData.CustomBuyStock = faction.CustomBuyStock?.Select(e => e.DeepCopy()).ToList();
+                    if (faction.CustomBuyStockByType != null) { newFactionData.CustomBuyStockByType = new Dictionary<string, List<TradeStockEntry>>(); foreach (var kv in faction.CustomBuyStockByType) newFactionData.CustomBuyStockByType[kv.Key] = kv.Value.Select(e => e.DeepCopy()).ToList(); }
 
                     // 保存 groupMakers
                     if (faction.groupMakers != null)

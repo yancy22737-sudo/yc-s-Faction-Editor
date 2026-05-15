@@ -1189,4 +1189,36 @@
   <PoolType>物品池类型</PoolType>
   <RelationPermanentEnemyTooltip>永久敌对关系无法修改</RelationPermanentEnemyTooltip>
 
+  <!-- Trade Stock -->
+  <TradeStockSettings>交易库存设置</TradeStockSettings>
+  <EditTradeStock>编辑交易库存</EditTradeStock>
+  <TradeStockSettingsDesc>自定义该派系在定居点出售的物品清单。</TradeStockSettingsDesc>
+  <TradeStockEditorTitle>交易库存 — {0}</TradeStockEditorTitle>
+  <TradeStockTrader>商人: {0}</TradeStockTrader>
+  <TradeStockReplaceVanilla>替换原版库存</TradeStockReplaceVanilla>
+  <TradeStockReplaceVanillaTip>未勾选：在原版库存基础上追加自定义物品。勾选后：先清空原版库存，仅保留你配置的物品。</TradeStockReplaceVanillaTip>
+  <TradeStockReplaceConfirm>启用后，交易时将清空所有原版库存，仅显示你配置的物品。确定继续？</TradeStockReplaceConfirm>
+  <TradeStockUndo>撤销 ({0})</TradeStockUndo>
+  <TradeStockRedo>重做 ({0})</TradeStockRedo>
+  <TradeStockApplyToOthers>应用到其他派系</TradeStockApplyToOthers>
+  <ApplyToAllFactions>应用到所有人类派系</ApplyToAllFactions>
+  <TradeStockSearch>搜索...</TradeStockSearch>
+  <TradeStockCount>{0} 件物品</TradeStockCount>
+  <TradeStockRemoveItem>移除此物品</TradeStockRemoveItem>
+  <TradeStockNoItems>暂无物品，从左侧库中添加 →</TradeStockNoItems>
+  <TradeStockAddFirst>请先添加物品。</TradeStockAddFirst>
+  <TradeStockClearAll>清空全部</TradeStockClearAll>
+  <TradeStockClear>清空</TradeStockClear>
+  <TradeStockClearAllConfirm>确定移除全部 {0} 件物品？</TradeStockClearAllConfirm>
+  <TradeStockResetDefaults>恢复默认</TradeStockResetDefaults>
+  <TradeStockResetConfirm>恢复到原版默认库存？此操作将丢弃所有自定义修改。</TradeStockResetConfirm>
+  <TradeStockSaved>交易库存已保存。</TradeStockSaved>
+  <TradeStockNoFactions>没有其他人类派系。</TradeStockNoFactions>
+  <TradeCat_All>全部</TradeCat_All>
+  <TradeCat_Weapons>武器</TradeCat_Weapons>
+  <TradeCat_Armor>护甲</TradeCat_Armor>
+  <TradeCat_Apparel>服饰</TradeCat_Apparel>
+  <TradeCat_Items>物品</TradeCat_Items>
+  <TradeCat_Animals>动物</TradeCat_Animals>
+
 </LanguageData>

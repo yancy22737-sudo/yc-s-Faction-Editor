@@ -34,6 +34,16 @@ namespace FactionGearCustomizer
         // Player Relation Override (Ally/Neutral/Hostile)
         public FactionRelationKind? PlayerRelationOverride;
 
+        // Trade Stock Customization (Sell side)
+        public List<TradeStockEntry> CustomTradeStock;
+        public bool ReplaceVanillaTradeStock = false;
+        public Dictionary<string, List<TradeStockEntry>> CustomTradeStockByType;
+        public Dictionary<string, bool> ReplaceVanillaByType;
+
+        // Trade Stock Buy side — what the trader will buy from the player
+        public List<TradeStockEntry> CustomBuyStock;
+        public Dictionary<string, List<TradeStockEntry>> CustomBuyStockByType;
+
         // 优化查询效率的字典索引        [Unsaved]
         private Dictionary<string, KindGearData> kindGearDataDict;
 
@@ -66,6 +76,13 @@ namespace FactionGearCustomizer
 
             Scribe_Values.Look(ref PlayerRelationOverride, "playerRelationOverride");
             Scribe_Values.Look(ref IdeoName, "ideoName");
+
+            Scribe_Collections.Look(ref CustomTradeStock, "customTradeStock", LookMode.Deep);
+            Scribe_Values.Look(ref ReplaceVanillaTradeStock, "replaceVanillaTradeStock", false);
+            Scribe_Collections.Look(ref CustomTradeStockByType, "customTradeStockByType", LookMode.Value, LookMode.Deep);
+            Scribe_Collections.Look(ref ReplaceVanillaByType, "replaceVanillaByType", LookMode.Value, LookMode.Value);
+            Scribe_Collections.Look(ref CustomBuyStock, "customBuyStock", LookMode.Deep);
+            Scribe_Collections.Look(ref CustomBuyStockByType, "customBuyStockByType", LookMode.Value, LookMode.Deep);
 
             if (kindGearData == null)
                 kindGearData = new List<KindGearData>();
@@ -121,6 +138,12 @@ namespace FactionGearCustomizer
             groupMakers?.Clear();
             PlayerRelationOverride = null;
             IdeoName = null;
+            CustomTradeStock = null;
+            ReplaceVanillaTradeStock = false;
+            CustomTradeStockByType = null;
+            ReplaceVanillaByType = null;
+            CustomBuyStock = null;
+            CustomBuyStockByType = null;
         }
         
         // 添加或更新兵种数据
@@ -222,6 +245,23 @@ namespace FactionGearCustomizer
             }
         }
 
+        /// <summary>
+        /// Get trade stock config for a specific trader kind. Falls back to global CustomTradeStock.
+        /// Returns (entries, replaceVanilla) tuple. entries=null means no config.
+        /// </summary>
+        public (List<TradeStockEntry> entries, bool replaceVanilla) GetTradeStockForTraderKind(string traderKindDefName)
+        {
+            if (CustomTradeStockByType != null && !string.IsNullOrEmpty(traderKindDefName)
+                && CustomTradeStockByType.TryGetValue(traderKindDefName, out var typedEntries)
+                && typedEntries != null && typedEntries.Count > 0)
+            {
+                bool typedReplace = ReplaceVanillaByType != null
+                    && ReplaceVanillaByType.TryGetValue(traderKindDefName, out var rv) && rv;
+                return (typedEntries, typedReplace);
+            }
+            return (CustomTradeStock, ReplaceVanillaTradeStock);
+        }
+
         public bool IsEffectivelyDefault()
         {
             bool hasFactionOverrides =
@@ -233,6 +273,11 @@ namespace FactionGearCustomizer
                 DisableXenotypeChances ||
                 PlayerRelationOverride.HasValue ||
                 !string.IsNullOrEmpty(IdeoName) ||
+                (CustomTradeStock?.Count ?? 0) > 0 ||
+                ReplaceVanillaTradeStock ||
+                (CustomTradeStockByType?.Count ?? 0) > 0 ||
+                (CustomBuyStock?.Count ?? 0) > 0 ||
+                (CustomBuyStockByType?.Count ?? 0) > 0 ||
                 (XenotypeChances?.Count ?? 0) > 0 ||
                 (groupMakers?.Count ?? 0) > 0;
 
@@ -251,7 +296,36 @@ namespace FactionGearCustomizer
             copy.PlayerRelationOverride = this.PlayerRelationOverride;
             copy.IdeoName = this.IdeoName;
             copy.DisableXenotypeChances = this.DisableXenotypeChances;
-            
+            copy.ReplaceVanillaTradeStock = this.ReplaceVanillaTradeStock;
+
+            if (this.CustomTradeStock != null)
+            {
+                copy.CustomTradeStock = new List<TradeStockEntry>();
+                foreach (var entry in this.CustomTradeStock)
+                    copy.CustomTradeStock.Add(entry.DeepCopy());
+            }
+
+            if (this.CustomTradeStockByType != null)
+            {
+                copy.CustomTradeStockByType = new Dictionary<string, List<TradeStockEntry>>();
+                foreach (var kvp in this.CustomTradeStockByType)
+                    copy.CustomTradeStockByType[kvp.Key] = kvp.Value.Select(e => e.DeepCopy()).ToList();
+            }
+            if (this.ReplaceVanillaByType != null)
+                copy.ReplaceVanillaByType = new Dictionary<string, bool>(this.ReplaceVanillaByType);
+
+            if (this.CustomBuyStock != null)
+            {
+                copy.CustomBuyStock = new List<TradeStockEntry>();
+                foreach (var e in this.CustomBuyStock) copy.CustomBuyStock.Add(e.DeepCopy());
+            }
+            if (this.CustomBuyStockByType != null)
+            {
+                copy.CustomBuyStockByType = new Dictionary<string, List<TradeStockEntry>>();
+                foreach (var kvp in this.CustomBuyStockByType)
+                    copy.CustomBuyStockByType[kvp.Key] = kvp.Value.Select(e => e.DeepCopy()).ToList();
+            }
+
             if (this.XenotypeChances != null)
             {
                 foreach (var kvp in this.XenotypeChances)

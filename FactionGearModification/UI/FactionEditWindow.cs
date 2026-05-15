@@ -259,8 +259,8 @@ namespace FactionGearCustomizer.UI
         private float CalculateSettingsHeight()
         {
             float height = 450f; // Base static height
-            
-            if (ModsConfig.BiotechActive && factionDef.humanlikeFaction) 
+
+            if (ModsConfig.BiotechActive && factionDef.humanlikeFaction)
             {
                 height += 60f; // Header
                 if (bufferXenotypes.Count > 0)
@@ -268,7 +268,10 @@ namespace FactionGearCustomizer.UI
                     height += bufferXenotypes.Count * 30f + 20f;
                 }
             }
-            
+
+            // Trade Stock Settings
+            height += 90f;
+
             // World Operations
             bool inGame = Current.Game != null && Find.FactionManager != null;
             if (inGame) height += 100f;
@@ -538,6 +541,16 @@ namespace FactionGearCustomizer.UI
                 if (!string.IsNullOrEmpty(bufferIdeoName) && Widgets.ButtonText(new Rect(btnX + 155f, ideoRow.y + 2f, 80f, 28f), LanguageManager.Get("Clear")))
                     bufferIdeoName = null;
             }
+
+            // Trade Stock Settings
+            listing.GapLine();
+            listing.Label($"<b>{LanguageManager.Get("TradeStockSettings")}</b>");
+            if (listing.ButtonText(LanguageManager.Get("EditTradeStock")))
+            {
+                Log.Message($"[FactionGearCustomizer] TradeStock: opening editor for {factionDef.defName}");
+                Find.WindowStack.Add(new Dialog_TradeStockEditor(factionDef, factionData));
+            }
+            listing.Label(LanguageManager.Get("TradeStockSettingsDesc"));
 
             // World Operations
             listing.GapLine();

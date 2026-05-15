@@ -1,0 +1,294 @@
+warning: in the working copy of 'FactionGearModification/Managers/GearApplier.cs', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/FactionGearModification/Managers/GearApplier.cs b/FactionGearModification/Managers/GearApplier.cs[m
+[1mindex d561957..c848601 100644[m
+[1m--- a/FactionGearModification/Managers/GearApplier.cs[m
+[1m+++ b/FactionGearModification/Managers/GearApplier.cs[m
+[36m@@ -3,6 +3,8 @@[m [musing System.Collections.Generic;[m
+ using System.Linq;[m
+ using FactionGearCustomizer.Core;[m
+ using FactionGearCustomizer.Compat;[m
+[32m+[m[32musing FactionGearCustomizer.Validation;[m
+[32m+[m[32musing FactionGearCustomizer.Utils;[m
+ using RimWorld;[m
+ using UnityEngine;[m
+ using Verse;[m
+[36m@@ -23,8 +25,7 @@[m [mnamespace FactionGearCustomizer[m
+                 FactionGearData factionData = null;[m
+                 if (PreviewPreset != null)[m
+                 {[m
+[31m-                    // 预览模式：使用预览预设[m
+[31m-                    factionData = PreviewPreset.factionGearData?.FirstOrDefault(f => f.factionDefName == faction.def?.defName);[m
+[32m+[m[32m                    // 预览模式：使用预览预�?                    factionData = PreviewPreset.factionGearData?.FirstOrDefault(f => f.factionDefName == faction.def?.defName);[m
+                 }[m
+                 else[m
+                 {[m
+[36m@@ -39,8 +40,7 @@[m [mnamespace FactionGearCustomizer[m
+                     }[m
+                     else[m
+                     {[m
+[31m-                        // 使用全局设置（兼容旧存档或主菜单）[m
+[31m-                        factionData = FactionGearCustomizerMod.Settings?.GetOrCreateFactionData(faction.def?.defName);[m
+[32m+[m[32m                        // 使用全局设置（兼容旧存档或主菜单�?                        factionData = FactionGearCustomizerMod.Settings?.GetOrCreateFactionData(faction.def?.defName);[m
+                     }[m
+                 }[m
+ [m
+[36m@@ -68,19 +68,16 @@[m [mnamespace FactionGearCustomizer[m
+         }[m
+ [m
+         /// <summary>[m
+[31m-        /// 检查服装是否适合pawn穿戴（包括身体部位和年龄限制）[m
+[31m-        /// </summary>[m
+[32m+[m[32m        /// 检查服装是否适合pawn穿戴（包括身体部位和年龄限制�?        /// </summary>[m
+         private static bool CanWearApparel(Pawn pawn, ThingDef apparelDef)[m
+         {[m
+             if (pawn == null || apparelDef == null || !apparelDef.IsApparel)[m
+                 return false;[m
+ [m
+[31m-            // 检查身体部位[m
+[31m-            if (!ApparelUtility.HasPartsToWear(pawn, apparelDef))[m
+[32m+[m[32m            // 检查身体部�?            if (!ApparelUtility.HasPartsToWear(pawn, apparelDef))[m
+                 return false;[m
+ [m
+[31m-            // 检查年龄限制（儿童/成人服装限制）[m
+[31m-            if (!apparelDef.apparel.PawnCanWear(pawn))[m
+[32m+[m[32m            // 检查年龄限制（儿童/成人服装限制�?            if (!apparelDef.apparel.PawnCanWear(pawn))[m
+                 return false;[m
+ [m
+             return true;[m
+[36m@@ -176,6 +173,10 @@[m [mnamespace FactionGearCustomizer[m
+ [m
+         private static void ApplyHediffs(Pawn pawn, KindGearData kindData)[m
+         {[m
+[32m+[m[32m            LogUtils.DebugLog($"ApplyHediffs called for {pawn.Name}, ForcedHediffs count: {kindData.ForcedHediffs?.Count ?? 0}");[m
+[32m+[m[41m            [m
+[32m+[m[32m            // 调试：输�?pawn 的身体部�?            BodyPartDebugger.DebugPawnBodyParts(pawn);[m
+[32m+[m[41m            [m
+             if (kindData.ForceOnlySelected && pawn.health != null)[m
+             {[m
+                 var hediffsToRemove = pawn.health.hediffSet.hediffs[m
+[36m@@ -188,11 +189,49 @@[m [mnamespace FactionGearCustomizer[m
+                 }[m
+             }[m
+ [m
+[31m-            if (kindData.ForcedHediffs.NullOrEmpty()) return;[m
+[32m+[m[32m            if (kindData.ForcedHediffs.NullOrEmpty())[m[41m [m
+[32m+[m[32m            {[m
+[32m+[m[32m                LogUtils.DebugLog("No ForcedHediffs configured for this kind");[m
+[32m+[m[32m                return;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            var listValidation = HediffApplicationValidator.ValidateHediffList(kindData.ForcedHediffs);[m
+[32m+[m[32m            if (listValidation.HasWarnings)[m
+[32m+[m[32m            {[m
+[32m+[m[32m                foreach (var warning in listValidation.Warnings)[m
+[32m+[m[32m                {[m
+[32m+[m[32m                    Log.Warning($"[FactionGearCustomizer] {warning}");[m
+[32m+[m[32m                }[m
+[32m+[m[32m            }[m
+ [m
+             foreach (var forcedHediff in kindData.ForcedHediffs)[m
+             {[m
+[31m-                if (!Rand.Chance(forcedHediff.chance)) continue;[m
+[32m+[m[32m                LogUtils.DebugLog($"Processing hediff: {forcedHediff?.HediffDef?.defName ?? "null"}, chance: {forcedHediff?.chance}");[m
+[32m+[m[41m                [m
+[32m+[m[32m                if (!Rand.Chance(forcedHediff.chance))[m[41m [m
+[32m+[m[32m                {[m
+[32m+[m[32m                    LogUtils.DebugLog($"Skipped due to chance check (chance={forcedHediff.chance})");[m
+[32m+[m[32m                    continue;[m
+[32m+[m[32m                }[m
+[32m+[m
+[32m+[m[32m                var validation = HediffApplicationValidator.ValidateApplicationToPawn(forcedHediff, pawn);[m
+[32m+[m[41m                [m
+[32m+[m[32m                if (validation.HasErrors)[m
+[32m+[m[32m                {[m
+[32m+[m[32m                    foreach (var error in validation.Errors)[m
+[32m+[m[32m                    {[m
+[32m+[m[32m                        Log.Error($"[FactionGearCustomizer] {error}");[m
+[32m+[m[32m                    }[m
+[32m+[m[32m                    continue;[m
+[32m+[m[32m                }[m
+[32m+[m
+[32m+[m[32m                if (validation.HasWarnings)[m
+[32m+[m[32m                {[m
+[32m+[m[32m                    foreach (var warning in validation.Warnings)[m
+[32m+[m[32m                    {[m
+[32m+[m[32m                        Log.Warning($"[FactionGearCustomizer] {warning}");[m
+[32m+[m[32m                    }[m
+[32m+[m[32m                }[m
+ [m
+                 if (forcedHediff.IsPool)[m
+                 {[m
+[36m@@ -200,7 +239,11 @@[m [mnamespace FactionGearCustomizer[m
+                     continue;[m
+                 }[m
+ [m
+[31m-                if (forcedHediff.HediffDef == null) continue;[m
+[32m+[m[32m                if (forcedHediff.HediffDef == null)[m[41m [m
+[32m+[m[32m                {[m
+[32m+[m[32m                    LogUtils.DebugLog("HediffDef is null, skipping");[m
+[32m+[m[32m                    continue;[m
+[32m+[m[32m                }[m
+ [m
+                 ApplySingleHediff(pawn, forcedHediff);[m
+             }[m
+[36m@@ -210,6 +253,8 @@[m [mnamespace FactionGearCustomizer[m
+         {[m
+             HediffDef def = forcedHediff.HediffDef;[m
+             [m
+[32m+[m[32m            LogUtils.DebugLog($"ApplySingleHediff: {def?.defName}, needsPart: {HediffNeedsBodyPart(def)}");[m
+[32m+[m[41m            [m
+             if (HediffNeedsBodyPart(def))[m
+             {[m
+                 ApplyHediffWithPart(pawn, forcedHediff);[m
+[36m@@ -224,7 +269,7 @@[m [mnamespace FactionGearCustomizer[m
+         {[m
+             if (def == null) return false;[m
+             [m
+[31m-            if (def.countsAsAddedPartOrImplant) return true;[m
+[32m+[m[32m            if (def.hediffClass == typeof(Hediff_Level)) return false;[m
+             [m
+             if (def.hediffClass == typeof(Hediff_AddedPart)) return true;[m
+             [m
+[36m@@ -232,6 +277,8 @@[m [mnamespace FactionGearCustomizer[m
+             [m
+             if (def.defName.Contains("Missing")) return true;[m
+             [m
+[32m+[m[32m            if (def.countsAsAddedPartOrImplant) return true;[m
+[32m+[m[41m            [m
+             return false;[m
+         }[m
+ [m
+[36m@@ -292,15 +339,19 @@[m [mnamespace FactionGearCustomizer[m
+                     if (pawn.health.hediffSet.GetHediffCount(def) >= count) break;[m
+                     [m
+                     BodyPartRecord part = validParts.RandomElement();[m
+[32m+[m[32m                    if (part == null) continue;[m
+                     validParts.Remove(part);[m
+                     [m
+                     if (pawn.health.hediffSet.HasHediff(def, part)) continue;[m
+                     [m
+[32m+[m[32m                    Log.Message($"[FactionGearCustomizer] Applying {def.defName} to part: {part.Label} ({part.def.defName})");[m
+[32m+[m[41m                    [m
+                     try[m
+                     {[m
+                         Hediff hediff = HediffMaker.MakeHediff(def, pawn, part);[m
+                         ApplyHediffSeverity(hediff, forcedHediff);[m
+                         pawn.health.AddHediff(hediff);[m
+[32m+[m[32m                        Log.Message($"[FactionGearCustomizer] Successfully applied {def.defName} to {part.Label}");[m
+                     }[m
+                     catch (Exception ex)[m
+                     {[m
+[36m@@ -310,6 +361,19 @@[m [mnamespace FactionGearCustomizer[m
+             }[m
+             else[m
+             {[m
+[32m+[m[32m                userSpecifiedParts = userSpecifiedParts.Where(p => p != null).ToList();[m
+[32m+[m[32m                userSpecifiedParts = userSpecifiedParts.Where(p =>[m[41m [m
+[32m+[m[32m                    p != null &&[m[41m [m
+[32m+[m[32m                    pawn.health != null &&[m[41m [m
+[32m+[m[32m                    pawn.health.hediffSet != null &&[m
+[32m+[m[32m                    !pawn.health.hediffSet.PartIsMissing(p) &&[m
+[32m+[m[32m                    pawn.health.hediffSet.GetPartHealth(p) > 0).ToList();[m
+[32m+[m[32m                if (userSpecifiedParts.NullOrEmpty())[m
+[32m+[m[32m                {[m
+[32m+[m[32m                    Log.Warning($"[FactionGearCustomizer] All specified body parts are invalid for hediff {def.defName} on pawn {pawn.Name.ToStringShort}");[m
+[32m+[m[32m                    return;[m
+[32m+[m[32m                }[m
+[32m+[m[41m                [m
+                 count = Mathf.Min(count, userSpecifiedParts.Count);[m
+                 [m
+                 for (int i = 0; i < count && userSpecifiedParts.Count > 0; i++)[m
+[36m@@ -341,13 +405,15 @@[m [mnamespace FactionGearCustomizer[m
+             {[m
+                 foreach (var partDef in forcedHediff.parts)[m
+                 {[m
+[32m+[m[32m                    if (partDef == null) continue;[m
+                     var parts = pawn.RaceProps.body.GetPartsWithDef(partDef)[m
+[31m-                        .Where(p => !pawn.health.hediffSet.PartIsMissing(p))[m
+[32m+[m[32m                        .Where(p => p != null && !pawn.health.hediffSet.PartIsMissing(p))[m
+                         .ToList();[m
+                     result.AddRange(parts);[m
+                 }[m
+             }[m
+             [m
+[32m+[m[32m            Log.Message($"[FactionGearCustomizer] GetValidBodyPartsForHediff: {def.defName}, found {result.Count} valid parts: {string.Join(", ", result.Select(p => p.Label))}");[m
+             return result;[m
+         }[m
+ [m
+[36m@@ -355,13 +421,42 @@[m [mnamespace FactionGearCustomizer[m
+         {[m
+             List<BodyPartRecord> result = new List<BodyPartRecord>();[m
+             [m
+[31m-            if (pawn?.RaceProps?.body == null || def == null) return result;[m
+[32m+[m[32m            if (pawn?.RaceProps?.body == null || def == null || pawn.health?.hediffSet == null) return result;[m
+             [m
+[31m-            IEnumerable<BodyPartRecord> allParts = pawn.RaceProps.body.AllParts[m
+[31m-                .Where(p => !pawn.health.hediffSet.PartIsMissing(p));[m
+[32m+[m[32m            List<BodyPartRecord> candidateParts;[m
+             [m
+[31m-            foreach (BodyPartRecord part in allParts)[m
+[32m+[m[32m            var recommendedPartNames = HediffPartMappingManager.GetRecommendedPartsForHediff(def);[m
+[32m+[m[32m            Log.Message($"[FactionGearCustomizer] GetValidBodyPartsForHediff: {def.defName}, recommended parts: {string.Join(", ", recommendedPartNames)}");[m
+[32m+[m[32m            if (recommendedPartNames.Count > 0)[m
+             {[m
+[32m+[m[32m                candidateParts = new List<BodyPartRecord>();[m
+[32m+[m[32m                foreach (var partName in recommendedPartNames)[m
+[32m+[m[32m                {[m
+[32m+[m[32m                    var partDef = DefDatabase<BodyPartDef>.GetNamedSilentFail(partName);[m
+[32m+[m[32m                    if (partDef == null)[m
+[32m+[m[32m                    {[m
+[32m+[m[32m                        Log.Warning($"[FactionGearCustomizer]   - BodyPartDef not found: {partName}");[m
+[32m+[m[32m                    }[m
+[32m+[m[32m                    if (partDef != null)[m
+[32m+[m[32m                    {[m
+[32m+[m[32m                        var parts = pawn.RaceProps.body.GetPartsWithDef(partDef)[m
+[32m+[m[32m                            .Where(p => p != null && !pawn.health.hediffSet.PartIsMissing(p))[m
+[32m+[m[32m                            .ToList();[m
+[32m+[m[32m                        Log.Message($"[FactionGearCustomizer]   - Found {parts.Count} parts for {partName}");[m
+[32m+[m[32m                        candidateParts.AddRange(parts);[m
+[32m+[m[32m                    }[m
+[32m+[m[32m                }[m
+[32m+[m[32m            }[m
+[32m+[m[32m            else[m
+[32m+[m[32m            {[m
+[32m+[m[32m                candidateParts = pawn.RaceProps.body.AllParts[m
+[32m+[m[32m                    .Where(p => p != null && !pawn.health.hediffSet.PartIsMissing(p))[m
+[32m+[m[32m                    .ToList();[m
+[32m+[m[32m            }[m
+[32m+[m[41m            [m
+[32m+[m[32m            foreach (BodyPartRecord part in candidateParts)[m
+[32m+[m[32m            {[m
+[32m+[m[32m                if (part == null) continue;[m
+                 try[m
+                 {[m
+                     if (def.countsAsAddedPartOrImplant || def.hediffClass == typeof(Hediff_AddedPart))[m
+[36m@@ -372,7 +467,13 @@[m [mnamespace FactionGearCustomizer[m
+                     [m
+                     if (!pawn.health.hediffSet.HasHediff(def, part))[m
+                     {[m
+[31m-                        result.Add(part);[m
+[32m+[m[32m                        int currentImplantCount = CountImplantsOnPart(pawn, part);[m
+[32m+[m[32m                        int maxCount = HediffPartMappingManager.GetMaxImplantCountForPart(part.def);[m
+[32m+[m[41m                        [m
+[32m+[m[32m                        if (currentImplantCount < maxCount)[m
+[32m+[m[32m                        {[m
+[32m+[m[32m                            result.Add(part);[m
+[32m+[m[32m                        }[m
+                     }[m
+                 }[m
+                 catch[m
+[36m@@ -380,9 +481,66 @@[m [mnamespace FactionGearCustomizer[m
+                 }[m
+             }[m
+             [m
+[32m+[m[32m            if (result.Count == 0 && recommendedPartNames.Count > 0)[m
+[32m+[m[32m            {[m
+[32m+[m[32m                string recommendedParts = string.Join(", ", recommendedPartNames);[m
+[32m+[m[32m                string pawnKindName = pawn?.kindDef?.defName ?? "Unknown";[m
+[32m+[m[41m                [m
+[32m+[m[32m                // 记录需要手动指定的植入�?                HediffMappingLogger.LogMissingPart(def.defName, recommendedPartNames, pawnKindName);[m
+[32m+[m[41m                [m
+[32m+[m[32m                // 只有在强制模式下才回退到所有部位，否则跳过此植入物[m
+[32m+[m[32m                bool forceFallback = FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;[m
+[32m+[m[41m                [m
+[3

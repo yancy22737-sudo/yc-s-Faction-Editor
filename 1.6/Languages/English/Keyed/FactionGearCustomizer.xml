@@ -1188,4 +1188,36 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <OverwritePresetConfirm>Overwrite preset?</OverwritePresetConfirm>
   <PoolType>Pool Type</PoolType>
   <RelationPermanentEnemyTooltip>Permanent enemy relations cannot be modified</RelationPermanentEnemyTooltip>
+
+  <!-- Trade Stock -->
+  <TradeStockSettings>Trade Stock Settings</TradeStockSettings>
+  <EditTradeStock>Edit Trade Stock</EditTradeStock>
+  <TradeStockSettingsDesc>Customize what items this faction sells at settlements.</TradeStockSettingsDesc>
+  <TradeStockEditorTitle>Trade Stock — {0}</TradeStockEditorTitle>
+  <TradeStockTrader>Trader: {0}</TradeStockTrader>
+  <TradeStockReplaceVanilla>Replace Vanilla</TradeStockReplaceVanilla>
+  <TradeStockReplaceVanillaTip>When unchecked: custom items are appended on top of vanilla stock. When checked: vanilla stock is cleared first, only your items appear.</TradeStockReplaceVanillaTip>
+  <TradeStockReplaceConfirm>When enabled, all vanilla stock will be cleared and only your configured items will appear in trade. Continue?</TradeStockReplaceConfirm>
+  <TradeStockUndo>Undo ({0})</TradeStockUndo>
+  <TradeStockRedo>Redo ({0})</TradeStockRedo>
+  <TradeStockApplyToOthers>Apply to Others</TradeStockApplyToOthers>
+  <ApplyToAllFactions>Apply to ALL humanlike factions</ApplyToAllFactions>
+  <TradeStockSearch>Search...</TradeStockSearch>
+  <TradeStockCount>{0} items</TradeStockCount>
+  <TradeStockRemoveItem>Remove this item</TradeStockRemoveItem>
+  <TradeStockNoItems>No items. Add from library →</TradeStockNoItems>
+  <TradeStockAddFirst>Add items first.</TradeStockAddFirst>
+  <TradeStockClearAll>Clear All</TradeStockClearAll>
+  <TradeStockClear>Clear</TradeStockClear>
+  <TradeStockClearAllConfirm>Remove all {0} items?</TradeStockClearAllConfirm>
+  <TradeStockResetDefaults>Reset Defaults</TradeStockResetDefaults>
+  <TradeStockResetConfirm>Reset to vanilla defaults? This will discard all custom changes.</TradeStockResetConfirm>
+  <TradeStockSaved>Trade stock saved.</TradeStockSaved>
+  <TradeStockNoFactions>No other humanlike factions found.</TradeStockNoFactions>
+  <TradeCat_All>All</TradeCat_All>
+  <TradeCat_Weapons>Weapons</TradeCat_Weapons>
+  <TradeCat_Armor>Armor</TradeCat_Armor>
+  <TradeCat_Apparel>Apparel</TradeCat_Apparel>
+  <TradeCat_Items>Items</TradeCat_Items>
+  <TradeCat_Animals>Animals</TradeCat_Animals>
 </LanguageData>
