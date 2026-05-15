@@ -70,8 +70,11 @@ namespace FactionGearCustomizer
             if (!_originalSell.ContainsKey(traderKindDefName))
                 _originalSell[traderKindDefName] = tkDef.stockGenerators.Where(sg => !IsBuyGenerator(sg)).ToList();
 
-            // Remove our previously added sell generators
-            tkDef.stockGenerators.RemoveAll(sg => (sg is StockGenerator_SingleDef && _ourSellTags.Contains(Traverse.Create(sg).Field("thingDef").GetValue<ThingDef>()?.defName)));
+            // Remove our previously added sell generators (safe: skip generators that fail traversal)
+            tkDef.stockGenerators.RemoveAll(sg => {
+                try { return sg is StockGenerator_SingleDef && _ourSellTags.Contains(Traverse.Create(sg).Field("thingDef").GetValue<ThingDef>()?.defName); }
+                catch { return false; }
+            });
 
             if (replaceVanilla)
             {
@@ -91,6 +94,7 @@ namespace FactionGearCustomizer
                         var gen = new StockGenerator_SingleDef();
                         Traverse.Create(gen).Field("thingDef").SetValue(kind.race);
                         Traverse.Create(gen).Field("countRange").SetValue(e.countRange);
+                        gen.ResolveReferences(tkDef);
                         tkDef.stockGenerators.Add(gen);
                         _ourSellTags.Add(kind.defName);
                         Log.Message($"[FactionGearCustomizer] DefMod: added animal {kind.defName} via race {kind.race.defName}");
@@ -102,6 +106,7 @@ namespace FactionGearCustomizer
                         var gen = new StockGenerator_SingleDef();
                         Traverse.Create(gen).Field("thingDef").SetValue(def);
                         Traverse.Create(gen).Field("countRange").SetValue(e.countRange);
+                        gen.ResolveReferences(tkDef);
                         tkDef.stockGenerators.Add(gen);
                         _ourSellTags.Add(def.defName);
                     }
@@ -127,7 +132,7 @@ namespace FactionGearCustomizer
                 _originalBuy[traderKindDefName] = tkDef.stockGenerators.Where(sg => IsBuyGenerator(sg)).ToList();
 
             // Remove our previously added buy generators
-            tkDef.stockGenerators.RemoveAll(sg => sg is StockGenerator_BuySingleDef && _ourBuyTags.Contains(Traverse.Create(sg).Field("thingDef").GetValue<ThingDef>()?.defName));
+            tkDef.stockGenerators.RemoveAll(sg => { try { return sg is StockGenerator_BuySingleDef && _ourBuyTags.Contains(Traverse.Create(sg).Field("thingDef").GetValue<ThingDef>()?.defName); } catch { return false; } });
 
             if (entries != null && entries.Count > 0)
             {
@@ -139,6 +144,7 @@ namespace FactionGearCustomizer
                     var gen = new StockGenerator_BuySingleDef();
                     Traverse.Create(gen).Field("thingDef").SetValue(def);
                     Traverse.Create(gen).Field("priceMultiplier").SetValue(1.0f);
+                    gen.ResolveReferences(tkDef);
                     tkDef.stockGenerators.Add(gen);
                     _ourBuyTags.Add(def.defName);
                 }
@@ -193,8 +199,7 @@ namespace FactionGearCustomizer
                 if (tracker == null) continue;
                 try
                 {
-                    // Access StockListForReading to trigger lazy regen with updated Def
-                    var _ = tracker.StockListForReading;
+                    // Just count — don't force access to avoid triggering crashes
                     count++;
                 }
                 catch (Exception ex)
