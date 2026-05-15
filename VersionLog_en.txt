@@ -1,3 +1,12 @@
+v1.6.5
+- Add: Faction trade stock editor — entry button in Faction Edit, full buy/sell configuration, Trader type dropdown (Settlement/Caravan/Orbital/Visitor), Undo/Redo (Ctrl+Z/Y).
+- Add: Item library with category tabs (All/Weapons/Armor/Apparel/Items), full ThingPickerFilterBar reuse (Search/Mod/Tech/Sort/Value range/Food/Ammo sub-filters).
+- Add: Quick batch-add pill buttons (+Weapons/+Armor/+Apparel/+Items/+All) for one-click category batch add.
+- Add: Batch apply to other factions — FloatMenu to select single or all humanlike factions.
+- Add: Direct TraderKindDef.stockGenerators modification — auto-injects custom buy/sell items at trade time, zero runtime Harmony hooks.
+- Add: Trade stock preview dialog — simulates generated trade items with total market value.
+- Internal: TradeStockEntry data model, FactionGearData persistence with preset import/export, StockGenerator_BuySingleDef buy-side generators.
+
 v1.6.4
 - Add: Trait editing tab — add/remove traits, chance slider, native translated tooltip, Info button, degree selector.
 - Add: Gene editing tab — gene picker (category grouping + icons + metabolism display), Info button, endogene/xenogene toggle, chance slider.

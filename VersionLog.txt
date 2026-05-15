@@ -1,4 +1,13 @@
-﻿v1.6.4
+﻿v1.6.5
+- Add: 派系交易库存编辑器 — 按钮入口(派系编辑界面)，买卖两侧完整配置，Trader类型下拉选择器(定居点/商队/轨道/访客)，Undo/Redo(Ctrl+Z/Y)。
+- Add: 库存物品库 — 分类标签页(全部/武器/护甲/服饰/物品)，ThingPickerFilterBar完整复用(搜索/Mod来源/科技等级/排序/物价范围/食物/弹药二级筛选)。
+- Add: 快捷批量添加 — 药丸按钮(+Weapons/+Armor/+Apparel/+Items/+All)一键批量添加分类物品。
+- Add: 批量应用到其他派系 — FloatMenu选择单个或全部人类派系。
+- Add: TraderKindDef.stockGenerators直接修改 — 交易时自动注入自定义买卖物品，零运行时补丁。
+- Add: 库存预览弹窗 — 模拟生成实际交易物品，显示总市场价值。
+- 内部: TradeStockEntry数据模型，FactionGearData持久化(含预设导入导出)，StockGenerator_BuySingleDef买侧生成器。
+
+v1.6.4
 - Add: 特性编辑tab — 添加/删除特性，概率滑条，原生翻译tooltip，Info按钮，等级选择器。
 - Add: 基因编辑tab — 基因选择器(分类分组+图标+代谢显示)，Info按钮，内源/异源切换，概率滑条。
 - Add: 外观编辑tab — Shape/Hair/Skin/Genes子标签，发型/胡须/体型/头型图标网格，肤色/发色调色器。
