@@ -1226,4 +1226,15 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <TradeCat_Apparel>Apparel</TradeCat_Apparel>
   <TradeCat_Items>Items</TradeCat_Items>
   <TradeCat_Animals>Animals</TradeCat_Animals>
+
+  <!-- Inter-Faction Relations -->
+  <InterFactionRelations>Inter-Faction Relations</InterFactionRelations>
+  <AddFactionRelation>Add Relation</AddFactionRelation>
+  <RemoveFactionRelation>Remove</RemoveFactionRelation>
+  <SelectTargetFaction>Select target faction</SelectTargetFaction>
+  <NoTargetFactionsAvailable>No target factions available</NoTargetFactionsAvailable>
+  <DeselectAll>Deselect All</DeselectAll>
+  <ShowInGameName>Game Names</ShowInGameName>
+  <CurrentRelation>Current</CurrentRelation>
+  <RelationPermanentEnemy>Permanent enemy</RelationPermanentEnemy>
 </LanguageData>

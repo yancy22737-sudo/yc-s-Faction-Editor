@@ -456,6 +456,21 @@ namespace FactionGearCustomizer.Managers
                 LogUtils.DebugLog($"Skipping PlayerRelationOverride. HasValue={data.PlayerRelationOverride.HasValue}, InGame={Current.Game != null}");
             }
 
+            // 派系间关系应用
+            if (data.FactionRelationOverrides != null && data.FactionRelationOverrides.Count > 0
+                && Current.Game != null && Find.FactionManager != null)
+            {
+                LogUtils.DebugLog($"Applying Inter-Faction Relations for faction def: {faction.defName}");
+                foreach (var f in Find.FactionManager.AllFactions)
+                {
+                    if (f.def == faction && !f.IsPlayer)
+                    {
+                        SaveOriginalFactionInstanceState(f);
+                        ApplyInterFactionRelations(f, data.FactionRelationOverrides);
+                    }
+                }
+            }
+
             // 意识形态应用
             if (ModsConfig.IdeologyActive && !string.IsNullOrEmpty(data.IdeoName)
                 && Current.Game != null && Find.FactionManager != null)
@@ -620,6 +635,89 @@ namespace FactionGearCustomizer.Managers
                 catch (Exception ex)
                 {
                     Log.Warning($"[FactionGearCustomizer] Error applying relation change: {ex.Message}");
+                }
+            }
+        }
+
+        public static void ApplyInterFactionRelations(Faction faction, List<FactionRelationOverride> overrides)
+        {
+            if (faction == null || faction.IsPlayer) return;
+            if (overrides == null || overrides.Count == 0) return;
+            if (Find.FactionManager == null) return;
+
+            InitializeReflectionFields();
+
+            foreach (var ov in overrides)
+            {
+                if (string.IsNullOrEmpty(ov.targetFactionDefName)) continue;
+
+                float targetGoodwill;
+                switch (ov.relationKind)
+                {
+                    case FactionRelationKind.Ally:
+                        targetGoodwill = 75f;
+                        break;
+                    case FactionRelationKind.Hostile:
+                        targetGoodwill = -75f;
+                        break;
+                    case FactionRelationKind.Neutral:
+                    default:
+                        targetGoodwill = 0f;
+                        break;
+                }
+
+                var targetFactions = Find.FactionManager.AllFactions
+                    .Where(f => f.def.defName == ov.targetFactionDefName && !f.IsPlayer)
+                    .ToList();
+
+                foreach (var target in targetFactions)
+                {
+                    if (target == faction) continue;
+                    SaveOriginalFactionInstanceState(target);
+
+                    try
+                    {
+                        FactionRelation relation = faction.RelationWith(target);
+                        if (relation == null)
+                        {
+                            faction.TryMakeInitialRelationsWith(target);
+                            relation = faction.RelationWith(target);
+                        }
+
+                        if (relation != null)
+                        {
+                            if (goodwillField != null)
+                                goodwillField.SetValue(relation, (int)targetGoodwill);
+                            if (baseGoodwillField != null)
+                                baseGoodwillField.SetValue(relation, (int)targetGoodwill);
+                            if (kindField != null)
+                                kindField.SetValue(relation, ov.relationKind);
+                        }
+
+                        // Also set on the target's side (bidirectional)
+                        FactionRelation reverseRelation = target.RelationWith(faction);
+                        if (reverseRelation == null)
+                        {
+                            target.TryMakeInitialRelationsWith(faction);
+                            reverseRelation = target.RelationWith(faction);
+                        }
+
+                        if (reverseRelation != null)
+                        {
+                            if (goodwillField != null)
+                                goodwillField.SetValue(reverseRelation, (int)targetGoodwill);
+                            if (baseGoodwillField != null)
+                                baseGoodwillField.SetValue(reverseRelation, (int)targetGoodwill);
+                            if (kindField != null)
+                                kindField.SetValue(reverseRelation, ov.relationKind);
+                        }
+
+                        LogUtils.DebugLog($"InterFactionRelation: {faction.Name} ↔ {target.Name} set to {ov.relationKind} (goodwill={targetGoodwill})");
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warning($"[FactionGearCustomizer] Error applying inter-faction relation ({faction.Name} ↔ {target?.Name}): {ex.Message}");
+                    }
                 }
             }
         }

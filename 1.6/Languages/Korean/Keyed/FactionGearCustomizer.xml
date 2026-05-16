@@ -1219,4 +1219,16 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <TradeCat_Apparel>의류</TradeCat_Apparel>
   <TradeCat_Items>아이템</TradeCat_Items>
   <TradeCat_Animals>Animals</TradeCat_Animals>
+
+  <!-- Inter-Faction Relations -->
+  <InterFactionRelations>진영 간 관계</InterFactionRelations>
+  <AddFactionRelation>관계 추가</AddFactionRelation>
+  <RemoveFactionRelation>제거</RemoveFactionRelation>
+  <SelectTargetFaction>대상 진영 선택</SelectTargetFaction>
+  <NoTargetFactionsAvailable>사용 가능한 대상 진영이 없습니다</NoTargetFactionsAvailable>
+  <DeselectAll>전체 해제</DeselectAll>
+  <ShowInGameName>게임 이름 표시</ShowInGameName>
+  <CurrentRelation>현재</CurrentRelation>
+  <RelationPermanentEnemy>영구 적대</RelationPermanentEnemy>
+
 <RaidPointsLabel>레이드 포인트</RaidPointsLabel><CarryWeightLabel>중량</CarryWeightLabel></LanguageData>

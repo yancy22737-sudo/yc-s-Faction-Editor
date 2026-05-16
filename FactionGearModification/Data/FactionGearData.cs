@@ -6,6 +6,31 @@ using Verse;
 
 namespace FactionGearCustomizer
 {
+    public class FactionRelationOverride : IExposable
+    {
+        public string targetFactionDefName;
+        public FactionRelationKind relationKind;
+
+        public FactionRelationOverride() { }
+
+        public FactionRelationOverride(string targetFactionDefName, FactionRelationKind relationKind)
+        {
+            this.targetFactionDefName = targetFactionDefName;
+            this.relationKind = relationKind;
+        }
+
+        public void ExposeData()
+        {
+            Scribe_Values.Look(ref targetFactionDefName, "targetFactionDefName");
+            Scribe_Values.Look(ref relationKind, "relationKind");
+        }
+
+        public FactionRelationOverride DeepCopy()
+        {
+            return new FactionRelationOverride(targetFactionDefName, relationKind);
+        }
+    }
+
     public class FactionGearData : IExposable
     {
         public string factionDefName;
@@ -33,6 +58,9 @@ namespace FactionGearCustomizer
 
         // Player Relation Override (Ally/Neutral/Hostile)
         public FactionRelationKind? PlayerRelationOverride;
+
+        // Inter-Faction Relations (faction → other faction)
+        public List<FactionRelationOverride> FactionRelationOverrides;
 
         // Trade Stock Customization (Sell side)
         public List<TradeStockEntry> CustomTradeStock;
@@ -75,6 +103,7 @@ namespace FactionGearCustomizer
             if (groupMakers == null) groupMakers = new List<PawnGroupMakerData>();
 
             Scribe_Values.Look(ref PlayerRelationOverride, "playerRelationOverride");
+            Scribe_Collections.Look(ref FactionRelationOverrides, "factionRelationOverrides", LookMode.Deep);
             Scribe_Values.Look(ref IdeoName, "ideoName");
 
             Scribe_Collections.Look(ref CustomTradeStock, "customTradeStock", LookMode.Deep);
@@ -137,6 +166,7 @@ namespace FactionGearCustomizer
             DisableXenotypeChances = false;
             groupMakers?.Clear();
             PlayerRelationOverride = null;
+            FactionRelationOverrides?.Clear();
             IdeoName = null;
             CustomTradeStock = null;
             ReplaceVanillaTradeStock = false;
@@ -278,6 +308,7 @@ namespace FactionGearCustomizer
                 (CustomTradeStockByType?.Count ?? 0) > 0 ||
                 (CustomBuyStock?.Count ?? 0) > 0 ||
                 (CustomBuyStockByType?.Count ?? 0) > 0 ||
+                (FactionRelationOverrides?.Count ?? 0) > 0 ||
                 (XenotypeChances?.Count ?? 0) > 0 ||
                 (groupMakers?.Count ?? 0) > 0;
 
@@ -294,6 +325,12 @@ namespace FactionGearCustomizer
             copy.IconPath = this.IconPath;
             copy.Color = this.Color;
             copy.PlayerRelationOverride = this.PlayerRelationOverride;
+            if (this.FactionRelationOverrides != null)
+            {
+                copy.FactionRelationOverrides = new List<FactionRelationOverride>();
+                foreach (var fro in this.FactionRelationOverrides)
+                    copy.FactionRelationOverrides.Add(fro.DeepCopy());
+            }
             copy.IdeoName = this.IdeoName;
             copy.DisableXenotypeChances = this.DisableXenotypeChances;
             copy.ReplaceVanillaTradeStock = this.ReplaceVanillaTradeStock;

@@ -1225,4 +1225,15 @@
   <TradeCat_Items>物品</TradeCat_Items>
   <TradeCat_Animals>动物</TradeCat_Animals>
 
+  <!-- Inter-Faction Relations -->
+  <InterFactionRelations>派系间关系</InterFactionRelations>
+  <AddFactionRelation>添加关系</AddFactionRelation>
+  <RemoveFactionRelation>移除</RemoveFactionRelation>
+  <SelectTargetFaction>选择目标派系</SelectTargetFaction>
+  <NoTargetFactionsAvailable>没有可用的目标派系</NoTargetFactionsAvailable>
+  <DeselectAll>取消全选</DeselectAll>
+  <ShowInGameName>显示游戏名称</ShowInGameName>
+  <CurrentRelation>当前</CurrentRelation>
+  <RelationPermanentEnemy>永久敌对</RelationPermanentEnemy>
+
 <RaidPointsLabel>袭击点数</RaidPointsLabel><CarryWeightLabel>负重</CarryWeightLabel></LanguageData>

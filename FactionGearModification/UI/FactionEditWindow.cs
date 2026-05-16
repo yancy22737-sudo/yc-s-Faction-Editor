@@ -50,6 +50,9 @@ namespace FactionGearCustomizer.UI
         // Player Relation Buffer
         private FactionRelationKind? bufferPlayerRelation;
 
+        // Inter-Faction Relations Buffer
+        private List<FactionRelationOverride> bufferFactionRelations;
+
         private string pawnKindSearchQuery = "";
 
         public override Vector2 InitialSize => new Vector2(700f, 800f);
@@ -141,6 +144,14 @@ namespace FactionGearCustomizer.UI
 
             // Initialize Player Relation Buffer
             bufferPlayerRelation = factionData.PlayerRelationOverride;
+
+            // Initialize Inter-Faction Relations Buffer
+            bufferFactionRelations = new List<FactionRelationOverride>();
+            if (factionData.FactionRelationOverrides != null)
+            {
+                foreach (var fro in factionData.FactionRelationOverrides)
+                    bufferFactionRelations.Add(fro.DeepCopy());
+            }
         }
 
         private Dictionary<string, string> kindLabelBuffers = new Dictionary<string, string>();
@@ -279,6 +290,9 @@ namespace FactionGearCustomizer.UI
 
             // Player Relation Settings
             if (inGame) height += 80f;
+
+            // Inter-Faction Relations
+            if (inGame) height += 70f + (bufferFactionRelations?.Count ?? 0) * 30f;
 
             // Delete Faction Section (Danger Zone) - 减少留白
             if (inGame) height += 45f;
@@ -582,6 +596,14 @@ namespace FactionGearCustomizer.UI
                 DrawPlayerRelationSelector(listing);
             }
 
+            // Inter-Faction Relations
+            if (inGame)
+            {
+                listing.GapLine();
+                listing.Label($"<b>{LanguageManager.Get("InterFactionRelations")}</b>");
+                DrawInterFactionRelations(listing);
+            }
+
             // Delete Faction
             if (inGame)
             {
@@ -710,6 +732,70 @@ namespace FactionGearCustomizer.UI
                     return "RelationHostile";
                 default:
                     return "RelationDefault";
+            }
+        }
+
+        private bool AreFactionRelationListsEqual(List<FactionRelationOverride> a, List<FactionRelationOverride> b)
+        {
+            if (a == null && b == null) return true;
+            if (a == null || b == null) return false;
+            if (a.Count != b.Count) return false;
+            for (int i = 0; i < a.Count; i++)
+            {
+                if (a[i].targetFactionDefName != b[i].targetFactionDefName
+                    || a[i].relationKind != b[i].relationKind)
+                    return false;
+            }
+            return true;
+        }
+
+        private void DrawInterFactionRelations(Listing_Standard listing)
+        {
+            if (Find.FactionManager == null) return;
+
+            // List existing overrides
+            for (int i = bufferFactionRelations.Count - 1; i >= 0; i--)
+            {
+                var fro = bufferFactionRelations[i];
+                var targetDef = DefDatabase<FactionDef>.GetNamedSilentFail(fro.targetFactionDefName);
+                if (targetDef == null)
+                {
+                    bufferFactionRelations.RemoveAt(i);
+                    continue;
+                }
+
+                Rect rowRect = listing.GetRect(30f);
+
+                // Target faction name
+                string targetName = DefDisplayNameUtility.GetSafeFactionDisplayName(targetDef, "FactionEditWindow.DrawInterFactionRelations");
+                Rect nameRect = new Rect(rowRect.x, rowRect.y, rowRect.width * 0.45f, 30f);
+                Widgets.Label(nameRect, targetName);
+
+                // Relation kind indicator
+                Rect relRect = new Rect(nameRect.xMax + 10f, rowRect.y, rowRect.width * 0.30f, 30f);
+                GUI.color = fro.relationKind == FactionRelationKind.Ally ? Color.green
+                    : fro.relationKind == FactionRelationKind.Hostile ? Color.red
+                    : Color.cyan;
+                Widgets.Label(relRect, LanguageManager.Get(GetRelationLanguageKey(fro.relationKind)));
+                GUI.color = Color.white;
+
+                // Remove button
+                Rect removeRect = new Rect(relRect.xMax + 10f, rowRect.y, 60f, 30f);
+                if (Widgets.ButtonText(removeRect, LanguageManager.Get("RemoveFactionRelation")))
+                {
+                    bufferFactionRelations.RemoveAt(i);
+                }
+            }
+
+            // Add relation button
+            Rect addBtnRect = listing.GetRect(30f);
+            if (Widgets.ButtonText(new Rect(addBtnRect.x, addBtnRect.y, 180f, 30f), LanguageManager.Get("AddFactionRelation")))
+            {
+                Find.WindowStack.Add(new Dialog_InterFactionRelation(factionDef, bufferFactionRelations,
+                    (result) =>
+                    {
+                        bufferFactionRelations = result;
+                    }));
             }
         }
 
@@ -908,6 +994,16 @@ namespace FactionGearCustomizer.UI
                 factionModified = true;
             }
 
+            // Inter-Faction Relations
+            bool interFactionChanged = !AreFactionRelationListsEqual(factionData.FactionRelationOverrides, bufferFactionRelations);
+            if (interFactionChanged)
+            {
+                factionData.FactionRelationOverrides = new List<FactionRelationOverride>();
+                foreach (var fro in bufferFactionRelations)
+                    factionData.FactionRelationOverrides.Add(fro.DeepCopy());
+                factionModified = true;
+            }
+
             if (factionModified)
             {
                 factionData.isModified = true;
@@ -1043,7 +1139,8 @@ namespace FactionGearCustomizer.UI
             factionData.XenotypeChances?.Clear();
             factionData.groupMakers?.Clear();
             factionData.PlayerRelationOverride = null;
-            factionData.isModified = false; 
+            factionData.FactionRelationOverrides?.Clear();
+            factionData.isModified = false;
             
             FactionDefManager.ResetFaction(factionDef);
 
@@ -1063,6 +1160,7 @@ namespace FactionGearCustomizer.UI
             }
 
             bufferPlayerRelation = null;
+            bufferFactionRelations.Clear();
 
             bufferXenotypes.Clear();
             if (ModsConfig.BiotechActive && factionDef.humanlikeFaction && factionDef.xenotypeSet != null)

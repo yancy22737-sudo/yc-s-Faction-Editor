@@ -1221,4 +1221,15 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <TradeCat_Apparel>衣服</TradeCat_Apparel>
   <TradeCat_Items>アイテム</TradeCat_Items>
   <TradeCat_Animals>Animals</TradeCat_Animals>
+
+  <!-- Inter-Faction Relations -->
+  <InterFactionRelations>派閥間関係</InterFactionRelations>
+  <AddFactionRelation>関係を追加</AddFactionRelation>
+  <RemoveFactionRelation>削除</RemoveFactionRelation>
+  <SelectTargetFaction>対象派閥を選択</SelectTargetFaction>
+  <NoTargetFactionsAvailable>利用可能な対象派閥がありません</NoTargetFactionsAvailable>
+  <DeselectAll>すべて解除</DeselectAll>
+  <ShowInGameName>ゲーム名表示</ShowInGameName>
+  <CurrentRelation>現在</CurrentRelation>
+  <RelationPermanentEnemy>永続的敵対</RelationPermanentEnemy>
 </LanguageData>

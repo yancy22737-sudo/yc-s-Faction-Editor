@@ -1,586 +1,590 @@
+v1.6.7
+	- New: Inter-Faction Relations — edit diplomatic relations between any non-player factions (Ally/Neutral/Hostile), with multi-select, select-all, and search filter.
+	- UI: New Dialog_InterFactionRelation window with in-game name toggle and hover tooltips, replacing the previous two-level FloatMenu.
+	- Localization: 10 new translation keys across all 7 languages (EN/ZH/KO/JA/RU/UK).
+
 v1.6.6
-- New: Elite Raids — auto-modify raid points based on pawn gear value, compressing raid size to reduce performance load.
-- New: Manual raid points override per pawn kind in group editor (combatPower), takes effect immediately.
-- New: Auto Raid Points toggle (Advanced > General) — auto-calculates on save/apply when ON, restores defaults when OFF.
-- New: Preview window shows raid points as "base + gear adjustment" format.
-- Fix: Faction ideology selection now actually applies to faction instances.
-- Fix: Iterator timing bug in PawnGroupMakerUtility.GeneratePawns causing raid points override to be ignored.
-- Fix: Hardcoded Chinese text in preview window ("点数"/"负重") replaced with language keys.
-- Localization: Added Korean and Japanese translations; Russian gained 78 missing keys with shortened UI labels.
-- Build: build.ps1 tolerates locked DLL, copying files individually to ensure language XML deployment.
+	- New: Elite Raids — auto-modify raid points based on pawn gear value, compressing raid size to reduce performance load.
+	- New: Manual raid points override per pawn kind in group editor (combatPower), takes effect immediately.
+	- New: Auto Raid Points toggle (Advanced > General) — auto-calculates on save/apply when ON, restores defaults when OFF.
+	- New: Preview window shows raid points as "base + gear adjustment" format.
+	- Fix: Faction ideology selection now actually applies to faction instances.
+	- Fix: Iterator timing bug in PawnGroupMakerUtility.GeneratePawns causing raid points override to be ignored.
+	- Fix: Hardcoded Chinese text in preview window ("点数"/"负重") replaced with language keys.
+	- Localization: Added Korean and Japanese translations; Russian gained 78 missing keys with shortened UI labels.
+	- Build: build.ps1 tolerates locked DLL, copying files individually to ensure language XML deployment.
 
 v1.6.5
-- Add: Faction trade stock editor — entry button in Faction Edit, full buy/sell configuration, Trader type dropdown (Settlement/Caravan/Orbital/Visitor), Undo/Redo (Ctrl+Z/Y).
-- Add: Item library with category tabs (All/Weapons/Armor/Apparel/Items), full ThingPickerFilterBar reuse (Search/Mod/Tech/Sort/Value range/Food/Ammo sub-filters).
-- Add: Quick batch-add pill buttons (+Weapons/+Armor/+Apparel/+Items/+All) for one-click category batch add.
-- Add: Batch apply to other factions — FloatMenu to select single or all humanlike factions.
-- Add: Direct TraderKindDef.stockGenerators modification — auto-injects custom buy/sell items at trade time, zero runtime Harmony hooks.
-- Add: Trade stock preview dialog — simulates generated trade items with total market value.
-- Internal: TradeStockEntry data model, FactionGearData persistence with preset import/export, StockGenerator_BuySingleDef buy-side generators.
+	- Add: Faction trade stock editor — entry button in Faction Edit, full buy/sell configuration, Trader type dropdown (Settlement/Caravan/Orbital/Visitor), Undo/Redo (Ctrl+Z/Y).
+	- Add: Item library with category tabs (All/Weapons/Armor/Apparel/Items), full ThingPickerFilterBar reuse (Search/Mod/Tech/Sort/Value range/Food/Ammo sub-filters).
+	- Add: Quick batch-add pill buttons (+Weapons/+Armor/+Apparel/+Items/+All) for one-click category batch add.
+	- Add: Batch apply to other factions — FloatMenu to select single or all humanlike factions.
+	- Add: Direct TraderKindDef.stockGenerators modification — auto-injects custom buy/sell items at trade time, zero runtime Harmony hooks.
+	- Add: Trade stock preview dialog — simulates generated trade items with total market value.
+	- Internal: TradeStockEntry data model, FactionGearData persistence with preset import/export, StockGenerator_BuySingleDef buy-side generators.
 
 v1.6.4
-- Add: Trait editing tab — add/remove traits, chance slider, native translated tooltip, Info button, degree selector.
-- Add: Gene editing tab — gene picker (category grouping + icons + metabolism display), Info button, endogene/xenogene toggle, chance slider.
-- Add: Appearance editing tab — Shape/Hair/Skin/Genes sub-tabs, icon grids for hair/beard/body/head, skin/hair color picker.
-- Add: Ideology selector in Faction Edit (Ideology DLC only), icon preview, auto-reads from runtime faction.
-- Add: TraitPreviewPawnCache — backend virtual pawn for native Trait.TipString display.
-- Add: Mod source column in trait/gene/appearance lists (truncated with ellipsis, no wrap).
-- UI: Two-row advanced tab layout — Row1(General/Apparel/Weapons/Hediffs/Items) · Row2(Traits/Appearance/Genes).
-- UI: All delete buttons unified to trash can icon.
-- Batch Apply: Added Traits/Genes/Appearance category copy flags. Fixed checkbox layout overlap.
-- Fix: ForceOverrideAppearance missing from DeepCopy/CopyFrom caused Apply To Others/Batch Apply to not copy appearance override.
-- Internal: KindGearData extended with full lifecycle for ForcedSkills/ForcedTraits/ForcedGenes/ForcedAppearance.
+	- Add: Trait editing tab — add/remove traits, chance slider, native translated tooltip, Info button, degree selector.
+	- Add: Gene editing tab — gene picker (category grouping + icons + metabolism display), Info button, endogene/xenogene toggle, chance slider.
+	- Add: Appearance editing tab — Shape/Hair/Skin/Genes sub-tabs, icon grids for hair/beard/body/head, skin/hair color picker.
+	- Add: Ideology selector in Faction Edit (Ideology DLC only), icon preview, auto-reads from runtime faction.
+	- Add: TraitPreviewPawnCache — backend virtual pawn for native Trait.TipString display.
+	- Add: Mod source column in trait/gene/appearance lists (truncated with ellipsis, no wrap).
+	- UI: Two-row advanced tab layout — Row1(General/Apparel/Weapons/Hediffs/Items) · Row2(Traits/Appearance/Genes).
+	- UI: All delete buttons unified to trash can icon.
+	- Batch Apply: Added Traits/Genes/Appearance category copy flags. Fixed checkbox layout overlap.
+	- Fix: ForceOverrideAppearance missing from DeepCopy/CopyFrom caused Apply To Others/Batch Apply to not copy appearance override.
+	- Internal: KindGearData extended with full lifecycle for ForcedSkills/ForcedTraits/ForcedGenes/ForcedAppearance.
 
 v1.6.3
-- Add: Skills/traits/genes/appearance editing framework (skills hidden, to be enabled in future release).
+	- Add: Skills/traits/genes/appearance editing framework (skills hidden, to be enabled in future release).
 
 v1.6.2
-- Fix: Item Library mod filter cache not cleared after deselecting all mods.
-- Fix: Normal weapons (e.g. MilkorMGL) incorrectly filtered as turret/mechanoid — added normal weaponTag bypass after turretGun cache hit.
-- Fix: Long mod names overflow in picker lists — added single-line ellipsis truncation.
-- Add: Market value column in all Item Picker lists.
-- Fix: Melee weapon picker could add ranged weapons — added RangedOnly/MeleeOnly filter mode.
-- Fix: Ranged/melee tabs shared the same weapon adder — now passes appropriate filter per tab.
-- UI: Range/damage sliders merged into one row. Sort controls moved to selection row.
+	- Fix: Item Library mod filter cache not cleared after deselecting all mods.
+	- Fix: Normal weapons (e.g. MilkorMGL) incorrectly filtered as turret/mechanoid — added normal weaponTag bypass after turretGun cache hit.
+	- Fix: Long mod names overflow in picker lists — added single-line ellipsis truncation.
+	- Add: Market value column in all Item Picker lists.
+	- Fix: Melee weapon picker could add ranged weapons — added RangedOnly/MeleeOnly filter mode.
+	- Fix: Ranged/melee tabs shared the same weapon adder — now passes appropriate filter per tab.
+	- UI: Range/damage sliders merged into one row. Sort controls moved to selection row.
 
 v1.6.1
-- Add: Enhanced color picker with visual 2D color field, hue slider, RGB sliders, preset palette, and color history.
-- Add: Pixel drawing board for custom faction icons — brush/eraser tools, undo stack, flood fill, quick palette, resizable canvas.
-- Add: Window_FactionGroupEditor — standalone faction group editor, accessible from kind list "+" button.
-- Add: Kind editor window redesigned with vanilla-style UI; kind list copy/paste hover-only with language key tooltips.
-- Fix: Mod source cache now invalidates on category switch, preventing missing mod filter entries.
-- Fix: Mod name truncation removed from mod filter button, allowing full names to display.
-- Fix: Hediff picker now sorts by market value; market value column shown in rows; defaults to "All Categories".
+	- Add: Enhanced color picker with visual 2D color field, hue slider, RGB sliders, preset palette, and color history.
+	- Add: Pixel drawing board for custom faction icons — brush/eraser tools, undo stack, flood fill, quick palette, resizable canvas.
+	- Add: Window_FactionGroupEditor — standalone faction group editor, accessible from kind list "+" button.
+	- Add: Kind editor window redesigned with vanilla-style UI; kind list copy/paste hover-only with language key tooltips.
+	- Fix: Mod source cache now invalidates on category switch, preventing missing mod filter entries.
+	- Fix: Mod name truncation removed from mod filter button, allowing full names to display.
+	- Fix: Hediff picker now sorts by market value; market value column shown in rows; defaults to "All Categories".
 
 v1.6.0
-- Fix: Removed ClearOriginalDataCache() + duplicate SaveAllOriginalData() to prevent pristine data from being overwritten by polluted ApplyAllSettings results.
-- Fix: Combat groups with maxTotalPoints < 10000 auto-expanded to 9999999; corrupted old data cleaned when groupsModified=false.
-- Fix: Added Patch_CanGenerateFrom_TileBypass — bypasses vanilla tile check for custom group factions (fixes "no usable PawnGroupMakers" error).
+	- Fix: Removed ClearOriginalDataCache() + duplicate SaveAllOriginalData() to prevent pristine data from being overwritten by polluted ApplyAllSettings results.
+	- Fix: Combat groups with maxTotalPoints < 10000 auto-expanded to 9999999; corrupted old data cleaned when groupsModified=false.
+	- Fix: Added Patch_CanGenerateFrom_TileBypass — bypasses vanilla tile check for custom group factions (fixes "no usable PawnGroupMakers" error).
 
 v1.5.10
-- Fix: CE ammo not auto-added to editor inventory when equipping weapons — InventoryItems defaulted to null, causing TryAutoAddAmmo to silently return.
-- Fix: English Keyed XML line 531 had unescaped & (& → &amp;), breaking the entire language file and causing all non-Chinese translation keys to fail.
-- Refactor: LanguageManager restored to custom loading + key.Translate() fallback, removing the flawed fallback-chain system introduced in 80fa7b3.
-- Add: CLAUDE.md with XML escape rules for language files.
+	- Fix: CE ammo not auto-added to editor inventory when equipping weapons — InventoryItems defaulted to null, causing TryAutoAddAmmo to silently return.
+	- Fix: English Keyed XML line 531 had unescaped & (& → &amp;), breaking the entire language file and causing all non-Chinese translation keys to fail.
+	- Refactor: LanguageManager restored to custom loading + key.Translate() fallback, removing the flawed fallback-chain system introduced in 80fa7b3.
+	- Add: CLAUDE.md with XML escape rules for language files.
 
 v1.5.9
-- Update: Unified all icon assets to UI/Logo.png, removed duplicate icon files.
-- Update: MainButton narrowed to icon-only mode (minimized), no text label.
-- Update: build.ps1 now backs up and restores Logo.png to prevent overwrites during deploy.
+	- Update: Unified all icon assets to UI/Logo.png, removed duplicate icon files.
+	- Update: MainButton narrowed to icon-only mode (minimized), no text label.
+	- Update: build.ps1 now backs up and restores Logo.png to prevent overwrites during deploy.
 
 v1.5.8
-- Fix: Mechanoid bosses (Apocriton/War Queen/Diabolus) failing to spawn in custom groups.
-- Fix: Custom group settings not applying after save-load.
-- Fix: Preview group filter reroll not randomizing.
-- Fix: Group editor add/remove not refreshing preview cache.
+	- Fix: Mechanoid bosses (Apocriton/War Queen/Diabolus) failing to spawn in custom groups.
+	- Fix: Custom group settings not applying after save-load.
+	- Fix: Preview group filter reroll not randomizing.
+	- Fix: Group editor add/remove not refreshing preview cache.
 
 v1.5.7
-- Feat: Preview window supports group filter dropdown, defaults to combat group.
-- Feat: Preview carry weight color improved (green #33C192 / yellow #FFAF1A / red #CC4B53), raid points read from group override.
-- Feat: CE ammo tooltip auto-shows damage, sharp/blunt armor penetration.
-- Feat: Item picker ammo category now has caliber sub-filter with pagination.
-- Feat: Item picker food category now has sub-categories (Cooked/Raw/Meat/Vegetable).
-- Feat: Batch apply dialog adds "Skip Ammo" checkbox, defaults to current tab's category.
-- Feat: Sort button moved to selection row (same row as Select All/None/Invert).
-- Fix: Filter bar height now precisely matches drawn content, eliminating bottom whitespace.
-- Fix: Removed value slider from item picker.
-- Fix: Hediff picker category filter changed to quick button style with auto-width.
-- Fix: Deep rewrite of HediffCardUI and ItemCardUI for cleaner layout, fixed delete button hit area overlap.
-- Fix: Faction list single-line display with ellipsis, fixed 28px row height, desaturated colors.
-- Fix: Kind list 60% / faction list 40% height ratio.
-- Fix: Default settings aligned: Force Only Selected defaults to ON.
-- Fix: Simple mode weapon removal now auto-cleans corresponding ammo.
-- Fix: CE weapon range showing 0 (reflection to read VerbPropertiesCE.range).
-- Fix: Caliber filter auto-clears when switching categories.
+	- Feat: Preview window supports group filter dropdown, defaults to combat group.
+	- Feat: Preview carry weight color improved (green #33C192 / yellow #FFAF1A / red #CC4B53), raid points read from group override.
+	- Feat: CE ammo tooltip auto-shows damage, sharp/blunt armor penetration.
+	- Feat: Item picker ammo category now has caliber sub-filter with pagination.
+	- Feat: Item picker food category now has sub-categories (Cooked/Raw/Meat/Vegetable).
+	- Feat: Batch apply dialog adds "Skip Ammo" checkbox, defaults to current tab's category.
+	- Feat: Sort button moved to selection row (same row as Select All/None/Invert).
+	- Fix: Filter bar height now precisely matches drawn content, eliminating bottom whitespace.
+	- Fix: Removed value slider from item picker.
+	- Fix: Hediff picker category filter changed to quick button style with auto-width.
+	- Fix: Deep rewrite of HediffCardUI and ItemCardUI for cleaner layout, fixed delete button hit area overlap.
+	- Fix: Faction list single-line display with ellipsis, fixed 28px row height, desaturated colors.
+	- Fix: Kind list 60% / faction list 40% height ratio.
+	- Fix: Default settings aligned: Force Only Selected defaults to ON.
+	- Fix: Simple mode weapon removal now auto-cleans corresponding ammo.
+	- Fix: CE weapon range showing 0 (reflection to read VerbPropertiesCE.range).
+	- Fix: Caliber filter auto-clears when switching categories.
 
 v1.5.6
-- Fix: Split "Force Override Status Effects" into a separate toggle from "Force Only Selected", so gene-provided buffs are no longer wiped when using equipment pool mode.
-- Fix: Fixed factions from mods like Medieval Overhaul (e.g. Cultist) not appearing in the faction list. Extended pawnGroupMakers filter to check traders/carriers/guards sublists.
-- Fix: Fixed melee weapons unconditionally overwriting ranged weapons when both are configured. Now randomly picks one.
-- Fix: Fixed preview pawn memory leak where old pawns were not destroyed before dictionary overwrite.
-- Fix: Fixed UI content truncation when apparel/weapon budget sliders expand in advanced settings.
-- Fix: Removed unfinished "RimTalk Integration" button.
-- Fix: Added raid points display on preview card bottom-left.
-- Fix: Added Mass sort option to item library.
-- Fix: Added many missing language keys (Category, SortField_Range/Damage/Mass, ForceOverrideHediffs, PawnGroupKind series, etc.).
-- Fix: Removed duplicate image assets, unified to Logo.png.
+	- Fix: Split "Force Override Status Effects" into a separate toggle from "Force Only Selected", so gene-provided buffs are no longer wiped when using equipment pool mode.
+	- Fix: Fixed factions from mods like Medieval Overhaul (e.g. Cultist) not appearing in the faction list. Extended pawnGroupMakers filter to check traders/carriers/guards sublists.
+	- Fix: Fixed melee weapons unconditionally overwriting ranged weapons when both are configured. Now randomly picks one.
+	- Fix: Fixed preview pawn memory leak where old pawns were not destroyed before dictionary overwrite.
+	- Fix: Fixed UI content truncation when apparel/weapon budget sliders expand in advanced settings.
+	- Fix: Removed unfinished "RimTalk Integration" button.
+	- Fix: Added raid points display on preview card bottom-left.
+	- Fix: Added Mass sort option to item library.
+	- Fix: Added many missing language keys (Category, SortField_Range/Damage/Mass, ForceOverrideHediffs, PawnGroupKind series, etc.).
+	- Fix: Removed duplicate image assets, unified to Logo.png.
 
 v1.5.5
-- Fix: Fixed the issue where the pawn inventory UI mass/capacity display was blank after enabling this mod. Added Patch_ITab_Pawn_Gear_Debug.cs to ensure MassUtility methods return safe values instead of throwing exceptions when inventory is null.
+	- Fix: Fixed the issue where the pawn inventory UI mass/capacity display was blank after enabling this mod. Added Patch_ITab_Pawn_Gear_Debug.cs to ensure MassUtility methods return safe values instead of throwing exceptions when inventory is null.
 
 v1.5.4
-- Fix: Milira patch now uses LongEventHandler.QueueLongEvent for delayed application, ensuring Milira assembly is loaded before patching (previous StaticConstructorOnStartup was too early, causing patch to not take effect).
-- Fix: Milira patch now uses an independent Harmony instance instead of relying on FactionGearCustomizerMod.HarmonyInstance (avoiding null due to initialization order).
-- Fix: Extended Milira hair render node type search to support multiple type names (PawnRenderNode_MilianHair / PawnRenderNode_MiliraHair / PawnRenderNode subclasses containing "Hair").
+	- Fix: Milira patch now uses LongEventHandler.QueueLongEvent for delayed application, ensuring Milira assembly is loaded before patching (previous StaticConstructorOnStartup was too early, causing patch to not take effect).
+	- Fix: Milira patch now uses an independent Harmony instance instead of relying on FactionGearCustomizerMod.HarmonyInstance (avoiding null due to initialization order).
+	- Fix: Extended Milira hair render node type search to support multiple type names (PawnRenderNode_MilianHair / PawnRenderNode_MiliraHair / PawnRenderNode subclasses containing "Hair").
 
 v1.5.3
-- Fix: Add unified name-safety utility `DefDisplayNameUtility` to centralize `FactionDef` / `PawnKindDef` display-name resolution, sort-key generation, and fallback warning logs.
-- Fix: Switch settings-window first-frame paths (`FactionGearEditor`, `FactionListPanel`, `KindListPanel`) to unified safe sorting, preventing bad Def or translation data from triggering `Failed to compare two elements in the array`.
-- Fix: Update faction/pawnkind related dialogs (batch apply, create faction instance, pawnkind picker, legacy faction editor) to reuse safe display-name resolution and reduce UI null-reference crashes triggered by mod conflicts or broken translations.
-- Update: Sync Index.md, Api.md, and config.md documentation.
+	- Fix: Add unified name-safety utility `DefDisplayNameUtility` to centralize `FactionDef` / `PawnKindDef` display-name resolution, sort-key generation, and fallback warning logs.
+	- Fix: Switch settings-window first-frame paths (`FactionGearEditor`, `FactionListPanel`, `KindListPanel`) to unified safe sorting, preventing bad Def or translation data from triggering `Failed to compare two elements in the array`.
+	- Fix: Update faction/pawnkind related dialogs (batch apply, create faction instance, pawnkind picker, legacy faction editor) to reuse safe display-name resolution and reduce UI null-reference crashes triggered by mod conflicts or broken translations.
+	- Update: Sync Index.md, Api.md, and config.md documentation.
 
 v1.5.2
-- Fix: Optimize the language-fallback hot path so fallback chains are recomputed only when the game language changes, avoiding repeated per-frame normalization and enumerable allocations in the UI.
-- Fix: Keep Traditional Chinese -> Simplified Chinese and other-language -> English fallback behavior while reducing the performance cost of opening the mod in unsupported language environments.
+	- Fix: Optimize the language-fallback hot path so fallback chains are recomputed only when the game language changes, avoiding repeated per-frame normalization and enumerable allocations in the UI.
+	- Fix: Keep Traditional Chinese -> Simplified Chinese and other-language -> English fallback behavior while reducing the performance cost of opening the mod in unsupported language environments.
 
 v1.5.1
-- Fix: Add language-file fallback chain; when the current language has no keyed file, this mod now falls back to English automatically.
-- Fix: Special-case Traditional Chinese to use ChineseTraditional -> ChineseSimplified -> English, preventing raw language keys from leaking in zh-Hant environments.
-- Update: Sync LanguageManager, Index.md, Api.md, and config.md documentation.
+	- Fix: Add language-file fallback chain; when the current language has no keyed file, this mod now falls back to English automatically.
+	- Fix: Special-case Traditional Chinese to use ChineseTraditional -> ChineseSimplified -> English, preventing raw language keys from leaking in zh-Hant environments.
+	- Update: Sync LanguageManager, Index.md, Api.md, and config.md documentation.
 
 v1.5.0
-- Fix: Switch translation loading to RimWorld native Keyed/DefInjected, so third-party translation mods can override this mod's UI text through the standard path.
-- Fix: Downgrade LanguageManager to a transition wrapper and stop loading text from this mod's private Strings.xml.
-- Update: Move English and Chinese text resources to 1.6/Languages/*/Keyed/FactionGearCustomizer.xml.
-- Update: Sync Index.md, Api.md, and config.md with the new translation integration rules.
+	- Fix: Switch translation loading to RimWorld native Keyed/DefInjected, so third-party translation mods can override this mod's UI text through the standard path.
+	- Fix: Downgrade LanguageManager to a transition wrapper and stop loading text from this mod's private Strings.xml.
+	- Update: Move English and Chinese text resources to 1.6/Languages/*/Keyed/FactionGearCustomizer.xml.
+	- Update: Sync Index.md, Api.md, and config.md with the new translation integration rules.
 
 v1.4.7
-- Update: Outfit-first strategy now uses max apparel budget (`ApparelMoney.max`) instead of random budget.
-- Update: Core outfit selection now auto-replaces/downgrades pieces until budget-compliant when feasible.
-- Add: Add default armor budget floor: core armor value (armored middle + shell) is kept at least 60% of budget when feasible.
-- Fix: When budget cap and 60% armor floor cannot both be satisfied, fallback prefers budget-compliant core sets with warning logs; if even cheapest core exceeds budget, fallback uses cheapest core set with warning.
-- Update: Sync EN/ZH tooltip text and update Index.md, Api.md, config.md.
+	- Update: Outfit-first strategy now uses max apparel budget (`ApparelMoney.max`) instead of random budget.
+	- Update: Core outfit selection now auto-replaces/downgrades pieces until budget-compliant when feasible.
+	- Add: Add default armor budget floor: core armor value (armored middle + shell) is kept at least 60% of budget when feasible.
+	- Fix: When budget cap and 60% armor floor cannot both be satisfied, fallback prefers budget-compliant core sets with warning logs; if even cheapest core exceeds budget, fallback uses cheapest core set with warning.
+	- Update: Sync EN/ZH tooltip text and update Index.md, Api.md, config.md.
 v1.4.6
-- Add: Add a new Advanced setting toggle "Outfit First, Material Upgrade Later" (enabled by default) with per-kind control.
-- Add: Apparel generation now uses a two-phase flow: generate complete core layers first, then upgrade material with remaining budget (no style change, no quality change).
-- Add: Simple mode now uses the same two-phase budget strategy by merging armors/apparel/others into one core-layer candidate pool.
-- Fix: When budget is insufficient, core layers are allowed to exceed budget to guarantee full outfit and prevent naked results.
-- Fix: Move fail-fast to pre-strip validation; when core layers cannot be satisfied, abort apparel flow and keep current worn apparel.
-- Fix: Batch Apply General copy now includes `OutfitFirstBudgetStrategy` to avoid losing behavior in cross-kind copy.
-- Update: Add EN/ZH language keys `OutfitFirstBudgetStrategy` and `OutfitFirstBudgetStrategyTooltip`.
-- Update: Update Index.md, Api.md, and config.md documentation.
+	- Add: Add a new Advanced setting toggle "Outfit First, Material Upgrade Later" (enabled by default) with per-kind control.
+	- Add: Apparel generation now uses a two-phase flow: generate complete core layers first, then upgrade material with remaining budget (no style change, no quality change).
+	- Add: Simple mode now uses the same two-phase budget strategy by merging armors/apparel/others into one core-layer candidate pool.
+	- Fix: When budget is insufficient, core layers are allowed to exceed budget to guarantee full outfit and prevent naked results.
+	- Fix: Move fail-fast to pre-strip validation; when core layers cannot be satisfied, abort apparel flow and keep current worn apparel.
+	- Fix: Batch Apply General copy now includes `OutfitFirstBudgetStrategy` to avoid losing behavior in cross-kind copy.
+	- Update: Add EN/ZH language keys `OutfitFirstBudgetStrategy` and `OutfitFirstBudgetStrategyTooltip`.
+	- Update: Update Index.md, Api.md, and config.md documentation.
 v1.4.5
-- Fix: Refactor hediff runtime application with new HediffApplicationService/HediffPartResolver to unify validation, part resolution, and apply flow.
-- Fix: Integrate HediffApplicationValidator into the real pre-apply pipeline; invalid entries are skipped with logs, warnings are preserved.
-- Fix: Enforce strict target-part priority (manual > recipe > mapping > inference); when no valid part exists, skip with warning and remove whole-body random fallback.
-- Fix: Allow AddedPart/Implant hediff application while keeping MissingPart and high-risk definitions blocked.
-- Fix: Unify pool and non-pool hediffs under the same safety/part resolution path to remove branch drift.
-- Add: Add target-part mode (Auto/Manual) to Hediff cards and introduce a multi-select body-part picker dialog.
-- Update: Add EN/ZH language keys and add Index.md, Api.md, config.md documentation.
+	- Fix: Refactor hediff runtime application with new HediffApplicationService/HediffPartResolver to unify validation, part resolution, and apply flow.
+	- Fix: Integrate HediffApplicationValidator into the real pre-apply pipeline; invalid entries are skipped with logs, warnings are preserved.
+	- Fix: Enforce strict target-part priority (manual > recipe > mapping > inference); when no valid part exists, skip with warning and remove whole-body random fallback.
+	- Fix: Allow AddedPart/Implant hediff application while keeping MissingPart and high-risk definitions blocked.
+	- Fix: Unify pool and non-pool hediffs under the same safety/part resolution path to remove branch drift.
+	- Add: Add target-part mode (Auto/Manual) to Hediff cards and introduce a multi-select body-part picker dialog.
+	- Update: Add EN/ZH language keys and add Index.md, Api.md, config.md documentation.
 v1.4.4
-- Fix: Restore backward-compatible defaults for `selectionChance` and hediff `chance` during deserialization, preventing legacy configs from reading as 0% chance.
-- Fix: Correct inventory generation aggregation when multiple specs/pools resolve to the same item, so counts are accumulated instead of being capped by the largest single entry.
-- Fix: Apply the same incapacitation safety check in user-specified body-part hediff application path to prevent unsafe hediffs from bypassing runtime guardrails.
-- Fix: Correct `AnyAddiction` hediff pool filtering to include actual addiction/tolerance hediffs instead of excluding most valid candidates.
-- Fix: Improve `AnyVegetable` item pool selection by using ingestible food-type flags instead of narrow name matching.
+	- Fix: Restore backward-compatible defaults for `selectionChance` and hediff `chance` during deserialization, preventing legacy configs from reading as 0% chance.
+	- Fix: Correct inventory generation aggregation when multiple specs/pools resolve to the same item, so counts are accumulated instead of being capped by the largest single entry.
+	- Fix: Apply the same incapacitation safety check in user-specified body-part hediff application path to prevent unsafe hediffs from bypassing runtime guardrails.
+	- Fix: Correct `AnyAddiction` hediff pool filtering to include actual addiction/tolerance hediffs instead of excluding most valid candidates.
+	- Fix: Improve `AnyVegetable` item pool selection by using ingestible food-type flags instead of narrow name matching.
 
 v1.4.3
-- Fix: Correct age-setting source during pawn generation: save-specific config now has priority, with global config as fallback, avoiding runtime pollution from empty auto-created entries.
-- Fix: Correct PlayerRelationOverride source when spawning faction instances, now aligned with active save data instead of global-only lookup.
-- Fix: ResetAllFactions now restores runtime faction instance state (name, color, and player relation), not just Def-level values.
-- Fix: Scenario config and world-creation lite editor now use the unified apply pipeline so changes take effect immediately.
-- Fix: First-time prompt faction list now keeps scroll position, and "Don't ask again" now persists correctly.
+	- Fix: Correct age-setting source during pawn generation: save-specific config now has priority, with global config as fallback, avoiding runtime pollution from empty auto-created entries.
+	- Fix: Correct PlayerRelationOverride source when spawning faction instances, now aligned with active save data instead of global-only lookup.
+	- Fix: ResetAllFactions now restores runtime faction instance state (name, color, and player relation), not just Def-level values.
+	- Fix: Scenario config and world-creation lite editor now use the unified apply pipeline so changes take effect immediately.
+	- Fix: First-time prompt faction list now keeps scroll position, and "Don't ask again" now persists correctly.
 
 v1.4.2
-- Add: Added age settings (min/max) in Kind Xenotype Editor, overriding faction group settings.
-- Add: Added warning dialog when selecting non-combatant xenotypes (e.g. Highmate), with option to force relax generation rules.
-- Fix: Fixed xenotype settings not applying in preview (NRE fix and null protection).
-- Fix: Fixed age settings not applying correctly during generation (parameter passing fix).
-- Update: Optimized layout of xenotype settings dialog.
-- feat: Enhance Batch Apply — selective category copy & cross-faction targeting
+	- Add: Added age settings (min/max) in Kind Xenotype Editor, overriding faction group settings.
+	- Add: Added warning dialog when selecting non-combatant xenotypes (e.g. Highmate), with option to force relax generation rules.
+	- Fix: Fixed xenotype settings not applying in preview (NRE fix and null protection).
+	- Fix: Fixed age settings not applying correctly during generation (parameter passing fix).
+	- Update: Optimized layout of xenotype settings dialog.
+	- feat: Enhance Batch Apply — selective category copy & cross-faction targeting
 
 v1.4.1
-- Added ability to edit xenotype for individual pawns.
-- Fixed an issue that made the search bar in the item library unusable.
-- Fixed the problem where Any Hediff would cause pawns to collapse.
-- Fixed an issue with the 3700 item limit when adding items.
-- Improved user experience.
+	- Added ability to edit xenotype for individual pawns.
+	- Fixed an issue that made the search bar in the item library unusable.
+	- Fixed the problem where Any Hediff would cause pawns to collapse.
+	- Fixed an issue with the 3700 item limit when adding items.
+	- Improved user experience.
 
 v1.4.0
-- Fix: Fix error when destroying Pawn in preview window - clear worn apparel before destroying to avoid destroying non-destroyable items (e.g., Cybernetic Mod implants)
-- Fix: Fix destroy error when closing PresetManagerWindow preview
-- Fix: Fix destroy error when closing Dialog_PawnGroupGenerationPreview preview
-- Fix: Fix source data being cleared after batch apply - create deep copy before passing to batch apply dialog to avoid shared reference causing accidental data modification
-- Fix: Fix missing group data in preset export merge mode
-- Fix: Fix incomplete group data after preset export overwrite mode
-- Fix: Fix error when applying hediff with non-existent body part - add null checks and exception handling
-- Fix: Fix hediff selector specified body parts not existing on some pawns
-- Add: Export faction now supports getting data from preset - when a preset is selected in preset manager, export will get faction data from that preset
-- Add: Auto-load target preset after successful export - if current active preset is the export target, it will auto-apply after successful export
-- Add: Add Clear Preset button in Preset Manager - clears all preset data but keeps the preset itself
+	- Fix: Fix error when destroying Pawn in preview window - clear worn apparel before destroying to avoid destroying non-destroyable items (e.g., Cybernetic Mod implants)
+	- Fix: Fix destroy error when closing PresetManagerWindow preview
+	- Fix: Fix destroy error when closing Dialog_PawnGroupGenerationPreview preview
+	- Fix: Fix source data being cleared after batch apply - create deep copy before passing to batch apply dialog to avoid shared reference causing accidental data modification
+	- Fix: Fix missing group data in preset export merge mode
+	- Fix: Fix incomplete group data after preset export overwrite mode
+	- Fix: Fix error when applying hediff with non-existent body part - add null checks and exception handling
+	- Fix: Fix hediff selector specified body parts not existing on some pawns
+	- Add: Export faction now supports getting data from preset - when a preset is selected in preset manager, export will get faction data from that preset
+	- Add: Auto-load target preset after successful export - if current active preset is the export target, it will auto-apply after successful export
+	- Add: Add Clear Preset button in Preset Manager - clears all preset data but keeps the preset itself
 
 v1.3.0
-- Add: Preview button now shows unsaved changes confirmation dialog - when there are unsaved changes, a confirmation dialog will ask whether to save
-- Add: Preview dialog adds auto-save toggle - when "Auto-save before preview" is checked, subsequent previews will auto-save without asking
+	- Add: Preview button now shows unsaved changes confirmation dialog - when there are unsaved changes, a confirmation dialog will ask whether to save
+	- Add: Preview dialog adds auto-save toggle - when "Auto-save before preview" is checked, subsequent previews will auto-save without asking
 
 v1.2.9
-- Fix: Redesign Inventory application mechanism - remove complex recovery mechanism, use simple multi-delay application strategy to ensure items are correctly retained
-- Fix: Simplify ApplyInventory logic - ApplyInventoryOnce() handles single application, ScheduleDelayedInventoryApply() handles 3 consecutive delayed applications to avoid race conditions
+	- Fix: Redesign Inventory application mechanism - remove complex recovery mechanism, use simple multi-delay application strategy to ensure items are correctly retained
+	- Fix: Simplify ApplyInventory logic - ApplyInventoryOnce() handles single application, ScheduleDelayedInventoryApply() handles 3 consecutive delayed applications to avoid race conditions
 
 v1.2.8
-- Fix: Thoroughly fix Inventory recovery mechanism - add InventoryItemState to track expected quantities, GetItemCountInInventory calculates current quantity, only re-add when missing to avoid "Tried to add ... to ThingOwner but this item is already here" warnings
-- Fix: Optimize recovery logic - only continue to next round of recovery when items are actually restored to avoid unnecessary delayed execution
+	- Fix: Thoroughly fix Inventory recovery mechanism - add InventoryItemState to track expected quantities, GetItemCountInInventory calculates current quantity, only re-add when missing to avoid "Tried to add ... to ThingOwner but this item is already here" warnings
+	- Fix: Optimize recovery logic - only continue to next round of recovery when items are actually restored to avoid unnecessary delayed execution
 
 v1.2.7
-- Fix: ForceOnlySelected mode now also clears pawn's original Hediffs - only keeps user-configured ones (keeps Mech-prefixed mechanical hediffs)
+	- Fix: ForceOnlySelected mode now also clears pawn's original Hediffs - only keeps user-configured ones (keeps Mech-prefixed mechanical hediffs)
 
 v1.2.6
-- Fix: ForceOnlySelected mode now clears pawn's default inventory items - only keeps user-configured items
+	- Fix: ForceOnlySelected mode now clears pawn's default inventory items - only keeps user-configured items
 
 v1.2.5
-- Fix: Fix infinite loop issue caused by Inventory recovery mechanism - add recovery limit (max 3 times) to avoid performance issues and infinite retries
-- Fix: Item count slider now uses item's stackLimit as max value instead of fixed 50
-- Add: CE ammo items use magazine size × 10 as max value for better compatibility
-- Fix: Item pool count slider max value changed from 500 to 100
-- Add: CECompat.GetSuggestedMaxCount() for intelligent count limit detection
+	- Fix: Fix infinite loop issue caused by Inventory recovery mechanism - add recovery limit (max 3 times) to avoid performance issues and infinite retries
+	- Fix: Item count slider now uses item's stackLimit as max value instead of fixed 50
+	- Add: CE ammo items use magazine size × 10 as max value for better compatibility
+	- Fix: Item pool count slider max value changed from 500 to 100
+	- Add: CECompat.GetSuggestedMaxCount() for intelligent count limit detection
 
 v1.2.4
-- Fix: Fix Hediff picker missing positive buff options like DrugHighs - IsCandidate now allows all Hediffs, add DrugHighs and Buffs categories
-- Fix: Fix "Try to restore null body part" error - for special Hediffs like DrugHighs, don't specify BodyPart, add exception handling
-- Fix: Implement more thorough Inventory item recovery mechanism - not only validates but also automatically re-adds items removed by game logic (medicine, food, etc.)
-- Add: Add InventoryRestoreData class and related recovery logic to ensure configured items are correctly retained
+	- Fix: Fix Hediff picker missing positive buff options like DrugHighs - IsCandidate now allows all Hediffs, add DrugHighs and Buffs categories
+	- Fix: Fix "Try to restore null body part" error - for special Hediffs like DrugHighs, don't specify BodyPart, add exception handling
+	- Fix: Implement more thorough Inventory item recovery mechanism - not only validates but also automatically re-adds items removed by game logic (medicine, food, etc.)
+	- Add: Add InventoryRestoreData class and related recovery logic to ensure configured items are correctly retained
 
 v1.2.3
-- Fix: Fix ForcedHediff not applying DrugHigh effect - now correctly uses severityRange to set Hediff severity
-- Fix: Enhance Inventory item adding robustness - add special item filtering, add logging, implement delayed validation mechanism
-- Fix: Prevent selecting and adding corpses (Corpse) in Inventory picker - to avoid errors
-- Add: Add Inventory item validation mechanism - use LongEventHandler to validate item existence in next frame for debugging
+	- Fix: Fix ForcedHediff not applying DrugHigh effect - now correctly uses severityRange to set Hediff severity
+	- Fix: Enhance Inventory item adding robustness - add special item filtering, add logging, implement delayed validation mechanism
+	- Fix: Prevent selecting and adding corpses (Corpse) in Inventory picker - to avoid errors
+	- Add: Add Inventory item validation mechanism - use LongEventHandler to validate item existence in next frame for debugging
 
 v1.2.2
-- Fix: Fix Wiki language settings not taking effect (Wiki language keys added to Language directory)
-- Add: Wiki UI beautification: added header bar, section-based color coding, optimized layout
+	- Fix: Fix Wiki language settings not taking effect (Wiki language keys added to Language directory)
+	- Add: Wiki UI beautification: added header bar, section-based color coding, optimized layout
 
 v1.2.1
-- Add: Add mini Wiki button in main toolbar with four tabs: How It Works, Terminology, Workflow, and Notes.
-- Add: Add WikiWindow.cs implementation for Wiki window UI.
-- Add: Add multi-language support (English/Chinese) for Wiki content.
+	- Add: Add mini Wiki button in main toolbar with four tabs: How It Works, Terminology, Workflow, and Notes.
+	- Add: Add WikiWindow.cs implementation for Wiki window UI.
+	- Add: Add multi-language support (English/Chinese) for Wiki content.
 
 v1.1.67
-- Optimize: Optimize item card UI height calculation in Advanced mode - dynamically calculate height based on actual content to reduce whitespace.
-- Optimize: ItemCardUI, ApparelCardUI, HediffCardUI add GetCardHeight static method for dynamic height calculation.
-- Fix: Delete incorrect GameComponents.xml file (GameComponentDef is not a valid Def type).
-- Add: Add Patch_GameComponent.cs, use Harmony Patch to correctly register FactionGearGameComponent.
+	- Optimize: Optimize item card UI height calculation in Advanced mode - dynamically calculate height based on actual content to reduce whitespace.
+	- Optimize: ItemCardUI, ApparelCardUI, HediffCardUI add GetCardHeight static method for dynamic height calculation.
+	- Fix: Delete incorrect GameComponents.xml file (GameComponentDef is not a valid Def type).
+	- Add: Add Patch_GameComponent.cs, use Harmony Patch to correctly register FactionGearGameComponent.
 
 v1.1.66
-- Add: Add new feature: detect when no preset is currently active and automatically clear all config files to avoid residual config affecting new games.
+	- Add: Add new feature: detect when no preset is currently active and automatically clear all config files to avoid residual config affecting new games.
 
 v1.1.65
-- Fix: Fix manual add settlement not closing other Mod windows - actively close other Mod windows before opening settlement placement window.
-- Fix: Fix second "Select on World Map" button not closing other Mod windows.
-- Change: Change "Tech Budget" to "Tech Limit", use vanilla TechLevel enum (Animal/Primitive/Medieval/Industrial/Spacer/Ultratech/Archotech).
-- Add: Tech Limit defaults to reading faction's default TechLevel, can manually select different level to restrict items above that level.
-- Add: New language key: TechLevelLimit.
+	- Fix: Fix manual add settlement not closing other Mod windows - actively close other Mod windows before opening settlement placement window.
+	- Fix: Fix second "Select on World Map" button not closing other Mod windows.
+	- Change: Change "Tech Budget" to "Tech Limit", use vanilla TechLevel enum (Animal/Primitive/Medieval/Industrial/Spacer/Ultratech/Archotech).
+	- Add: Tech Limit defaults to reading faction's default TechLevel, can manually select different level to restrict items above that level.
+	- Add: New language key: TechLevelLimit.
 
 v1.1.64
-- Add: Add validation for xenotype chances total - prevents saving when sum exceeds 100% and shows user a warning message.
-- Add: New language key: XenotypeChancesExceed100.
+	- Add: Add validation for xenotype chances total - prevents saving when sum exceeds 100% and shows user a warning message.
+	- Add: New language key: XenotypeChancesExceed100.
 
 v1.1.63
-- Fix: Fix issue where previously modified faction data was still visible after "Reset All". Now clears all cache and session state after reset to ensure UI refreshes correctly.
+	- Fix: Fix issue where previously modified faction data was still visible after "Reset All". Now clears all cache and session state after reset to ensure UI refreshes correctly.
 
 v1.1.62
-- Add: Add faction deletion feature in faction edit menu, can safely remove faction and its settlements, includes confirmation dialog.
-- Add: New language keys: DeleteFactionTitle, DeleteFactionWarning, TargetFaction, SettlementsToRemove, PawnsToRemove, OtherEffects, FactionRelationsRemoved, ActiveQuestsAffected, DeleteFaction, DangerZone, NoFactionInstanceToDelete, FactionDeleted, FactionDeleteFailed, SelectFactionInstanceToDelete, SelectInstance, Next, Settlements, UnknownLocation.
+	- Add: Add faction deletion feature in faction edit menu, can safely remove faction and its settlements, includes confirmation dialog.
+	- Add: New language keys: DeleteFactionTitle, DeleteFactionWarning, TargetFaction, SettlementsToRemove, PawnsToRemove, OtherEffects, FactionRelationsRemoved, ActiveQuestsAffected, DeleteFaction, DangerZone, NoFactionInstanceToDelete, FactionDeleted, FactionDeleteFailed, SelectFactionInstanceToDelete, SelectInstance, Next, Settlements, UnknownLocation.
 
 v1.1.61
-- Add: Add player relation settings in faction edit menu, allows player to set relation with faction as Ally/Neutral/Hostile.
-- Add: New language keys: PlayerRelationSettings, RelationAlly, RelationNeutral, RelationHostile, RelationCurrent, RelationDefault.
+	- Add: Add player relation settings in faction edit menu, allows player to set relation with faction as Ally/Neutral/Hostile.
+	- Add: New language keys: PlayerRelationSettings, RelationAlly, RelationNeutral, RelationHostile, RelationCurrent, RelationDefault.
 
 v1.1.60
-- Optimize: Preview window multi-preview mode changed to frame-by-frame Pawn generation to avoid lag when opening.
-- Optimize: Hediff card control IDs changed to object-based generation to reduce control ID conflict risk.
-- Refactor: Refactor faction list building logic, eliminate duplicate code and unify filtering/display rules.
-- Optimize: Add EditorSession.ResetSession to auto-reset session state when game state changes.
+	- Optimize: Preview window multi-preview mode changed to frame-by-frame Pawn generation to avoid lag when opening.
+	- Optimize: Hediff card control IDs changed to object-based generation to reduce control ID conflict risk.
+	- Refactor: Refactor faction list building logic, eliminate duplicate code and unify filtering/display rules.
+	- Optimize: Add EditorSession.ResetSession to auto-reset session state when game state changes.
 
 v1.1.59
-- Optimize: Optimize FactionGearManager.LoadDefaultPresets to use Lazy Loading, only loads faction detailed data when user clicks on a faction, improving startup performance.
-- Fix: Enhance exception handling in GearApplier.ApplyCustomGear (try-catch) to prevent Patch injection point errors from interrupting Pawn generation.
-- Update: Remove FactionGearManager.GetModGroup related functionality and references to simplify code.
+	- Optimize: Optimize FactionGearManager.LoadDefaultPresets to use Lazy Loading, only loads faction detailed data when user clicks on a faction, improving startup performance.
+	- Fix: Enhance exception handling in GearApplier.ApplyCustomGear (try-catch) to prevent Patch injection point errors from interrupting Pawn generation.
+	- Update: Remove FactionGearManager.GetModGroup related functionality and references to simplify code.
 
 v1.1.58
-- Update: Rename "Apparel Color" to "Name Color" and add related description tooltip.
-- Add: Add "RimTalk Integration" button in Advanced settings (not yet open, shows as "In Development").
+	- Update: Rename "Apparel Color" to "Name Color" and add related description tooltip.
+	- Add: Add "RimTalk Integration" button in Advanced settings (not yet open, shows as "In Development").
 
 v1.1.57
-- Fix: Fix "Select on Map" feature causing NullReferenceException due to calling old method. Now uses new FactionSpawnWindow logic.
+	- Fix: Fix "Select on Map" feature causing NullReferenceException due to calling old method. Now uses new FactionSpawnWindow logic.
 
 v1.1.56
-- Build: Release build.
+	- Build: Release build.
 
 v1.1.55
-- Fix: Fixed TopBar not showing in MainTabWindow.
+	- Fix: Fixed TopBar not showing in MainTabWindow.
 
 v1.1.54
-- Add: Add "Select on Map" settlement feature (FactionSpawnWindow), reference WorldEdit implementation, supports continuous clicking on world map to generate settlements.
-- Update: Replace original WorldTargeter selection method with more intuitive non-modal window interaction.
+	- Add: Add "Select on Map" settlement feature (FactionSpawnWindow), reference WorldEdit implementation, supports continuous clicking on world map to generate settlements.
+	- Update: Replace original WorldTargeter selection method with more intuitive non-modal window interaction.
 
 v1.1.53
-- Fix: Fix NullReferenceException that could occur when switching World tab in FactionSpawnManager, add null check and auto-fix logic for MainButtonDefOf.World.TabWindow.
+	- Fix: Fix NullReferenceException that could occur when switching World tab in FactionSpawnManager, add null check and auto-fix logic for MainButtonDefOf.World.TabWindow.
 
 v1.1.52
-- Fix: Fix issue where World Tab couldn't switch in FactionSpawnManager.BeginTargetingForSettlement, add fallback mechanism (try using Inspect window as placeholder to prevent null reference).
-- Fix: Fix potential NullReferenceException in FactionSpawnManager.BeginTargetingForSettlement, add detailed debug logging and null checks.
-- Fix: Fix potential compile error in Dialog_PawnKindPicker when accessing defaultFactionType property.
-- Update: FactionEditWindow removes tab design, change to single-page long scroll layout,，集中展示设置、兵种列表和群组列表。
+	- Fix: Fix issue where World Tab couldn't switch in FactionSpawnManager.BeginTargetingForSettlement, add fallback mechanism (try using Inspect window as placeholder to prevent null reference).
+	- Fix: Fix potential NullReferenceException in FactionSpawnManager.BeginTargetingForSettlement, add detailed debug logging and null checks.
+	- Fix: Fix potential compile error in Dialog_PawnKindPicker when accessing defaultFactionType property.
+	- Update: FactionEditWindow removes tab design, change to single-page long scroll layout，集中展示设置、兵种列表和群组列表。
 
 v1.1.51
-- Update: In preview UI, mouse hover for 1 second before showing hover info card (equipment panel) to avoid frequent popups when moving mouse quickly.
+	- Update: In preview UI, mouse hover for 1 second before showing hover info card (equipment panel) to avoid frequent popups when moving mouse quickly.
 
 v1.1.50
-- Fix: Fix duplicated options rendering in the out-of-game editor caused by incorrectly ignoring duplicates.
-- Update: Enter the editor directly from Mod Options; the Open Editor button is no longer needed.
-- Update: The bottom main button now opens a non-fullscreen editor window.
+	- Fix: Fix duplicated options rendering in the out-of-game editor caused by incorrectly ignoring duplicates.
+	- Update: Enter the editor directly from Mod Options; the Open Editor button is no longer needed.
+	- Update: The bottom main button now opens a non-fullscreen editor window.
 
 v1.1.49
-- Fix: Fix UI crash in Advanced mode when adding weapons due to a missing message type (NullReferenceException).
-- Fix: Harden default weapon add logic with safety checks to avoid issues when "Gun_AssaultRifle" is missing.
+	- Fix: Fix UI crash in Advanced mode when adding weapons due to a missing message type (NullReferenceException).
+	- Fix: Harden default weapon add logic with safety checks to avoid issues when "Gun_AssaultRifle" is missing.
 
 v1.1.48
-- Fix: Fix duplicated Reset buttons in the main UI and the edit panel.
-- Add: Add CE ammo caliber filter (ItemLibrary), allowing filtering ranged weapons by caliber.
-- Fix: Adjust mod load order to ensure it loads after Combat Extended.
+	- Fix: Fix duplicated Reset buttons in the main UI and the edit panel.
+	- Add: Add CE ammo caliber filter (ItemLibrary), allowing filtering ranged weapons by caliber.
+	- Fix: Adjust mod load order to ensure it loads after Combat Extended.
 
 v1.1.47
-- Fix: Fix UI crash when loading presets if language file loading fails (NullReferenceException).
-- Fix: Restore logic where clicking the MainTab opens the editor directly instead of showing a fullscreen settings window.
+	- Fix: Fix UI crash when loading presets if language file loading fails (NullReferenceException).
+	- Fix: Restore logic where clicking the MainTab opens the editor directly instead of showing a fullscreen settings window.
 
 v1.1.46
-- Add: Add Inventory support, allowing configuration of any items such as medicine, food, tools, etc.
-- Add: Add Combat Extended (CE) compatibility: auto-add weapon ammo; show item Bulk and Mass.
-- Add: Support configuring stack count range (Count Range).
+	- Add: Add Inventory support, allowing configuration of any items such as medicine, food, tools, etc.
+	- Add: Add Combat Extended (CE) compatibility: auto-add weapon ammo; show item Bulk and Mass.
+	- Add: Support configuring stack count range (Count Range).
 
 v1.1.45
-- Update: Change the bottom button UI from fullscreen Tab mode to a standard Mod settings popup window for better UX.
-- Add: Add FactionGearSettingsWindow implementing a standard settings window (pause game, centered, close confirmation, etc.).
+	- Update: Change the bottom button UI from fullscreen Tab mode to a standard Mod settings popup window for better UX.
+	- Add: Add FactionGearSettingsWindow implementing a standard settings window (pause game, centered, close confirmation, etc.).
 
 v1.1.44
-- Fix: Remove non-standard manual scroll wheel handling in KindListPanel to fix scrollbar drag issues.
+	- Fix: Remove non-standard manual scroll wheel handling in KindListPanel to fix scrollbar drag issues.
 
 v1.1.43
-- Fix: Delete Patch_ModSettingsTitleIcon.cs, which misidentified the main UI as a target and forced drawing title/icon, leaving an unremovable title bar.
+	- Fix: Delete Patch_ModSettingsTitleIcon.cs, which misidentified the main UI as a target and forced drawing title/icon, leaving an unremovable title bar.
 
 v1.1.42
-- Fix: Force optionalTitle to empty in PreOpen to prevent RimWorld from drawing the native window title and close button.
+	- Fix: Force optionalTitle to empty in PreOpen to prevent RimWorld from drawing the native window title and close button.
 
 v1.1.41
-- Fix: Further force the main UI WindowOnGUI draw region to start at (0,0) to resolve top whitespace from windowRect offsets in some cases; also reduce content margins.
+	- Fix: Further force the main UI WindowOnGUI draw region to start at (0,0) to resolve top whitespace from windowRect offsets in some cases; also reduce content margins.
 
 v1.1.40
-- Fix: Completely remove the top blank area by taking over drawing with a rewritten WindowOnGUI.
-- Fix: Remove duplicated title text in Mod settings UI and optimize TopBarPanel layout.
+	- Fix: Completely remove the top blank area by taking over drawing with a rewritten WindowOnGUI.
+	- Fix: Remove duplicated title text in Mod settings UI and optimize TopBarPanel layout.
 
 v1.1.39
-- Build: Release build.
+	- Build: Release build.
 
 v1.1.38
-- Fix: Handle top whitespace with highest priority: remove the custom TopBar in the main UI and restore RimWorld's native title bar; move Save/Preset/Reset buttons to the top of the editor panel to avoid consuming extra top height.
+	- Fix: Handle top whitespace with highest priority: remove the custom TopBar in the main UI and restore RimWorld's native title bar; move Save/Preset/Reset buttons to the top of the editor panel to avoid consuming extra top height.
 
 v1.1.37
-- Fix: Completely remove the native title bar and top whitespace of the main UI window: take over WindowOnGUI for FactionGearMainTabWindow, bypass GUI.Window's fixed title bar height, and draw via BeginGroup + custom contents.
+	- Fix: Completely remove the native title bar and top whitespace of the main UI window: take over WindowOnGUI for FactionGearMainTabWindow, bypass GUI.Window's fixed title bar height, and draw via BeginGroup + custom contents.
 
 v1.1.36
-- Fix: Improve robustness of duplicate-title suppression: set the patch to Priority.Last and also intercept Window.InnerWindowOnGUI to reduce chances of being overridden by other mods.
+	- Fix: Improve robustness of duplicate-title suppression: set the patch to Priority.Last and also intercept Window.InnerWindowOnGUI to reduce chances of being overridden by other mods.
 
 v1.1.35
-- Fix: Fully fix duplicated title in the main UI by intercepting Window.WindowOnGUI via Harmony and forcibly disabling the default title drawing for FactionGearMainTabWindow.
+	- Fix: Fully fix duplicated title in the main UI by intercepting Window.WindowOnGUI via Harmony and forcibly disabling the default title drawing for FactionGearMainTabWindow.
 
 v1.1.34
-- Fix: Improve title hiding logic for FactionGearMainTabWindow by forcing optionalTitle to a blank space in PreOpen, PostOpen, and DoWindowContents to eliminate duplicated titles.
+	- Fix: Improve title hiding logic for FactionGearMainTabWindow by forcing optionalTitle to a blank space in PreOpen, PostOpen, and DoWindowContents to eliminate duplicated titles.
 
 v1.1.33
-- Fix: Disable default title drawing for FactionGearMainTabWindow to resolve the "huge duplicated title" at the top of the main UI.
+	- Fix: Disable default title drawing for FactionGearMainTabWindow to resolve the "huge duplicated title" at the top of the main UI.
 
 v1.1.32
-- Fix: Fully fix duplicated title by overriding the Title property so the native title isn't drawn.
+	- Fix: Fully fix duplicated title by overriding the Title property so the native title isn't drawn.
 
 v1.1.31
-- Fix: Fix duplicated title that could appear for FactionGearMainTabWindow in some cases.
-- Optimize: Rewrite WindowOnGUI and clear optionalTitle before drawing to keep the UI clean.
+	- Fix: Fix duplicated title that could appear for FactionGearMainTabWindow in some cases.
+	- Optimize: Rewrite WindowOnGUI and clear optionalTitle before drawing to keep the UI clean.
 
 v1.1.30
-- Update: Restore the "FactionGearCustomizer" title in the main UI top bar with a compact single-line layout to remove extra top whitespace.
+	- Update: Restore the "FactionGearCustomizer" title in the main UI top bar with a compact single-line layout to remove extra top whitespace.
 
 v1.1.29
-- Update: Optimize main UI top bar layout, shorten button text, fix UI overlap, and remove extra top whitespace.
+	- Update: Optimize main UI top bar layout, shorten button text, fix UI overlap, and remove extra top whitespace.
 
 v1.1.28
-- Update: Remove "Faction Gear Customizer" title text from the main UI top to improve space usage.
+	- Update: Remove "Faction Gear Customizer" title text from the main UI top to improve space usage.
 
 v1.1.27
-- Refactor: Refactor UI structure and extract the top toolbar into the TopBarPanel component to improve modularity.
+	- Refactor: Refactor UI structure and extract the top toolbar into the TopBarPanel component to improve modularity.
 
 v1.1.26
-- Fix: Fix logo coordinate system bug that caused it to fly to the screen corner.
-- Update: In the main UI title row, move the logo to the right of the title and remove extra top padding.
+	- Fix: Fix logo coordinate system bug that caused it to fly to the screen corner.
+	- Update: In the main UI title row, move the logo to the right of the title and remove extra top padding.
 
 v1.1.25
-- Fix: Adjust title area drawing in settings window so the logo and title are on the same line.
+	- Fix: Adjust title area drawing in settings window so the logo and title are on the same line.
 
 v1.1.24
-- Optimize: Optimize faction settings UI by placing the faction icon and name on the same line.
+	- Optimize: Optimize faction settings UI by placing the faction icon and name on the same line.
 
 v1.1.23
-- Update: Remove duplicated title text in the Mod settings UI and optimize layout.
+	- Update: Remove duplicated title text in the Mod settings UI and optimize layout.
 
 v1.1.22
-- Fix: Fix issue where randomly generated settlements could spawn in the ocean (invalid terrain).
+	- Fix: Fix issue where randomly generated settlements could spawn in the ocean (invalid terrain).
 
 v1.1.21
-- Update: Maintenance build.
+	- Update: Maintenance build.
 
 v1.1.20
-- Fix: Fix missing logo in Mod options UI; logo now displays.
+	- Fix: Fix missing logo in Mod options UI; logo now displays.
 
 v1.1.19
-- Update: Maintenance build.
+	- Update: Maintenance build.
 
 v1.1.18
-- Update: Change the bottom button icon: stop using the vanilla faction icon and use a custom icon instead.
-- Update: Add an icon to the Mod settings list (modIconPath).
-- Update: Simplify the mod description and note that Chinese translation is included.
+	- Update: Change the bottom button icon: stop using the vanilla faction icon and use a custom icon instead.
+	- Update: Add an icon to the Mod settings list (modIconPath).
+	- Update: Simplify the mod description and note that Chinese translation is included.
 
 v1.1.17
-- Update: Adjust editor UI layout: move average value and average weight info to the bottom and fix clipping issues.
-- Fix: Fix PresetManagerWindow compile error by resolving inner class references.
+	- Update: Adjust editor UI layout: move average value and average weight info to the bottom and fix clipping issues.
+	- Fix: Fix PresetManagerWindow compile error by resolving inner class references.
 
 v1.1.16
-- Update: Remove log messages that might pop up during game initialization to avoid disturbing users.
-- Optimize: Improve logging when icons or language files are missing; no longer pop up warning windows.
+	- Update: Remove log messages that might pop up during game initialization to avoid disturbing users.
+	- Optimize: Improve logging when icons or language files are missing; no longer pop up warning windows.
 
 v1.1.15
-- Fix: Fix faction edit menu top tabs (Settings/PawnKinds) not clickable; adjust tab draw position so they appear correctly inside the window contents area.
+	- Fix: Fix faction edit menu top tabs (Settings/PawnKinds) not clickable; adjust tab draw position so they appear correctly inside the window contents area.
 
 v1.1.14
-- Update: Change default sorting to descending by Market Value.
-- Update: Set the default value filter range to the maximum coverage.
+	- Update: Change default sorting to descending by Market Value.
+	- Update: Set the default value filter range to the maximum coverage.
 
 v1.1.14
-- Fix: Fix activation logic in MainButtonWorker_FactionGear: use Find.MainTabsRoot.ToggleTab(def) instead of manually WindowStack.Add, preventing a NullReferenceException when MainTabWindow.def is not assigned.
-- Fix: Add iconPath to MainButtonDef to fix missing main UI button icon.
+	- Fix: Fix activation logic in MainButtonWorker_FactionGear: use Find.MainTabsRoot.ToggleTab(def) instead of manually WindowStack.Add, preventing a NullReferenceException when MainTabWindow.def is not assigned.
+	- Fix: Add iconPath to MainButtonDef to fix missing main UI button icon.
 
 v1.1.13
-- Fix: Fix MissingMethodException crash in RimWorld 1.5/1.6 due to GetDamageAmount API removal in FactionGearManager.GetWeaponDamage.
-- Fix: Add iconPath to MainButtonDef to fix missing main UI button icon.
+	- Fix: Fix MissingMethodException crash in RimWorld 1.5/1.6 due to GetDamageAmount API removal in FactionGearManager.GetWeaponDamage.
+	- Fix: Add iconPath to MainButtonDef to fix missing main UI button icon.
 
 v1.1.12
-- Fix: Fix some headgear and wearable relics not showing in the item library. Root cause: cache filtering required all apparel to have apparel.layers, which excluded items without layers (e.g. VE Hats, Rags).
-- Fix: Improve cache filtering so apparel.layers can be null or empty and still be categorized correctly.
+	- Fix: Fix some headgear and wearable relics not showing in the item library. Root cause: cache filtering required all apparel to have apparel.layers, which excluded items without layers (e.g. VE Hats, Rags).
+	- Fix: Improve cache filtering so apparel.layers can be null or empty and still be categorized correctly.
 
 v1.1.11
-- Optimize: Refactor FactionGearEditor.cs by splitting DrawTopBar into smaller methods to improve maintainability.
-- Optimize: Simplify caching logic by removing redundant local cache fields and delegating to FactionGearManager.
-- Optimize: Extract FloatMenu option building into a dedicated method BuildResetMenuOptions.
+	- Optimize: Refactor FactionGearEditor.cs by splitting DrawTopBar into smaller methods to improve maintainability.
+	- Optimize: Simplify caching logic by removing redundant local cache fields and delegating to FactionGearManager.
+	- Optimize: Extract FloatMenu option building into a dedicated method BuildResetMenuOptions.
 
 v1.1.10
-- Add: Clicking the top-right version number opens the version log window, showing update history and a "Give me a like" button linking to the Steam Workshop page.
+	- Add: Clicking the top-right version number opens the version log window, showing update history and a "Give me a like" button linking to the Steam Workshop page.
 
 v1.1.9
-- Fix: Fix NullReferenceException when opening FactionEditWindow; add stronger null checks.
+	- Fix: Fix NullReferenceException when opening FactionEditWindow; add stronger null checks.
 
 v1.1.8
-- Fix: When no preset is active, clicking Save/Apply now automatically navigates to the create preset screen and prompts the user to create a preset.
+	- Fix: When no preset is active, clicking Save/Apply now automatically navigates to the create preset screen and prompts the user to create a preset.
 
 v1.1.7
-- Update: Maintenance build.
+	- Update: Maintenance build.
 
 v1.1.6
-- Fix: Fix "In-Game" option being checked but faction name list not auto-refreshing after entering a game. Now it auto-refreshes when entering a game from the main menu.
+	- Fix: Fix "In-Game" option being checked but faction name list not auto-refreshing after entering a game. Now it auto-refreshes when entering a game from the main menu.
 
 v1.1.5
-- Update: Automatically check the "In-Game" button after entering a game (default to using in-game faction names).
+	- Update: Automatically check the "In-Game" button after entering a game (default to using in-game faction names).
 
 v1.1.4
-- Add: Add Faction Edit feature, allowing editing faction name, icon, and color.
-- Add: Add FactionDefManager to handle runtime Def modifications.
-- Add: Preset system supports saving faction static data modifications.
+	- Add: Add Faction Edit feature, allowing editing faction name, icon, and color.
+	- Add: Add FactionDefManager to handle runtime Def modifications.
+	- Add: Preset system supports saving faction static data modifications.
 
 v1.1.3
-- Add: Add Language folder containing full English and Simplified Chinese translations.
-- Add: Add LanguageManager supporting automatic game language detection.
+	- Add: Add Language folder containing full English and Simplified Chinese translations.
+	- Add: Add LanguageManager supporting automatic game language detection.
 
 v1.1.2
-- Fix: Fix crash in main menu or world generation: Pawn_ApparelTracker.Wear threw "Could not find player faction".
+	- Fix: Fix crash in main menu or world generation: Pawn_ApparelTracker.Wear threw "Could not find player faction".
 
 v1.1.2
-- Fix: Fix Budget slider not triggering save and undo history.
-- Fix: Fix Force Ignore stripping all pawn equipment incorrectly; it now only lifts restrictions and does not forcibly unequip everything.
-- Fix: Improve Simple Mode budget check logic for clearer behavior.
+	- Fix: Fix Budget slider not triggering save and undo history.
+	- Fix: Fix Force Ignore stripping all pawn equipment incorrectly; it now only lifts restrictions and does not forcibly unequip everything.
+	- Fix: Improve Simple Mode budget check logic for clearer behavior.
 
 v1.1.1
-- Fix: Fix gear application logic; enable multi-select gear mode by default to support configuring multiple items in a single list.
-- Add: Add custom gear budget check to ensure Budget restrictions apply when Force Ignore is off.
+	- Fix: Fix gear application logic; enable multi-select gear mode by default to support configuring multiple items in a single list.
+	- Add: Add custom gear budget check to ensure Budget restrictions apply when Force Ignore is off.
 
 v1.1.0
-- Add: Add Advanced editor mode with Simple/Advanced mode switching.
-- Add: Advanced mode provides precise gear control (specific items, materials, quality, etc.).
-- Add: Add multi-tab UI: Weapons, Armor, Items, Hediff, Genes, etc.
-- Add: Add Undo/Redo via UndoManager edit history.
-- Add: Add color picker (Window_ColorPicker) supporting custom color configuration.
-- Add: Add genes support; ForcedHediff class supports forced health condition configuration.
-- Update: Expand the editor UI to improve user experience.
-- Update: Improve preset import/export.
-- Fix: Fix gear application logic; refactor GearApplier to ensure custom gear takes effect correctly.
+	- Add: Add Advanced editor mode with Simple/Advanced mode switching.
+	- Add: Advanced mode provides precise gear control (specific items, materials, quality, etc.).
+	- Add: Add multi-tab UI: Weapons, Armor, Items, Hediff, Genes, etc.
+	- Add: Add Undo/Redo via UndoManager edit history.
+	- Add: Add color picker (Window_ColorPicker) supporting custom color configuration.
+	- Add: Add genes support; ForcedHediff class supports forced health condition configuration.
+	- Update: Expand the editor UI to improve user experience.
+	- Update: Improve preset import/export.
+	- Fix: Fix gear application logic; refactor GearApplier to ensure custom gear takes effect correctly.
 
 v1.0.29
-- Update: Layer Preview is hidden by default; optimize layout and add a "waist" row for clearer belt display.
-- Update: Layer Preview now checks the others list (e.g. belts) and no longer misses them.
-- Fix: Improve SpecRequirementEdit loading to prevent red errors when ThingDef is missing (e.g. after uninstalling a mod).
-- Fix: Improve ForcedHediff loading to prevent red errors when HediffDef is missing.
-- Fix: Improve KindGearData loading for ApparelRequired/TechRequired to prevent failures when Defs are missing.
+	- Update: Layer Preview is hidden by default; optimize layout and add a "waist" row for clearer belt display.
+	- Update: Layer Preview now checks the others list (e.g. belts) and no longer misses them.
+	- Fix: Improve SpecRequirementEdit loading to prevent red errors when ThingDef is missing (e.g. after uninstalling a mod).
+	- Fix: Improve ForcedHediff loading to prevent red errors when HediffDef is missing.
+	- Fix: Improve KindGearData loading for ApparelRequired/TechRequired to prevent failures when Defs are missing.
 
 v1.0.28
-- Fix: Fix NullReferenceException in GenerateSimpleItem when ThingDef or KindGearData is null.
-- Fix: Fix errors when trying to drop gear while the pawn is not spawned on the map.
-- Fix: Add defensive checks for things that require Stuff to prevent generation failures when Stuff is null.
+	- Fix: Fix NullReferenceException in GenerateSimpleItem when ThingDef or KindGearData is null.
+	- Fix: Fix errors when trying to drop gear while the pawn is not spawned on the map.
+	- Fix: Add defensive checks for things that require Stuff to prevent generation failures when Stuff is null.
 
 v1.0.27
-- Fix: Fix PresetManagerWindow crash due to System.MissingMethodException: Method not found: UnityEngine.Rect Verse.Listing_Standard.Label(string,single,string).
-- Update: Replace Listing_Standard.Label calls in PresetManagerWindow with Widgets.Label to improve cross-version compatibility.
+	- Fix: Fix PresetManagerWindow crash due to System.MissingMethodException: Method not found: UnityEngine.Rect Verse.Listing_Standard.Label(string,single,string).
+	- Update: Replace Listing_Standard.Label calls in PresetManagerWindow with Widgets.Label to improve cross-version compatibility.
 
 v1.0.26
-- Fix: Fix game crash caused by HediffDef load failure (add ExposeData exception handling).
+	- Fix: Fix game crash caused by HediffDef load failure (add ExposeData exception handling).
 
 v1.0.22
-- Update: Optimize Hediff card UI layout: increase card height and add a detailed info section.
-- Add: HediffCardUI adds Severity range control.
-- Fix: Fix PresetManagerWindow missing WidgetsUtils reference.
-- Fix: Fix WidgetsUtils PortraitsCache type lookup compatibility issue.
+	- Update: Optimize Hediff card UI layout: increase card height and add a detailed info section.
+	- Add: HediffCardUI adds Severity range control.
+	- Fix: Fix PresetManagerWindow missing WidgetsUtils reference.
+	- Fix: Fix WidgetsUtils PortraitsCache type lookup compatibility issue.
 
 v1.0.7
-- Fix: Fix FactionGearPreviewWindow not working (PortraitsCache/DrawBox compatibility fixes).
-- Update: WidgetsUtils adds PortraitsCache.Get/SetDirty and DrawWindowBackground compatibility wrappers.
+	- Fix: Fix FactionGearPreviewWindow not working (PortraitsCache/DrawBox compatibility fixes).
+	- Update: WidgetsUtils adds PortraitsCache.Get/SetDirty and DrawWindowBackground compatibility wrappers.
 
 v1.0.6
-- Fix: Fix PresetManagerWindow crash on older RimWorld versions (Widgets.DrawBox/DrawMenuSection signature mismatch).
-- Update: WidgetsUtils adds DrawBox and DrawMenuSection compatibility wrappers.
+	- Fix: Fix PresetManagerWindow crash on older RimWorld versions (Widgets.DrawBox/DrawMenuSection signature mismatch).
+	- Update: WidgetsUtils adds DrawBox and DrawMenuSection compatibility wrappers.
 
 v1.0.5
-- Fix: Fix crash caused by missing Widgets.FloatRange call in GearEditPanel.cs.
-- Update: Add WidgetsUtils.IntRange wrapper to prevent potential compatibility issues in HediffCardUI.
+	- Fix: Fix crash caused by missing Widgets.FloatRange call in GearEditPanel.cs.
+	- Update: Add WidgetsUtils.IntRange wrapper to prevent potential compatibility issues in HediffCardUI.
 
 v1.0.4
-- Fix: Fix System.MissingMethodException: Method not found: void Verse.Widgets.FloatRange.
-- Update: Improve WidgetsUtils.FloatRange compatibility: add exception handling and a fallback UI (dual sliders) to avoid crashing when reflection fails.
-- Update: WidgetsUtils adds a smart FloatRange wrapper that auto-adapts to different parameter signatures across versions.
+	- Fix: Fix System.MissingMethodException: Method not found: void Verse.Widgets.FloatRange.
+	- Update: Improve WidgetsUtils.FloatRange compatibility: add exception handling and a fallback UI (dual sliders) to avoid crashing when reflection fails.
+	- Update: WidgetsUtils adds a smart FloatRange wrapper that auto-adapts to different parameter signatures across versions.
 
 v1.0.3
-- Fix: Fix System.MissingMethodException: Method not found: UnityEngine.Rect Verse.Listing_Standard.Label.
-- Update: Add WidgetsUtils.Label wrapper to handle Listing_Standard.Label signature differences across versions.
+	- Fix: Fix System.MissingMethodException: Method not found: UnityEngine.Rect Verse.Listing_Standard.Label.
+	- Update: Add WidgetsUtils.Label wrapper to handle Listing_Standard.Label signature differences across versions.
 
 v1.0.2
-- Fix: Fix System.MissingMethodException: Method not found: void Verse.Widgets.DrawTextureFitted.
-- Add: Add WidgetsUtils helper class, wrapping UI drawing methods for better compatibility.
+	- Fix: Fix System.MissingMethodException: Method not found: void Verse.Widgets.DrawTextureFitted.
+	- Add: Add WidgetsUtils helper class, wrapping UI drawing methods for better compatibility.
 
 
 
 v1.4.10
-- Fix: Correct `ForceOnlySelected + OutfitFirstBudgetStrategy` so failed core-outfit planning no longer preserves vanilla apparel; strict pool mode now strips and only equips valid pool apparel, leaving empty slots when needed.
-- Fix: Correct the incomplete core-outfit path in strict pool mode so it continues equipping from configured apparel pools instead of aborting the apparel pipeline.
-- Fix: Unify PawnKind target enumeration so `GetFactionKinds` merges `options/traders/carriers/guards` plus already-configured PawnKinds, restoring special Empire-derived targets such as champions/guards.
-- Fix: Switch `ApplyToAllKindsInFaction` to the unified kind enumerator so "Apply to others" and batch apply target the same PawnKind set.
-- Fix: Guard `ApplyHediffWithPart` / `GetUserSpecifiedBodyParts` against null body/health data so one bad hediff no longer aborts the full gear application chain.
-- Update: Sync Index.md, Api.md, and config.md.
+	- Fix: Correct `ForceOnlySelected + OutfitFirstBudgetStrategy` so failed core-outfit planning no longer preserves vanilla apparel; strict pool mode now strips and only equips valid pool apparel, leaving empty slots when needed.
+	- Fix: Correct the incomplete core-outfit path in strict pool mode so it continues equipping from configured apparel pools instead of aborting the apparel pipeline.
+	- Fix: Unify PawnKind target enumeration so `GetFactionKinds` merges `options/traders/carriers/guards` plus already-configured PawnKinds, restoring special Empire-derived targets such as champions/guards.
+	- Fix: Switch `ApplyToAllKindsInFaction` to the unified kind enumerator so "Apply to others" and batch apply target the same PawnKind set.
+	- Fix: Guard `ApplyHediffWithPart` / `GetUserSpecifiedBodyParts` against null body/health data so one bad hediff no longer aborts the full gear application chain.
+	- Update: Sync Index.md, Api.md, and config.md.
 v1.4.9
-- Fix: Correct `Reset -> Current Pawn` null-reference crash; remove the mistaken deep-cleanup call so reset no longer jumps back to the first-time preset selection flow.
-- Fix: Correct `Reset -> Current Faction` and `Load Default Faction` so they no longer clear the active preset binding; reset scope is now limited to the current target only.
-- Fix: Add fail-fast null guards to `LoadKindDefGear` to block `NullReferenceException` when the selected `PawnKindDef` cannot be resolved.
-- Fix: Add empty-override pruning before save/save-sync, preventing blank `KindGearData` entries from overriding vanilla rules.
-- Update: `ItemLibraryPanel` no longer creates empty per-pawn custom data during read-only drawing.
+	- Fix: Correct `Reset -> Current Pawn` null-reference crash; remove the mistaken deep-cleanup call so reset no longer jumps back to the first-time preset selection flow.
+	- Fix: Correct `Reset -> Current Faction` and `Load Default Faction` so they no longer clear the active preset binding; reset scope is now limited to the current target only.
+	- Fix: Add fail-fast null guards to `LoadKindDefGear` to block `NullReferenceException` when the selected `PawnKindDef` cannot be resolved.
+	- Fix: Add empty-override pruning before save/save-sync, preventing blank `KindGearData` entries from overriding vanilla rules.
+	- Update: `ItemLibraryPanel` no longer creates empty per-pawn custom data during read-only drawing.
 v1.4.8
-- Fix: `Reset -> Current Kind` now keeps the kind override unmodified after reset (no false-positive modified marker).
-- Fix: `Reset -> Current Kind / Current Faction / Load Default Faction` now immediately runs save-sync flow so save-scoped data is updated at once.
-- Add: Advanced General now shows the default apparel budget source from `PawnKindDef.apparelMoney` for the current kind.
-- Update: Manual apparel/weapon budget slider cap increased from `5000` to `10000`.
-
+	- Fix: `Reset -> Current Kind` now keeps the kind override unmodified after reset (no false-positive modified marker).
+	- Fix: `Reset -> Current Kind / Current Faction / Load Default Faction` now immediately runs save-sync flow so save-scoped data is updated at once.
+	- Add: Advanced General now shows the default apparel budget source from `PawnKindDef.apparelMoney` for the current kind.
+	- Update: Manual apparel/weapon budget slider cap increased from `5000` to `10000`.
 
 

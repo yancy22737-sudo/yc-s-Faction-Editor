@@ -1162,4 +1162,14 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <TraitPickerTitle>Выбор черт</TraitPickerTitle>
   <Traits>Черты</Traits>
   <TraitsAddedMessage>Добавлено {0} черт, пропущено {1}.</TraitsAddedMessage>
-<AutoCalculateRaidPoints>Авто-расчёт очков рейда</AutoCalculateRaidPoints><AutoCalculateRaidPointsDone>Очки рейда рассчитаны по стоимости снаряжения.</AutoCalculateRaidPointsDone><AutoRaidPointsEnabled>Авто-изменение очков рейда</AutoRaidPointsEnabled><AutoRaidPointsEnabledTooltip>Расчёт очков рейда по стоимости снаряжения для сжатых элитных рейдов.</AutoRaidPointsEnabledTooltip><RaidPointsLabel>Очки рейда</RaidPointsLabel><CarryWeightLabel>Вес</CarryWeightLabel></LanguageData>
+<AutoCalculateRaidPoints>Авто-расчёт очков рейда</AutoCalculateRaidPoints><AutoCalculateRaidPointsDone>Очки рейда рассчитаны по стоимости снаряжения.</AutoCalculateRaidPointsDone><AutoRaidPointsEnabled>Авто-изменение очков рейда</AutoRaidPointsEnabled><AutoRaidPointsEnabledTooltip>Расчёт очков рейда по стоимости снаряжения для сжатых элитных рейдов.</AutoRaidPointsEnabledTooltip><RaidPointsLabel>Очки рейда</RaidPointsLabel><CarryWeightLabel>Вага</CarryWeightLabel>
+  <InterFactionRelations>Відносини між фракціями</InterFactionRelations>
+  <AddFactionRelation>Додати відношення</AddFactionRelation>
+  <RemoveFactionRelation>Видалити</RemoveFactionRelation>
+  <SelectTargetFaction>Виберіть цільову фракцію</SelectTargetFaction>
+  <NoTargetFactionsAvailable>Немає доступних цільових фракцій</NoTargetFactionsAvailable>
+  <DeselectAll>Зняти виділення</DeselectAll>
+  <ShowInGameName>Ігрові імена</ShowInGameName>
+  <CurrentRelation>Поточне</CurrentRelation>
+  <RelationPermanentEnemy>Вічний ворог</RelationPermanentEnemy>
+</LanguageData>

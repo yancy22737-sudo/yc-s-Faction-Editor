@@ -3,7 +3,7 @@
   <name>yc's Faction Editor</name>
   <author>yancy</author>
   <packageId>yancy.factiongearcustomizer</packageId>
-  <modVersion>1.6.6</modVersion>
+  <modVersion>1.6.7</modVersion>
   <supportedVersions>
     <li>1.6</li>
   </supportedVersions>

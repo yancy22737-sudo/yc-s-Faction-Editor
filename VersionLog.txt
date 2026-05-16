@@ -1,530 +1,534 @@
-﻿v1.6.6
-- 新功能: 精英化袭击 — 自动修改袭击点数，根据兵种装备价值自动计算，压缩袭击规模减少负载。
-- 新功能: 手动袭击点数覆盖 — 群组编辑中每个兵种可单独覆盖袭击点数(combatPower)，立即生效。
-- 新功能: 自动袭击点数开关(高级→常规) — 开启后保存/应用时自动计算，关闭则恢复默认。
-- 新功能: 预览窗口袭击点数显示"基础值+装备附加值"格式。
-- 修复: 派系意识形态设置后未实际应用到派系实例。
-- 修复: PawnGroupMakerUtility.GeneratePawns 迭代器导致袭击点数覆盖时序错误。
-- 修复: 预览窗口硬编码中文"点数""负重"，改为多语言键。
-- 本地化: 新增韩语、日语翻译，俄语补齐78个缺失键并缩短UI标签长度对齐中英文。
-- 构建: build.ps1 容错 DLL 锁文件，逐文件复制确保语言 XML 正常部署。
+v1.6.7
+	- 新功能: 派系间关系调整 — 编辑任意非玩家派系间的外交关系（盟友/中立/敌对），支持多选、全选、搜索过滤。
+	- UI: 新增 Dialog_InterFactionRelation 弹窗，显示游戏中名称切换、悬浮详细信息提示，替代原有双层 FloatMenu。
+	- 本地化: 新增英/中/韩/日/俄/乌 7 语言翻译键（InterFactionRelations 等 10 个键）。
+
+v1.6.6
+	- 新功能: 精英化袭击 — 自动修改袭击点数，根据兵种装备价值自动计算，压缩袭击规模减少负载。
+	- 新功能: 手动袭击点数覆盖 — 群组编辑中每个兵种可单独覆盖袭击点数(combatPower)，立即生效。
+	- 新功能: 自动袭击点数开关(高级→常规) — 开启后保存/应用时自动计算，关闭则恢复默认。
+	- 新功能: 预览窗口袭击点数显示"基础值+装备附加值"格式。
+	- 修复: 派系意识形态设置后未实际应用到派系实例。
+	- 修复: PawnGroupMakerUtility.GeneratePawns 迭代器导致袭击点数覆盖时序错误。
+	- 修复: 预览窗口硬编码中文"点数""负重"，改为多语言键。
+	- 本地化: 新增韩语、日语翻译，俄语补齐78个缺失键并缩短UI标签长度对齐中英文。
+	- 构建: build.ps1 容错 DLL 锁文件，逐文件复制确保语言 XML 正常部署。
 
 v1.6.5
-- Add: 派系交易库存编辑器 — 按钮入口(派系编辑界面)，买卖两侧完整配置，Trader类型下拉选择器(定居点/商队/轨道/访客)，Undo/Redo(Ctrl+Z/Y)。
-- Add: 库存物品库 — 分类标签页(全部/武器/护甲/服饰/物品)，ThingPickerFilterBar完整复用(搜索/Mod来源/科技等级/排序/物价范围/食物/弹药二级筛选)。
-- Add: 快捷批量添加 — 药丸按钮(+Weapons/+Armor/+Apparel/+Items/+All)一键批量添加分类物品。
-- Add: 批量应用到其他派系 — FloatMenu选择单个或全部人类派系。
-- Add: TraderKindDef.stockGenerators直接修改 — 交易时自动注入自定义买卖物品，零运行时补丁。
-- Add: 库存预览弹窗 — 模拟生成实际交易物品，显示总市场价值。
-- 内部: TradeStockEntry数据模型，FactionGearData持久化(含预设导入导出)，StockGenerator_BuySingleDef买侧生成器。
+	- Add: 派系交易库存编辑器 — 按钮入口(派系编辑界面)，买卖两侧完整配置，Trader类型下拉选择器(定居点/商队/轨道/访客)，Undo/Redo(Ctrl+Z/Y)。
+	- Add: 库存物品库 — 分类标签页(全部/武器/护甲/服饰/物品)，ThingPickerFilterBar完整复用(搜索/Mod来源/科技等级/排序/物价范围/食物/弹药二级筛选)。
+	- Add: 快捷批量添加 — 药丸按钮(+Weapons/+Armor/+Apparel/+Items/+All)一键批量添加分类物品。
+	- Add: 批量应用到其他派系 — FloatMenu选择单个或全部人类派系。
+	- Add: TraderKindDef.stockGenerators直接修改 — 交易时自动注入自定义买卖物品，零运行时补丁。
+	- Add: 库存预览弹窗 — 模拟生成实际交易物品，显示总市场价值。
+	- 内部: TradeStockEntry数据模型，FactionGearData持久化(含预设导入导出)，StockGenerator_BuySingleDef买侧生成器。
 
 v1.6.4
-- Add: 特性编辑tab — 添加/删除特性，概率滑条，原生翻译tooltip，Info按钮，等级选择器。
-- Add: 基因编辑tab — 基因选择器(分类分组+图标+代谢显示)，Info按钮，内源/异源切换，概率滑条。
-- Add: 外观编辑tab — Shape/Hair/Skin/Genes子标签，发型/胡须/体型/头型图标网格，肤色/发色调色器。
-- Add: 派系编辑新增意识形态选择(仅Ideology DLC)，图标预览，默认读取运行时派系意识形态。
-- Add: TraitPreviewPawnCache — 基于后台虚构pawn的Trait.TipString原生信息展示。
-- Add: 特性/基因/外观列表显示来源mod列(长名称省略号截断，不换行)。
-- UI: 高级模式双行tab布局 — Row1(General/Apparel/Weapons/Hediffs/Items) · Row2(Traits/Appearance/Genes)。
-- UI: 高级设置→高级(中文标签更新)；所有删除按钮统一为垃圾桶图标。
-- Batch Apply: 新增Traits/Genes/Appearance分类复制，修复checkbox布局遮挡。
-- Fix: ForceOverrideAppearance在DeepCopy/CopyFrom中缺失导致Apply To Others/Batch Apply外观无效。
-- Internal: KindGearData扩展ForcedSkills/ForcedTraits/ForcedGenes/ForcedAppearance完整生命周期(ExposeData/DeepCopy/CopyFrom/Reset)。
+	- Add: 特性编辑tab — 添加/删除特性，概率滑条，原生翻译tooltip，Info按钮，等级选择器。
+	- Add: 基因编辑tab — 基因选择器(分类分组+图标+代谢显示)，Info按钮，内源/异源切换，概率滑条。
+	- Add: 外观编辑tab — Shape/Hair/Skin/Genes子标签，发型/胡须/体型/头型图标网格，肤色/发色调色器。
+	- Add: 派系编辑新增意识形态选择(仅Ideology DLC)，图标预览，默认读取运行时派系意识形态。
+	- Add: TraitPreviewPawnCache — 基于后台虚构pawn的Trait.TipString原生信息展示。
+	- Add: 特性/基因/外观列表显示来源mod列(长名称省略号截断，不换行)。
+	- UI: 高级模式双行tab布局 — Row1(General/Apparel/Weapons/Hediffs/Items) · Row2(Traits/Appearance/Genes)。
+	- UI: 高级设置→高级(中文标签更新)；所有删除按钮统一为垃圾桶图标。
+	- Batch Apply: 新增Traits/Genes/Appearance分类复制，修复checkbox布局遮挡。
+	- Fix: ForceOverrideAppearance在DeepCopy/CopyFrom中缺失导致Apply To Others/Batch Apply外观无效。
+	- Internal: KindGearData扩展ForcedSkills/ForcedTraits/ForcedGenes/ForcedAppearance完整生命周期(ExposeData/DeepCopy/CopyFrom/Reset)。
 
 v1.6.3
-- Add: 技能/特性/基因/外观编辑系统框架（技能已隐藏，后续版本开放）。
+	- Add: 技能/特性/基因/外观编辑系统框架（技能已隐藏，后续版本开放）。
 
 v1.6.2
-- Fix: Item Library 取消选择所有mod后缓存未清除导致仍显示mod被选中。
-- Fix: 正常武器（如 MilkorMGL 榴弹发射器）被误判为炮塔/机械族武器过滤掉——重构过滤逻辑，turretGun 缓存命中后增加正常 weaponTag 放行判断。
-- Fix: 武器/服装/物品选择器中模组名过长溢出——添加单行省略号截断。
-- Add: 所有 Item Picker 物品列表新增市场价值字段。
-- Fix: 近战武器选择器可错误添加远程武器——Dialog_WeaponPicker 新增 RangedOnly/MeleeOnly 筛选模式，按当前标签页自动过滤。
-- Fix: 远程/近战标签页共用同一个武器添加器——改为根据标签页传入对应 filter。
-- UI: 射程/伤害滑条合并到同一行节省空间。
-- UI: 武器/服装选择器排序控件移至选择行（全选/全不选/反选同一行），参考物品选择器布局。
+	- Fix: Item Library 取消选择所有mod后缓存未清除导致仍显示mod被选中。
+	- Fix: 正常武器（如 MilkorMGL 榴弹发射器）被误判为炮塔/机械族武器过滤掉——重构过滤逻辑，turretGun 缓存命中后增加正常 weaponTag 放行判断。
+	- Fix: 武器/服装/物品选择器中模组名过长溢出——添加单行省略号截断。
+	- Add: 所有 Item Picker 物品列表新增市场价值字段。
+	- Fix: 近战武器选择器可错误添加远程武器——Dialog_WeaponPicker 新增 RangedOnly/MeleeOnly 筛选模式，按当前标签页自动过滤。
+	- Fix: 远程/近战标签页共用同一个武器添加器——改为根据标签页传入对应 filter。
+	- UI: 射程/伤害滑条合并到同一行节省空间。
+	- UI: 武器/服装选择器排序控件移至选择行（全选/全不选/反选同一行），参考物品选择器布局。
 
 v1.6.1
-- Add: 颜色选择器全面增强——2D可视化色域、色相滑条、RGB滑条、32色常用色板、持久化取色历史记录。
-- Add: 像素绘图板——支持画笔/橡皮擦、泛洪填充、撤销、快捷色板、可调画布大小，保存为派系自定义图标。
-- Add: 独立派系群组编辑窗口(Window_FactionGroupEditor)，从兵种列表"+"按钮进入，包含群组编辑和兵种列表。
-- Redesign: 兵种编辑界面(Dialog_KindXenotypeEditor)改为原版风格UI。
-- Add: Hediff选择器新增市场价值排序及市场价值字段显示，默认选择"全部类别"。
-- Fix: Mod筛选器切换分类后缓存未刷新导致缺少mod选项。
-- Fix: Mod名称按钮截断过激，改为自动适应；ModFilter窗口长名称单行省略号显示。
-- Fix: 兵种列表复制/粘贴按钮改为悬停显示，tooltip使用语言键。
-- Fix: 派系编辑窗口"异种"按钮改名"编辑"并悬停显示；修复图标路径浏览/手绘按钮重叠。
-- Fix: Mod筛选器名称自适应、派系群组编辑窗口UI布局修正、调色器按钮遮挡修正等多项UI修复。
+	- Add: 颜色选择器全面增强——2D可视化色域、色相滑条、RGB滑条、32色常用色板、持久化取色历史记录。
+	- Add: 像素绘图板——支持画笔/橡皮擦、泛洪填充、撤销、快捷色板、可调画布大小，保存为派系自定义图标。
+	- Add: 独立派系群组编辑窗口(Window_FactionGroupEditor)，从兵种列表"+"按钮进入，包含群组编辑和兵种列表。
+	- Redesign: 兵种编辑界面(Dialog_KindXenotypeEditor)改为原版风格UI。
+	- Add: Hediff选择器新增市场价值排序及市场价值字段显示，默认选择"全部类别"。
+	- Fix: Mod筛选器切换分类后缓存未刷新导致缺少mod选项。
+	- Fix: Mod名称按钮截断过激，改为自动适应；ModFilter窗口长名称单行省略号显示。
+	- Fix: 兵种列表复制/粘贴按钮改为悬停显示，tooltip使用语言键。
+	- Fix: 派系编辑窗口"异种"按钮改名"编辑"并悬停显示；修复图标路径浏览/手绘按钮重叠。
+	- Fix: Mod筛选器名称自适应、派系群组编辑窗口UI布局修正、调色器按钮遮挡修正等多项UI修复。
 
 v1.6.0
-- Fix: 删除 ClearOriginalDataCache() + 重复 SaveAllOriginalData()，防止 pristine 数据被 ApplyAllSettings 污染后覆盖。
-- Fix: maxTotalPoints < 10000 的 Combat 组自动展开为 9999999；groupsModified=false 时清理旧损坏数据。
-- Fix: 新增 Patch_CanGenerateFrom_TileBypass — 对自定义群组派系，绕过 vanilla 的 tile 检查（解决"no usable PawnGroupMakers"错误）。
+	- Fix: 删除 ClearOriginalDataCache() + 重复 SaveAllOriginalData()，防止 pristine 数据被 ApplyAllSettings 污染后覆盖。
+	- Fix: maxTotalPoints < 10000 的 Combat 组自动展开为 9999999；groupsModified=false 时清理旧损坏数据。
+	- Fix: 新增 Patch_CanGenerateFrom_TileBypass — 对自定义群组派系，绕过 vanilla 的 tile 检查（解决"no usable PawnGroupMakers"错误）。
 
 v1.5.10
-- Fix: CE 环境下编辑器添加武器时弹药不自动添加到物品栏——InventoryItems 默认 null 导致 TryAutoAddAmmo 静默失败。
-- Fix: 英文 Keyed XML 第 531 行 & 未转义（& → &amp;）导致整个语言文件解析失败，非中文语言键全部失效。
-- Refactor: LanguageManager 恢复为自定义加载 + key.Translate() 兜底架构，移除 80fa7b3 引入的有缺陷的 fallback 链系统。
-- Add: CLAUDE.md 加入 XML 特殊字符转义规则。
+	- Fix: CE 环境下编辑器添加武器时弹药不自动添加到物品栏——InventoryItems 默认 null 导致 TryAutoAddAmmo 静默失败。
+	- Fix: 英文 Keyed XML 第 531 行 & 未转义（& → &amp;）导致整个语言文件解析失败，非中文语言键全部失效。
+	- Refactor: LanguageManager 恢复为自定义加载 + key.Translate() 兜底架构，移除 80fa7b3 引入的有缺陷的 fallback 链系统。
+	- Add: CLAUDE.md 加入 XML 特殊字符转义规则。
 
 v1.5.9
-- Update: 统一图标资源，全部指向 UI/Logo.png，移除冗余图标文件。
-- Update: MainButton 收窄为图标模式（minimized），底部标签栏仅显示 Logo 无文字。
-- Update: build.ps1 增加 Logo.png 备份还原机制，防止部署覆盖。
+	- Update: 统一图标资源，全部指向 UI/Logo.png，移除冗余图标文件。
+	- Update: MainButton 收窄为图标模式（minimized），底部标签栏仅显示 Logo 无文字。
+	- Update: build.ps1 增加 Logo.png 备份还原机制，防止部署覆盖。
 
 v1.5.8
-- Fix: 机械族Boss（Apocriton/War Queen/Diabolus等）在自定义群组中无法生成的问题。原版RimWorld会通过内部机制过滤掉这些Boss，现已通过Patch PawnGroupMakerUtility.GeneratePawns强制追加。
-- Fix: 存档加载后自定义群组设置可能不生效，现在加载存档后自动调用ApplyAllSettings。
-- Fix: 派系预览窗口群组筛选器rll不随机的问题，改用加权随机选取模拟突袭生成逻辑。
-- Fix: 群组编辑器添加/删除兵种后编辑器预览缓存不刷新，现在自动刷新。
+	- Fix: 机械族Boss（Apocriton/War Queen/Diabolus等）在自定义群组中无法生成的问题。原版RimWorld会通过内部机制过滤掉这些Boss，现已通过Patch PawnGroupMakerUtility.GeneratePawns强制追加。
+	- Fix: 存档加载后自定义群组设置可能不生效，现在加载存档后自动调用ApplyAllSettings。
+	- Fix: 派系预览窗口群组筛选器rll不随机的问题，改用加权随机选取模拟突袭生成逻辑。
+	- Fix: 群组编辑器添加/删除兵种后编辑器预览缓存不刷新，现在自动刷新。
 
 v1.5.7-hotfix
-- Fix: Milira 机械体在预览窗口肖像渲染崩溃（ArgumentNullException），重写安全补丁覆盖所有 Hair 变体节点，肖像用双重渲染策略确保机械体头发正常显示。
-- Fix: 预览窗口群组筛选下拉菜单回退到原版 pawnGroupMakers，无自定义群组时不再空白。
-- Fix: 预览窗口群组筛选行始终可见（仅"All"时灰色不可点击）。
-- Fix: 预览窗口进度条计数修正（totalToGenerate 使用筛选后数量）。
-- Fix: 预览窗口肖像渲染失败时显示占位符（种族图标+提示），武器/点数/负重/InfoCard 加 try-catch 保护。
-- Fix: GearApplier.SafeLogError 防崩溃日志（Milira Name.ToStringFull 异常不传播）。
-- Fix: GearApplier.ApplyHediffs 增加 forcedHediff null 检查。
+	- Fix: Milira 机械体在预览窗口肖像渲染崩溃（ArgumentNullException），重写安全补丁覆盖所有 Hair 变体节点，肖像用双重渲染策略确保机械体头发正常显示。
+	- Fix: 预览窗口群组筛选下拉菜单回退到原版 pawnGroupMakers，无自定义群组时不再空白。
+	- Fix: 预览窗口群组筛选行始终可见（仅"All"时灰色不可点击）。
+	- Fix: 预览窗口进度条计数修正（totalToGenerate 使用筛选后数量）。
+	- Fix: 预览窗口肖像渲染失败时显示占位符（种族图标+提示），武器/点数/负重/InfoCard 加 try-catch 保护。
+	- Fix: GearApplier.SafeLogError 防崩溃日志（Milira Name.ToStringFull 异常不传播）。
+	- Fix: GearApplier.ApplyHediffs 增加 forcedHediff null 检查。
 
 v1.5.7
-- Feat: 预览窗口支持群组筛选下拉框，默认选中战斗群组。
-- Feat: 预览负重显示颜色优化（绿#33C192/黄#FFAF1A/红#CC4B53），袭击点数读取群组覆盖值。
-- Feat: CE环境下弹药tooltip自动显示伤害、利器/钝器穿透。
-- Feat: 物品选择器弹药分类下添加二级口径快捷筛选，支持翻页。
-- Feat: 物品选择器食物分类下添加二级子分类（烹饪食物/生食/肉类/蔬菜）。
-- Feat: 批量应用界面添加「跳过弹药」复选框，默认勾选当前tab对应分类。
-- Feat: 物品选择器排序按钮移至选择行（全选/全不选/反选同一行）。
-- Fix: 物品选择器筛选栏高度精确匹配绘制内容，消除底部空白。
-- Fix: 移除物品选择器价值拖动条。
-- Fix: Hediff选择器分类按钮改为快捷按钮样式，自适应宽度。
-- Fix: 深度重写HediffCardUI和ItemCardUI，优化布局，修复删除按钮点击区域重合。
-- Fix: 派系列表单行显示+省略号，行高固定28px，颜色饱和度降低。
-- Fix: 兵种列表60%/派系列表40%高度比。
-- Fix: 默认设置对齐：仅从装备池选择默认开启。
-- Fix: 简单模式移除武器时自动清理对应弹药。
-- Fix: CE武器射程显示为0的问题（反射读取VerbPropertiesCE.range）。
-- Fix: 口径筛选切换类别后自动清除。
+	- Feat: 预览窗口支持群组筛选下拉框，默认选中战斗群组。
+	- Feat: 预览负重显示颜色优化（绿#33C192/黄#FFAF1A/红#CC4B53），袭击点数读取群组覆盖值。
+	- Feat: CE环境下弹药tooltip自动显示伤害、利器/钝器穿透。
+	- Feat: 物品选择器弹药分类下添加二级口径快捷筛选，支持翻页。
+	- Feat: 物品选择器食物分类下添加二级子分类（烹饪食物/生食/肉类/蔬菜）。
+	- Feat: 批量应用界面添加「跳过弹药」复选框，默认勾选当前tab对应分类。
+	- Feat: 物品选择器排序按钮移至选择行（全选/全不选/反选同一行）。
+	- Fix: 物品选择器筛选栏高度精确匹配绘制内容，消除底部空白。
+	- Fix: 移除物品选择器价值拖动条。
+	- Fix: Hediff选择器分类按钮改为快捷按钮样式，自适应宽度。
+	- Fix: 深度重写HediffCardUI和ItemCardUI，优化布局，修复删除按钮点击区域重合。
+	- Fix: 派系列表单行显示+省略号，行高固定28px，颜色饱和度降低。
+	- Fix: 兵种列表60%/派系列表40%高度比。
+	- Fix: 默认设置对齐：仅从装备池选择默认开启。
+	- Fix: 简单模式移除武器时自动清理对应弹药。
+	- Fix: CE武器射程显示为0的问题（反射读取VerbPropertiesCE.range）。
+	- Fix: 口径筛选切换类别后自动清除。
 
 v1.5.6
-- Fix: 拆分「仅从装备池选择」中的状态效果强制覆盖为独立选项「强制覆盖状态效果」，避免基因提供的状态增益被误清除。
-- Fix: 修复中世纪大修等模组中部分派系（如邪教徒）无法在列表中显示的问题，扩展 pawnGroupMakers 过滤条件以检查 traders/carriers/guards 子列表。
-- Fix: 修复同时配置近战+远程武器时近战无条件覆盖远程的问题，改为随机二选一。
-- Fix: 修复预览小人数据堆积的内存泄漏问题，字典赋值前先销毁旧 Pawn。
-- Fix: 修复高级设置中服装预算/武器预算滑块展开导致下方 UI 内容截断的问题。
-- Fix: 移除未完成的「RimTalk联动」按钮。
-- Fix: 预览卡片左下角添加袭击点数显示。
-- Fix: 物品库添加 Mass（质量）排序选项。
-- Fix: 补全大量缺失的语言键（Category、SortField_Range/Damage/Mass、ForceOverrideHediffs、PawnGroupKind 系列等）。
-- Fix: 移除重复图片资源，统一使用 Logo.png。
+	- Fix: 拆分「仅从装备池选择」中的状态效果强制覆盖为独立选项「强制覆盖状态效果」，避免基因提供的状态增益被误清除。
+	- Fix: 修复中世纪大修等模组中部分派系（如邪教徒）无法在列表中显示的问题，扩展 pawnGroupMakers 过滤条件以检查 traders/carriers/guards 子列表。
+	- Fix: 修复同时配置近战+远程武器时近战无条件覆盖远程的问题，改为随机二选一。
+	- Fix: 修复预览小人数据堆积的内存泄漏问题，字典赋值前先销毁旧 Pawn。
+	- Fix: 修复高级设置中服装预算/武器预算滑块展开导致下方 UI 内容截断的问题。
+	- Fix: 移除未完成的「RimTalk联动」按钮。
+	- Fix: 预览卡片左下角添加袭击点数显示。
+	- Fix: 物品库添加 Mass（质量）排序选项。
+	- Fix: 补全大量缺失的语言键（Category、SortField_Range/Damage/Mass、ForceOverrideHediffs、PawnGroupKind 系列等）。
+	- Fix: 移除重复图片资源，统一使用 Logo.png。
 
 v1.5.5
-- Fix: 修复加入mod后Pawn物品栏UI负重值不显示的问题。新增Patch_ITab_Pawn_Gear_Debug.cs，确保MassUtility方法在inventory为null时返回安全值而非抛出异常。
+	- Fix: 修复加入mod后Pawn物品栏UI负重值不显示的问题。新增Patch_ITab_Pawn_Gear_Debug.cs，确保MassUtility方法在inventory为null时返回安全值而非抛出异常。
 
 v1.5.4
-- Fix: Milira 补丁改用 LongEventHandler.QueueLongEvent 延迟应用，确保 Milira 程序集已加载后才执行补丁（之前 StaticConstructorOnStartup 时机太早导致补丁未生效）。
-- Fix: Milira 补丁改用独立 Harmony 实例，不再依赖 FactionGearCustomizerMod.HarmonyInstance（避免因初始化顺序导致 null）。
-- Fix: 扩展 Milira 头发渲染节点类型搜索，支持多种类型名称（PawnRenderNode_MilianHair / PawnRenderNode_MiliraHair / 包含"Hair"的 PawnRenderNode 子类）。
+	- Fix: Milira 补丁改用 LongEventHandler.QueueLongEvent 延迟应用，确保 Milira 程序集已加载后才执行补丁（之前 StaticConstructorOnStartup 时机太早导致补丁未生效）。
+	- Fix: Milira 补丁改用独立 Harmony 实例，不再依赖 FactionGearCustomizerMod.HarmonyInstance（避免因初始化顺序导致 null）。
+	- Fix: 扩展 Milira 头发渲染节点类型搜索，支持多种类型名称（PawnRenderNode_MilianHair / PawnRenderNode_MiliraHair / 包含"Hair"的 PawnRenderNode 子类）。
 
 v1.5.3
-- Fix: 新增统一名称安全工具 `DefDisplayNameUtility`，统一处理 `FactionDef` / `PawnKindDef` 的显示名解析、排序键生成和空值告警日志。
-- Fix: 设置窗口首帧相关链路（`FactionGearEditor`、`FactionListPanel`、`KindListPanel`）改为统一安全排序，避免异常 Def/翻译数据导致 `Failed to compare two elements in the array`。
-- Fix: 派系/兵种相关窗口（批量应用、创建派系实例、兵种选择器、旧版派系编辑窗口）改为复用安全名称解析，降低 mod 冲突或坏翻译触发 UI 空引用的概率。
-- Update: 同步更新 Index.md、Api.md、config.md 文档说明。
+	- Fix: 新增统一名称安全工具 `DefDisplayNameUtility`，统一处理 `FactionDef` / `PawnKindDef` 的显示名解析、排序键生成和空值告警日志。
+	- Fix: 设置窗口首帧相关链路（`FactionGearEditor`、`FactionListPanel`、`KindListPanel`）改为统一安全排序，避免异常 Def/翻译数据导致 `Failed to compare two elements in the array`。
+	- Fix: 派系/兵种相关窗口（批量应用、创建派系实例、兵种选择器、旧版派系编辑窗口）改为复用安全名称解析，降低 mod 冲突或坏翻译触发 UI 空引用的概率。
+	- Update: 同步更新 Index.md、Api.md、config.md 文档说明。
 
 v1.5.2
-- Fix: 优化语言回退热路径，语言变化时只更新一次回退链，避免在 UI 每帧大量重复归一语言名与分配枚举器。
-- Fix: 保持繁中优先退简中、其它语言退英文，同时降低未提供语言包环境下打开 mod 的性能开销。
+	- Fix: 优化语言回退热路径，语言变化时只更新一次回退链，避免在 UI 每帧大量重复归一语言名与分配枚举器。
+	- Fix: 保持繁中优先退简中、其它语言退英文，同时降低未提供语言包环境下打开 mod 的性能开销。
 
 v1.5.1
-- Fix: 新增语言文件回退链；当前语言缺少对应 Keyed 文件时自动回退到英文。
-- Fix: 繁体中文特殊处理为 ChineseTraditional -> ChineseSimplified -> English，避免繁中环境直接暴露语言键。
-- Update: 同步更新 LanguageManager、Index.md、Api.md、config.md 文档说明。
+	- Fix: 新增语言文件回退链；当前语言缺少对应 Keyed 文件时自动回退到英文。
+	- Fix: 繁体中文特殊处理为 ChineseTraditional -> ChineseSimplified -> English，避免繁中环境直接暴露语言键。
+	- Update: 同步更新 LanguageManager、Index.md、Api.md、config.md 文档说明。
 
 v1.5.0
-- Fix: 翻译加载链路切换为 RimWorld 原生 Keyed/DefInjected，第三方翻译 mod 可按标准方式覆盖本 mod UI 文本。
-- Fix: LanguageManager 降级为过渡包装层，不再从本 mod 私有 Strings.xml 直接加载文本。
-- Update: 中英文语言资源迁移到 1.6/Languages/*/Keyed/FactionGearCustomizer.xml。
-- Update: 同步更新 Index.md、Api.md、config.md，明确外部翻译接入方式。
+	- Fix: 翻译加载链路切换为 RimWorld 原生 Keyed/DefInjected，第三方翻译 mod 可按标准方式覆盖本 mod UI 文本。
+	- Fix: LanguageManager 降级为过渡包装层，不再从本 mod 私有 Strings.xml 直接加载文本。
+	- Update: 中英文语言资源迁移到 1.6/Languages/*/Keyed/FactionGearCustomizer.xml。
+	- Update: 同步更新 Index.md、Api.md、config.md，明确外部翻译接入方式。
 
 v1.4.7
-- Update: 优先套装策略改为按服装预算上限（max）构建核心套装，不再使用随机预算。
-- Update: 核心套装选择逻辑改为"超预算自动替换降级直到不超预算"（可行时）。
-- Add: 新增默认防具预算下限约束：核心防具价值（中层防护+外层）不低于预算的60%（可行时）。
-- Fix: 当无法同时满足"预算上限+防具60%"时，改为优先保持预算内并记录降级日志；若最低组合仍超预算则回退最低成本核心套装并告警。
-- Update: 同步更新中英提示文案、Index.md、Api.md、config.md。
+	- Update: 优先套装策略改为按服装预算上限（max）构建核心套装，不再使用随机预算。
+	- Update: 核心套装选择逻辑改为"超预算自动替换降级直到不超预算"（可行时）。
+	- Add: 新增默认防具预算下限约束：核心防具价值（中层防护+外层）不低于预算的60%（可行时）。
+	- Fix: 当无法同时满足"预算上限+防具60%"时，改为优先保持预算内并记录降级日志；若最低组合仍超预算则回退最低成本核心套装并告警。
+	- Update: 同步更新中英提示文案、Index.md、Api.md、config.md。
 v1.4.6
-- Add: 高级设置新增"先成套后升材质"开关（默认开启），支持兵种级独立控制。
-- Add: 服装生成改为两阶段流程：先生成核心层级套装，再根据剩余预算升级材质（不改款式、不改品质）。
-- Add: 简单模式接入同样的两阶段预算策略（合并 armors/apparel/others 后统一推断核心层级）。
-- Fix: 预算不足时，核心层级允许超预算保底穿齐，避免出现只穿一件高材质导致裸装。
-- Fix: Fail Fast 前置到剥离前校验；核心层级无法满足时直接退出本次服装流程并保留原穿着。
-- Fix: 批量应用 General 分类新增复制 OutfitFirstBudgetStrategy 字段，避免跨兵种复制时策略丢失。
-- Update: 新增中英语言键 `OutfitFirstBudgetStrategy` / `OutfitFirstBudgetStrategyTooltip`。
-- Update: 同步更新 Index.md、Api.md、config.md 文档说明。
+	- Add: 高级设置新增"先成套后升材质"开关（默认开启），支持兵种级独立控制。
+	- Add: 服装生成改为两阶段流程：先生成核心层级套装，再根据剩余预算升级材质（不改款式、不改品质）。
+	- Add: 简单模式接入同样的两阶段预算策略（合并 armors/apparel/others 后统一推断核心层级）。
+	- Fix: 预算不足时，核心层级允许超预算保底穿齐，避免出现只穿一件高材质导致裸装。
+	- Fix: Fail Fast 前置到剥离前校验；核心层级无法满足时直接退出本次服装流程并保留原穿着。
+	- Fix: 批量应用 General 分类新增复制 OutfitFirstBudgetStrategy 字段，避免跨兵种复制时策略丢失。
+	- Update: 新增中英语言键 `OutfitFirstBudgetStrategy` / `OutfitFirstBudgetStrategyTooltip`。
+	- Update: 同步更新 Index.md、Api.md、config.md 文档说明。
 v1.4.5
-- Fix: 重构 Hediff 应用链路，新增 HediffApplicationService/HediffPartResolver，统一校验、部位解析与应用流程。
-- Fix: 接入 HediffApplicationValidator 到实际应用前置校验，错误跳过并记录日志，警告继续记录。
-- Fix: 植入物部位选择改为严格优先级（手动 > 配方 > 映射 > 推断），无合法部位时跳过并告警，不再全身随机兜底。
-- Fix: 放行 AddedPart/Implant 应用，继续拦截 MissingPart 等高风险定义。
-- Fix: 池化与非池化 Hediff 统一走同一安全/部位逻辑，修复分支漂移。
-- Add: Hediff 编辑卡新增目标部位模式（自动/手动）与身体部位多选对话框。
-- Update: 新增中英语言键；新增 Index.md、Api.md、config.md 文档。
+	- Fix: 重构 Hediff 应用链路，新增 HediffApplicationService/HediffPartResolver，统一校验、部位解析与应用流程。
+	- Fix: 接入 HediffApplicationValidator 到实际应用前置校验，错误跳过并记录日志，警告继续记录。
+	- Fix: 植入物部位选择改为严格优先级（手动 > 配方 > 映射 > 推断），无合法部位时跳过并告警，不再全身随机兜底。
+	- Fix: 放行 AddedPart/Implant 应用，继续拦截 MissingPart 等高风险定义。
+	- Fix: 池化与非池化 Hediff 统一走同一安全/部位逻辑，修复分支漂移。
+	- Add: Hediff 编辑卡新增目标部位模式（自动/手动）与身体部位多选对话框。
+	- Update: 新增中英语言键；新增 Index.md、Api.md、config.md 文档。
 v1.4.4
-- Fix: 修复 `selectionChance` 与 hediff `chance` 的反序列化默认值，兼容旧配置，避免旧数据被读取为 0% 概率。
-- Fix: 修复多个条目/池命中同一物品时数量只取最大值的问题，改为按来源数量累加生成。
-- Fix: 修复"手动指定身体部位"分支绕过安全检查的问题，统一执行昏迷/失能防护判定。
-- Fix: 修复 `AnyAddiction` Hediff 池筛选条件，避免错误排除真实成瘾/耐受类 Hediff。
-- Fix: 修复 `AnyVegetable` 物品池筛选过窄问题，改为基于可食物类型标记筛选，提高命中准确性。
+	- Fix: 修复 `selectionChance` 与 hediff `chance` 的反序列化默认值，兼容旧配置，避免旧数据被读取为 0% 概率。
+	- Fix: 修复多个条目/池命中同一物品时数量只取最大值的问题，改为按来源数量累加生成。
+	- Fix: 修复"手动指定身体部位"分支绕过安全检查的问题，统一执行昏迷/失能防护判定。
+	- Fix: 修复 `AnyAddiction` Hediff 池筛选条件，避免错误排除真实成瘾/耐受类 Hediff。
+	- Fix: 修复 `AnyVegetable` 物品池筛选过窄问题，改为基于可食物类型标记筛选，提高命中准确性。
 
 v1.4.3
-- Fix: 修复 Pawn 生成时年龄配置读取逻辑，改为"存档配置优先、全局配置兜底"，避免运行中写入空配置污染全局设置。
-- Fix: 修复新建派系实例时关系覆写只读取全局配置的问题，现已与存档激活配置一致。
-- Fix: 修复 ResetAllFactions 仅恢复 Def 不恢复实例状态的问题，现会同时恢复运行中派系实例的名称、颜色与玩家关系。
-- Fix: 修复剧本配置与世界创建 Lite 编辑器应用后未立即生效的问题，改为走统一应用链路并即时刷新生效。
-- Fix: 修复首次提示窗口派系列表滚动状态每帧重置问题，并实现"不再询问"持久化逻辑。
+	- Fix: 修复 Pawn 生成时年龄配置读取逻辑，改为"存档配置优先、全局配置兜底"，避免运行中写入空配置污染全局设置。
+	- Fix: 修复新建派系实例时关系覆写只读取全局配置的问题，现已与存档激活配置一致。
+	- Fix: 修复 ResetAllFactions 仅恢复 Def 不恢复实例状态的问题，现会同时恢复运行中派系实例的名称、颜色与玩家关系。
+	- Fix: 修复剧本配置与世界创建 Lite 编辑器应用后未立即生效的问题，改为走统一应用链路并即时刷新生效。
+	- Fix: 修复首次提示窗口派系列表滚动状态每帧重置问题，并实现"不再询问"持久化逻辑。
 
 v1.4.2
-- Add: 在兵种异种设置中添加年龄设置选项（最小/最大年龄），优先级高于派系群组设置。
-- Add: 选择非战斗异种（如优侣种）时弹出警告提示，并支持强制放宽生成规则以允许生成。
-- Fix: 修复预览时异种设置不生效的问题（NRE修复及空值保护）。
-- Fix: 修复年龄设置在生成时未正确应用的问题（参数传递修复）。
-- Update: 优化异种设置界面的布局。
-- feat: 增强批量应用 — 支持按类别选择性复制与跨派系应用。
+	- Add: 在兵种异种设置中添加年龄设置选项（最小/最大年龄），优先级高于派系群组设置。
+	- Add: 选择非战斗异种（如优侣种）时弹出警告提示，并支持强制放宽生成规则以允许生成。
+	- Fix: 修复预览时异种设置不生效的问题（NRE修复及空值保护）。
+	- Fix: 修复年龄设置在生成时未正确应用的问题（参数传递修复）。
+	- Update: 优化异种设置界面的布局。
+	- feat: 增强批量应用 — 支持按类别选择性复制与跨派系应用。
 
 v1.4.1
--添加了单独修改pawn的xeno type的功能。
--修复了一个会导致item lib搜索栏无法使用的问题。
--修复了Any Hediff会导致pawn倒地的问题。
--修复了一个添加上限3700 items的问题。
--优化了用户体验。
+	-添加了单独修改pawn的xeno type的功能。
+	-修复了一个会导致item lib搜索栏无法使用的问题。
+	-修复了Any Hediff会导致pawn倒地的问题。
+	-修复了一个添加上限3700 items的问题。
+	-优化了用户体验。
 
 v1.4.0
-- Fix: 修复预览窗口关闭时销毁Pawn导致的错误 - 在销毁预览Pawn前先清空穿着的衣物，避免尝试销毁标记为不可销毁的物品（如Cybernetic Mod的植入物）
-- Fix: 修复PresetManagerWindow预览关闭时的销毁错误
-- Fix: 修复Dialog_PawnGroupGenerationPreview预览关闭时的销毁错误
-- Fix: 修复批量应用后源数据被清空的问题 - 传递给批量应用对话框前创建数据深拷贝，避免共享引用导致数据被意外修改
-- Fix: 修复预设导出合并模式丢失群组数据的问题
-- Fix: 修复预设导出覆盖模式后群组数据不完整的问题
-- Fix: 修复应用hediff时身体部位不存在导致的错误 - 添加空值检查和异常处理
-- Fix: 修复hediff选择器指定的身体部位在某些pawn上不存在的问题
-- Add: 导出派系时支持从预设获取数据 - 在预设管理器中选择预设后，点击导出会从该预设获取派系数据
-- Add: 导出成功后自动加载目标预设 - 如果当前激活的预设就是导出目标预设，导出成功后会自动应用该预设
-- Add: 预设管理器新增清空预设按钮 - 清空预设的所有数据但保留预设本身
+	- Fix: 修复预览窗口关闭时销毁Pawn导致的错误 - 在销毁预览Pawn前先清空穿着的衣物，避免尝试销毁标记为不可销毁的物品（如Cybernetic Mod的植入物）
+	- Fix: 修复PresetManagerWindow预览关闭时的销毁错误
+	- Fix: 修复Dialog_PawnGroupGenerationPreview预览关闭时的销毁错误
+	- Fix: 修复批量应用后源数据被清空的问题 - 传递给批量应用对话框前创建数据深拷贝，避免共享引用导致数据被意外修改
+	- Fix: 修复预设导出合并模式丢失群组数据的问题
+	- Fix: 修复预设导出覆盖模式后群组数据不完整的问题
+	- Fix: 修复应用hediff时身体部位不存在导致的错误 - 添加空值检查和异常处理
+	- Fix: 修复hediff选择器指定的身体部位在某些pawn上不存在的问题
+	- Add: 导出派系时支持从预设获取数据 - 在预设管理器中选择预设后，点击导出会从该预设获取派系数据
+	- Add: 导出成功后自动加载目标预设 - 如果当前激活的预设就是导出目标预设，导出成功后会自动应用该预设
+	- Add: 预设管理器新增清空预设按钮 - 清空预设的所有数据但保留预设本身
 
 v1.3.3
-- Fix: 修复同一次游戏运行中从一个存档退出后再新建第二个存档时数据残留的问题 - RemoveGlobalSettingsForNewSave() 现在无论新存档是否有自定义设置都会清理全局设置；RestoreAllFactionDefsToOriginal() 现在无论什么情况都会恢复所有 FactionDef 和 PawnKindDef 到原版状态，确保新存档总是在干净基础上应用
+	- Fix: 修复同一次游戏运行中从一个存档退出后再新建第二个存档时数据残留的问题 - RemoveGlobalSettingsForNewSave() 现在无论新存档是否有自定义设置都会清理全局设置；RestoreAllFactionDefsToOriginal() 现在无论什么情况都会恢复所有 FactionDef 和 PawnKindDef 到原版状态，确保新存档总是在干净基础上应用
 
 v1.3.2
-- Fix: 根据 persistence_preset_matrix.md 检查并修复预设持久化问题 - 在 PresetIOManager.ImportFromBase64()、FactionGearPreset.SaveFullFactionData()、FactionGearGameComponent.ApplyPresetToSave()、FactionGearGameComponent.ApplyFactionsFromPreset() 所有关键数据流转位置都添加 ResolveReferences() 调用，确保引用在任何场景下都有效
+	- Fix: 根据 persistence_preset_matrix.md 检查并修复预设持久化问题 - 在 PresetIOManager.ImportFromBase64()、FactionGearPreset.SaveFullFactionData()、FactionGearGameComponent.ApplyPresetToSave()、FactionGearGameComponent.ApplyFactionsFromPreset() 所有关键数据流转位置都添加 ResolveReferences() 调用，确保引用在任何场景下都有效
 
 v1.3.1
-- Fix: 彻底修复新存档数据残留问题 - 在 Startup 类中确保在任何 Def 修改前先调用 SaveAllOriginalData()，防止原始数据被上一个存档修改污染
-- Fix: 彻底修复新游戏时装备/物品引用丢失问题 - 重构 SpecRequirementEdit 和 ForcedHediff，保存 defName 而非仅在序列化时转换，添加防御性编程在访问时自动重新解析引用，增加 ResolveReferences() 显式解析方法确保在数据同步、深拷贝等场景下引用有效
+	- Fix: 彻底修复新存档数据残留问题 - 在 Startup 类中确保在任何 Def 修改前先调用 SaveAllOriginalData()，防止原始数据被上一个存档修改污染
+	- Fix: 彻底修复新游戏时装备/物品引用丢失问题 - 重构 SpecRequirementEdit 和 ForcedHediff，保存 defName 而非仅在序列化时转换，添加防御性编程在访问时自动重新解析引用，增加 ResolveReferences() 显式解析方法确保在数据同步、深拷贝等场景下引用有效
 
 v1.3.0
-- Add: 预览按钮新增未保存修改确认对话框 - 点击预览时如有未保存修改，会弹出确认对话框询问是否保存
-- Add: 预览对话框添加自动保存开关 - 勾选"预览前自动保存"后，后续预览将自动保存而不再询问
+	- Add: 预览按钮新增未保存修改确认对话框 - 点击预览时如有未保存修改，会弹出确认对话框询问是否保存
+	- Add: 预览对话框添加自动保存开关 - 勾选"预览前自动保存"后，后续预览将自动保存而不再询问
 
 v1.2.9
-- Fix: 重新设计Inventory应用机制 - 移除复杂的恢复机制，改用简洁的多次延迟应用策略，确保物品最终能正确保留
-- Fix: 简化ApplyInventory逻辑 - ApplyInventoryOnce()负责单次应用，ScheduleDelayedInventoryApply()负责连续3次延迟应用，避免时间竞争问题
+	- Fix: 重新设计Inventory应用机制 - 移除复杂的恢复机制，改用简洁的多次延迟应用策略，确保物品最终能正确保留
+	- Fix: 简化ApplyInventory逻辑 - ApplyInventoryOnce()负责单次应用，ScheduleDelayedInventoryApply()负责连续3次延迟应用，避免时间竞争问题
 
 v1.2.8
-- Fix: 彻底修复Inventory恢复机制 - 新增InventoryItemState跟踪期望数量，GetItemCountInInventory计算当前数量，只在缺少时重新添加，避免"Tried to add ... to ThingOwner but this item is already here"警告
-- Fix: 优化恢复逻辑 - 只有当实际恢复了物品时才继续下一轮恢复，避免不必要的延迟执行
+	- Fix: 彻底修复Inventory恢复机制 - 新增InventoryItemState跟踪期望数量，GetItemCountInInventory计算当前数量，只在缺少时重新添加，避免"Tried to add ... to ThingOwner but this item is already here"警告
+	- Fix: 优化恢复逻辑 - 只有当实际恢复了物品时才继续下一轮恢复，避免不必要的延迟执行
 
 v1.2.7
-- Fix: ForceOnlySelected模式现在也会清空pawn原有的Hediffs - 只保留用户配置的（保留Mech开头的机械hediff）
+	- Fix: ForceOnlySelected模式现在也会清空pawn原有的Hediffs - 只保留用户配置的（保留Mech开头的机械hediff）
 
 v1.2.6
-- Fix: ForceOnlySelected模式现在会清理pawn默认的库存物品 - 只保留用户配置的物品
+	- Fix: ForceOnlySelected模式现在会清理pawn默认的库存物品 - 只保留用户配置的物品
 
 v1.2.5
-- Fix: 修复Inventory恢复机制导致的无限循环问题 - 添加恢复次数限制（最多3次），避免性能问题和无限重试
+	- Fix: 修复Inventory恢复机制导致的无限循环问题 - 添加恢复次数限制（最多3次），避免性能问题和无限重试
 
 v1.2.4
-- Fix: 修复Hediff选择器缺少药物high等正面buff选项的问题 - IsCandidate现在允许所有Hediff，新增DrugHighs和Buffs分类
-- Fix: 修复"Try to restore null body part"错误 - 对特殊Hediff（如药物highs）不指定BodyPart，增加异常处理
-- Fix: 实现更彻底的Inventory物品恢复机制 - 不仅验证，还会自动重新添加被游戏逻辑移除的物品（药品、食物等）
-- Add: 新增InventoryRestoreData类和相关恢复逻辑，确保配置的物品最终能正确保留
+	- Fix: 修复Hediff选择器缺少药物high等正面buff选项的问题 - IsCandidate现在允许所有Hediff，新增DrugHighs和Buffs分类
+	- Fix: 修复"Try to restore null body part"错误 - 对特殊Hediff（如药物highs）不指定BodyPart，增加异常处理
+	- Fix: 实现更彻底的Inventory物品恢复机制 - 不仅验证，还会自动重新添加被游戏逻辑移除的物品（药品、食物等）
+	- Add: 新增InventoryRestoreData类和相关恢复逻辑，确保配置的物品最终能正确保留
 
 v1.2.3
-- Fix: 修复ForcedHediff无法应用药物high效果的问题 - 现在会正确使用severityRange设置Hediff严重度
-- Fix: 增强Inventory物品添加的健壮性 - 添加特殊物品过滤、添加日志记录、实现延迟验证机制
-- Fix: 防止在Inventory选择器中选择和添加尸体（Corpse） - 避免导致错误
-- Add: 添加Inventory物品验证机制 - 通过LongEventHandler在下一帧验证物品是否仍然存在，便于调试
+	- Fix: 修复ForcedHediff无法应用药物high效果的问题 - 现在会正确使用severityRange设置Hediff严重度
+	- Fix: 增强Inventory物品添加的健壮性 - 添加特殊物品过滤、添加日志记录、实现延迟验证机制
+	- Fix: 防止在Inventory选择器中选择和添加尸体（Corpse） - 避免导致错误
+	- Add: 添加Inventory物品验证机制 - 通过LongEventHandler在下一帧验证物品是否仍然存在，便于调试
 
 v1.2.2
-- Fix: 修复Wiki语言设置不生效问题（Wiki语言定义已添加到Language目录）
-- Add: Wiki UI美化：添加标题栏、分段着色显示、优化排版布局
+	- Fix: 修复Wiki语言设置不生效问题（Wiki语言定义已添加到Language目录）
+	- Add: Wiki UI美化：添加标题栏、分段着色显示、优化排版布局
 
 v1.2.1
-- Add: 主界面toolbar新增迷你Wiki按钮，包含工作原理、名词解释、典型工作流和注意事项四个标签页。
-- Add: 新增WikiWindow.cs实现Wiki窗口UI。
-- Add: 新增多语言支持（中英文）用于Wiki内容。
+	- Add: 主界面toolbar新增迷你Wiki按钮，包含工作原理、名词解释、典型工作流和注意事项四个标签页。
+	- Add: 新增WikiWindow.cs实现Wiki窗口UI。
+	- Add: 新增多语言支持（中英文）用于Wiki内容。
 
 v1.1.67
-- Optimize: 优化高级模式下物品卡片UI高度计算，改为根据实际内容动态计算高度，减少留白。
-- Optimize: ItemCardUI、ApparelCardUI、HediffCardUI 新增 GetCardHeight 静态方法，支持动态高度计算。
-- Fix: 删除错误的 GameComponents.xml 文件（GameComponentDef 不是有效的 Def 类型）。
-- Add: 新增 Patch_GameComponent.cs，使用 Harmony Patch 正确注册 FactionGearGameComponent。
+	- Optimize: 优化高级模式下物品卡片UI高度计算，改为根据实际内容动态计算高度，减少留白。
+	- Optimize: ItemCardUI、ApparelCardUI、HediffCardUI 新增 GetCardHeight 静态方法，支持动态高度计算。
+	- Fix: 删除错误的 GameComponents.xml 文件（GameComponentDef 不是有效的 Def 类型）。
+	- Add: 新增 Patch_GameComponent.cs，使用 Harmony Patch 正确注册 FactionGearGameComponent。
 
 v1.1.66
-- Add: 新增功能：检测到当前无生效预设时自动清除所有配置文件，避免残留配置影响新游戏。
+	- Add: 新增功能：检测到当前无生效预设时自动清除所有配置文件，避免残留配置影响新游戏。
 
 v1.1.65
-- Change: 将"科技预算"改为"科技限制"，使用原版TechLevel枚举（原始/中世纪/工业/太空/超凡/远古）。
-- Add: 科技限制默认读取派系默认科技等级，可手动选择不同等级限制生成高于该等级的物品。
-- Add: 新增语言条目：TechLevelLimit。
+	- Change: 将"科技预算"改为"科技限制"，使用原版TechLevel枚举（原始/中世纪/工业/太空/超凡/远古）。
+	- Add: 科技限制默认读取派系默认科技等级，可手动选择不同等级限制生成高于该等级的物品。
+	- Add: 新增语言条目：TechLevelLimit。
 
 v1.1.64
-- Add: 添加异种人概率总和验证，当概率总和超过100%时阻止保存并提示用户。
-- Add: 新增语言条目：XenotypeChancesExceed100。
+	- Add: 添加异种人概率总和验证，当概率总和超过100%时阻止保存并提示用户。
+	- Add: 新增语言条目：XenotypeChancesExceed100。
 
 v1.1.63
-- Fix: 修复"重置所有"后仍然能看到以前修改的派系数据的问题。现在在重置后会清除所有缓存和会话状态，确保UI正确刷新。
+	- Fix: 修复"重置所有"后仍然能看到以前修改的派系数据的问题。现在在重置后会清除所有缓存和会话状态，确保UI正确刷新。
 
 v1.1.62
-- Add: 派系编辑菜单新增删除派系功能，可安全移除派系及其据点，包含二次确认界面。
-- Add: 新增语言条目：DeleteFactionTitle, DeleteFactionWarning, TargetFaction, SettlementsToRemove, PawnsToRemove, OtherEffects, FactionRelationsRemoved, ActiveQuestsAffected, DeleteFaction, DangerZone, NoFactionInstanceToDelete, FactionDeleted, FactionDeleteFailed, SelectFactionInstanceToDelete, SelectInstance, Next, Settlements, UnknownLocation。
+	- Add: 派系编辑菜单新增删除派系功能，可安全移除派系及其据点，包含二次确认界面。
+	- Add: 新增语言条目：DeleteFactionTitle, DeleteFactionWarning, TargetFaction, SettlementsToRemove, PawnsToRemove, OtherEffects, FactionRelationsRemoved, ActiveQuestsAffected, DeleteFaction, DangerZone, NoFactionInstanceToDelete, FactionDeleted, FactionDeleteFailed, SelectFactionInstanceToDelete, SelectInstance, Next, Settlements, UnknownLocation。
 
 v1.1.61
-- Add: 派系编辑菜单新增玩家关系设置功能，允许玩家设定自身与派系的关系为结盟/中立/敌对。
-- Add: 新增语言条目：PlayerRelationSettings, RelationAlly, RelationNeutral, RelationHostile, RelationCurrent, RelationDefault。
+	- Add: 派系编辑菜单新增玩家关系设置功能，允许玩家设定自身与派系的关系为结盟/中立/敌对。
+	- Add: 新增语言条目：PlayerRelationSettings, RelationAlly, RelationNeutral, RelationHostile, RelationCurrent, RelationDefault。
 
 v1.1.60
-- Optimize: 预览窗口多预览模式改为分帧生成Pawn，避免打开时卡顿。
-- Optimize: Hediff卡片控件ID改为基于对象生成，降低控件ID冲突风险。
-- Refactor: 重构派系列表构建逻辑，消除重复代码并统一过滤/显示规则。
-- Optimize: 新增EditorSession.ResetSession，在游戏状态切换时自动重置会话状态。
+	- Optimize: 预览窗口多预览模式改为分帧生成Pawn，避免打开时卡顿。
+	- Optimize: Hediff卡片控件ID改为基于对象生成，降低控件ID冲突风险。
+	- Refactor: 重构派系列表构建逻辑，消除重复代码并统一过滤/显示规则。
+	- Optimize: 新增EditorSession.ResetSession，在游戏状态切换时自动重置会话状态。
 v1.1.59
-- Optimize: 优化 FactionGearManager.LoadDefaultPresets 为按需加载 (Lazy Loading)，仅在用户点击某个阵营时才加载该阵营的详细数据，提升启动性能。
-- Fix: 增强 GearApplier.ApplyCustomGear 的异常捕获 (try-catch)，防止 Patch 注入点报错打断 Pawn 生成流程。
-- Update: 移除 FactionGearManager.GetModGroup 相关功能及引用，简化代码。
+	- Optimize: 优化 FactionGearManager.LoadDefaultPresets 为按需加载 (Lazy Loading)，仅在用户点击某个阵营时才加载该阵营的详细数据，提升启动性能。
+	- Fix: 增强 GearApplier.ApplyCustomGear 的异常捕获 (try-catch)，防止 Patch 注入点报错打断 Pawn 生成流程。
+	- Update: 移除 FactionGearManager.GetModGroup 相关功能及引用，简化代码。
 v1.1.58
-- Update: 将"服饰颜色"选项更名为"名称颜色"，并添加了相关说明提示。
-- Add: 在高级设置中新增"RimTalk联动"按钮（暂未开放，显示为开发中）。
+	- Update: 将"服饰颜色"选项更名为"名称颜色"，并添加了相关说明提示。
+	- Add: 在高级设置中新增"RimTalk联动"按钮（暂未开放，显示为开发中）。
 v1.1.57
-- Fix: 修复"在地图上选择"功能因调用旧方法而导致的 NullReferenceException。现在该功能使用新的 FactionSpawnWindow 逻辑。
+	- Fix: 修复"在地图上选择"功能因调用旧方法而导致的 NullReferenceException。现在该功能使用新的 FactionSpawnWindow 逻辑。
 v1.1.56
-- Build: Release build.
+	- Build: Release build.
 v1.1.55
-- Fix: Fixed TopBar not showing in MainTabWindow.
+	- Fix: Fixed TopBar not showing in MainTabWindow.
 v1.1.54
-- Add: 新增"在地图上选择"据点功能 (FactionSpawnWindow)，参考 WorldEdit 实现，支持在世界地图上连续点击生成据点。
-- Update: 替换原有的 WorldTargeter 选择方式，改为更直观的非模态窗口交互。
+	- Add: 新增"在地图上选择"据点功能 (FactionSpawnWindow)，参考 WorldEdit 实现，支持在世界地图上连续点击生成据点。
+	- Update: 替换原有的 WorldTargeter 选择方式，改为更直观的非模态窗口交互。
 v1.1.53
-- Fix: 修复 FactionSpawnManager 中切换 World 标签页时可能发生的 NullReferenceException，增加对 MainButtonDefOf.World.TabWindow 的空值检查和自动修复逻辑。
+	- Fix: 修复 FactionSpawnManager 中切换 World 标签页时可能发生的 NullReferenceException，增加对 MainButtonDefOf.World.TabWindow 的空值检查和自动修复逻辑。
 v1.1.52
-- Fix: 修复 FactionSpawnManager.BeginTargetingForSettlement 中 World Tab 无法切换的问题，增加了回退机制（尝试使用 Inspect 窗口作为占位符，防止空指针）。
-- Fix: 修复 FactionSpawnManager.BeginTargetingForSettlement 中可能出现的 NullReferenceException，增加详细的调试日志和空值检查。
-- Fix: 修复 Dialog_PawnKindPicker 中访问 defaultFactionType 属性可能导致的编译错误。
-- Update: 派系编辑窗口 (FactionEditWindow) 移除选项卡设计，改为单页长滚动布局，集中展示设置、兵种列表和群组列表。
+	- Fix: 修复 FactionSpawnManager.BeginTargetingForSettlement 中 World Tab 无法切换的问题，增加了回退机制（尝试使用 Inspect 窗口作为占位符，防止空指针）。
+	- Fix: 修复 FactionSpawnManager.BeginTargetingForSettlement 中可能出现的 NullReferenceException，增加详细的调试日志和空值检查。
+	- Fix: 修复 Dialog_PawnKindPicker 中访问 defaultFactionType 属性可能导致的编译错误。
+	- Update: 派系编辑窗口 (FactionEditWindow) 移除选项卡设计，改为单页长滚动布局，集中展示设置、兵种列表和群组列表。
 v1.1.51
-- Update: 预览界面中，鼠标悬浮1秒后才显示悬浮信息卡 (装备栏)，避免快速移动鼠标时频繁弹出窗口。
+	- Update: 预览界面中，鼠标悬浮1秒后才显示悬浮信息卡 (装备栏)，避免快速移动鼠标时频繁弹出窗口。
 v1.1.50
-- Fix: 修复游戏外编辑器界面强制忽略选项重复显示的问题。
-- Update: Mod 选项页直接进入编辑器，不再需要点击 Open Editor。
-- Update: 底部主按钮点击后打开非全屏编辑器窗口。
+	- Fix: 修复游戏外编辑器界面强制忽略选项重复显示的问题。
+	- Update: Mod 选项页直接进入编辑器，不再需要点击 Open Editor。
+	- Update: 底部主按钮点击后打开非全屏编辑器窗口。
 v1.1.49
-- Fix: 修复高级模式下添加武器时因消息类型为空导致的界面崩溃 (NullReferenceException)。
-- Fix: 优化默认武器添加逻辑，增加安全检查防止因 "Gun_AssaultRifle" 缺失导致的问题。
+	- Fix: 修复高级模式下添加武器时因消息类型为空导致的界面崩溃 (NullReferenceException)。
+	- Fix: 优化默认武器添加逻辑，增加安全检查防止因 "Gun_AssaultRifle" 缺失导致的问题。
 v1.1.48
-- Fix: 修复主界面和编辑面板中 Reset 按钮重复显示的问题。
-- Add: 新增 CE 弹药口径筛选功能 (ItemLibrary)，支持按口径过滤远程武器。
-- Fix: 调整 Mod 加载顺序，确保在 Combat Extended 之后加载。
+	- Fix: 修复主界面和编辑面板中 Reset 按钮重复显示的问题。
+	- Add: 新增 CE 弹药口径筛选功能 (ItemLibrary)，支持按口径过滤远程武器。
+	- Fix: 调整 Mod 加载顺序，确保在 Combat Extended 之后加载。
 v1.1.47
-- Fix: 修复了 Preset 加载时可能因语言文件加载失败导致的界面崩溃 (NullReferenceException)。
-- Fix: 恢复了点击 MainTab 直接打开编辑器的逻辑，不再弹出全屏设置窗口。
+	- Fix: 修复了 Preset 加载时可能因语言文件加载失败导致的界面崩溃 (NullReferenceException)。
+	- Fix: 恢复了点击 MainTab 直接打开编辑器的逻辑，不再弹出全屏设置窗口。
 v1.1.46
-- Add: 新增 Inventory (物品清单) 支持，允许配置药品、食物、工具等任意物品。
-- Add: 兼容 Combat Extended (CE)，支持自动添加武器弹药、显示物品体积 (Bulk) 和重量 (Mass)。
-- Add: 支持配置物品的堆叠数量范围 (Count Range)。
+	- Add: 新增 Inventory (物品清单) 支持，允许配置药品、食物、工具等任意物品。
+	- Add: 兼容 Combat Extended (CE)，支持自动添加武器弹药、显示物品体积 (Bulk) 和重量 (Mass)。
+	- Add: 支持配置物品的堆叠数量范围 (Count Range)。
 v1.1.45
-- Update: 将底部按钮打开的界面从全屏 Tab 模式更改为标准 Mod 设置弹窗模式，提升用户体验。
-- Add: 新增 FactionGearSettingsWindow 类，实现标准的设置窗口逻辑（支持暂停游戏、居中显示、关闭确认等）。
+	- Update: 将底部按钮打开的界面从全屏 Tab 模式更改为标准 Mod 设置弹窗模式，提升用户体验。
+	- Add: 新增 FactionGearSettingsWindow 类，实现标准的设置窗口逻辑（支持暂停游戏、居中显示、关闭确认等）。
 v1.1.44
-- Fix: 移除 KindListPanel 中非标准的手动滚轮处理代码，解决列表滑动条无法鼠标拖动的问题。
+	- Fix: 移除 KindListPanel 中非标准的手动滚轮处理代码，解决列表滑动条无法鼠标拖动的问题。
 v1.1.43
-- Fix: 删除 Patch_ModSettingsTitleIcon.cs，该补丁错误地将主界面识别为目标并强制绘制了标题和图标，导致顶部出现不可移除的标题栏。
+	- Fix: 删除 Patch_ModSettingsTitleIcon.cs，该补丁错误地将主界面识别为目标并强制绘制了标题和图标，导致顶部出现不可移除的标题栏。
 v1.1.42
-- Fix: 在 PreOpen 中强制清空 optionalTitle，防止 RimWorld 绘制原生窗口标题及关闭按钮。
+	- Fix: 在 PreOpen 中强制清空 optionalTitle，防止 RimWorld 绘制原生窗口标题及关闭按钮。
 v1.1.41
-- Fix: 进一步强制主界面 WindowOnGUI 的绘制区域从屏幕顶部 (0,0) 开始，解决部分情况下 windowRect 偏移导致的顶部留白问题；同时减小内容边距。
+	- Fix: 进一步强制主界面 WindowOnGUI 的绘制区域从屏幕顶部 (0,0) 开始，解决部分情况下 windowRect 偏移导致的顶部留白问题；同时减小内容边距。
 v1.1.40
-- Fix: 彻底移除主界面上方空白，重写 WindowOnGUI 接管绘制。
-- Fix: 移除 Mod 设置界面中重复的标题文本，优化 TopBarPanel 布局。
+	- Fix: 彻底移除主界面上方空白，重写 WindowOnGUI 接管绘制。
+	- Fix: 移除 Mod 设置界面中重复的标题文本，优化 TopBarPanel 布局。
 v1.1.39
-- Build: Release build.
+	- Build: Release build.
 v1.1.38
-- Fix: 最高优先级处理顶部留白：移除主界面自定义 TopBar，恢复游戏原生标题栏；将保存/预设/重置等按钮移动到编辑面板顶部，避免额外占用窗口顶部高度。
+	- Fix: 最高优先级处理顶部留白：移除主界面自定义 TopBar，恢复游戏原生标题栏；将保存/预设/重置等按钮移动到编辑面板顶部，避免额外占用窗口顶部高度。
 v1.1.37
-- Fix: 彻底移除主界面窗口的原生标题栏与顶部留白：对 FactionGearMainTabWindow 接管 WindowOnGUI，绕过 GUI.Window 固定标题栏高度，改为 BeginGroup+自绘内容。
+	- Fix: 彻底移除主界面窗口的原生标题栏与顶部留白：对 FactionGearMainTabWindow 接管 WindowOnGUI，绕过 GUI.Window 固定标题栏高度，改为 BeginGroup+自绘内容。
 v1.1.36
-- Fix: 增强主界面重复标题抑制的鲁棒性：将补丁前置设为 Priority.Last，并同时拦截 Window.InnerWindowOnGUI，降低被其他 Mod 覆盖导致的重复标题概率。
+	- Fix: 增强主界面重复标题抑制的鲁棒性：将补丁前置设为 Priority.Last，并同时拦截 Window.InnerWindowOnGUI，降低被其他 Mod 覆盖导致的重复标题概率。
 v1.1.35
-- Fix: 彻底修复主界面重复标题问题。通过 Harmony Patch 拦截 Window.WindowOnGUI，强制禁用 FactionGearMainTabWindow 的系统默认标题绘制逻辑。
+	- Fix: 彻底修复主界面重复标题问题。通过 Harmony Patch 拦截 Window.WindowOnGUI，强制禁用 FactionGearMainTabWindow 的系统默认标题绘制逻辑。
 v1.1.34
-- Fix: 增强 FactionGearMainTabWindow 的标题隐藏逻辑，在 PreOpen、PostOpen 和 DoWindowContents 中强制将 optionalTitle 设为空格，彻底解决重复标题问题。
+	- Fix: 增强 FactionGearMainTabWindow 的标题隐藏逻辑，在 PreOpen、PostOpen 和 DoWindowContents 中强制将 optionalTitle 设为空格，彻底解决重复标题问题。
 v1.1.33
-- Fix: 禁用 FactionGearMainTabWindow 的系统默认标题绘制，解决主界面顶部出现"巨大的重复标题"问题。
+	- Fix: 禁用 FactionGearMainTabWindow 的系统默认标题绘制，解决主界面顶部出现"巨大的重复标题"问题。
 v1.1.32
-- Fix: 彻底修复主界面重复标题问题，通过重写 Title 属性确保原生标题不被绘制。
+	- Fix: 彻底修复主界面重复标题问题，通过重写 Title 属性确保原生标题不被绘制。
 v1.1.31
-- Fix: 修复 FactionGearMainTabWindow 在某些情况下可能出现重复标题的问题。
-- Optimize: 重写 WindowOnGUI 方法，在绘制前清除 optionalTitle，确保界面整洁。
+	- Fix: 修复 FactionGearMainTabWindow 在某些情况下可能出现重复标题的问题。
+	- Optimize: 重写 WindowOnGUI 方法，在绘制前清除 optionalTitle，确保界面整洁。
 v1.1.30
-- Update: 恢复主界面顶部 "FactionGearCustomizer" 标题显示，采用单行紧凑布局，消除顶部多余空白。
+	- Update: 恢复主界面顶部 "FactionGearCustomizer" 标题显示，采用单行紧凑布局，消除顶部多余空白。
 v1.1.29
-- Update: 优化主界面顶部栏布局，精简按钮文本，修复UI重叠问题，并移除了顶部多余空白。
+	- Update: 优化主界面顶部栏布局，精简按钮文本，修复UI重叠问题，并移除了顶部多余空白。
 v1.1.28
-- Update: 移除了主界面顶部的 "Faction Gear Customizer" 标题文本，优化空间利用。
+	- Update: 移除了主界面顶部的 "Faction Gear Customizer" 标题文本，优化空间利用。
 v1.1.27
-- Refactor: 重构 UI 结构，提取顶部工具栏为 TopBarPanel 组件，优化代码模块化。
+	- Refactor: 重构 UI 结构，提取顶部工具栏为 TopBarPanel 组件，优化代码模块化。
 v1.1.26
-- Fix: 修复标题栏 Logo 坐标系错误导致飞到屏幕角落。
-- Update: 主界面标题行将 Logo 放到标题右侧，并移除顶部多余留空。
+	- Fix: 修复标题栏 Logo 坐标系错误导致飞到屏幕角落。
+	- Update: 主界面标题行将 Logo 放到标题右侧，并移除顶部多余留空。
 v1.1.25
-- Fix: 调整设置窗口标题区域绘制，使 Logo 与标题在同一行显示。
+	- Fix: 调整设置窗口标题区域绘制，使 Logo 与标题在同一行显示。
 v1.1.24
-- Update: 优化派系设置界面，将派系图标和名称调整为同一行显示。
+	- Update: 优化派系设置界面，将派系图标和名称调整为同一行显示。
 v1.1.23
-- Update: 移除了 Mod 设置界面中重复的标题文本，优化了 UI 布局。
+	- Update: 移除了 Mod 设置界面中重复的标题文本，优化了 UI 布局。
 v1.1.22
-- Fix: 修复随机生成据点时可能生成在海里（无效地形）的问题。
+	- Fix: 修复随机生成据点时可能生成在海里（无效地形）的问题。
 v1.1.21
-- Update: Maintenance build.
+	- Update: Maintenance build.
 v1.1.20
-- Fix: 修复 Mod 选项界面 Logo 丢失的问题，现在会显示 Logo。
+	- Fix: 修复 Mod 选项界面 Logo 丢失的问题，现在会显示 Logo。
 v1.1.19
-- Update: Maintenance build.
+	- Update: Maintenance build.
 v1.1.18
-- Update: 修改底部按钮图标，不再使用原版派系图标，改为使用自定义图标。
-- Update: 为 Mod 设置列表添加图标 (modIconPath)。
-- Update: 简化 Mod 简介，并注明包含中文汉化。
+	- Update: 修改底部按钮图标，不再使用原版派系图标，改为使用自定义图标。
+	- Update: 为 Mod 设置列表添加图标 (modIconPath)。
+	- Update: 简化 Mod 简介，并注明包含中文汉化。
 v1.1.17
-- Update: 调整装备编辑器 UI 布局，将平均价值和平均权重信息移至底部，修复显示不全的问题。
-- Fix: 修复预设管理器 (PresetManagerWindow) 编译错误，解决内部类引用问题。
+	- Update: 调整装备编辑器 UI 布局，将平均价值和平均权重信息移至底部，修复显示不全的问题。
+	- Fix: 修复预设管理器 (PresetManagerWindow) 编译错误，解决内部类引用问题。
 v1.1.16
-- Update: 移除了游戏初始化时可能弹出的日志信息，避免干扰用户。
-- Optimize: 优化了图标和语言文件缺失时的日志记录，不再弹出警告窗口。
+	- Update: 移除了游戏初始化时可能弹出的日志信息，避免干扰用户。
+	- Optimize: 优化了图标和语言文件缺失时的日志记录，不再弹出警告窗口。
 v1.1.15
-- Fix: 修复派系编辑菜单顶部选项卡（Settings/PawnKinds）无法点击的问题。调整了 Tab 绘制位置，使其正确显示在窗口内容区域内。
+	- Fix: 修复派系编辑菜单顶部选项卡（Settings/PawnKinds）无法点击的问题。调整了 Tab 绘制位置，使其正确显示在窗口内容区域内。
 v1.1.14
-- Update: 修改默认排序方式为按"市场价值"降序
-- Update: 将价值筛选范围默认设置为最大覆盖范围
+	- Update: 修改默认排序方式为按"市场价值"降序
+	- Update: 将价值筛选范围默认设置为最大覆盖范围
 v1.1.14
-- Fix: 修复 MainButtonWorker_FactionGear 中激活逻辑，改用 Find.MainTabsRoot.ToggleTab(def) 代替手动 WindowStack.Add，解决了因 MainTabWindow.def 未赋值导致的 NullReferenceException 崩溃。
-- Fix: 为 MainButtonDef 添加 iconPath，修复主界面按钮缺失图标的错误。
+	- Fix: 修复 MainButtonWorker_FactionGear 中激活逻辑，改用 Find.MainTabsRoot.ToggleTab(def) 代替手动 WindowStack.Add，解决了因 MainTabWindow.def 未赋值导致的 NullReferenceException 崩溃。
+	- Fix: 为 MainButtonDef 添加 iconPath，修复主界面按钮缺失图标的错误。
 v1.1.13
-- Fix: 修复 FactionGearManager 中 GetWeaponDamage 方法在 RimWorld 1.5/1.6 版本因 GetDamageAmount API 移除导致的 MissingMethodException 崩溃问题。
-- Fix: 为 MainButtonDef 添加 iconPath，修复主界面按钮缺失图标的错误。
+	- Fix: 修复 FactionGearManager 中 GetWeaponDamage 方法在 RimWorld 1.5/1.6 版本因 GetDamageAmount API 移除导致的 MissingMethodException 崩溃问题。
+	- Fix: 为 MainButtonDef 添加 iconPath，修复主界面按钮缺失图标的错误。
 v1.1.12
-- Fix: 修复物品库中部分头部装备和可装备神器不显示的问题。问题原因是缓存过滤逻辑要求所有服装必须有apparel.layers属性，导致VE Hats和Rags等没有设置layers的装备被完全排除
-- Fix: 优化缓存过滤逻辑，允许apparel.layers为null或空列表的服装也能正确归类
+	- Fix: 修复物品库中部分头部装备和可装备神器不显示的问题。问题原因是缓存过滤逻辑要求所有服装必须有apparel.layers属性，导致VE Hats和Rags等没有设置layers的装备被完全排除
+	- Fix: 优化缓存过滤逻辑，允许apparel.layers为null或空列表的服装也能正确归类
 v1.1.11
-- Optimize: 优化 FactionGearEditor.cs，将 DrawTopBar 方法拆分为更小的模块方法，提升代码可维护性
-- Optimize: 简化缓存逻辑，移除冗余的本地缓存字段，委托给 FactionGearManager 处理
-- Optimize: 提取 FloatMenu 选项构建逻辑到独立方法 BuildResetMenuOptions
+	- Optimize: 优化 FactionGearEditor.cs，将 DrawTopBar 方法拆分为更小的模块方法，提升代码可维护性
+	- Optimize: 简化缓存逻辑，移除冗余的本地缓存字段，委托给 FactionGearManager 处理
+	- Optimize: 提取 FloatMenu 选项构建逻辑到独立方法 BuildResetMenuOptions
 v1.1.10
-- Add: 点击右上角版本号可打开版本日志窗口，窗口内显示更新历史并提供"给我点赞"按钮跳转Steam创意工坊页面
+	- Add: 点击右上角版本号可打开版本日志窗口，窗口内显示更新历史并提供"给我点赞"按钮跳转Steam创意工坊页面
 v1.1.9
-- Fix: 修复 FactionEditWindow 打开时的 NullReferenceException 错误，增强了空值检查
+	- Fix: 修复 FactionEditWindow 打开时的 NullReferenceException 错误，增强了空值检查
 v1.1.8
-- Fix: 当前没有预设生效时，点击保存/应用按钮会自动跳转到新建预设界面，并提示用户创建预设。
+	- Fix: 当前没有预设生效时，点击保存/应用按钮会自动跳转到新建预设界面，并提示用户创建预设。
 v1.1.7
-- Update: Maintenance build.
+	- Update: Maintenance build.
 v1.1.6
-- Fix: 修复进入游戏后 "In-Game" 选项虽然勾选但派系名称列表未自动刷新的问题。现在从主菜单进入游戏时会自动刷新列表。
+	- Fix: 修复进入游戏后 "In-Game" 选项虽然勾选但派系名称列表未自动刷新的问题。现在从主菜单进入游戏时会自动刷新列表。
 v1.1.5
-- Update: 进入游戏后自动勾选 "In-Game" 按钮（默认使用游戏内派系名称）。
+	- Update: 进入游戏后自动勾选 "In-Game" 按钮（默认使用游戏内派系名称）。
 v1.1.4
-- Add: 新增 Faction Edit 功能，允许修改派系名称、图标和颜色
-- Add: 新增 FactionDefManager 管理器，处理运行时 Def 修改
-- Add: 预设系统支持保存派系静态数据修改
+	- Add: 新增 Faction Edit 功能，允许修改派系名称、图标和颜色
+	- Add: 新增 FactionDefManager 管理器，处理运行时 Def 修改
+	- Add: 预设系统支持保存派系静态数据修改
 v1.1.3
-- Add: 新增Language文件夹，包含English和SimplifiedChinese完整翻译文件
-- Add: 新增LanguageManager语言管理器，支持游戏语言自动检测
+	- Add: 新增Language文件夹，包含English和SimplifiedChinese完整翻译文件
+	- Add: 新增LanguageManager语言管理器，支持游戏语言自动检测
 v1.1.2
-- Fix: 修复主菜单界面或世界生成时因 Pawn_ApparelTracker.Wear 抛出 "Could not find player faction" 导致的崩溃问题。
+	- Fix: 修复主菜单界面或世界生成时因 Pawn_ApparelTracker.Wear 抛出 "Could not find player faction" 导致的崩溃问题。
 v1.1.2
-- Fix: 修复 Budget 滑块拖动时不触发保存和撤销记录的问题。
-- Fix: 修复 Force Ignore 开启时会错误剥离 Pawn 身上所有装备的问题。现在它只解除限制，不强制脱光。
-- Fix: 优化 Simple Mode 下的预算检查逻辑，确保逻辑清晰。
+	- Fix: 修复 Budget 滑块拖动时不触发保存和撤销记录的问题。
+	- Fix: 修复 Force Ignore 开启时会错误剥离 Pawn 身上所有装备的问题。现在它只解除限制，不强制脱光。
+	- Fix: 优化 Simple Mode 下的预算检查逻辑，确保逻辑清晰。
 v1.1.1
-- Fix: 修复装备应用逻辑，默认开启多选装备模式，支持同一列表配置多个物品。
-- Add: 新增自定义装备预算检查逻辑，确保非 Force Ignore 模式下遵守 Budget 限制。
+	- Fix: 修复装备应用逻辑，默认开启多选装备模式，支持同一列表配置多个物品。
+	- Add: 新增自定义装备预算检查逻辑，确保非 Force Ignore 模式下遵守 Budget 限制。
 v1.1.0
-- Add: 新增高级编辑器模式，支持Simple/Advanced模式切换
-- Add: Advanced模式提供精确的装备控制（指定物品、材质、品质等）
-- Add: 新增多标签页界面：武器、护甲、物品、Hediff、基因等
-- Add: 新增撤销/重做功能，通过UndoManager实现修改历史记录
-- Add: 新增颜色选择器（Window_ColorPicker），支持自定义颜色配置
-- Add: 新增基因支持，ForcedHediff类支持强制健康状态配置
-- Update: 扩展编辑器界面，提升用户体验
-- Update: 改进预设导入导出功能
-- Fix: 修复装备应用逻辑，GearApplier重构确保自定义装备正确生效
+	- Add: 新增高级编辑器模式，支持Simple/Advanced模式切换
+	- Add: Advanced模式提供精确的装备控制（指定物品、材质、品质等）
+	- Add: 新增多标签页界面：武器、护甲、物品、Hediff、基因等
+	- Add: 新增撤销/重做功能，通过UndoManager实现修改历史记录
+	- Add: 新增颜色选择器（Window_ColorPicker），支持自定义颜色配置
+	- Add: 新增基因支持，ForcedHediff类支持强制健康状态配置
+	- Update: 扩展编辑器界面，提升用户体验
+	- Update: 改进预设导入导出功能
+	- Fix: 修复装备应用逻辑，GearApplier重构确保自定义装备正确生效
 v1.0.29
-- Update: Layer Preview 默认隐藏，优化了布局并新增"腰部"行，更直观展示腰带装备。
-- Update: Layer Preview 现在会检查 others 列表（如腰带），不再遗漏。
-- Fix: 增强 SpecRequirementEdit 加载逻辑，防止因 ThingDef 缺失（如卸载 Mod 后）导致红字报错。
-- Fix: 增强 ForcedHediff 加载逻辑，防止因 HediffDef 缺失导致红字报错。
-- Fix: 增强 KindGearData 中 ApparelRequired/TechRequired 加载逻辑，防止因 Def 缺失导致加载失败。
+	- Update: Layer Preview 默认隐藏，优化了布局并新增"腰部"行，更直观展示腰带装备。
+	- Update: Layer Preview 现在会检查 others 列表（如腰带），不再遗漏。
+	- Fix: 增强 SpecRequirementEdit 加载逻辑，防止因 ThingDef 缺失（如卸载 Mod 后）导致红字报错。
+	- Fix: 增强 ForcedHediff 加载逻辑，防止因 HediffDef 缺失导致红字报错。
+	- Fix: 增强 KindGearData 中 ApparelRequired/TechRequired 加载逻辑，防止因 Def 缺失导致加载失败。
 v1.0.28
-- Fix: 修复 GenerateSimpleItem 中因 ThingDef 或 KindGearData 为空导致的 NullReferenceException。
-- Fix: 修复在 Pawn 未生成到地图时尝试丢弃装备导致的错误。
-- Fix: 为需要 Stuff 的物品增加防御性检查，防止 Stuff 为空导致的生成失败。
+	- Fix: 修复 GenerateSimpleItem 中因 ThingDef 或 KindGearData 为空导致的 NullReferenceException。
+	- Fix: 修复在 Pawn 未生成到地图时尝试丢弃装备导致的错误。
+	- Fix: 为需要 Stuff 的物品增加防御性检查，防止 Stuff 为空导致的生成失败。
 v1.0.27
-- Fix: 修复 System.MissingMethodException: Method not found: UnityEngine.Rect Verse.Listing_Standard.Label(string,single,string) 导致 PresetManagerWindow 界面崩溃的问题
-- Update: 将 PresetManagerWindow 中的 Listing_Standard.Label 调用改为 Widgets.Label，增强跨版本兼容性
+	- Fix: 修复 System.MissingMethodException: Method not found: UnityEngine.Rect Verse.Listing_Standard.Label(string,single,string) 导致 PresetManagerWindow 界面崩溃的问题
+	- Update: 将 PresetManagerWindow 中的 Listing_Standard.Label 调用改为 Widgets.Label，增强跨版本兼容性
 v1.0.26
-- Fix: 修复 HediffDef 加载失败导致游戏崩溃的问题（添加 ExposeData 异常处理）
+	- Fix: 修复 HediffDef 加载失败导致游戏崩溃的问题（添加 ExposeData 异常处理）
 v1.0.22
-- Update: 优化 Hediff 卡片 UI 布局，增加卡片高度和详细信息展示区
-- Add: HediffCardUI 新增 Severity（严重程度）范围控制
-- Fix: 修复 PresetManagerUI 中 WidgetsUtils 引用缺失问题
-- Fix: 修复 WidgetsUtils 中 PortraitsCache 类型查找兼容性问题
+	- Update: 优化 Hediff 卡片 UI 布局，增加卡片高度和详细信息展示区
+	- Add: HediffCardUI 新增 Severity（严重程度）范围控制
+	- Fix: 修复 PresetManagerUI 中 WidgetsUtils 引用缺失问题
+	- Fix: 修复 WidgetsUtils 中 PortraitsCache 类型查找兼容性问题
 v1.0.7
-- Fix: 修复 FactionGearPreviewWindow (预览卡片) 无法正常工作的问题 (PortraitsCache/DrawBox 兼容性修复)。
-- Update: WidgetsUtils 增加 PortraitsCache.Get/SetDirty 和 DrawWindowBackground 兼容封装。
+	- Fix: 修复 FactionGearPreviewWindow (预览卡片) 无法正常工作的问题 (PortraitsCache/DrawBox 兼容性修复)。
+	- Update: WidgetsUtils 增加 PortraitsCache.Get/SetDirty 和 DrawWindowBackground 兼容封装。
 v1.0.6
-- Fix: 修复 PresetManagerWindow (预设界面) 在旧版本 RimWorld 中的崩溃问题 (Widgets.DrawBox/DrawMenuSection 签名不匹配)。
-- Update: WidgetsUtils 增加 DrawBox 和 DrawMenuSection 兼容封装。
+	- Fix: 修复 PresetManagerWindow (预设界面) 在旧版本 RimWorld 中的崩溃问题 (Widgets.DrawBox/DrawMenuSection 签名不匹配)。
+	- Update: WidgetsUtils 增加 DrawBox 和 DrawMenuSection 兼容封装。
 v1.0.5
-- Fix: 修复 GearEditPanel.cs 中遗漏的 Widgets.FloatRange 调用导致的崩溃。
-- Update: 增加 WidgetsUtils.IntRange 封装，预防 HediffCardUI 中的潜在兼容性问题。
+	- Fix: 修复 GearEditPanel.cs 中遗漏的 Widgets.FloatRange 调用导致的崩溃。
+	- Update: 增加 WidgetsUtils.IntRange 封装，预防 HediffCardUI 中的潜在兼容性问题。
 v1.0.4
-- Fix: 修复 System.MissingMethodException: Method not found: void Verse.Widgets.FloatRange。
-- Update: 增强 WidgetsUtils.FloatRange 兼容性，增加异常捕获和后备 UI (双滑块)，确保在反射失败时不崩溃。
-- Update: WidgetsUtils 增加 FloatRange 智能封装，自动适配不同版本的参数签名
+	- Fix: 修复 System.MissingMethodException: Method not found: void Verse.Widgets.FloatRange。
+	- Update: 增强 WidgetsUtils.FloatRange 兼容性，增加异常捕获和后备 UI (双滑块)，确保在反射失败时不崩溃。
+	- Update: WidgetsUtils 增加 FloatRange 智能封装，自动适配不同版本的参数签名
 v1.0.3
-- Fix: 修复 System.MissingMethodException: Method not found: UnityEngine.Rect Verse.Listing_Standard.Label
-- Update: WidgetsUtils 增加 Label 方法封装，解决 Listing_Standard.Label 在不同版本间的签名差异
+	- Fix: 修复 System.MissingMethodException: Method not found: UnityEngine.Rect Verse.Listing_Standard.Label
+	- Update: WidgetsUtils 增加 Label 方法封装，解决 Listing_Standard.Label 在不同版本间的签名差异
 v1.0.2
-- Fix: 修复 System.MissingMethodException: Method not found: void Verse.Widgets.DrawTextureFitted
-- Add: 新增 WidgetsUtils 工具类，封装 UI 绘制方法以提高兼容性
+	- Fix: 修复 System.MissingMethodException: Method not found: void Verse.Widgets.DrawTextureFitted
+	- Add: 新增 WidgetsUtils 工具类，封装 UI 绘制方法以提高兼容性
 
 
 
 v1.4.10
-- Fix: 修复"仅从装备池选择 + 先成套后升材质"在核心套装失败时保留原版服装的问题；现在会严格清空并仅尝试穿戴装备池中的合法服装，允许缺位。
-- Fix: 修复核心套装不完整时直接中断的问题；严格池内模式下改为继续从用户配置池补穿，并输出区分性的失败/降级日志。
-- Fix: 统一兵种目标来源枚举，`GetFactionKinds` 现在会合并 `options/traders/carriers/guards` 与当前派系已配置的 PawnKind，补上帝国冠军等特殊来源目标。
-- Fix: `ApplyToAllKindsInFaction` 改为复用统一兵种枚举器，避免"应用到其他"与批量应用目标集合不一致。
-- Fix: 修复 `ApplyHediffWithPart` / `GetUserSpecifiedBodyParts` 空引用，异常不再中断整条装备应用链路。
-- Update: 同步更新 Index.md、Api.md、config.md。
+	- Fix: 修复"仅从装备池选择 + 先成套后升材质"在核心套装失败时保留原版服装的问题；现在会严格清空并仅尝试穿戴装备池中的合法服装，允许缺位。
+	- Fix: 修复核心套装不完整时直接中断的问题；严格池内模式下改为继续从用户配置池补穿，并输出区分性的失败/降级日志。
+	- Fix: 统一兵种目标来源枚举，`GetFactionKinds` 现在会合并 `options/traders/carriers/guards` 与当前派系已配置的 PawnKind，补上帝国冠军等特殊来源目标。
+	- Fix: `ApplyToAllKindsInFaction` 改为复用统一兵种枚举器，避免"应用到其他"与批量应用目标集合不一致。
+	- Fix: 修复 `ApplyHediffWithPart` / `GetUserSpecifiedBodyParts` 空引用，异常不再中断整条装备应用链路。
+	- Update: 同步更新 Index.md、Api.md、config.md。
 v1.4.9
-- Fix: 修复顶部 `Reset -> 当前 Pawn` 空引用崩溃；移除该入口对全局深度清理的误调用，避免点击后跳回首次预设选择界面。
-- Fix: 修复 `Reset -> 当前 Faction` 与 `Load Default Faction` 误清空当前预设绑定的问题，重置范围现严格限制为当前目标。
-- Fix: 为 `LoadKindDefGear` 增加 fail-fast 空值保护，阻断 `PawnKindDef` 丢失时的 `NullReferenceException`。
-- Fix: 新增空覆盖剪枝逻辑；会在保存和同步到存档前移除无实际内容的 `KindGearData`，避免空白覆盖污染原版规则。
-- Update: `ItemLibraryPanel` 纯绘制阶段不再偷偷创建当前 pawn 的空自定义数据。
+	- Fix: 修复顶部 `Reset -> 当前 Pawn` 空引用崩溃；移除该入口对全局深度清理的误调用，避免点击后跳回首次预设选择界面。
+	- Fix: 修复 `Reset -> 当前 Faction` 与 `Load Default Faction` 误清空当前预设绑定的问题，重置范围现严格限制为当前目标。
+	- Fix: 为 `LoadKindDefGear` 增加 fail-fast 空值保护，阻断 `PawnKindDef` 丢失时的 `NullReferenceException`。
+	- Fix: 新增空覆盖剪枝逻辑；会在保存和同步到存档前移除无实际内容的 `KindGearData`，避免空白覆盖污染原版规则。
+	- Update: `ItemLibraryPanel` 纯绘制阶段不再偷偷创建当前 pawn 的空自定义数据。
 v1.4.8
-- Fix: 修复 `Reset -> 当前兵种` 在重置后被再次标记为已修改（绿色勾误报）的问题。
-- Fix: `Reset -> 当前兵种 / 当前派系 / 加载默认派系` 现在会立即走保存同步链，实时同步到 `savedFactionGearData`。
-- Add: 高级-常规新增显示当前兵种默认服装预算来源（`PawnKindDef.apparelMoney`），便于手动调参参考。
-- Update: 手动服装/武器预算滑条上限从 `5000` 提升到 `10000`。
-
+	- Fix: 修复 `Reset -> 当前兵种` 在重置后被再次标记为已修改（绿色勾误报）的问题。
+	- Fix: `Reset -> 当前兵种 / 当前派系 / 加载默认派系` 现在会立即走保存同步链，实时同步到 `savedFactionGearData`。
+	- Add: 高级-常规新增显示当前兵种默认服装预算来源（`PawnKindDef.apparelMoney`），便于手动调参参考。
+	- Update: 手动服装/武器预算滑条上限从 `5000` 提升到 `10000`。
 
 
