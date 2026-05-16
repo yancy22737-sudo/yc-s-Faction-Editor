@@ -28,15 +28,33 @@ namespace FactionGearCustomizer
             if (parms.faction?.def == null) return;
             if (__instance.options.NullOrEmpty()) return;
 
-            var data = FactionGearCustomizerMod.Settings?.TryGetFactionData(parms.faction.def.defName);
-            if (data?.groupMakers == null || data.groupMakers.Count == 0) return;
+            string defName = parms.faction.def.defName;
+
+            // 优先使用存档级数据，回退到全局设置
+            var gameComponent = FactionGearGameComponent.Instance;
+            var saveData = gameComponent?.GetActiveFactionGearData();
+            FactionGearData data = null;
+            if (saveData != null)
+                data = saveData.FirstOrDefault(f => f.factionDefName == defName);
+            if (data == null)
+                data = FactionGearCustomizerMod.Settings?.TryGetFactionData(defName);
+
+            if (data?.groupMakers == null || data.groupMakers.Count == 0)
+            {
+                LogUtils.DebugLog($"[TileBypass] No custom groupMakers for {defName} — result={__result}");
+                return;
+            }
 
             // Re-check non-tile conditions
             if (parms.points > 0f && __instance.maxTotalPoints > 0f && parms.points > __instance.maxTotalPoints)
+            {
+                LogUtils.DebugLog($"[TileBypass] {defName}: points={parms.points} > maxTotalPoints={__instance.maxTotalPoints} — blocked");
                 return;
+            }
             if (parms.generateFightersOnly && !__instance.options.Any(o => o.kind.isFighter))
                 return;
 
+            LogUtils.DebugLog($"[TileBypass] Allowed {defName}/{__instance.kindDef?.defName} for tile={parms.tile}, points={parms.points}");
             __result = true;
         }
     }
@@ -52,7 +70,16 @@ namespace FactionGearCustomizer
         public static void Postfix(PawnGroupMakerParms parms, ref IEnumerable<Pawn> __result)
         {
             if (parms.faction?.def == null || __result == null) return;
-            var data = FactionGearCustomizerMod.Settings?.TryGetFactionData(parms.faction.def.defName);
+
+            string defName = parms.faction.def.defName;
+            var gameComponent = FactionGearGameComponent.Instance;
+            var saveData = gameComponent?.GetActiveFactionGearData();
+            FactionGearData data = null;
+            if (saveData != null)
+                data = saveData.FirstOrDefault(f => f.factionDefName == defName);
+            if (data == null)
+                data = FactionGearCustomizerMod.Settings?.TryGetFactionData(defName);
+
             if (data?.groupMakers == null) return;
 
             var bosses = new List<(PawnKindDef kind, float cost)>();
@@ -72,6 +99,7 @@ namespace FactionGearCustomizer
             }
             if (bosses.Count == 0) return;
 
+            LogUtils.DebugLog($"[MechBoss] Force-generating {bosses.Count} mech bosses for {defName}");
             var original = __result;
             __result = WrapWithBosses(original, parms.faction, bosses);
         }
@@ -100,6 +128,121 @@ namespace FactionGearCustomizer
                     LogUtils.DebugLog($"Force-generated mech boss: {p.kindDef.defName} for {faction.Name}");
                     yield return p;
                 }
+            }
+        }
+    }
+
+    /// <summary>
+    /// 临时覆盖 PawnKindDef.combatPower 以支持 pointsOverride。
+    /// 原版 PawnGenOption 没有点数覆盖字段，PawnGroupMakerUtility.GeneratePawns
+    /// 直接读取 kind.combatPower。GeneratePawns 是迭代器方法，实际的 pawn 生成
+    /// 发生在 IEnumerable 被枚举时，而非方法调用时。因此必须用 Postfix 包装
+    /// __result，在枚举期间维持 combatPower 覆盖。
+    /// </summary>
+    [HarmonyPatch(typeof(PawnGroupMakerUtility), "GeneratePawns")]
+    [HarmonyPriority(Priority.First)]
+    public static class Patch_GeneratePawns_CombatPowerOverride
+    {
+        public static void Postfix(PawnGroupMakerParms parms, ref IEnumerable<Pawn> __result)
+        {
+            if (parms.faction?.def == null || __result == null) return;
+            string defName = parms.faction.def.defName;
+
+            // 优先使用存档级数据，回退到全局设置
+            var gameComponent = FactionGearGameComponent.Instance;
+            var saveData = gameComponent?.GetActiveFactionGearData();
+            FactionGearData data = null;
+            if (saveData != null)
+            {
+                data = saveData.FirstOrDefault(f => f.factionDefName == defName);
+                LogUtils.DebugLog($"[CombatPowerOverride] save-level data: {saveData.Count} entries, found={data != null}");
+            }
+            if (data == null)
+            {
+                data = FactionGearCustomizerMod.Settings?.TryGetFactionData(defName);
+                LogUtils.DebugLog($"[CombatPowerOverride] global settings: found={data != null}");
+            }
+
+            // 收集所有需要覆盖的 combatPower
+            var overrides = new Dictionary<PawnKindDef, float>();   // kind -> new value
+            var originals = new Dictionary<PawnKindDef, float>();    // kind -> original value
+
+            // 来源1：PawnGenOptionData 的手动 pointsOverride
+            if (data.groupMakers != null)
+            {
+                foreach (var gm in data.groupMakers)
+                {
+                    CollectOverridesFromOptions(gm.options, overrides, originals);
+                    CollectOverridesFromOptions(gm.traders, overrides, originals);
+                    CollectOverridesFromOptions(gm.carriers, overrides, originals);
+                    CollectOverridesFromOptions(gm.guards, overrides, originals);
+                }
+            }
+
+            // 来源2：KindGearData 的自动计算 RaidPointsOverride
+            if (data.kindGearData != null)
+            {
+                foreach (var kindData in data.kindGearData)
+                {
+                    if (!kindData.RaidPointsOverride.HasValue) continue;
+                    var kind = DefDatabase<PawnKindDef>.GetNamedSilentFail(kindData.kindDefName);
+                    if (kind == null) continue;
+                    if (!originals.ContainsKey(kind))
+                        originals[kind] = kind.combatPower;
+                    overrides[kind] = kindData.RaidPointsOverride.Value;
+                }
+            }
+
+            if (overrides.Count == 0)
+            {
+                LogUtils.DebugLog($"[CombatPowerOverride] {defName}: no pointsOverride entries found");
+                return;
+            }
+
+            LogUtils.DebugLog($"[CombatPowerOverride] {defName}: wrapping iterator with {overrides.Count} combatPower overrides, points={parms.points:F0}");
+            foreach (var kv in overrides)
+                LogUtils.DebugLog($"[CombatPowerOverride]   {kv.Key.defName}: {originals[kv.Key]:F0} -> {kv.Value:F0}");
+
+            var original = __result;
+            __result = WrapWithCombatPower(original, overrides, originals);
+        }
+
+        private static void CollectOverridesFromOptions(List<PawnGenOptionData> list,
+            Dictionary<PawnKindDef, float> overrides, Dictionary<PawnKindDef, float> originals)
+        {
+            if (list == null) return;
+            foreach (var opt in list)
+            {
+                if (!opt.pointsOverride.HasValue) continue;
+                var kind = DefDatabase<PawnKindDef>.GetNamedSilentFail(opt.kindDefName);
+                if (kind == null) continue;
+                if (!originals.ContainsKey(kind))
+                    originals[kind] = kind.combatPower;
+                overrides[kind] = opt.pointsOverride.Value;
+            }
+        }
+
+        private static IEnumerable<Pawn> WrapWithCombatPower(
+            IEnumerable<Pawn> inner,
+            Dictionary<PawnKindDef, float> overrides,
+            Dictionary<PawnKindDef, float> originals)
+        {
+            // 在枚举开始前应用覆盖
+            foreach (var kv in overrides)
+                kv.Key.combatPower = kv.Value;
+            LogUtils.DebugLog("[CombatPowerOverride] Applied overrides, starting enumeration...");
+
+            try
+            {
+                foreach (var pawn in inner)
+                    yield return pawn;
+            }
+            finally
+            {
+                // 枚举结束后（正常或异常）恢复原始值
+                foreach (var kv in originals)
+                    kv.Key.combatPower = kv.Value;
+                LogUtils.DebugLog($"[CombatPowerOverride] Restored {originals.Count} combatPower values after enumeration");
             }
         }
     }

@@ -1,117 +1,117 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <LanguageData>
-  <FactionGearCustomizer>yc's Faction Editor</FactionGearCustomizer>
-  <Factions>Factions</Factions>
-  <ItemLibrary>Item Library</ItemLibrary>
-  <Advanced>Advanced</Advanced>
-  <Simple>Simple</Simple>
-  <Preview>Preview</Preview>
-  <PawnGroupPreviewTitle>Group Preview</PawnGroupPreviewTitle>
-  <Seed>Seed</Seed>
-  <DrawsPerList>Draws</DrawsPerList>
-  <RebuildPreview>Rebuild</RebuildPreview>
-  <GeneratePortraits>Generate Portraits</GeneratePortraits>
-  <ClearAll>Clear All</ClearAll>
-  <Clear>Clear</Clear>
-  <ApplyOthers>Apply to Others</ApplyOthers>
-  <Yes>Yes</Yes>
-  <Cancel>Cancel</Cancel>
-  <Save>Save</Save>
-  <SaveAs>Save As</SaveAs>
-  <Load>Load</Load>
-  <Delete>Delete</Delete>
-  <Export>Export</Export>
-  <Import>Import</Import>
-  <Apply>Apply</Apply>
-  <Reset>Reset</Reset>
-  <Close>Close</Close>
-  <Confirm>Confirm</Confirm>
-  <AddNewApparel>Add Apparel</AddNewApparel>
-  <AddNewWeapon>Add Weapon</AddNewWeapon>
-  <AddNewHediff>Add Hediff</AddNewHediff>
-  <PickColor>Pick Color</PickColor>
-  <SetColor>Set Color</SetColor>
-  <SelectItem>Select Item</SelectItem>
-  <SelectHediff>Select Hediff</SelectHediff>
-  <Show>Show</Show>
-  <Hide>Hide</Hide>
-  <Disabled>Disabled</Disabled>
-  <All>All</All>
-  <None>None</None>
-  <Invert>Invert</Invert>
-  <Default>Default</Default>
-  <RandomDefault>Random Material</RandomDefault>
-  <SelectedGear>Selected Gear</SelectedGear>
-  <AdvancedSettings>Advanced Settings</AdvancedSettings>
-  <LayerPreview>Layer Preview</LayerPreview>
-  <GeneralOverrides>General Overrides</GeneralOverrides>
-  <SpecificApparelAdvanced>Specific Apparel (Adv)</SpecificApparelAdvanced>
-  <SpecificWeaponsAdvanced>Specific Weapons (Adv)</SpecificWeaponsAdvanced>
-  <ForcedHediffs>Forced Hediffs</ForcedHediffs>
-  <HediffPickerTitle>Add Hediff</HediffPickerTitle>
-  <InventoryItems>Inventory</InventoryItems>
-  <AddNewItem>Add Item</AddNewItem>
-  <QuickAdd>Quick Add</QuickAdd>
-  <InventoryItemPickerTitle>Add Item</InventoryItemPickerTitle>
-  <ApparelPickerTitle>Add Apparel</ApparelPickerTitle>
-  <WeaponPickerTitle>Add Weapon</WeaponPickerTitle>
-  <DefaultCountRange>Default Count</DefaultCountRange>
+  <FactionGearCustomizer>ycの派閥エディタ</FactionGearCustomizer>
+  <Factions>派閥</Factions>
+  <ItemLibrary>アイテム庫</ItemLibrary>
+  <Advanced>詳細</Advanced>
+  <Simple>簡易</Simple>
+  <Preview>プレビュー</Preview>
+  <PawnGroupPreviewTitle>グループ预览</PawnGroupPreviewTitle>
+  <Seed>シード</Seed>
+  <DrawsPerList>抽選</DrawsPerList>
+  <RebuildPreview>再生成</RebuildPreview>
+  <GeneratePortraits>肖像生成</GeneratePortraits>
+  <ClearAll>全消去</ClearAll>
+  <Clear>消去</Clear>
+  <ApplyOthers>他に適用</ApplyOthers>
+  <Yes>はい</Yes>
+  <Cancel>取消</Cancel>
+  <Save>保存</Save>
+  <SaveAs>名前保存</SaveAs>
+  <Load>読込</Load>
+  <Delete>削除</Delete>
+  <Export>出力</Export>
+  <Import>入力</Import>
+  <Apply>適用</Apply>
+  <Reset>初期化</Reset>
+  <Close>閉じる</Close>
+  <Confirm>確認</Confirm>
+  <AddNewApparel>衣服追加</AddNewApparel>
+  <AddNewWeapon>武器追加</AddNewWeapon>
+  <AddNewHediff>状態追加</AddNewHediff>
+  <PickColor>色選択</PickColor>
+  <SetColor>色設定</SetColor>
+  <SelectItem>選択</SelectItem>
+  <SelectHediff>状態選択</SelectHediff>
+  <Show>表示</Show>
+  <Hide>非表示</Hide>
+  <Disabled>無効</Disabled>
+  <All>全</All>
+  <None>無</None>
+  <Invert>反転</Invert>
+  <Default>既定</Default>
+  <RandomDefault>ランダム素材</RandomDefault>
+  <SelectedGear>選択装備</SelectedGear>
+  <AdvancedSettings>詳細設定</AdvancedSettings>
+  <LayerPreview>層预览</LayerPreview>
+  <GeneralOverrides>一般設定</GeneralOverrides>
+  <SpecificApparelAdvanced>指定衣服(詳細)</SpecificApparelAdvanced>
+  <SpecificWeaponsAdvanced>指定武器(詳細)</SpecificWeaponsAdvanced>
+  <ForcedHediffs>強制状態</ForcedHediffs>
+  <HediffPickerTitle>状態追加</HediffPickerTitle>
+  <InventoryItems>所持品</InventoryItems>
+  <AddNewItem>追加</AddNewItem>
+  <QuickAdd>高速追加</QuickAdd>
+  <InventoryItemPickerTitle>追加</InventoryItemPickerTitle>
+  <ApparelPickerTitle>衣服追加</ApparelPickerTitle>
+  <WeaponPickerTitle>武器追加</WeaponPickerTitle>
+  <DefaultCountRange>既定数</DefaultCountRange>
   <DefaultSelectionMode>Default Mode: {0}</DefaultSelectionMode>
-  <DefaultChance>Default Chance</DefaultChance>
-  <SkipExistingItems>Skip Existing</SkipExistingItems>
-  <AlreadyAdded>Already Added</AlreadyAdded>
-  <AddSelected>Add Selected</AddSelected>
+  <DefaultChance>既定確率</DefaultChance>
+  <SkipExistingItems>既存除外</SkipExistingItems>
+  <AlreadyAdded>追加済</AlreadyAdded>
+  <AddSelected>選択追加</AddSelected>
   <InventoryItemsAddedMessage>Added {0} items, skipped {1} duplicates.</InventoryItemsAddedMessage>
   <ApparelItemsAddedMessage>Added {0} apparel, skipped {1} duplicates.</ApparelItemsAddedMessage>
   <WeaponItemsAddedMessage>Added {0} weapons, skipped {1} duplicates.</WeaponItemsAddedMessage>
   <HediffsAddedMessage>Added {0} hediffs, skipped {1} duplicates.</HediffsAddedMessage>
   <SelectionModeAlwaysTake>Always</SelectionModeAlwaysTake>
-  <SelectionModeRandomChance>Chance</SelectionModeRandomChance>
+  <SelectionModeRandomChance>確率</SelectionModeRandomChance>
   <SelectionModeFromPool>Pool {0}</SelectionModeFromPool>
-  <Items>Items</Items>
-  <Count>Count</Count>
-  <AdvancedSpecificItems>Advanced/Specific Items</AdvancedSpecificItems>
-  <EditFactionDetails>Edit Faction</EditFactionDetails>
-  <ModFilter>Mod Filter</ModFilter>
-  <CategoryFilter>Category Filter</CategoryFilter>
+  <Items>アイテム</Items>
+  <Count>数</Count>
+  <AdvancedSpecificItems>詳細/指定</AdvancedSpecificItems>
+  <EditFactionDetails>派閥編集</EditFactionDetails>
+  <ModFilter>Mod絞込</ModFilter>
+  <CategoryFilter>分類絞込</CategoryFilter>
   <CategoryAll>Category: All</CategoryAll>
   <CategoryCountSelected>Category: {0} Selected</CategoryCountSelected>
   <ApparelColor>Apparel Color:</ApparelColor>
-  <ItemQuality>Item Quality</ItemQuality>
-  <ApparelBudget>Apparel Budget</ApparelBudget>
+  <ItemQuality>品質</ItemQuality>
+  <ApparelBudget>衣服予算</ApparelBudget>
   <DefaultApparelBudgetValue>Default apparel budget source (PawnKindDef): {0}</DefaultApparelBudgetValue>
-  <WeaponBudget>Weapon Budget</WeaponBudget>
-  <TechLevelLimit>Tech Level Limit</TechLevelLimit>
-  <ForcedWeaponQuality>Weapon Quality</ForcedWeaponQuality>
-  <BiocodeChance>Biocode Chance</BiocodeChance>
+  <WeaponBudget>武器予算</WeaponBudget>
+  <TechLevelLimit>技術制限</TechLevelLimit>
+  <ForcedWeaponQuality>武器品質</ForcedWeaponQuality>
+  <BiocodeChance>生体認証率</BiocodeChance>
   <BiocodeApparelChance>Apparel Biocode Chance</BiocodeApparelChance>
-  <Biocode>Biocode</Biocode>
-  <ForceNaked>Force Naked</ForceNaked>
-  <ForceOnlySelected>Force Only Selected</ForceOnlySelected>
-  <ForceOverrideHediffs>Force Override Hediffs</ForceOverrideHediffs>
+  <Biocode>生体認証</Biocode>
+  <ForceNaked>強制裸体</ForceNaked>
+  <ForceOnlySelected>選択品のみ</ForceOnlySelected>
+  <ForceOverrideHediffs>状態上書き</ForceOverrideHediffs>
   <MinMax>Min (Force Ignore)</MinMax>
   <MaxForceIgnore>Max (Force Ignore)</MaxForceIgnore>
-  <Ranged>Ranged</Ranged>
-  <Melee>Melee</Melee>
-  <Armors>Armors</Armors>
-  <Clothes>Clothes</Clothes>
-  <Others>Others</Others>
-  <General>General</General>
-  <Apparel>Apparel</Apparel>
-  <Weapons>Weapons</Weapons>
-  <Hediffs>Hediffs</Hediffs>
-  <Head>Head</Head>
-  <Torso>Torso</Torso>
-  <Shoulders>Shoulders</Shoulders>
-  <Arms>Arms</Arms>
-  <Hands>Hands</Hands>
-  <Waist>Waist</Waist>
-  <Legs>Legs</Legs>
-  <Feet>Feet</Feet>
-  <Skin>Skin</Skin>
-  <Mid>Mid</Mid>
-  <SettingsSaved>Settings Saved!</SettingsSaved>
-  <SettingsDiscarded>Settings Discarded.</SettingsDiscarded>
+  <Ranged>遠隔</Ranged>
+  <Melee>近接</Melee>
+  <Armors>防具</Armors>
+  <Clothes>衣服</Clothes>
+  <Others>他</Others>
+  <General>一般</General>
+  <Apparel>衣服</Apparel>
+  <Weapons>武器</Weapons>
+  <Hediffs>状態</Hediffs>
+  <Head>頭</Head>
+  <Torso>胴</Torso>
+  <Shoulders>肩</Shoulders>
+  <Arms>腕</Arms>
+  <Hands>手</Hands>
+  <Waist>腰</Waist>
+  <Legs>脚</Legs>
+  <Feet>足</Feet>
+  <Skin>肌</Skin>
+  <Mid>中層</Mid>
+  <SettingsSaved>保存完了</SettingsSaved>
+  <SettingsDiscarded>破棄完了</SettingsDiscarded>
   <PresetUpdated>Preset "{0}" Updated</PresetUpdated>
   <PresetSaved>Preset Saved</PresetSaved>
   <TipCreatePreset>Tip: Create a preset to backup your work!</TipCreatePreset>
@@ -127,7 +127,7 @@
   <ApplyToAllKindsConfirm>Overwrite all kinds in this faction with current gear config?</ApplyToAllKindsConfirm>
   <NoItemsInThisCategory>No items in this category.</NoItemsInThisCategory>
   <SelectAKindDefFirst>Please select a kind def first.</SelectAKindDefFirst>
-  <PresetManager>Preset Manager</PresetManager>
+  <PresetManager>プリセット管理</PresetManager>
   <PresetMetadataSaved>Preset metadata saved.</PresetMetadataSaved>
   <PresetUpdatedFromGameSettings>Preset updated from game settings.</PresetUpdatedFromGameSettings>
   <PresetOverwritten>Preset "{0}" overwritten with current settings!</PresetOverwritten>
@@ -143,7 +143,7 @@
   <ExportFailed>Export failed!</ExportFailed>
   <PresetImportedFromClipboard>Preset "{0}" imported from clipboard!</PresetImportedFromClipboard>
   <FactionDetailsUpdated>Faction details updated (memory only)</FactionDetailsUpdated>
-  <TechLevel>Tech Level</TechLevel>
+  <TechLevel>技術Lv</TechLevel>
   <QualityAwful>Awful</QualityAwful>
   <QualityPoor>Poor</QualityPoor>
   <QualityNormal>Normal</QualityNormal>
@@ -153,131 +153,126 @@
   <QualityLegendary>Legendary</QualityLegendary>
   <SelectionModeIfPossible>If Possible</SelectionModeIfPossible>
   <SelectionModeBest>Best</SelectionModeBest>
-  <SelectionModeRandom>Random</SelectionModeRandom>
-  <ResetFilters>Reset Filters</ResetFilters>
-  <ResetCurrentKind>Reset Current Kind</ResetCurrentKind>
-  <LoadDefaultFaction>Load Default Faction</LoadDefaultFaction>
-  <ResetCurrentFaction>Reset Current Faction</ResetCurrentFaction>
-  <ResetEVERYTHING>Reset Everything</ResetEVERYTHING>
-  <UndoTooltip>Undo (Ctrl+Z)</UndoTooltip>
-  <RedoTooltip>Redo (Ctrl+Y)</RedoTooltip>
-  <PreviewAllKindsTooltip>Preview all kinds for this faction</PreviewAllKindsTooltip>
-  <PreviewInGameOnlyTooltip>Only available in-game</PreviewInGameOnlyTooltip>
-  <ApplyToOthersTooltip>Apply current gear to all other kinds in this faction</ApplyToOthersTooltip>
-  <ClearCategoryTooltip>Clear all items in current category.</ClearCategoryTooltip>
-  <ForceNakedTooltip>If enabled, removes all apparel when applying gear, leaving pawn naked.
-
-Age verification required.</ForceNakedTooltip>
-  <ForceOnlySelectedTooltip>If enabled, all existing/vanilla gear will be stripped before applying custom gear. Ensures pawns only wear what you specify, preventing vanilla/custom mixing.
-
-Recommended: Enable for full control.</ForceOnlySelectedTooltip>
-  <ForceOverrideHediffsTooltip>If enabled, all non-mechanoid hediffs (status effects) will be cleared before applying your configured forced hediffs. This includes gene-provided buffs.
-    If disabled, existing hediffs from genes, implants, etc. will be preserved.</ForceOverrideHediffsTooltip>
-  <WeightMechanicsTooltip>Weight mechanics: In RimWorld, gear weight acts as selection weight, not 100% selection. Higher weight gear is prioritized but not guaranteed.</WeightMechanicsTooltip>
-  <ColorPicker>Color Picker</ColorPicker>
-  <ColorPickerApply>Apply</ColorPickerApply>
-  <ColorPresets>Presets</ColorPresets>
-  <ColorHistory>History</ColorHistory>
-  <DrawingBoard>Drawing Board</DrawingBoard>
-  <CurrentColor>Current Color</CurrentColor>
-  <MoreColors>More Colors...</MoreColors>
-  <BrushSize>Brush Size</BrushSize>
-  <Undo>Undo</Undo>
-  <HandDraw>Draw</HandDraw>
-  <CanvasSize>Canvas Size</CanvasSize>
-  <Zoom>Zoom</Zoom>
+  <SelectionModeRandom>乱数</SelectionModeRandom>
+  <ResetFilters>絞込解除</ResetFilters>
+  <ResetCurrentKind>種別初期化</ResetCurrentKind>
+  <LoadDefaultFaction>既定読込</LoadDefaultFaction>
+  <ResetCurrentFaction>派閥初期化</ResetCurrentFaction>
+  <ResetEVERYTHING>全初期化</ResetEVERYTHING>
+  <UndoTooltip>取消(Ctrl+Z)</UndoTooltip>
+  <RedoTooltip>再実行(Ctrl+Y)</RedoTooltip>
+  <PreviewAllKindsTooltip>全種別预览</PreviewAllKindsTooltip>
+  <PreviewInGameOnlyTooltip>ゲーム内限定</PreviewInGameOnlyTooltip>
+  <ApplyToOthersTooltip>現在装備を他種別に適用</ApplyToOthersTooltip>
+  <ClearCategoryTooltip>分類内全消去。</ClearCategoryTooltip>
+  <ForceNakedTooltip>有効時、全衣服を剥ぎ取って装備を適用。(年齢確認要)</ForceNakedTooltip>
+  <ForceOnlySelectedTooltip>既存装備を除去し指定装備のみ着用。完全制御に推奨。</ForceOnlySelectedTooltip>
+  <ForceOverrideHediffsTooltip>非機械状態を消去し設定状態のみ適用。遺伝子効果含む。</ForceOverrideHediffsTooltip>
+  <WeightMechanicsTooltip>装備重みは選択確率。高いほど優先。</WeightMechanicsTooltip>
+  <ColorPicker>色選択器</ColorPicker>
+  <ColorPickerApply>適用</ColorPickerApply>
+  <ColorPresets>プリセット</ColorPresets>
+  <ColorHistory>履歴</ColorHistory>
+  <DrawingBoard>描画板</DrawingBoard>
+  <CurrentColor>現在色</CurrentColor>
+  <MoreColors>他色...</MoreColors>
+  <BrushSize>筆幅</BrushSize>
+  <Undo>取消</Undo>
+  <HandDraw>描画</HandDraw>
+  <CanvasSize>画布</CanvasSize>
+  <Zoom>拡大</Zoom>
   <ImportTemplate>Import Template</ImportTemplate>
   <ShowTemplate>Show Template</ShowTemplate>
   <TemplateScale>Template Scale</TemplateScale>
-  <ImportTemplateTooltip>Import current faction icon as a drawing template</ImportTemplateTooltip>
+  <ImportTemplateTooltip>現在の派閥アイコンを雛形読込。</ImportTemplateTooltip>
   <NoTemplateFound>No template available to import</NoTemplateFound>
   <NoHistory>No history</NoHistory>
-  <Fill>Fill</Fill>
-  <UnsavedChanges>Unsaved Changes</UnsavedChanges>
+  <Fill>塗潰</Fill>
+  <UnsavedChanges>未保存</UnsavedChanges>
   <UnsavedChangesMessage>You have unsaved changes. Save them?</UnsavedChangesMessage>
-  <Discard>Discard</Discard>
-  <Version>Version</Version>
-  <VersionLog>Changelog</VersionLog>
+  <Discard>破棄</Discard>
+  <Version>版</Version>
+  <VersionLog>更新履歴</VersionLog>
   <GiveMeALike>Give me a like!</GiveMeALike>
   <AvgValue>Avg Value</AvgValue>
   <AvgWeight>Avg Weight</AvgWeight>
-  <Weight>Weight</Weight>
+  <Weight>重み</Weight>
   <Missing>Missing</Missing>
   <MissingParts>Missing Parts</MissingParts>
   <NoPreset>[No Preset]</NoPreset>
   <NoPresetWarning>No Active Preset</NoPresetWarning>
   <NoPresetDescription>You need to create or load a preset to start configuring faction gear. Presets save your configurations.</NoPresetDescription>
-  <CreatePreset>Create Preset</CreatePreset>
-  <PresetEqualsConfigTip>Tip: Preset = Configuration. Create preset to start editing</PresetEqualsConfigTip>
-  <ClearAllConfigs>Clear All Configs</ClearAllConfigs>
-  <ClearAllConfigsTooltip>Clear all saved configuration data, return to initial state</ClearAllConfigsTooltip>
+  <CreatePreset>新規</CreatePreset>
+  <PresetEqualsConfigTip>提示: 編集開始にはプリセット作成を。</PresetEqualsConfigTip>
+  <ClearAllConfigs>全消去</ClearAllConfigs>
+  <ClearAllConfigsTooltip>全設定を削除し初期化。</ClearAllConfigsTooltip>
   <ClearAllConfigsConfirm>Clear all configurations?</ClearAllConfigsConfirm>
   <ClearAllConfigsConfirmMessage>This will delete all saved faction gear configurations and cannot be undone.</ClearAllConfigsConfirmMessage>
   <ActivePreset>[Current: {0}]</ActivePreset>
   <AddedItemsToGearList>Added {0} items to gear list</AddedItemsToGearList>
   <SaveChangesToGame>Save Changes to Current Game</SaveChangesToGame>
-  <SaveImmediateEffectTooltip>All changes take effect immediately, no restart needed.</SaveImmediateEffectTooltip>
-  <Presets>Presets</Presets>
-  <Options>Options</Options>
-  <AdvancedOptionsTooltip>Advanced Options</AdvancedOptionsTooltip>
+  <SaveImmediateEffectTooltip>全変更即時反映、再起動不要。</SaveImmediateEffectTooltip>
+  <Presets>プリセット</Presets>
+  <Options>設定</Options>
+  <AdvancedOptionsTooltip>詳細設定</AdvancedOptionsTooltip>
   <ShowHiddenFactions>Show Hidden/Non-human Factions</ShowHiddenFactions>
-  <ShowInMainTab>Show Main Button</ShowInMainTab>
-  <EnableDebugLog>Enable Debug Log</EnableDebugLog>
-  <EnableDebugLogTooltip>When enabled, detailed debug log messages will be output during gameplay for troubleshooting. Recommended to enable only when needed to avoid large log files.</EnableDebugLogTooltip>
-  <ForceIgnore>Force Ignore</ForceIgnore>
-  <ForceIgnoreTooltip>Force remove conflicting apparel/weapons and ignore budget limits. Pawns will attempt to equip all possible items from config list, allowing you to bypass restrictions and always create god-tier units.</ForceIgnoreTooltip>
-  <AmmoProtection>Ammo Protection</AmmoProtection>
-  <AmmoProtectionTooltip>When enabled, only mod-generated ammo is kept, preventing CE and other sources from causing duplicate or mixed ammo. When disabled, the mod and CE each generate their own set of ammo.</AmmoProtectionTooltip>
+  <ShowInMainTab>主釦表示</ShowInMainTab>
+  <EnableDebugLog>開発記録</EnableDebugLog>
+  <EnableDebugLogTooltip>詳細記録を出力。必要時のみ推奨。</EnableDebugLogTooltip>
+  <ForceIgnore>強制無視</ForceIgnore>
+  <ForceIgnoreTooltip>予算無視、競合装備を強制除去。</ForceIgnoreTooltip>
+  <AmmoProtection>弾薬保護</AmmoProtection>
+  <AmmoProtectionTooltip>Mod弾薬のみ保持、重複防止。</AmmoProtectionTooltip>
   <ForceIgnoreGlobal>Global Force Ignore</ForceIgnoreGlobal>
-  <ForceIgnoreGlobalTooltip>Global setting: Force remove conflicting apparel/weapons and ignore budget limits. Used as default for all pawn kinds, can be overridden by local settings.</ForceIgnoreGlobalTooltip>
+  <ForceIgnoreGlobalTooltip>全体: 予算無視・競合除去。個別設定で上書可。</ForceIgnoreGlobalTooltip>
   <ForceIgnoreLocal>Local Force Ignore</ForceIgnoreLocal>
-  <ForceIgnoreLocalTooltip>Local setting: Force remove conflicting apparel/weapons and ignore budget limits for this pawn kind only. Overrides global setting.</ForceIgnoreLocalTooltip>
-  <AdvancedItemTooltip>This item was added via advanced mode (specific requirements).</AdvancedItemTooltip>
-  <Shell>Shell</Shell>
-  <Belt>Belt</Belt>
-  <Over>Over</Over>
-  <Reroll>Reroll</Reroll>
-  <Retry>Retry</Retry>
+  <ForceIgnoreLocalTooltip>個別: この種別のみ予算無視・競合除去。全体より優先。</ForceIgnoreLocalTooltip>
+  <AdvancedItemTooltip>詳細modeで追加された品目。</AdvancedItemTooltip>
+  <Shell>外殻</Shell>
+  <Belt>帯</Belt>
+  <Over>外套</Over>
+  <Reroll>再抽選</Reroll>
+  <Retry>再試行</Retry>
   <PortraitUnavailable>Portrait Unavailable</PortraitUnavailable>
-  <Rotate>Rotate</Rotate>
-  <RerollPawn>Reroll Pawn</RerollPawn>
+  <Rotate>回転</Rotate>
+  <RerollPawn>再抽選</RerollPawn>
   <EquippedGear><b>Equipped:</b></EquippedGear>
   <ApparelWorn><b>Worn:</b></ApparelWorn>
   <FailedToGeneratePreview>Preview failed. (Faction may be inactive)</FailedToGeneratePreview>
-  <SavedPresets>Saved Presets</SavedPresets>
+  <SavedPresets>保存済</SavedPresets>
   <SearchPresets>Search Presets</SearchPresets>
   <CreateNew>Create New</CreateNew>
-  <Name>Name</Name>
+  <Name>名前</Name>
   <Add>Add</Add>
   <AddAll>Add All</AddAll>
   <SelectPresetFirst>Please select a preset from the left list first.</SelectPresetFirst>
-  <PresetDetails>Preset Details</PresetDetails>
-  <PresetName>Preset Name</PresetName>
-  <Description>Description</Description>
+  <PresetDetails>詳細</PresetDetails>
+  <PresetName>プリセット名</PresetName>
+  <Description>説明</Description>
   <Management><b>Management:</b></Management>
-  <SaveNameDesc>Save Name/Description</SaveNameDesc>
+  <SaveNameDesc>名前/説明保存</SaveNameDesc>
   <UpdateFromGame>Update from Game</UpdateFromGame>
   <LoadPresetConfirmTitle>Overwrite preset "{0}" with current game settings?</LoadPresetConfirmTitle>
   <LoadPresetConfirmMessage>Overwrite this preset's gear data with current in-game configuration?</LoadPresetConfirmMessage>
-  <UpdateFromGameTooltip>Overwrite this preset's gear data with current game configuration.</UpdateFromGameTooltip>
-  <RequiredMods>Required Mods</RequiredMods>
-  <FactionPreview>Faction Preview</FactionPreview>
+  <UpdateFromGameTooltip>現在の設定で上書保存。</UpdateFromGameTooltip>
+  <RequiredMods>必要Mod</RequiredMods>
+  <FactionPreview>预览</FactionPreview>
   <NoFactionDataInPreset>No faction data in preset.</NoFactionDataInPreset>
   <NoRequiredMods>No required mods.</NoRequiredMods>
-  <ModNotActiveTooltip>This mod is not enabled in current game.</ModNotActiveTooltip>
-  <Chance>Chance</Chance>
-  <MaxParts>Parts</MaxParts>
-  <Severity>Severity</Severity>
+  <ModNotActiveTooltip>このModは現在無効。</ModNotActiveTooltip>
+  <Chance>確率</Chance>
+  <MaxParts>部位</MaxParts>
+  <Severity>深刻度</Severity>
   <SelectHediffToViewDetails>Select a hediff to view details.</SelectHediffToViewDetails>
-  <FromMod>From Mod</FromMod>
-  <KindDefs>KindDefs</KindDefs>
+  <FromMod>提供Mod</FromMod>
+  <KindDefs>種別定義</KindDefs>
   <DontShowAgain>Don't show this again</DontShowAgain>
   <Label>Label</Label>
   <InGame>In Game</InGame>
-  <ShowInGameFactionNamesTooltip>Show in-game faction names. Grayed out if faction not in current game.</ShowInGameFactionNamesTooltip>
-  <LoadPreset>Load Preset</LoadPreset>
-  <LoadPresetTooltip>Apply this preset to your game.</LoadPresetTooltip>
-  <LoadPresetConfirmTitle>Load Preset</LoadPresetConfirmTitle>
+  <ShowInGameFactionNamesTooltip>ゲーム内派閥名表示。</ShowInGameFactionNamesTooltip>
+  <LoadPreset>読込</LoadPreset>
+  <LoadPresetTooltip>プリセットを適用。</LoadPresetTooltip>
+  <LoadPresetConfirmTitle>読込</LoadPresetConfirmTitle>
   <LoadPresetConfirmMessage>Clear current custom gear before applying preset?
 
 Yes: Overwrite all (Recommended)
@@ -294,185 +289,185 @@ Applying this preset may cause missing items or errors. Continue?</MissingModsWa
   <MissingModsWarningCancel>No (Cancel)</MissingModsWarningCancel>
   <DeletePresetConfirm>Permanently delete preset "{0}"?</DeletePresetConfirm>
   <ClearPresetConfirm>Clear all data from preset "{0}"?</ClearPresetConfirm>
-  <ExportTooltip>Copy preset to clipboard for sharing.</ExportTooltip>
-  <ClearPresetTooltip>Clear all preset data but keep the preset itself.</ClearPresetTooltip>
-  <DeletePresetTooltip>Delete this preset (deletes preset record only, won't auto-rollback saved changes).</DeletePresetTooltip>
-  <SavePresetMetadataTooltip>Save only current preset's name/description (won't update gear content).</SavePresetMetadataTooltip>
-  <CreatePresetTooltip>Create new preset and save current settings as initial content.</CreatePresetTooltip>
-  <ImportFromClipboard>Import from Clipboard</ImportFromClipboard>
-  <ImportFromClipboardTooltip>Import preset from base64 string in clipboard.</ImportFromClipboardTooltip>
+  <ExportTooltip>共有用に複写。</ExportTooltip>
+  <ClearPresetTooltip>内容消去、枠は保持。</ClearPresetTooltip>
+  <DeletePresetTooltip>プリセット削除。</DeletePresetTooltip>
+  <SavePresetMetadataTooltip>名前/説明のみ保存。</SavePresetMetadataTooltip>
+  <CreatePresetTooltip>新規作成し現在設定を保存。</CreatePresetTooltip>
+  <ImportFromClipboard>読込</ImportFromClipboard>
+  <ImportFromClipboardTooltip>複写板から読込。</ImportFromClipboardTooltip>
   <PresetAlreadyExists>Preset "{0}" already exists. Overwrite?</PresetAlreadyExists>
   <Overwrite>Overwrite</Overwrite>
-  <CannotAddItemsInCurrentTabTooltip>Cannot add items in current advanced mode tab.</CannotAddItemsInCurrentTabTooltip>
-  <NewPreset>New Preset</NewPreset>
-  <ClearSearch>Clear Search</ClearSearch>
-  <ModAll>All</ModAll>
+  <CannotAddItemsInCurrentTabTooltip>現在の欄では追加不可。</CannotAddItemsInCurrentTabTooltip>
+  <NewPreset>新規作成</NewPreset>
+  <ClearSearch>検索解除</ClearSearch>
+  <ModAll>全</ModAll>
   <ModCountSelected>Mod: {0} Selected</ModCountSelected>
-  <FilterByModTooltip>Filter by Mod (Multi-select)</FilterByModTooltip>
+  <FilterByModTooltip>Mod別絞込</FilterByModTooltip>
   <AmmoAll>Caliber: All</AmmoAll>
   <AmmoFilter>Caliber Filter</AmmoFilter>
-  <FilterByAmmoTooltip>Filter by ammunition caliber (Multi-select)</FilterByAmmoTooltip>
+  <FilterByAmmoTooltip>口径別絞込</FilterByAmmoTooltip>
   <AmmoCountSelected>Caliber: {0} Selected</AmmoCountSelected>
   <TechAll>Tech: All</TechAll>
-  <FilterByTechLevelTooltip>Filter by tech level. Tech level from item/weapon TechLevel, used to distinguish primitive/medieval/industrial/spacer etc.</FilterByTechLevelTooltip>
+  <FilterByTechLevelTooltip>技術Lv別絞込。</FilterByTechLevelTooltip>
   <SortBy>Sort: {0}</SortBy>
   <SortAscending>Ascending</SortAscending>
   <SortDescending>Descending</SortDescending>
-  <SortFieldTooltip>Click to select sort field. Different categories have different available fields.</SortFieldTooltip>
-  <SortField_Name>Name</SortField_Name>
-  <SortField_MarketValue>Market Value</SortField_MarketValue>
-  <SortField_TechLevel>Tech Level</SortField_TechLevel>
+  <SortFieldTooltip>整列項目選択。</SortFieldTooltip>
+  <SortField_Name>名前</SortField_Name>
+  <SortField_MarketValue>市場価値</SortField_MarketValue>
+  <SortField_TechLevel>技術Lv</SortField_TechLevel>
   <SortField_ModSource>Mod Source</SortField_ModSource>
   <SortField_Accuracy>Accuracy</SortField_Accuracy>
   <SortField_DPS>DPS</SortField_DPS>
-  <SortField_Armor_Sharp>Sharp Armor</SortField_Armor_Sharp>
-  <SortField_Armor_Blunt>Blunt Armor</SortField_Armor_Blunt>
-  <SortField_Range>Range</SortField_Range>
-  <SortField_Damage>Damage</SortField_Damage>
-  <SortField_Mass>Mass</SortField_Mass>
-  <BaseMarketValue>Market Value</BaseMarketValue>
-  <Weight>Weight</Weight>
-  <Damage>Damage</Damage>
-  <Range>Range</Range>
+  <SortField_Armor_Sharp>鋭防護</SortField_Armor_Sharp>
+  <SortField_Armor_Blunt>鈍防護</SortField_Armor_Blunt>
+  <SortField_Range>射程</SortField_Range>
+  <SortField_Damage>損傷</SortField_Damage>
+  <SortField_Mass>質量</SortField_Mass>
+  <BaseMarketValue>市場価値</BaseMarketValue>
+  <Weight>重み</Weight>
+  <Damage>損傷</Damage>
+  <Range>射程</Range>
   <DPS>DPS</DPS>
-  <ArmorSharp>Sharp Armor</ArmorSharp>
-  <ArmorBlunt>Blunt Armor</ArmorBlunt>
-  <Value>Value</Value>
-  <RangeFilterTooltip>Drag slider to filter {0} range (min~max). Upper range limit is taken from the current candidate list.</RangeFilterTooltip>
-  <Material>Material</Material>
+  <ArmorSharp>鋭防護</ArmorSharp>
+  <ArmorBlunt>鈍防護</ArmorBlunt>
+  <Value>価値</Value>
+  <RangeFilterTooltip>範囲絞込。</RangeFilterTooltip>
+  <Material>素材</Material>
   <MaterialSelect>Material: {0}</MaterialSelect>
   <QualitySelect>Quality: {0}</QualitySelect>
   <SelectionMode>Mode: {0}</SelectionMode>
   <SelectionMode_AlwaysTake>Always</SelectionMode_AlwaysTake>
-  <SelectionMode_RandomChance>Chance</SelectionMode_RandomChance>
+  <SelectionMode_RandomChance>確率</SelectionMode_RandomChance>
   <SelectionMode_FromPool1>Pool 1</SelectionMode_FromPool1>
   <SelectionMode_FromPool2>Pool 2</SelectionMode_FromPool2>
   <SelectionMode_FromPool3>Pool 3</SelectionMode_FromPool3>
   <SelectionMode_FromPool4>Pool 4</SelectionMode_FromPool4>
-  <Remove>Remove</Remove>
-  <Search>Search</Search>
+  <Remove>除去</Remove>
+  <Search>検索</Search>
   <Active>(Active)</Active>
-  <ManagePresetsTooltip>Manage equipment presets</ManagePresetsTooltip>
-  <GithubLinkTooltip>Open project homepage (report issues/view updates).</GithubLinkTooltip>
-  <VersionLogTooltip>View changelog and updates.</VersionLogTooltip>
-  <ResetMenuTooltip>Open reset menu: reset filters, current kind, current faction, or all settings.</ResetMenuTooltip>
-  <Changelog>Changelog</Changelog>
+  <ManagePresetsTooltip>装備管理</ManagePresetsTooltip>
+  <GithubLinkTooltip>GitHub</GithubLinkTooltip>
+  <VersionLogTooltip>更新履歴。</VersionLogTooltip>
+  <ResetMenuTooltip>絞込/種別/派閥/全初期化。</ResetMenuTooltip>
+  <Changelog>更新履歴</Changelog>
   <FactionEdit>Faction Edit</FactionEdit>
-  <FactionEditTooltip>Edit factions, edit pawn groups [Adding new pawn kind], add settlements, adjust xenotype chances.</FactionEditTooltip>
-  <Settings>Settings</Settings>
-  <PawnKinds>Pawn Kinds</PawnKinds>
-  <FactionName>Faction Name</FactionName>
-  <FactionDescription>Faction Description</FactionDescription>
+  <FactionEditTooltip>派閥編集、集団編集、定住地追加。</FactionEditTooltip>
+  <Settings>設定</Settings>
+  <PawnKinds>種別</PawnKinds>
+  <FactionName>派閥名</FactionName>
+  <FactionDescription>派閥説明</FactionDescription>
   <FactionIconPath>Icon Path</FactionIconPath>
-  <FactionColor>Faction Color</FactionColor>
+  <FactionColor>派閥色</FactionColor>
   <PawnKindLabel>Kind Label</PawnKindLabel>
   <OriginalValue>Original</OriginalValue>
   <CurrentValue>Current</CurrentValue>
-  <ApplyChanges>Apply Changes</ApplyChanges>
-  <ResetChanges>Reset Changes</ResetChanges>
-  <Browse>Browse</Browse>
+  <ApplyChanges>変更適用</ApplyChanges>
+  <ResetChanges>初期化</ResetChanges>
+  <Browse>選択</Browse>
   <IconPathPlaceholder>Enter texture path (e.g. World/WorldObjects/Expanding/Town)</IconPathPlaceholder>
   <OnlyAvailableInGame>Only available in-game.</OnlyAvailableInGame>
   <FactionEditDisabledInLiteMode>Faction editing is not available in world creation. Please access the full editor through Mod Settings after entering the game.</FactionEditDisabledInLiteMode>
   <NewFactionDisabledInLiteMode>Adding factions is not available in world creation. Please access the full editor through Mod Settings after entering the game.</NewFactionDisabledInLiteMode>
   <FiltersDisabledInLiteMode>Item filters are not available in world creation. Please access the full editor through Mod Settings after entering the game.</FiltersDisabledInLiteMode>
-  <AdvancedModeTooltip>Advanced mode: provides finer editing control (specific items/special requirements). Simple mode only edits basic gear pools.</AdvancedModeTooltip>
-  <ClearAllGearTooltip>Clear all custom gear configuration for current kind. Shows confirmation and can be undone.</ClearAllGearTooltip>
-  <FactionInfoCardTooltip>View this faction's Def info card.</FactionInfoCardTooltip>
-  <DefName>DefName</DefName>
+  <AdvancedModeTooltip>詳細: 精密編集。簡易modeは基本装備のみ。</AdvancedModeTooltip>
+  <ClearAllGearTooltip>現在の種別装備設定を全消去。</ClearAllGearTooltip>
+  <FactionInfoCardTooltip>この派閥のDef情報。</FactionInfoCardTooltip>
+  <DefName>定義名</DefName>
   <XenotypeChances>Xenotype Chances (Biotech)</XenotypeChances>
   <DisableXenotypeChances>Disable Xenotype Chance Control</DisableXenotypeChances>
-  <AddXenotype>Add Xenotype</AddXenotype>
+  <AddXenotype>異種追加</AddXenotype>
   <AllXenotypesAdded>All xenotypes added.</AllXenotypesAdded>
   <KindXenotypeSettings>Kind Edit</KindXenotypeSettings>
-  <KindXenotypeTooltip>Edit xenotype generation, age limits, and other settings for this kind.</KindXenotypeTooltip>
-  <XenoButtonLabel>Edit</XenoButtonLabel>
-  <CopyKindTooltip>Copy this kind's gear configuration</CopyKindTooltip>
-  <PasteKindTooltip>Paste gear configuration to this kind</PasteKindTooltip>
+  <KindXenotypeTooltip>異種生成や年齢制限等を編集。</KindXenotypeTooltip>
+  <XenoButtonLabel>編集</XenoButtonLabel>
+  <CopyKindTooltip>装備設定を複写</CopyKindTooltip>
+  <PasteKindTooltip>装備設定を貼付</PasteKindTooltip>
   <ForcedXenotype>Forced Xenotype</ForcedXenotype>
-  <ForcedXenotypeTooltip>Force this pawn kind to only spawn with this xenotype, ignoring chance settings.</ForcedXenotypeTooltip>
+  <ForcedXenotypeTooltip>この種別を指定異種のみで生成。</ForcedXenotypeTooltip>
   <SelectXenotype>Select Xenotype</SelectXenotype>
-  <ClearForcedXenotype>Clear</ClearForcedXenotype>
-  <Total>Total</Total>
+  <ClearForcedXenotype>消去</ClearForcedXenotype>
+  <Total>合計</Total>
   <XenotypeChancesExceed100>Xenotype chances cannot exceed 100%</XenotypeChancesExceed100>
-  <BatchApply>Batch Apply</BatchApply>
-  <BatchApplyTooltip>Open batch apply window to apply current config to selected kinds.</BatchApplyTooltip>
+  <BatchApply>一括適用</BatchApply>
+  <BatchApplyTooltip>現在設定を選択種別に一括適用。</BatchApplyTooltip>
   <BatchApplyTitle>Batch Apply Config</BatchApplyTitle>
-  <SelectAll>Select All</SelectAll>
-  <SelectNone>Select None</SelectNone>
-  <Selected>Selected</Selected>
+  <SelectAll>全選択</SelectAll>
+  <SelectNone>全解除</SelectNone>
+  <Selected>選択</Selected>
   <BatchApplyConfirm>Apply config to {0} selected kinds?</BatchApplyConfirm>
   <BatchApplied>Applied config to {0} kinds.</BatchApplied>
   <BatchApplySource>Source</BatchApplySource>
   <BatchCopyCategories>Copy Categories</BatchCopyCategories>
   <BatchSkipAmmo>Skip Ammo (don't override)</BatchSkipAmmo>
-  <BatchTargetFaction>Target Faction</BatchTargetFaction>
+  <BatchTargetFaction>対象</BatchTargetFaction>
   <BatchApplyNoCategorySelected>Please select at least one category to copy.</BatchApplyNoCategorySelected>
-  <NewFaction>New</NewFaction>
-  <NewFactionTooltip>Create new faction. Only available in-game.</NewFactionTooltip>
+  <NewFaction>新規</NewFaction>
+  <NewFactionTooltip>新派閥生成(ゲーム内限定)。</NewFactionTooltip>
   <CreateFaction>Create Faction</CreateFaction>
-  <CreateFactionTooltip>Create new faction by cloning existing one.</CreateFactionTooltip>
+  <CreateFactionTooltip>既存派閥を複製し新派閥生成。</CreateFactionTooltip>
   <SelectTemplateFaction>Select Template Faction</SelectTemplateFaction>
-  <SelectTemplateFactionTooltip>Select faction to use as template. New faction will inherit its kind definitions and settlement generation settings.</SelectTemplateFactionTooltip>
+  <SelectTemplateFactionTooltip>雛形にする派閥を選択。</SelectTemplateFactionTooltip>
   <NewFactionDefName>New Faction DefName</NewFactionDefName>
   <NewFactionLabel>New Faction Label</NewFactionLabel>
   <CloneFactionSuccess>Successfully created new faction: {0}</CloneFactionSuccess>
   <FactionDefNameRequired>DefName is required and must be unique.</FactionDefNameRequired>
   <FactionDefNameExists>Faction with this DefName already exists.</FactionDefNameExists>
-  <PawnGroups>Pawn Groups</PawnGroups>
-  <GeneralSettings>General Settings</GeneralSettings>
-  <SortByPower>Sort by Power</SortByPower>
-  <PawnKind>Pawn Kind</PawnKind>
-  <Race>Race</Race>
-  <RaceAll>All Races</RaceAll>
-  <Power>Power</Power>
-  <FactionLeader>Faction Leader</FactionLeader>
-  <Points>Points</Points>
-  <RaidPoints>Raid Points</RaidPoints>
-  <RaidPointsLabel>Raid Points</RaidPointsLabel>
+  <PawnGroups>ポーングループ</PawnGroups>
+  <GeneralSettings>一般設定</GeneralSettings>
+  <SortByPower>戦力順</SortByPower>
+  <PawnKind>種別</PawnKind>
+  <Race>種族</Race>
+  <RaceAll>全種族</RaceAll>
+  <Power>戦力</Power>
+  <FactionLeader>派閥長</FactionLeader>
+  <Points>得点</Points>
+  <RaidPoints>襲撃得点</RaidPoints>
+  <RaidPointsLabel>襲撃得点</RaidPointsLabel>
   <CarryWeightLabel>Carry Weight</CarryWeightLabel>
-  <PointsOverrideTooltip>Override this pawn's raid points. Leave empty to use default combat power.</PointsOverrideTooltip>
-  <PointsOverrideFieldTooltip>Enter custom points, or leave empty to use default. Set to 0 to clear override.</PointsOverrideFieldTooltip>
-  <AutoCalculateRaidPoints>Auto-Calculate Raid Points</AutoCalculateRaidPoints>
+  <PointsOverrideTooltip>襲撃得点を上書。空白で既定値。</PointsOverrideTooltip>
+  <PointsOverrideFieldTooltip>任意得点入力。0で解除。</PointsOverrideFieldTooltip>
+  <AutoCalculateRaidPoints>自動計算</AutoCalculateRaidPoints>
   <AutoCalculateRaidPointsDone>Raid points auto-calculated based on gear value.</AutoCalculateRaidPointsDone>
-  <AutoRaidPointsEnabled>Auto-Modify Raid Points</AutoRaidPointsEnabled>
-  <AutoRaidPointsEnabledTooltip>Calculate raid points based on pawn gear value for elite-compressed raids to reduce performance load.</AutoRaidPointsEnabledTooltip>
-  <Unknown>Unknown</Unknown>
-  <Category>Category</Category>
-  <Category_All>All</Category_All>
+  <AutoRaidPointsEnabled>自動修正</AutoRaidPointsEnabled>
+  <AutoRaidPointsEnabledTooltip>装備価値で得点計算、圧縮襲撃。</AutoRaidPointsEnabledTooltip>
+  <Unknown>不明</Unknown>
+  <Category>分類</Category>
+  <Category_All>全</Category_All>
   <Category_Humanlike>Humanlike</Category_Humanlike>
   <Category_Animal>Animal</Category_Animal>
   <Category_Mechanoid>Mechanoid</Category_Mechanoid>
   <Category_Other>Other</Category_Other>
-  <AddGroup>Add Group</AddGroup>
+  <AddGroup>追加</AddGroup>
   <FactionGroupEditorTitle>Faction Group Editor - {0}</FactionGroupEditorTitle>
-  <Group>Group</Group>
-  <GroupName>Group Name</GroupName>
+  <Group>グループ</Group>
+  <GroupName>グループ名</GroupName>
   <GroupDefaultName>{0} #{1}</GroupDefaultName>
-  <Commonality>Commonality</Commonality>
-  <EditGroup>Edit Group</EditGroup>
-  <MaxTotalPoints>Max Total Points</MaxTotalPoints>
-  <AddPawn>Add Pawn</AddPawn>
+  <Commonality>生成重み</Commonality>
+  <EditGroup>編集</EditGroup>
+  <MaxTotalPoints>最大得点</MaxTotalPoints>
+  <AddPawn>ポーン追加</AddPawn>
   <AddKindDef>Add</AddKindDef>
   <AddPawnKind>Add</AddPawnKind>
-  <Traders>Traders</Traders>
-  <Carriers>Carriers</Carriers>
-  <Guards>Guards</Guards>
+  <Traders>交易者</Traders>
+  <Carriers>運搬者</Carriers>
+  <Guards>護衛</Guards>
   <GroupOptions>General Members</GroupOptions>
-  <Weight>Weight</Weight>
-  <Edit>Edit</Edit>
-  <Delete>Delete</Delete>
+  <Weight>重み</Weight>
+  <Edit>編集</Edit>
+  <Delete>削除</Delete>
   <ConfirmDeleteGroup>Delete this group?</ConfirmDeleteGroup>
-  <DeleteGroup>Delete Group</DeleteGroup>
-  <WorldOperations>World Operations</WorldOperations>
-  <InstanceCount>Instance Count</InstanceCount>
-  <Create>Create</Create>
+  <DeleteGroup>削除</DeleteGroup>
+  <WorldOperations>世界操作</WorldOperations>
+  <InstanceCount>数</InstanceCount>
+  <Create>生成</Create>
   <SelectFactionToCreate>Select faction template to create new instance.</SelectFactionToCreate>
   <CreateNewInstance>Create New Instance</CreateNewInstance>
   <ConfirmCreateNewInstance>Create new faction instance? Note: Too many instances may affect performance. Recommended max 10 per type.</ConfirmCreateNewInstance>
   <NewInstancePreview>New instance name: {0}</NewInstancePreview>
-  <TooManyInstances>Too many instances of this type (>20). Cannot create more.</TooManyInstances>
-  <SpawnRandomSettlement>Spawn Settlement</SpawnRandomSettlement>
+  <TooManyInstances>Too many instances of this type (&gt;20). Cannot create more.</TooManyInstances>
+  <SpawnRandomSettlement>定住地生成</SpawnRandomSettlement>
   <SelectSettlementLocation>Select Location</SelectSettlementLocation>
   <FactionInstanceCreated>Faction instance '{0}' created!</FactionInstanceCreated>
   <SettlementCreated>Settlement '{0}' created!</SettlementCreated>
@@ -480,13 +475,13 @@ Applying this preset may cause missing items or errors. Continue?</MissingModsWa
   <InvalidTile>Invalid location selected.</InvalidTile>
   <FilterByFaction>Show faction kinds only</FilterByFaction>
   <SpawnSettlements>Spawn Settlements</SpawnSettlements>
-  <TargetFaction>Target Faction</TargetFaction>
+  <TargetFaction>対象</TargetFaction>
   <RandomGeneration>Random Generation</RandomGeneration>
-  <SettlementCount>Count</SettlementCount>
+  <SettlementCount>数</SettlementCount>
   <MinDistanceToPlayer>Min Distance to Player</MinDistanceToPlayer>
   <GenerateRandomly>Generate Randomly</GenerateRandomly>
   <ManualSelection>Manual Selection</ManualSelection>
-  <ManualSelectionDesc>Click on world map to select location.</ManualSelectionDesc>
+  <ManualSelectionDesc>世界地図上で位置選択。</ManualSelectionDesc>
   <SettlementPermanentWarning>Warning: New settlements cannot be deleted! Only available while this window is open.</SettlementPermanentWarning>
   <SelectOnWorldMap>Select on Map</SelectOnWorldMap>
   <SettlementsCreated>Created {0} settlements!</SettlementsCreated>
@@ -581,7 +576,7 @@ Warnings:
   <TypePrefix>Type</TypePrefix>
   <ClickToSpawn>Click map to spawn settlement ({0})</ClickToSpawn>
   <AddedItemsMessage>Added {0} items to gear list</AddedItemsMessage>
-  <VisualPreview>Visual Preview</VisualPreview>
+  <VisualPreview>外観预览</VisualPreview>
   <PreviewError_NoData>No Data</PreviewError_NoData>
   <PreviewError_DefMissing>Def Missing</PreviewError_DefMissing>
   <PreviewError_FactionMissing>Faction Missing</PreviewError_FactionMissing>
@@ -591,42 +586,42 @@ Warnings:
   <CopiedKindGearMessage>Copied kind gear!</CopiedKindGearMessage>
   <UnknownFaction>Unknown Faction</UnknownFaction>
   <NameColor>Apparel Color</NameColor>
-  <NameColorTooltip>Display color for Apparel.</NameColorTooltip>
+  <NameColorTooltip>衣服色表示。</NameColorTooltip>
   <RimTalkLinkage>RimTalk Integration</RimTalkLinkage>
-  <SeverityRange>Severity Range</SeverityRange>
+  <SeverityRange>深刻度幅</SeverityRange>
   <NameCannotBeEmpty>Name cannot be empty</NameCannotBeEmpty>
   <NameTooShort>Name too short</NameTooShort>
   <NameTooLong>Name too long (max 100 chars)</NameTooLong>
   <NameCannotBeOnlySpecialChars>Name cannot contain only special characters</NameCannotBeOnlySpecialChars>
-  <Refresh>Refresh</Refresh>
+  <Refresh>更新</Refresh>
   <CachesRefreshed>Caches refreshed</CachesRefreshed>
-  <RefreshTooltip>Refresh all UI caches including faction lists, kind lists and icon caches.</RefreshTooltip>
+  <RefreshTooltip>UI一時記憶更新。</RefreshTooltip>
   <AlreadyExists>Already Exists</AlreadyExists>
-  <FactionAlreadyExistsTooltip>This faction already exists in game. Only one instance per faction template. To modify existing faction, use "Faction Edit" feature.</FactionAlreadyExistsTooltip>
+  <FactionAlreadyExistsTooltip>この派閥は既に存在。</FactionAlreadyExistsTooltip>
   <Changelog_FixWikiLang>Fixed Wiki language setting not applying</Changelog_FixWikiLang>
   <Changelog_AddWikiUI>Wiki UI improvements: added title bar, section coloring, layout optimization</Changelog_AddWikiUI>
-  <DeleteFactionTitle>Delete Faction</DeleteFactionTitle>
+  <DeleteFactionTitle>派閥削除</DeleteFactionTitle>
   <DeleteFactionWarning>Warning: This action is irreversible!</DeleteFactionWarning>
-  <TargetFaction>Target Faction</TargetFaction>
+  <TargetFaction>対象</TargetFaction>
   <SettlementsToRemove>Settlements to Remove</SettlementsToRemove>
   <PawnsToRemove>Pawns to Remove</PawnsToRemove>
   <OtherEffects>Other Effects</OtherEffects>
   <FactionRelationsRemoved>Faction relations will be cleared</FactionRelationsRemoved>
   <ActiveQuestsAffected>Active quests may be affected</ActiveQuestsAffected>
-  <DeleteFaction>Delete Faction</DeleteFaction>
-  <DangerZone>Danger Zone</DangerZone>
+  <DeleteFaction>派閥削除</DeleteFaction>
+  <DangerZone>危険区域</DangerZone>
   <NoFactionInstanceToDelete>No faction instance to delete</NoFactionInstanceToDelete>
   <FactionDeleted>Faction '{0}' deleted.</FactionDeleted>
   <FactionDeleteFailed>Failed to delete faction. Check logs.</FactionDeleteFailed>
   <SelectFactionInstanceToDelete>Select {0} instance to delete</SelectFactionInstanceToDelete>
   <SelectInstance>Please select instance</SelectInstance>
-  <Next>Next</Next>
-  <Settlements>Settlements</Settlements>
+  <Next>次</Next>
+  <Settlements>定住地</Settlements>
   <UnknownLocation>Unknown Location</UnknownLocation>
   <PlayerRelationSettings>Player Relations</PlayerRelationSettings>
-  <RelationAlly>Ally</RelationAlly>
-  <RelationNeutral>Neutral</RelationNeutral>
-  <RelationHostile>Hostile</RelationHostile>
+  <RelationAlly>同盟</RelationAlly>
+  <RelationNeutral>中立</RelationNeutral>
+  <RelationHostile>敵対</RelationHostile>
   <RelationCurrent>Current: {0}</RelationCurrent>
   <RelationDefault>Use game default relations</RelationDefault>
   <FGC_FirstTimePrompt_Title>Select Faction Gear Preset</FGC_FirstTimePrompt_Title>
@@ -644,16 +639,16 @@ You can change this later in Mod Settings.</FGC_FirstTimePrompt_Description>
   <FGC_Message_SelectedFactionsApplied>Applied {1} factions from preset "{0}" to current save.</FGC_Message_SelectedFactionsApplied>
   <FGC_SelectFactions>Select Factions</FGC_SelectFactions>
   <FGC_Message_UsingVanilla>Current save uses vanilla faction settings.</FGC_Message_UsingVanilla>
-  <NoPresetEditingDisabledTooltip>Create or load preset to enable editing</NoPresetEditingDisabledTooltip>
+  <NoPresetEditingDisabledTooltip>編集にはプリセット作成/読込を。</NoPresetEditingDisabledTooltip>
   <NoPresetCannotSave>Create or load preset to save</NoPresetCannotSave>
-  <WikiTooltip>Open Wiki help documentation</WikiTooltip>
-  <WikiMascotTip>Sly raccoon - Click to view on Steam Workshop</WikiMascotTip>
+  <WikiTooltip>Wiki案内</WikiTooltip>
+  <WikiMascotTip>Steamで見る</WikiMascotTip>
   <WikiTab_Principles>Core Principles</WikiTab_Principles>
   <WikiTab_Terminology>Terminology</WikiTab_Terminology>
   <WikiTab_Workflow>Workflow</WikiTab_Workflow>
   <WikiTab_Notes>Notes</WikiTab_Notes>
 
-  <!-- Wiki Content -->
+  
   <Wiki_Principles_Content>[How does this mod work?]
 
 Simply put: After you configure the mod, when the game generates new characters (enemies, caravans, defenders, etc.), the mod quietly replaces their original gear with your custom gear.
@@ -899,17 +894,17 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
 • QQ Group
 984338429</Wiki_Notes_Content>
 
-  <!-- Missing Keys Added -->
-  <ItemQualityTooltip>Override the quality of all items equipped by this pawn kind.</ItemQualityTooltip>
-  <OutfitFirstBudgetStrategy>Output first priority</OutfitFirstBudgetStrategy>
-  <OutfitFirstBudgetStrategyTooltip>Build a complete core outfit using the max apparel budget first (torso inner, legs inner, armored middle, shell). If over budget, it automatically downgrades/replaces pieces until within budget; armor value is kept at least 60% of budget by default. If core layers cannot be satisfied, fail fast before stripping and keep current worn apparel.</OutfitFirstBudgetStrategyTooltip>
-  <ApparelBudgetTooltip>Set the minimum and maximum market value budget for apparel generation.</ApparelBudgetTooltip>
-  <WeaponBudgetTooltip>Set the minimum and maximum market value budget for weapon generation.</WeaponBudgetTooltip>
-  <TechLevelLimitTooltip>Limit equipment to specific tech level or below.</TechLevelLimitTooltip>
+  
+  <ItemQualityTooltip>この種別の全品目品質を上書。</ItemQualityTooltip>
+  <OutfitFirstBudgetStrategy>服装セット優先</OutfitFirstBudgetStrategy>
+  <OutfitFirstBudgetStrategyTooltip>予算内で一式優先生成。</OutfitFirstBudgetStrategyTooltip>
+  <ApparelBudgetTooltip>衣服予算範囲設定。</ApparelBudgetTooltip>
+  <WeaponBudgetTooltip>武器予算範囲設定。</WeaponBudgetTooltip>
+  <TechLevelLimitTooltip>指定技術Lv以下に制限。</TechLevelLimitTooltip>
   <SkippedNonHumanKinds>Skipped {0} non-human pawn kinds.</SkippedNonHumanKinds>
   <AddedPawnKinds>Added {0} pawn kinds.</AddedPawnKinds>
   
-  <!-- Gear Info Dialog -->
+  
   <MassCarried>Mass carried</MassCarried>
   <ComfortableTemperature>Comfortable temperature range</ComfortableTemperature>
   <OverallArmor>Overall armor</OverallArmor>
@@ -917,21 +912,21 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <ArmorBlunt>Blunt</ArmorBlunt>
   <ArmorHeat>Heat</ArmorHeat>
   <Equipment>Equipment</Equipment>
-  <Apparel>Apparel</Apparel>
-  <Inventory>Inventory</Inventory>
+  <Apparel>衣服</Apparel>
+  <Inventory>所持品</Inventory>
   <TotalMass>Total mass</TotalMass>
   <ClickToViewGearInfo>Click to view gear details</ClickToViewGearInfo>
 
-  <!-- Category Filter -->
+  
   <CategoryAll>All Categories</CategoryAll>
   <Category_Food>Food</Category_Food>
   <Category_Medicine>Medicine</Category_Medicine>
   <Category_SocialDrug>Social Drug</Category_SocialDrug>
   <Category_HardDrug>Hard Drug</Category_HardDrug>
   <Category_Ammo>Ammo</Category_Ammo>
-  <CategoryFilterTooltip>Filter by item category</CategoryFilterTooltip>
+  <CategoryFilterTooltip>分類別絞込</CategoryFilterTooltip>
 
-  <!-- Hediff Categories -->
+  
   <HediffCat_Implants>Implants</HediffCat_Implants>
   <HediffCat_MissingParts>Missing Parts</HediffCat_MissingParts>
   <HediffCat_Debuffs>Debuffs</HediffCat_Debuffs>
@@ -940,27 +935,27 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <HediffCat_Buffs>Buffs</HediffCat_Buffs>
   <HediffCat_Other>Other</HediffCat_Other>
 
-  <!-- Food Sub-categories -->
+  
   <FoodCat_Cooked>Cooked</FoodCat_Cooked>
   <FoodCat_Raw>Raw</FoodCat_Raw>
   <FoodCat_Meat>Meat</FoodCat_Meat>
   <FoodCat_Vegetable>Vegetable</FoodCat_Vegetable>
 
-  <!-- Preview Save Confirmation -->
+  
   <ConfirmSaveBeforePreview>You have unsaved changes. Save before preview?</ConfirmSaveBeforePreview>
   <AutoSaveBeforePreview>Auto-save before preview</AutoSaveBeforePreview>
-  <AutoSaveBeforePreviewTooltip>When enabled, auto-save before preview without prompt</AutoSaveBeforePreviewTooltip>
+  <AutoSaveBeforePreviewTooltip>预览前自動保存。</AutoSaveBeforePreviewTooltip>
 
-  <!-- Clear Buttons -->
+  
   <ClearStatuses>Clear Statuses</ClearStatuses>
   <ClearInventory>Clear Inventory</ClearInventory>
-  <ClearStatusesTooltip>Clear all status effects for this pawn kind</ClearStatusesTooltip>
-  <ClearInventoryTooltip>Clear all items for this pawn kind</ClearInventoryTooltip>
+  <ClearStatusesTooltip>全状態効果を消去</ClearStatusesTooltip>
+  <ClearInventoryTooltip>全所持品を消去</ClearInventoryTooltip>
   <ConfirmClearStatuses>Are you sure you want to clear all status effects?</ConfirmClearStatuses>
   <ConfirmClearInventory>Are you sure you want to clear all items?</ConfirmClearInventory>
 
-  <!-- Item Pool -->
-  <QuickAddPool>Quick Add</QuickAddPool>
+  
+  <QuickAddPool>高速追加</QuickAddPool>
   <Pool_AnyFood>Any Food</Pool_AnyFood>
   <Pool_AnyMeal>Any Meal</Pool_AnyMeal>
   <Pool_AnyRawFood>Any Raw Food</Pool_AnyRawFood>
@@ -969,12 +964,12 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <Pool_AnyMedicine>Any Medicine</Pool_AnyMedicine>
   <Pool_AnySocialDrug>Any Social Drug</Pool_AnySocialDrug>
   <Pool_AnyHardDrug>Any Hard Drug</Pool_AnyHardDrug>
-  <QuickAddPoolTooltip>Quickly add an item pool</QuickAddPoolTooltip>
+  <QuickAddPoolTooltip>品目群を高速追加</QuickAddPoolTooltip>
   <EditPoolContents>Edit Pool Contents</EditPoolContents>
 
-  <!-- Hediff Pool -->
+  
   <QuickAddHediffPool>Quick Status Pool</QuickAddHediffPool>
-  <QuickAddHediffPoolTooltip>Quickly add a status pool (randomly select from specified type)</QuickAddHediffPoolTooltip>
+  <QuickAddHediffPoolTooltip>状態群を高速追加</QuickAddHediffPoolTooltip>
   <HediffPool_Tag>Pool</HediffPool_Tag>
   <HediffPool_AnyDebuff>Any Debuff</HediffPool_AnyDebuff>
   <HediffPool_AnyDrugHigh>Any Drug High</HediffPool_AnyDrugHigh>
@@ -983,9 +978,9 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <HediffPool_AnyIllness>Any Illness</HediffPool_AnyIllness>
   <HediffPool_AnyBuff>Any Buff</HediffPool_AnyBuff>
 
-  <!-- Apply to Others Dialogs -->
-  <ApplyHediffsToOthersTooltip>Apply current hediffs to other kinds in this faction</ApplyHediffsToOthersTooltip>
-  <ApplyItemsToOthersTooltip>Apply current inventory items to other kinds in this faction</ApplyItemsToOthersTooltip>
+  
+  <ApplyHediffsToOthersTooltip>現在の状態を他種別に適用</ApplyHediffsToOthersTooltip>
+  <ApplyItemsToOthersTooltip>現在の品目を他種別に適用</ApplyItemsToOthersTooltip>
   <ApplyHediffsToOthersTitle>Apply Hediffs to Other Kinds</ApplyHediffsToOthersTitle>
   <ApplyItemsToOthersTitle>Apply Items to Other Kinds</ApplyItemsToOthersTitle>
   <ApplyHediffsConfirm>Apply hediffs to {0} selected kinds?</ApplyHediffsConfirm>
@@ -994,7 +989,7 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <ItemsApplied>Applied items to {0} kinds.</ItemsApplied>
   <NoOtherKindsInFaction>No other kinds in this faction.</NoOtherKindsInFaction>
 
-  <!-- Inventory Limit Warnings -->
+  
   <InventoryItemCountLimit>Item count exceeds limit (max {0})</InventoryItemCountLimit>
   <InvalidItem>Invalid item</InvalidItem>
   <MassWarning>Mass warning: {0}/{1} kg</MassWarning>
@@ -1003,7 +998,7 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <BulkCriticalWarning>Critical overbulk: {0}/{1} - May cause inability to move!</BulkCriticalWarning>
   <InventoryOverweightWarning>Warning: Inventory critically overweight, pawn may be unable to move!</InventoryOverweightWarning>
 
-  <!-- Hediff Critical Warnings -->
+  
   <HediffWarningType_Consciousness>Consciousness</HediffWarningType_Consciousness>
   <HediffWarningType_Moving>Moving</HediffWarningType_Moving>
   <HediffWarningType_Manipulation>Manipulation</HediffWarningType_Manipulation>
@@ -1014,7 +1009,7 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <HediffWarning_ManipulationZero>Will cause pawn to be unable to manipulate items</HediffWarning_ManipulationZero>
   <HediffWarning_ManipulationLow>Will severely reduce pawn manipulation capability</HediffWarning_ManipulationLow>
 
-  <!-- Faction Export Feature -->
+  
   <yFE_ExportFactions>Export Factions</yFE_ExportFactions>
   <yFE_ExportFactions_Title>Export Factions to Preset</yFE_ExportFactions_Title>
   <yFE_TargetPreset>Target Preset</yFE_TargetPreset>
@@ -1029,12 +1024,12 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <yFE_ExportFailed>Export failed</yFE_ExportFailed>
   <yFE_Kinds_Label>kinds</yFE_Kinds_Label>
   <yFE_Factions_Label>factions</yFE_Factions_Label>
-  <yFE_SelectAll>Select All</yFE_SelectAll>
+  <yFE_SelectAll>全選択</yFE_SelectAll>
   <yFE_DeselectAll>Deselect All</yFE_DeselectAll>
-  <yFE_PresetName>Preset Name</yFE_PresetName>
+  <yFE_PresetName>プリセット名</yFE_PresetName>
   <yFE_PresetDescription>Preset Description</yFE_PresetDescription>
 
-  <!-- Phase 2: Scenario Creation UI -->
+  
   <P2_FactionEditorButton>Faction Editor</P2_FactionEditorButton>
   <P2_FactionEditorLite_Title>Select Faction Preset</P2_FactionEditorLite_Title>
   <P2_SelectPreset>Select Preset:</P2_SelectPreset>
@@ -1055,78 +1050,78 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <P2_AppliedToWorld>Successfully applied {0} factions to world ({1} mode)</P2_AppliedToWorld>
   <P2_NoNewFactionsToAdd>No new factions to add (all selected factions already exist)</P2_NoNewFactionsToAdd>
   <P2_ResetDefault>Reset Default</P2_ResetDefault>
-  <P2_OpenSettings>Settings</P2_OpenSettings>
+  <P2_OpenSettings>設定</P2_OpenSettings>
   <P2_ResetSuccess>Faction data reset to default</P2_ResetSuccess>
   <P2_NotInGameWarning>[Note] Not currently in game, some features (e.g., apply to save) are unavailable</P2_NotInGameWarning>
   
-  <!-- Skills -->
-  <Skills>Skills</Skills>
-  <ForcedSkills>Forced Skills</ForcedSkills>
+  
+  <Skills>技能</Skills>
+  <ForcedSkills>強制技能</ForcedSkills>
   <SkillLevel>Level</SkillLevel>
   <ForceOverrideSkills>Override Skills</ForceOverrideSkills>
-  <SkillRandomRange>Random Range</SkillRandomRange>
+  <SkillRandomRange>乱数幅</SkillRandomRange>
   <SkillsAddedMessage>Added {0} skills, skipped {1} duplicates.</SkillsAddedMessage>
-  <BaseLevel>Base Level</BaseLevel>
-  <RandomRange>Random Range</RandomRange>
+  <BaseLevel>基本Lv</BaseLevel>
+  <RandomRange>乱数幅</RandomRange>
   <SkillMin>Min</SkillMin>
   <SkillMax>Max</SkillMax>
-  <Passion>Passion</Passion>
+  <Passion>情熱</Passion>
   <SkillEditTitle>Edit Skill</SkillEditTitle>
-  <ClearSkillsTooltip>Clear all skills for this pawn kind</ClearSkillsTooltip>
+  <ClearSkillsTooltip>全技能を消去</ClearSkillsTooltip>
 
-  <!-- Traits -->
-  <Traits>Traits</Traits>
-  <ForcedTraits>Forced Traits</ForcedTraits>
-  <AddTrait>Add Trait</AddTrait>
+  
+  <Traits>特性</Traits>
+  <ForcedTraits>強制特性</ForcedTraits>
+  <AddTrait>特性追加</AddTrait>
   <TraitPickerTitle>Add Traits</TraitPickerTitle>
-  <Degree>Degree</Degree>
+  <Degree>度合</Degree>
   <ForceOverrideTraits>Override Traits</ForceOverrideTraits>
   <TraitsAddedMessage>Added {0} traits, skipped {1} duplicates.</TraitsAddedMessage>
-  <ClearTraitsTooltip>Clear all traits for this pawn kind</ClearTraitsTooltip>
+  <ClearTraitsTooltip>全特性を消去</ClearTraitsTooltip>
 
-  <!-- Genes -->
-  <Genes>Genes</Genes>
-  <ForcedGenes>Forced Genes</ForcedGenes>
-  <AddGene>Add Gene</AddGene>
+  
+  <Genes>遺伝子</Genes>
+  <ForcedGenes>強制遺伝子</ForcedGenes>
+  <AddGene>遺伝子追加</AddGene>
   <GenePickerTitle>Add Genes</GenePickerTitle>
   <GeneEndogene>Endogene</GeneEndogene>
-  <ForceOverrideGenes>Override</ForceOverrideGenes>
+  <ForceOverrideGenes>上書</ForceOverrideGenes>
   <GenesAddedMessage>Added {0} genes, skipped {1} duplicates.</GenesAddedMessage>
-  <ClearGenesTooltip>Clear all genes for this pawn kind</ClearGenesTooltip>
+  <ClearGenesTooltip>全遺伝子を消去</ClearGenesTooltip>
 
-  <!-- Appearance -->
-  <Appearance>Appearance</Appearance>
-  <EditAppearance>Edit Appearance</EditAppearance>
-  <AppearanceEditorTitle>Edit Appearance</AppearanceEditorTitle>
-  <SkinColor>Skin Color</SkinColor>
-  <HairColor>Hair Color</HairColor>
+  
+  <Appearance>外見</Appearance>
+  <EditAppearance>外見編集</EditAppearance>
+  <AppearanceEditorTitle>外見編集</AppearanceEditorTitle>
+  <SkinColor>肌色</SkinColor>
+  <HairColor>髪色</HairColor>
   <ForceOverrideAppearance>Override Appearance</ForceOverrideAppearance>
-  <ClearAppearanceTooltip>Clear appearance settings for this pawn kind</ClearAppearanceTooltip>
+  <ClearAppearanceTooltip>外見設定を消去</ClearAppearanceTooltip>
   <AppearanceTab_Shape>Shape</AppearanceTab_Shape>
   <AppearanceTab_Hair>Hair</AppearanceTab_Hair>
-  <AppearanceTab_Skin>Skin</AppearanceTab_Skin>
-  <AppearanceTab_Genes>Genes</AppearanceTab_Genes>
+  <AppearanceTab_Skin>肌</AppearanceTab_Skin>
+  <AppearanceTab_Genes>遺伝子</AppearanceTab_Genes>
   <AppearanceTab_Body>Body</AppearanceTab_Body>
-  <AppearanceTab_Head>Head</AppearanceTab_Head>
+  <AppearanceTab_Head>頭</AppearanceTab_Head>
   <AppearanceTab_Beard>Beard</AppearanceTab_Beard>
-  <Random>Random</Random>
+  <Random>乱数</Random>
 
-  <!-- Ideology -->
-  <IdeologySettings>Ideology Settings</IdeologySettings>
-  <SelectIdeology>Select Ideology</SelectIdeology>
+  
+  <IdeologySettings>思想設定</IdeologySettings>
+  <SelectIdeology>思想選択</SelectIdeology>
 
-  <!-- Turret/Mechanoid Weapon Filter -->
-  <HideTurretMechanoidWeaponsTooltip>Hide turret and mechanoid weapons from the item library</HideTurretMechanoidWeaponsTooltip>
+  
+  <HideTurretMechanoidWeaponsTooltip>砲塔/機械武器を非表示</HideTurretMechanoidWeaponsTooltip>
 
-  <!-- Hediff Target Parts -->
-  <TargetParts>Target Parts</TargetParts>
-  <HediffPartModeAuto>Auto</HediffPartModeAuto>
-  <HediffPartModeManual>Manual</HediffPartModeManual>
+  
+  <TargetParts>対象部位</TargetParts>
+  <HediffPartModeAuto>自動</HediffPartModeAuto>
+  <HediffPartModeManual>手動</HediffPartModeManual>
   <HediffPartModeAutoDescription>Auto (recipe/mapping)</HediffPartModeAutoDescription>
   <HediffPartSummaryFormat>{0}, {1} (+{2})</HediffPartSummaryFormat>
   <BodyPartSelectionTitle>Select Target Body Parts</BodyPartSelectionTitle>
 
-  <!-- Hediff Validation Messages -->
+  
   <Validation_HediffNull>Hediff is null</Validation_HediffNull>
   <Validation_InvalidPoolType>Invalid pool type</Validation_InvalidPoolType>
   <Validation_HediffDefNull>HediffDef is null</Validation_HediffDefNull>
@@ -1150,80 +1145,80 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <Validation_InsufficientParts>Insufficient available parts for hediff '{0}': requested {1}, available {2}</Validation_InsufficientParts>
   <Validation_TooManyImplantsForPart>Too many implants for part '{0}': {1} requested, max allowed {2}</Validation_TooManyImplantsForPart>
 
-  <!-- Batch History -->
-  <History>History</History>
-  <BatchHistoryTooltip>View and revert past batch apply operations.</BatchHistoryTooltip>
+  
+  <History>履歴</History>
+  <BatchHistoryTooltip>過去の一括操作を表示/復元。</BatchHistoryTooltip>
   <BatchHistoryTitle>Batch Apply History</BatchHistoryTitle>
-  <ClearAll>Clear All</ClearAll>
+  <ClearAll>全消去</ClearAll>
   <BatchHistoryClearConfirm>Clear all batch apply history? This cannot be undone.</BatchHistoryClearConfirm>
-  <Yes>Yes</Yes>
+  <Yes>はい</Yes>
   <No>No</No>
   <BatchHistoryCount>Total {0} records</BatchHistoryCount>
   <BatchHistoryEmpty>No history found.</BatchHistoryEmpty>
   <BatchHistoryInvalidBtn>Invalid</BatchHistoryInvalidBtn>
-  <BatchHistoryInvalidTooltip>Snapshot or target data is corrupted or lost due to mod changes.</BatchHistoryInvalidTooltip>
+  <BatchHistoryInvalidTooltip>情報破損により復元不可。</BatchHistoryInvalidTooltip>
   <BatchHistoryInvalid>Cannot revert: target data is corrupted.</BatchHistoryInvalid>
   <BatchHistoryRevertBtn>Revert</BatchHistoryRevertBtn>
   <BatchHistoryRevertConfirm>Revert this batch apply operation? Target kinds will be restored to their previous state.</BatchHistoryRevertConfirm>
   <BatchReverted>Batch operation reverted successfully.</BatchReverted>
-  <General>General</General>
+  <General>一般</General>
   <BatchHistory_SrcTgt>Src: [{0}] {1} → Tgts: {2}</BatchHistory_SrcTgt>
   <BatchHistory_Flags>Flags: {0}</BatchHistory_Flags>
 
-  <!-- Age Settings -->
-  <AgeSettings>Age Settings</AgeSettings>
-  <AgeSettingsTooltip>Set the biological age range for this pawn kind.</AgeSettingsTooltip>
+  
+  <AgeSettings>年齢設定</AgeSettings>
+  <AgeSettingsTooltip>生物学的年齢範囲設定。</AgeSettingsTooltip>
   <MinAge>Minimum Age</MinAge>
   <MaxAge>Maximum Age</MaxAge>
   <AgeSettingsHint>Leave empty to disable. If in conflict with faction group settings, this will take precedence. Age will be clamped to the minimum adult age of the race.</AgeSettingsHint>
   <AgeClampedToAdult>Age value adjusted to minimum adult age: {0}</AgeClampedToAdult>
 
-  <!-- Non-Combatant Warning -->
+  
   <NonCombatantWarningText>Warning: The selected pawn kind contains "non-combatant" genes or cannot be generated as a combatant.
 
     If you force apply this pawn kind, we will automatically relax generation rules to allow generating non-combatant Pawns. This may result in the pawn kind being useless in combat (e.g., only running away).
 
     Continue?</NonCombatantWarningText>
-  <Yes>Yes</Yes>
+  <Yes>はい</Yes>
   <No>No</No>
   <DoNotShowAgain>Don't Show Again</DoNotShowAgain>
-  <RaidPoints>Raid Points</RaidPoints>
-  <AddPawnKindTooltip>Click to add a new pawn kind</AddPawnKindTooltip>
+  <RaidPoints>襲撃得点</RaidPoints>
+  <AddPawnKindTooltip>新種別追加</AddPawnKindTooltip>
   <SelectFactionFirst>Please select a faction first</SelectFactionFirst>
   <OK>OK</OK>
   <OverwritePresetConfirm>Overwrite preset?</OverwritePresetConfirm>
   <PoolType>Pool Type</PoolType>
-  <RelationPermanentEnemyTooltip>Permanent enemy relations cannot be modified</RelationPermanentEnemyTooltip>
+  <RelationPermanentEnemyTooltip>永続敵対関係は変更不可。</RelationPermanentEnemyTooltip>
 
-  <!-- Trade Stock -->
-  <TradeStockSettings>Trade Stock Settings</TradeStockSettings>
-  <EditTradeStock>Edit Trade Stock</EditTradeStock>
-  <TradeStockSettingsDesc>Customize what items this faction sells at settlements.</TradeStockSettingsDesc>
+  
+  <TradeStockSettings>交易設定</TradeStockSettings>
+  <EditTradeStock>交易品編集</EditTradeStock>
+  <TradeStockSettingsDesc>定住地で販売する品目を設定。</TradeStockSettingsDesc>
   <TradeStockEditorTitle>Trade Stock — {0}</TradeStockEditorTitle>
   <TradeStockTrader>Trader: {0}</TradeStockTrader>
   <TradeStockReplaceVanilla>Replace Vanilla</TradeStockReplaceVanilla>
-  <TradeStockReplaceVanillaTip>When unchecked: custom items are appended on top of vanilla stock. When checked: vanilla stock is cleared first, only your items appear.</TradeStockReplaceVanillaTip>
+  <TradeStockReplaceVanillaTip>未: 追加。済: 全消去後追加のみ。</TradeStockReplaceVanillaTip>
   <TradeStockReplaceConfirm>When enabled, all vanilla stock will be cleared and only your configured items will appear in trade. Continue?</TradeStockReplaceConfirm>
   <TradeStockUndo>Undo ({0})</TradeStockUndo>
   <TradeStockRedo>Redo ({0})</TradeStockRedo>
-  <TradeStockApplyToOthers>Apply to Others</TradeStockApplyToOthers>
+  <TradeStockApplyToOthers>他に適用</TradeStockApplyToOthers>
   <ApplyToAllFactions>Apply to ALL humanlike factions</ApplyToAllFactions>
   <TradeStockSearch>Search...</TradeStockSearch>
   <TradeStockCount>{0} items</TradeStockCount>
   <TradeStockRemoveItem>Remove this item</TradeStockRemoveItem>
   <TradeStockNoItems>No items. Add from library →</TradeStockNoItems>
   <TradeStockAddFirst>Add items first.</TradeStockAddFirst>
-  <TradeStockClearAll>Clear All</TradeStockClearAll>
-  <TradeStockClear>Clear</TradeStockClear>
+  <TradeStockClearAll>全消去</TradeStockClearAll>
+  <TradeStockClear>消去</TradeStockClear>
   <TradeStockClearAllConfirm>Remove all {0} items?</TradeStockClearAllConfirm>
   <TradeStockResetDefaults>Reset Defaults</TradeStockResetDefaults>
   <TradeStockResetConfirm>Reset to vanilla defaults? This will discard all custom changes.</TradeStockResetConfirm>
   <TradeStockSaved>Trade stock saved.</TradeStockSaved>
   <TradeStockNoFactions>No other humanlike factions found.</TradeStockNoFactions>
-  <TradeCat_All>All</TradeCat_All>
-  <TradeCat_Weapons>Weapons</TradeCat_Weapons>
+  <TradeCat_All>全</TradeCat_All>
+  <TradeCat_Weapons>武器</TradeCat_Weapons>
   <TradeCat_Armor>Armor</TradeCat_Armor>
-  <TradeCat_Apparel>Apparel</TradeCat_Apparel>
-  <TradeCat_Items>Items</TradeCat_Items>
+  <TradeCat_Apparel>衣服</TradeCat_Apparel>
+  <TradeCat_Items>アイテム</TradeCat_Items>
   <TradeCat_Animals>Animals</TradeCat_Animals>
 </LanguageData>

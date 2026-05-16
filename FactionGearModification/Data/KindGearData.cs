@@ -95,6 +95,9 @@ namespace FactionGearCustomizer
         public float? MinAge = null;
         public float? MaxAge = null;
 
+        // 袭击点数覆盖（自动计算）—— 根据装备价值自动计算，群组自动匹配
+        public float? RaidPointsOverride = null;
+
         public KindGearData() { }
 
         public KindGearData(string kindDefName)
@@ -198,6 +201,7 @@ namespace FactionGearCustomizer
             Scribe_Values.Look(ref ForcedXenotype, "forcedXenotype");
             Scribe_Values.Look(ref MinAge, "minAge");
             Scribe_Values.Look(ref MaxAge, "maxAge");
+            Scribe_Values.Look(ref RaidPointsOverride, "raidPointsOverride");
 
             if (weapons == null) weapons = new List<GearItem>();
             if (meleeWeapons == null) meleeWeapons = new List<GearItem>();
@@ -317,6 +321,7 @@ namespace FactionGearCustomizer
             ForcedXenotype = null;
             MinAge = null;
             MaxAge = null;
+            RaidPointsOverride = null;
         }
 
         public bool IsEffectivelyDefault()
@@ -348,6 +353,7 @@ namespace FactionGearCustomizer
                 !string.IsNullOrEmpty(ForcedXenotype) ||
                 MinAge.HasValue ||
                 MaxAge.HasValue ||
+                RaidPointsOverride.HasValue ||
                 !string.IsNullOrEmpty(Label) ||
                 !(TechHediffTags?.Count ?? 0).Equals(0) ||
                 !(TechHediffDisallowedTags?.Count ?? 0).Equals(0) ||
@@ -415,6 +421,7 @@ namespace FactionGearCustomizer
             copy.ForcedXenotype = this.ForcedXenotype;
             copy.MinAge = this.MinAge;
             copy.MaxAge = this.MaxAge;
+            copy.RaidPointsOverride = this.RaidPointsOverride;
 
             if (this.ForcedSkills != null)
             {
@@ -627,6 +634,7 @@ namespace FactionGearCustomizer
             this.ForcedXenotype = source.ForcedXenotype;
             this.MinAge = source.MinAge;
             this.MaxAge = source.MaxAge;
+            this.RaidPointsOverride = source.RaidPointsOverride;
 
             if (source.ForcedSkills != null)
             {

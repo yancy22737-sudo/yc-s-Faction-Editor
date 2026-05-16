@@ -64,6 +64,20 @@ namespace FactionGearCustomizer.Managers
                 FactionDefManager.ApplyFactionChanges(factionDef, factionData);
             }
 
+            // 意识形态应用
+            if (ModsConfig.IdeologyActive && factionData != null
+                && !string.IsNullOrEmpty(factionData.IdeoName))
+            {
+                var ideo = Find.IdeoManager?.IdeosListForReading
+                    ?.FirstOrDefault(i => i.name == factionData.IdeoName);
+                if (ideo != null)
+                {
+                    if (faction.ideos == null)
+                        faction.ideos = new FactionIdeosTracker(faction);
+                    faction.ideos.SetPrimary(ideo);
+                }
+            }
+
             FactionListPanel.MarkDirty();
             Messages.Message(LanguageManager.Get("FactionInstanceCreated", faction.Name), MessageTypeDefOf.PositiveEvent, false);
             return faction;

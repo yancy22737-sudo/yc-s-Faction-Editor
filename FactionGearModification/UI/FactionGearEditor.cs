@@ -202,6 +202,16 @@ namespace FactionGearCustomizer
         {
             PruneDefaultOverrides();
 
+            // 自动计算袭击点数（开关开启则计算，关闭则恢复默认）
+            if (FactionGearCustomizerMod.Settings.autoRaidPointsEnabled)
+            {
+                AutoCalculateRaidPoints();
+            }
+            else
+            {
+                ClearAllRaidPointsOverrides();
+            }
+
             if (!string.IsNullOrEmpty(FactionGearCustomizerMod.Settings.currentPresetName))
             {
                 var preset = FactionGearCustomizerMod.Settings.presets.FirstOrDefault(p => p.name == FactionGearCustomizerMod.Settings.currentPresetName);
@@ -219,6 +229,73 @@ namespace FactionGearCustomizer
             IsDirty = false;
             backupSettings = null; 
             LogUtils.Info("Settings saved successfully.");
+        }
+
+        /// <summary>
+        /// 开关切换时立即触发：计算所有派系袭击点数。
+        /// </summary>
+        public static void TriggerAutoCalculateAll()
+        {
+            AutoCalculateRaidPoints();
+            FactionGearCustomizerMod.Settings.Write();
+            MarkDirty();
+        }
+
+        /// <summary>
+        /// 开关切换时立即触发：清除所有派系袭击点数覆盖。
+        /// </summary>
+        public static void TriggerClearAllOverrides()
+        {
+            ClearAllRaidPointsOverrides();
+            FactionGearCustomizerMod.Settings.Write();
+            MarkDirty();
+        }
+
+        /// <summary>
+        /// 清除所有派系的自动袭击点数覆盖（恢复默认）。
+        /// </summary>
+        private static void ClearAllRaidPointsOverrides()
+        {
+            var settings = FactionGearCustomizerMod.Settings;
+            if (settings == null) return;
+
+            int count = 0;
+            foreach (var factionData in settings.factionGearData)
+            {
+                if (factionData?.kindGearData == null) continue;
+                foreach (var kd in factionData.kindGearData)
+                {
+                    if (kd?.RaidPointsOverride != null)
+                    {
+                        kd.RaidPointsOverride = null;
+                        count++;
+                    }
+                }
+            }
+            if (count > 0)
+                LogUtils.DebugLog($"Cleared {count} auto raid points overrides");
+        }
+
+        /// <summary>
+        /// 自动计算所有派系的袭击点数（根据装备价值，写入 KindGearData）。
+        /// </summary>
+        private static void AutoCalculateRaidPoints()
+        {
+            var settings = FactionGearCustomizerMod.Settings;
+            if (settings == null) return;
+
+            float multiplier = settings.autoRaidPointValueMultiplier;
+            int count = 0;
+
+            foreach (var factionData in settings.factionGearData)
+            {
+                if (factionData?.kindGearData == null) continue;
+                Managers.RaidPointCalculator.AutoCalculateForFaction(factionData, multiplier);
+                count++;
+            }
+
+            if (count > 0)
+                LogUtils.DebugLog($"Auto-calculated raid points for {count} factions (multiplier={multiplier})");
         }
 
         /// <summary>

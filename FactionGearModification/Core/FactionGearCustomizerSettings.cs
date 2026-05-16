@@ -58,6 +58,12 @@ namespace FactionGearCustomizer
         // [New] Ammo protection — when CE is active, remove ammo that doesn't match equipped weapons
         public bool ammoProtection = true;
 
+        // [New] Auto raid points — 保存时自动根据装备价值计算袭击点数（精英袭击）
+        public bool autoRaidPointsEnabled = true;
+
+        // [New] Auto raid points value multiplier — 装备市场价值转换为袭击点数的系数
+        public float autoRaidPointValueMultiplier = 0.01f;
+
         // [Phase 2] 剧本配置 - 用于游戏开始前配置派系
         public ScenarioFactionConfig scenarioFactionConfig;
 
@@ -72,6 +78,8 @@ namespace FactionGearCustomizer
             Scribe_Values.Look(ref autoSaveBeforePreview, "autoSaveBeforePreview", false);
             Scribe_Values.Look(ref enableDebugLog, "enableDebugLog", false);
             Scribe_Values.Look(ref ammoProtection, "ammoProtection", true);
+            Scribe_Values.Look(ref autoRaidPointValueMultiplier, "autoRaidPointValueMultiplier", 0.01f);
+            Scribe_Values.Look(ref autoRaidPointsEnabled, "autoRaidPointsEnabled", true);
             Scribe_Collections.Look(ref dismissedDialogs, "dismissedDialogs", LookMode.Value);
             if (dismissedDialogs == null) dismissedDialogs = new HashSet<string>();
             Scribe_Values.Look(ref currentPresetName, "currentPresetName", null);

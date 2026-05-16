@@ -34,7 +34,7 @@ Copy-Item "$sourceRoot\About" "$destRoot" -Recurse -Force
 
 Write-Host "Copying 1.6... (includes Languages folder)"
 
-Copy-Item "$sourceRoot\1.6" "$destRoot" -Recurse -Force
+try { Copy-Item "$sourceRoot\1.6" "$destRoot" -Recurse -Force -ErrorAction Stop } catch { Write-Host "WARNING: Full copy failed (file locked), copying files individually..."; Get-ChildItem "$sourceRoot\1.6" -Recurse -File | ForEach-Object { $dest = $_.FullName.Replace($sourceRoot, $destRoot); $destDir = Split-Path $dest; if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Path $destDir -Force }; try { Copy-Item $_.FullName $dest -Force -ErrorAction Stop } catch { Write-Host "  SKIP: $($_.Name) (locked)" } } }
 
 Write-Host "Cleaning up stale icon files..."
 @(

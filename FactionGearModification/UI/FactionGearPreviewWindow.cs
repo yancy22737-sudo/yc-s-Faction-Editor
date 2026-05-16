@@ -748,32 +748,49 @@ namespace FactionGearCustomizer
                 // Raid points display - bottom left
                 try
                 {
-                    float combatPower = k.combatPower;
-                    var settings = FactionGearCustomizerMod.Settings;
-                    if (settings?.factionGearData != null)
+                    float baseCombatPower = k.combatPower;
+                    float? effectivePoints = null;
+
+                    // 优先：群组中的手动覆盖
+                    if (factionData?.groupMakers != null)
                     {
-                        foreach (var fd in settings.factionGearData)
+                        foreach (var gm in factionData.groupMakers)
                         {
-                            if (fd.factionDefName != factionDef.defName) continue;
-                            if (fd.groupMakers == null) continue;
-                            foreach (var gm in fd.groupMakers)
+                            if (gm.options != null)
                             {
-                                if (gm.options == null) continue;
                                 foreach (var opt in gm.options)
                                 {
                                     if (opt.kindDefName == k.defName && opt.pointsOverride.HasValue)
                                     {
-                                        combatPower = opt.pointsOverride.Value;
+                                        effectivePoints = opt.pointsOverride.Value;
                                         break;
                                     }
                                 }
                             }
+                            if (effectivePoints.HasValue) break;
                         }
                     }
+                    // 回退：KindGearData 的自动计算值
+                    if (!effectivePoints.HasValue)
+                    {
+                        var kindData = factionData?.GetKindData(k.defName);
+                        if (kindData?.RaidPointsOverride.HasValue == true)
+                            effectivePoints = kindData.RaidPointsOverride.Value;
+                    }
+
                     Rect raidPointsRect = new Rect(inner.x + 2f, inner.yMax - 18f, inner.width - 44f, 16f);
                     Text.Anchor = TextAnchor.LowerLeft;
                     Text.Font = GameFont.Tiny;
-                    Widgets.Label(raidPointsRect, $"点数：{(int)combatPower}");
+                    if (effectivePoints.HasValue && Mathf.Abs(effectivePoints.Value - baseCombatPower) > 0.5f)
+                    {
+                        float adjustment = effectivePoints.Value - baseCombatPower;
+                        string sign = adjustment >= 0 ? "+" : "";
+                        Widgets.Label(raidPointsRect, $"{LanguageManager.Get("RaidPointsLabel")}：{baseCombatPower:F0}{sign}{adjustment:F0}");
+                    }
+                    else
+                    {
+                        Widgets.Label(raidPointsRect, $"{LanguageManager.Get("RaidPointsLabel")}：{baseCombatPower:F0}");
+                    }
                     Text.Anchor = TextAnchor.UpperLeft;
                 }
                 catch { }
@@ -789,7 +806,7 @@ namespace FactionGearCustomizer
                         Rect weightRect = new Rect(inner.x + 2f, inner.yMax - 32f, inner.width - 44f, 16f);
                         Color weightColor = percent > 0.9f ? new Color(0.8f, 0.29f, 0.32f) : (percent > 0.75f ? new Color(1f, 0.69f, 0.1f) : new Color(0.2f, 0.76f, 0.57f));
                         GUI.color = weightColor;
-                        Widgets.Label(weightRect, $"负重: {percent:P0}");
+                        Widgets.Label(weightRect, $"{LanguageManager.Get("CarryWeightLabel")}: {percent:P0}");
                         GUI.color = Color.white;
                     }
                 }

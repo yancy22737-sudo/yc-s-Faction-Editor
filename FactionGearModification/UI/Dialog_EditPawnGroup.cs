@@ -94,7 +94,21 @@ namespace FactionGearCustomizer.UI
 
             Widgets.EndScrollView();
 
-            if (Widgets.ButtonText(new Rect(inRect.width / 2f - 60f, inRect.height - 40f, 120f, 35f), LanguageManager.Get("Close")))
+            float buttonY = inRect.height - 40f;
+
+            // 自动计算袭击点数按钮
+            if (Widgets.ButtonText(new Rect(inRect.width / 2f - 240f, buttonY, 200f, 35f),
+                LanguageManager.Get("AutoCalculateRaidPoints")))
+            {
+                var factionData = FactionGearCustomizerMod.Settings?.TryGetFactionData(factionDef?.defName);
+                float multiplier = FactionGearCustomizerMod.Settings?.autoRaidPointValueMultiplier ?? 0.01f;
+                UndoManager.RecordState(groupData);
+                Managers.RaidPointCalculator.AutoCalculateForGroup(groupData, factionData, multiplier);
+                FactionGearEditor.MarkDirty();
+                Messages.Message(LanguageManager.Get("AutoCalculateRaidPointsDone"), MessageTypeDefOf.PositiveEvent, false);
+            }
+
+            if (Widgets.ButtonText(new Rect(inRect.width / 2f - 30f, buttonY, 100f, 35f), LanguageManager.Get("Close")))
             {
                 Close();
             }
@@ -213,9 +227,10 @@ namespace FactionGearCustomizer.UI
 
                 PawnKindDef kind = DefDatabase<PawnKindDef>.GetNamedSilentFail(opt.kindDefName);
                 string kindLabel = kind?.LabelCap ?? opt.kindDefName;
-                float displayPoints = opt.GetEffectivePoints();
+                var factionData = FactionGearCustomizerMod.Settings?.TryGetFactionData(factionDef?.defName);
+                float displayPoints = opt.GetEffectivePoints(factionData);
                 float basePoints = kind?.combatPower ?? 0f;
-                if (opt.pointsOverride.HasValue)
+                if (displayPoints != basePoints)
                 {
                     kindLabel += $" ({displayPoints:F0})";
                 }

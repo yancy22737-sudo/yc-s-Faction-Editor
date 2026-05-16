@@ -456,6 +456,27 @@ namespace FactionGearCustomizer.Managers
                 LogUtils.DebugLog($"Skipping PlayerRelationOverride. HasValue={data.PlayerRelationOverride.HasValue}, InGame={Current.Game != null}");
             }
 
+            // 意识形态应用
+            if (ModsConfig.IdeologyActive && !string.IsNullOrEmpty(data.IdeoName)
+                && Current.Game != null && Find.FactionManager != null)
+            {
+                var ideo = Find.IdeoManager?.IdeosListForReading
+                    ?.FirstOrDefault(i => i.name == data.IdeoName);
+                if (ideo != null)
+                {
+                    foreach (var f in Find.FactionManager.AllFactions)
+                    {
+                        if (f.def == faction && !f.IsPlayer)
+                        {
+                            if (f.ideos == null)
+                                f.ideos = new FactionIdeosTracker(f);
+                            f.ideos.SetPrimary(ideo);
+                            LogUtils.DebugLog($"Applied ideology '{ideo.name}' to faction instance: {f.Name}");
+                        }
+                    }
+                }
+            }
+
             if (cachedDescriptionField != null)
             {
                 cachedDescriptionField.SetValue(faction, null);

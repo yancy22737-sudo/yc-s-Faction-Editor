@@ -913,14 +913,28 @@ namespace FactionGearCustomizer.UI
                 factionData.isModified = true;
                 // If groups haven't been intentionally modified, strip stale groupMakers
                 // to prevent corrupted data from re-infecting faction.pawnGroupMakers.
-                if (!groupsModified) factionData.groupMakers = null;
+                // 但如果开启了自动袭击点数，则需要保留 groupMakers 以便自动计算
+                if (!groupsModified && !FactionGearCustomizerMod.Settings.autoRaidPointsEnabled)
+                    factionData.groupMakers = null;
+
+                // 自动计算袭击点数（Apply 时立即生效，不等待 Save）
+                if (FactionGearCustomizerMod.Settings.autoRaidPointsEnabled)
+                {
+                    AutoCalculateRaidPointsForFaction(factionData);
+                }
+                else
+                {
+                    ClearRaidPointsOverrideForFaction(factionData);
+                }
+
                 FactionDefManager.ApplyFactionChanges(factionDef, factionData);
             }
 
             // Apply relation changes immediately even if no other faction changes
             if (relationChanged && Current.Game != null && Find.FactionManager != null)
             {
-                if (!groupsModified) factionData.groupMakers = null;
+                if (!groupsModified && !FactionGearCustomizerMod.Settings.autoRaidPointsEnabled)
+                    factionData.groupMakers = null;
                 FactionDefManager.ApplyFactionChanges(factionDef, factionData);
             }
 
@@ -997,6 +1011,26 @@ namespace FactionGearCustomizer.UI
             FactionGearEditor.IsDirty = true;
             FactionGearEditor.MarkDirty();
             Messages.Message(LanguageManager.Get("SettingsSaved"), MessageTypeDefOf.PositiveEvent, false);
+        }
+
+        /// <summary>
+        /// 对当前派系的所有兵种运行自动袭击点数计算（写入 KindGearData.RaidPointsOverride）
+        /// </summary>
+        private void AutoCalculateRaidPointsForFaction(FactionGearData data)
+        {
+            if (data == null) return;
+            float multiplier = FactionGearCustomizerMod.Settings.autoRaidPointValueMultiplier;
+            Managers.RaidPointCalculator.AutoCalculateForFaction(data, multiplier);
+        }
+
+        private void ClearRaidPointsOverrideForFaction(FactionGearData data)
+        {
+            if (data?.kindGearData == null) return;
+            foreach (var kd in data.kindGearData)
+            {
+                if (kd?.RaidPointsOverride != null)
+                    kd.RaidPointsOverride = null;
+            }
         }
 
         private void ResetChanges()

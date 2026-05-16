@@ -1,3 +1,14 @@
+v1.6.6
+- New: Elite Raids — auto-modify raid points based on pawn gear value, compressing raid size to reduce performance load.
+- New: Manual raid points override per pawn kind in group editor (combatPower), takes effect immediately.
+- New: Auto Raid Points toggle (Advanced > General) — auto-calculates on save/apply when ON, restores defaults when OFF.
+- New: Preview window shows raid points as "base + gear adjustment" format.
+- Fix: Faction ideology selection now actually applies to faction instances.
+- Fix: Iterator timing bug in PawnGroupMakerUtility.GeneratePawns causing raid points override to be ignored.
+- Fix: Hardcoded Chinese text in preview window ("点数"/"负重") replaced with language keys.
+- Localization: Added Korean and Japanese translations; Russian gained 78 missing keys with shortened UI labels.
+- Build: build.ps1 tolerates locked DLL, copying files individually to ensure language XML deployment.
+
 v1.6.5
 - Add: Faction trade stock editor — entry button in Faction Edit, full buy/sell configuration, Trader type dropdown (Settlement/Caravan/Orbital/Visitor), Undo/Redo (Ctrl+Z/Y).
 - Add: Item library with category tabs (All/Weapons/Armor/Apparel/Items), full ThingPickerFilterBar reuse (Search/Mod/Tech/Sort/Value range/Food/Ammo sub-filters).

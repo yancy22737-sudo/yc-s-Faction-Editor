@@ -575,7 +575,7 @@ namespace FactionGearCustomizer.UI.Panels
             {
                 bool isForceIgnore = kindData.ForceIgnoreRestrictions ?? FactionGearCustomizerMod.Settings.forceIgnoreRestrictions;
                 height = 310f;
-                if (!kindData.ForceNaked) height += 84f;
+                if (!kindData.ForceNaked) height += 112f;
                 if (!isForceIgnore)
                 {
                     if (kindData.ApparelMoney.HasValue) height += 24f;
@@ -834,6 +834,25 @@ namespace FactionGearCustomizer.UI.Panels
                     {
                         FactionGearCustomizerMod.Settings.ammoProtection = ammoProtection;
                         FactionGearCustomizerMod.Settings.Write();
+                    }
+                }
+
+                bool autoRaid = FactionGearCustomizerMod.Settings.autoRaidPointsEnabled;
+                ui.CheckboxLabeled(LanguageManager.Get("AutoRaidPointsEnabled"), ref autoRaid, LanguageManager.Get("AutoRaidPointsEnabledTooltip"));
+                if (autoRaid != FactionGearCustomizerMod.Settings.autoRaidPointsEnabled)
+                {
+                    FactionGearCustomizerMod.Settings.autoRaidPointsEnabled = autoRaid;
+                    FactionGearCustomizerMod.Settings.Write();
+
+                    if (autoRaid)
+                    {
+                        // 开关开启：立即计算所有派系袭击点数
+                        FactionGearEditor.TriggerAutoCalculateAll();
+                    }
+                    else
+                    {
+                        // 开关关闭：立即恢复默认袭击点数
+                        FactionGearEditor.TriggerClearAllOverrides();
                     }
                 }
             }

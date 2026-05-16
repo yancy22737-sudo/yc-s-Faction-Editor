@@ -29,32 +29,43 @@ namespace FactionGearCustomizer.UI.Dialogs
                 return;
             }
 
-            float y = 0f;
-            Text.Font = GameFont.Medium;
-            Widgets.Label(new Rect(0f, y, inRect.width, 32f), trait.LabelCap.ToString());
-            Text.Font = GameFont.Small;
-            y += 36f;
-
-            string desc = trait.description ?? "";
-            float descH = Text.CalcHeight(desc, inRect.width - 8f);
-            Widgets.Label(new Rect(4f, y, inRect.width - 8f, descH), desc);
-            y += descH + 12f;
-
-            if (trait.degreeDatas != null && trait.degreeDatas.Count > 1)
+            try
             {
-                Widgets.Label(new Rect(4f, y, inRect.width - 8f, 24f), "<b>" + "Degrees" + ":</b>");
-                y += 26f;
-                for (int i = 0; i < trait.degreeDatas.Count; i++)
+                float y = 0f;
+                Text.Font = GameFont.Medium;
+                string label = "???";
+                try { label = trait.LabelCap.ToString(); } catch { label = trait.defName ?? "???"; }
+                Widgets.Label(new Rect(0f, y, inRect.width, 32f), label);
+                Text.Font = GameFont.Small;
+                y += 36f;
+
+                string desc = "";
+                try { desc = trait.description ?? ""; } catch { }
+                float descH = Text.CalcHeight(desc, inRect.width - 8f);
+                Widgets.Label(new Rect(4f, y, inRect.width - 8f, descH), desc);
+                y += descH + 12f;
+
+                if (trait.degreeDatas != null && trait.degreeDatas.Count > 1)
                 {
-                    string dl = trait.degreeDatas[i].LabelCap.ToString();
-                    if (string.IsNullOrEmpty(dl)) dl = trait.degreeDatas[i].label ?? ("Lv" + i);
-                    string dd = trait.degreeDatas[i].description ?? "";
-                    string line = dl + (string.IsNullOrEmpty(dd) ? "" : " — " + dd);
-                    float lh = Text.CalcHeight(line, inRect.width - 16f);
-                    Widgets.Label(new Rect(8f, y, inRect.width - 16f, lh), line);
-                    y += lh + 4f;
+                    Widgets.Label(new Rect(4f, y, inRect.width - 8f, 24f), "<b>" + "Degrees" + ":</b>");
+                    y += 26f;
+                    for (int i = 0; i < trait.degreeDatas.Count; i++)
+                    {
+                        try
+                        {
+                            string dl = trait.degreeDatas[i].LabelCap.ToString();
+                            if (string.IsNullOrEmpty(dl)) dl = trait.degreeDatas[i].label ?? ("Lv" + i);
+                            string dd = trait.degreeDatas[i].description ?? "";
+                            string line = dl + (string.IsNullOrEmpty(dd) ? "" : " — " + dd);
+                            float lh = Text.CalcHeight(line, inRect.width - 16f);
+                            Widgets.Label(new Rect(8f, y, inRect.width - 16f, lh), line);
+                            y += lh + 4f;
+                        }
+                        catch { y += 20f; }
+                    }
                 }
             }
+            catch { }
 
             Rect closeRect = new Rect(inRect.width / 2f - 60f, inRect.height - 34f, 120f, 28f);
             if (Widgets.ButtonText(closeRect, "Close"))

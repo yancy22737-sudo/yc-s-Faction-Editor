@@ -279,11 +279,18 @@ namespace FactionGearCustomizer
             };
         }
 
-        public float GetEffectivePoints()
+        public float GetEffectivePoints(FactionGearData factionData = null)
         {
+            // 优先使用手动覆盖值
             if (pointsOverride.HasValue)
-            {
                 return pointsOverride.Value;
+
+            // 回退到 KindGearData 的自动计算值
+            if (factionData != null && !string.IsNullOrEmpty(kindDefName))
+            {
+                var kindData = factionData.GetKindData(kindDefName);
+                if (kindData?.RaidPointsOverride.HasValue == true)
+                    return kindData.RaidPointsOverride.Value;
             }
 
             var kind = DefDatabase<PawnKindDef>.GetNamedSilentFail(kindDefName);

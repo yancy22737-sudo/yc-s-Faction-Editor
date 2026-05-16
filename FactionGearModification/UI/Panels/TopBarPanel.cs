@@ -205,7 +205,7 @@ namespace FactionGearCustomizer.UI.Panels
                     FactionGearCustomizerMod.Settings.Write();
                     FactionGearCustomizer.Utils.LogUtils.Info(debugLogLabel);
                 }));
-                
+
                 Find.WindowStack.Add(new FloatMenu(options));
             }
             TooltipHandler.TipRegion(optionsRect, LanguageManager.Get("AdvancedOptionsTooltip"));

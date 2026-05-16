@@ -1,283 +1,278 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <LanguageData>
-  <FactionGearCustomizer>yc's Faction Editor</FactionGearCustomizer>
-  <Factions>Factions</Factions>
-  <ItemLibrary>Item Library</ItemLibrary>
-  <Advanced>Advanced</Advanced>
-  <Simple>Simple</Simple>
-  <Preview>Preview</Preview>
-  <PawnGroupPreviewTitle>Group Preview</PawnGroupPreviewTitle>
-  <Seed>Seed</Seed>
-  <DrawsPerList>Draws</DrawsPerList>
-  <RebuildPreview>Rebuild</RebuildPreview>
-  <GeneratePortraits>Generate Portraits</GeneratePortraits>
-  <ClearAll>Clear All</ClearAll>
-  <Clear>Clear</Clear>
-  <ApplyOthers>Apply to Others</ApplyOthers>
-  <Yes>Yes</Yes>
-  <Cancel>Cancel</Cancel>
-  <Save>Save</Save>
-  <SaveAs>Save As</SaveAs>
-  <Load>Load</Load>
-  <Delete>Delete</Delete>
-  <Export>Export</Export>
-  <Import>Import</Import>
-  <Apply>Apply</Apply>
-  <Reset>Reset</Reset>
-  <Close>Close</Close>
-  <Confirm>Confirm</Confirm>
-  <AddNewApparel>Add Apparel</AddNewApparel>
-  <AddNewWeapon>Add Weapon</AddNewWeapon>
-  <AddNewHediff>Add Hediff</AddNewHediff>
-  <PickColor>Pick Color</PickColor>
-  <SetColor>Set Color</SetColor>
-  <SelectItem>Select Item</SelectItem>
-  <SelectHediff>Select Hediff</SelectHediff>
-  <Show>Show</Show>
-  <Hide>Hide</Hide>
-  <Disabled>Disabled</Disabled>
-  <All>All</All>
-  <None>None</None>
-  <Invert>Invert</Invert>
-  <Default>Default</Default>
-  <RandomDefault>Random Material</RandomDefault>
-  <SelectedGear>Selected Gear</SelectedGear>
-  <AdvancedSettings>Advanced Settings</AdvancedSettings>
-  <LayerPreview>Layer Preview</LayerPreview>
-  <GeneralOverrides>General Overrides</GeneralOverrides>
-  <SpecificApparelAdvanced>Specific Apparel (Adv)</SpecificApparelAdvanced>
-  <SpecificWeaponsAdvanced>Specific Weapons (Adv)</SpecificWeaponsAdvanced>
-  <ForcedHediffs>Forced Hediffs</ForcedHediffs>
-  <HediffPickerTitle>Add Hediff</HediffPickerTitle>
-  <InventoryItems>Inventory</InventoryItems>
-  <AddNewItem>Add Item</AddNewItem>
-  <QuickAdd>Quick Add</QuickAdd>
-  <InventoryItemPickerTitle>Add Item</InventoryItemPickerTitle>
-  <ApparelPickerTitle>Add Apparel</ApparelPickerTitle>
-  <WeaponPickerTitle>Add Weapon</WeaponPickerTitle>
-  <DefaultCountRange>Default Count</DefaultCountRange>
+  <FactionGearCustomizer>yc의 진영 편집기</FactionGearCustomizer>
+  <Factions>진영</Factions>
+  <ItemLibrary>아이템 라이브러리</ItemLibrary>
+  <Advanced>고급</Advanced>
+  <Simple>간단</Simple>
+  <Preview>미리보기</Preview>
+  <PawnGroupPreviewTitle>그룹 미리보기</PawnGroupPreviewTitle>
+  <Seed>시드</Seed>
+  <DrawsPerList>추첨</DrawsPerList>
+  <RebuildPreview>재생성</RebuildPreview>
+  <GeneratePortraits>초상화 생성</GeneratePortraits>
+  <ClearAll>모두 지우기</ClearAll>
+  <Clear>지우기</Clear>
+  <ApplyOthers>다른 항목에 적용</ApplyOthers>
+  <Yes>예</Yes>
+  <Cancel>취소</Cancel>
+  <Save>저장</Save>
+  <SaveAs>다른 이름으로 저장</SaveAs>
+  <Load>불러오기</Load>
+  <Delete>삭제</Delete>
+  <Export>내보내기</Export>
+  <Import>가져오기</Import>
+  <Apply>적용</Apply>
+  <Reset>초기화</Reset>
+  <Close>닫기</Close>
+  <Confirm>확인</Confirm>
+  <AddNewApparel>의류 추가</AddNewApparel>
+  <AddNewWeapon>무기 추가</AddNewWeapon>
+  <AddNewHediff>상태 효과 추가</AddNewHediff>
+  <PickColor>색상 선택</PickColor>
+  <SetColor>색상 설정</SetColor>
+  <SelectItem>아이템 선택</SelectItem>
+  <SelectHediff>상태 효과 선택</SelectHediff>
+  <Show>표시</Show>
+  <Hide>숨기기</Hide>
+  <Disabled>비활성화</Disabled>
+  <All>전체</All>
+  <None>없음</None>
+  <Invert>반전</Invert>
+  <Default>기본값</Default>
+  <RandomDefault>무작위 재료</RandomDefault>
+  <SelectedGear>선택된 장비</SelectedGear>
+  <AdvancedSettings>고급 설정</AdvancedSettings>
+  <LayerPreview>레이어 미리보기</LayerPreview>
+  <GeneralOverrides>일반 설정</GeneralOverrides>
+  <SpecificApparelAdvanced>특정 의류 (고급)</SpecificApparelAdvanced>
+  <SpecificWeaponsAdvanced>특정 무기 (고급)</SpecificWeaponsAdvanced>
+  <ForcedHediffs>강제 상태 효과</ForcedHediffs>
+  <HediffPickerTitle>상태 효과 추가</HediffPickerTitle>
+  <InventoryItems>인벤토리</InventoryItems>
+  <AddNewItem>아이템 추가</AddNewItem>
+  <QuickAdd>빠른 추가</QuickAdd>
+  <InventoryItemPickerTitle>아이템 추가</InventoryItemPickerTitle>
+  <ApparelPickerTitle>의류 추가</ApparelPickerTitle>
+  <WeaponPickerTitle>무기 추가</WeaponPickerTitle>
+  <DefaultCountRange>기본 수량</DefaultCountRange>
   <DefaultSelectionMode>Default Mode: {0}</DefaultSelectionMode>
-  <DefaultChance>Default Chance</DefaultChance>
-  <SkipExistingItems>Skip Existing</SkipExistingItems>
-  <AlreadyAdded>Already Added</AlreadyAdded>
-  <AddSelected>Add Selected</AddSelected>
+  <DefaultChance>기본 확률</DefaultChance>
+  <SkipExistingItems>기존 건너뛰기</SkipExistingItems>
+  <AlreadyAdded>이미 추가됨</AlreadyAdded>
+  <AddSelected>선택 추가</AddSelected>
   <InventoryItemsAddedMessage>Added {0} items, skipped {1} duplicates.</InventoryItemsAddedMessage>
   <ApparelItemsAddedMessage>Added {0} apparel, skipped {1} duplicates.</ApparelItemsAddedMessage>
   <WeaponItemsAddedMessage>Added {0} weapons, skipped {1} duplicates.</WeaponItemsAddedMessage>
   <HediffsAddedMessage>Added {0} hediffs, skipped {1} duplicates.</HediffsAddedMessage>
   <SelectionModeAlwaysTake>Always</SelectionModeAlwaysTake>
-  <SelectionModeRandomChance>Chance</SelectionModeRandomChance>
+  <SelectionModeRandomChance>확률</SelectionModeRandomChance>
   <SelectionModeFromPool>Pool {0}</SelectionModeFromPool>
-  <Items>Items</Items>
-  <Count>Count</Count>
-  <AdvancedSpecificItems>Advanced/Specific Items</AdvancedSpecificItems>
-  <EditFactionDetails>Edit Faction</EditFactionDetails>
-  <ModFilter>Mod Filter</ModFilter>
-  <CategoryFilter>Category Filter</CategoryFilter>
-  <CategoryAll>Category: All</CategoryAll>
+  <Items>아이템</Items>
+  <Count>수량</Count>
+  <AdvancedSpecificItems>고급/특정 아이템</AdvancedSpecificItems>
+  <EditFactionDetails>진영 편집</EditFactionDetails>
+  <ModFilter>모드 필터</ModFilter>
+  <CategoryFilter>카테고리 필터</CategoryFilter>
+  <CategoryAll>카테고리: 전체</CategoryAll>
   <CategoryCountSelected>Category: {0} Selected</CategoryCountSelected>
-  <ApparelColor>Apparel Color:</ApparelColor>
-  <ItemQuality>Item Quality</ItemQuality>
-  <ApparelBudget>Apparel Budget</ApparelBudget>
+  <ApparelColor>의류 색상:</ApparelColor>
+  <ItemQuality>아이템 품질</ItemQuality>
+  <ApparelBudget>의류 예산</ApparelBudget>
   <DefaultApparelBudgetValue>Default apparel budget source (PawnKindDef): {0}</DefaultApparelBudgetValue>
-  <WeaponBudget>Weapon Budget</WeaponBudget>
-  <TechLevelLimit>Tech Level Limit</TechLevelLimit>
-  <ForcedWeaponQuality>Weapon Quality</ForcedWeaponQuality>
-  <BiocodeChance>Biocode Chance</BiocodeChance>
-  <BiocodeApparelChance>Apparel Biocode Chance</BiocodeApparelChance>
-  <Biocode>Biocode</Biocode>
-  <ForceNaked>Force Naked</ForceNaked>
-  <ForceOnlySelected>Force Only Selected</ForceOnlySelected>
-  <ForceOverrideHediffs>Force Override Hediffs</ForceOverrideHediffs>
+  <WeaponBudget>무기 예산</WeaponBudget>
+  <TechLevelLimit>기술 수준 제한</TechLevelLimit>
+  <ForcedWeaponQuality>무기 품질</ForcedWeaponQuality>
+  <BiocodeChance>바이오코드 확률</BiocodeChance>
+  <BiocodeApparelChance>의류 바이오코드 확률</BiocodeApparelChance>
+  <Biocode>바이오코드</Biocode>
+  <ForceNaked>강제 나체</ForceNaked>
+  <ForceOnlySelected>선택 항목만 강제</ForceOnlySelected>
+  <ForceOverrideHediffs>상태 효과 강제</ForceOverrideHediffs>
   <MinMax>Min (Force Ignore)</MinMax>
   <MaxForceIgnore>Max (Force Ignore)</MaxForceIgnore>
-  <Ranged>Ranged</Ranged>
-  <Melee>Melee</Melee>
-  <Armors>Armors</Armors>
-  <Clothes>Clothes</Clothes>
-  <Others>Others</Others>
-  <General>General</General>
-  <Apparel>Apparel</Apparel>
-  <Weapons>Weapons</Weapons>
-  <Hediffs>Hediffs</Hediffs>
-  <Head>Head</Head>
-  <Torso>Torso</Torso>
-  <Shoulders>Shoulders</Shoulders>
-  <Arms>Arms</Arms>
-  <Hands>Hands</Hands>
-  <Waist>Waist</Waist>
-  <Legs>Legs</Legs>
-  <Feet>Feet</Feet>
-  <Skin>Skin</Skin>
-  <Mid>Mid</Mid>
-  <SettingsSaved>Settings Saved!</SettingsSaved>
-  <SettingsDiscarded>Settings Discarded.</SettingsDiscarded>
-  <PresetUpdated>Preset "{0}" Updated</PresetUpdated>
-  <PresetSaved>Preset Saved</PresetSaved>
-  <TipCreatePreset>Tip: Create a preset to backup your work!</TipCreatePreset>
-  <CannotPreviewFactionNotPresent>Cannot Preview: Faction not present in current game.</CannotPreviewFactionNotPresent>
-  <AppliedToAllKinds>Applied current gear to all kinds in this faction!</AppliedToAllKinds>
-  <CopiedKindGear>Copied kind gear!</CopiedKindGear>
-  <PastedGearTo>Pasted gear to {0}</PastedGearTo>
-  <CopiedGearFrom>Copied gear from {0}</CopiedGearFrom>
-  <ClearAllGearConfirm>Clear All Gear</ClearAllGearConfirm>
-  <ClearAllGearConfirmMessage>Clear all gear for this kind?</ClearAllGearConfirmMessage>
-  <ClearCategoryGearConfirm>Clear Category</ClearCategoryGearConfirm>
-  <ClearCategoryGearConfirmMessage>Clear all items in this category?</ClearCategoryGearConfirmMessage>
-  <ApplyToAllKindsConfirm>Overwrite all kinds in this faction with current gear config?</ApplyToAllKindsConfirm>
-  <NoItemsInThisCategory>No items in this category.</NoItemsInThisCategory>
-  <SelectAKindDefFirst>Please select a kind def first.</SelectAKindDefFirst>
-  <PresetManager>Preset Manager</PresetManager>
-  <PresetMetadataSaved>Preset metadata saved.</PresetMetadataSaved>
-  <PresetUpdatedFromGameSettings>Preset updated from game settings.</PresetUpdatedFromGameSettings>
-  <PresetOverwritten>Preset "{0}" overwritten with current settings!</PresetOverwritten>
-  <NewPresetCreated>New preset created and saved with current settings!</NewPresetCreated>
-  <PresetApplied>Preset applied successfully to current game!</PresetApplied>
-  <ApplyPresetFailed>Failed to apply preset. Check logs for details.</ApplyPresetFailed>
-  <PresetDeleted>Preset deleted.</PresetDeleted>
-  <PresetCleared>Preset data cleared.</PresetCleared>
-  <PresetExportedToClipboard>Preset "{0}" exported to clipboard!</PresetExportedToClipboard>
-  <ImportFailedInvalidData>Import failed: Invalid preset data in clipboard!</ImportFailedInvalidData>
-  <ImportFailed>Import failed: {0}</ImportFailed>
-  <ClipboardIsEmpty>Clipboard is empty!</ClipboardIsEmpty>
-  <ExportFailed>Export failed!</ExportFailed>
-  <PresetImportedFromClipboard>Preset "{0}" imported from clipboard!</PresetImportedFromClipboard>
-  <FactionDetailsUpdated>Faction details updated (memory only)</FactionDetailsUpdated>
-  <TechLevel>Tech Level</TechLevel>
-  <QualityAwful>Awful</QualityAwful>
-  <QualityPoor>Poor</QualityPoor>
-  <QualityNormal>Normal</QualityNormal>
-  <QualityGood>Good</QualityGood>
-  <QualityExcellent>Excellent</QualityExcellent>
-  <QualityMasterwork>Masterwork</QualityMasterwork>
-  <QualityLegendary>Legendary</QualityLegendary>
-  <SelectionModeIfPossible>If Possible</SelectionModeIfPossible>
-  <SelectionModeBest>Best</SelectionModeBest>
-  <SelectionModeRandom>Random</SelectionModeRandom>
-  <ResetFilters>Reset Filters</ResetFilters>
-  <ResetCurrentKind>Reset Current Kind</ResetCurrentKind>
-  <LoadDefaultFaction>Load Default Faction</LoadDefaultFaction>
-  <ResetCurrentFaction>Reset Current Faction</ResetCurrentFaction>
-  <ResetEVERYTHING>Reset Everything</ResetEVERYTHING>
-  <UndoTooltip>Undo (Ctrl+Z)</UndoTooltip>
-  <RedoTooltip>Redo (Ctrl+Y)</RedoTooltip>
-  <PreviewAllKindsTooltip>Preview all kinds for this faction</PreviewAllKindsTooltip>
-  <PreviewInGameOnlyTooltip>Only available in-game</PreviewInGameOnlyTooltip>
-  <ApplyToOthersTooltip>Apply current gear to all other kinds in this faction</ApplyToOthersTooltip>
-  <ClearCategoryTooltip>Clear all items in current category.</ClearCategoryTooltip>
-  <ForceNakedTooltip>If enabled, removes all apparel when applying gear, leaving pawn naked.
-
-Age verification required.</ForceNakedTooltip>
-  <ForceOnlySelectedTooltip>If enabled, all existing/vanilla gear will be stripped before applying custom gear. Ensures pawns only wear what you specify, preventing vanilla/custom mixing.
-
-Recommended: Enable for full control.</ForceOnlySelectedTooltip>
-  <ForceOverrideHediffsTooltip>If enabled, all non-mechanoid hediffs (status effects) will be cleared before applying your configured forced hediffs. This includes gene-provided buffs.
-    If disabled, existing hediffs from genes, implants, etc. will be preserved.</ForceOverrideHediffsTooltip>
-  <WeightMechanicsTooltip>Weight mechanics: In RimWorld, gear weight acts as selection weight, not 100% selection. Higher weight gear is prioritized but not guaranteed.</WeightMechanicsTooltip>
-  <ColorPicker>Color Picker</ColorPicker>
-  <ColorPickerApply>Apply</ColorPickerApply>
-  <ColorPresets>Presets</ColorPresets>
-  <ColorHistory>History</ColorHistory>
-  <DrawingBoard>Drawing Board</DrawingBoard>
-  <CurrentColor>Current Color</CurrentColor>
-  <MoreColors>More Colors...</MoreColors>
-  <BrushSize>Brush Size</BrushSize>
-  <Undo>Undo</Undo>
-  <HandDraw>Draw</HandDraw>
-  <CanvasSize>Canvas Size</CanvasSize>
-  <Zoom>Zoom</Zoom>
-  <ImportTemplate>Import Template</ImportTemplate>
-  <ShowTemplate>Show Template</ShowTemplate>
-  <TemplateScale>Template Scale</TemplateScale>
-  <ImportTemplateTooltip>Import current faction icon as a drawing template</ImportTemplateTooltip>
-  <NoTemplateFound>No template available to import</NoTemplateFound>
-  <NoHistory>No history</NoHistory>
-  <Fill>Fill</Fill>
-  <UnsavedChanges>Unsaved Changes</UnsavedChanges>
-  <UnsavedChangesMessage>You have unsaved changes. Save them?</UnsavedChangesMessage>
-  <Discard>Discard</Discard>
-  <Version>Version</Version>
-  <VersionLog>Changelog</VersionLog>
-  <GiveMeALike>Give me a like!</GiveMeALike>
+  <Ranged>원거리</Ranged>
+  <Melee>근접</Melee>
+  <Armors>방어구</Armors>
+  <Clothes>의복</Clothes>
+  <Others>기타</Others>
+  <General>일반</General>
+  <Apparel>의류</Apparel>
+  <Weapons>무기</Weapons>
+  <Hediffs>상태 효과</Hediffs>
+  <Head>머리</Head>
+  <Torso>몸통</Torso>
+  <Shoulders>어깨</Shoulders>
+  <Arms>팔</Arms>
+  <Hands>손</Hands>
+  <Waist>허리</Waist>
+  <Legs>다리</Legs>
+  <Feet>발</Feet>
+  <Skin>피부</Skin>
+  <Mid>중간</Mid>
+  <SettingsSaved>설정 저장됨!</SettingsSaved>
+  <SettingsDiscarded>설정 취소됨.</SettingsDiscarded>
+  <PresetUpdated>프리셋 "{0}" 업데이트됨</PresetUpdated>
+  <PresetSaved>프리셋 저장됨</PresetSaved>
+  <TipCreatePreset>팁: 프리셋을 만들어 작업을 백업하세요!</TipCreatePreset>
+  <CannotPreviewFactionNotPresent>미리보기 불가: 현재 게임에 진영이 없습니다.</CannotPreviewFactionNotPresent>
+  <AppliedToAllKinds>현재 장비를 이 진영의 모든 폰종에 적용했습니다!</AppliedToAllKinds>
+  <CopiedKindGear>폰종 장비 복사됨!</CopiedKindGear>
+  <PastedGearTo>{0}에 장비 붙여넣기</PastedGearTo>
+  <CopiedGearFrom>{0}에서 장비 복사</CopiedGearFrom>
+  <ClearAllGearConfirm>모든 장비 지우기</ClearAllGearConfirm>
+  <ClearAllGearConfirmMessage>이 폰종의 모든 장비를 지우시겠습니까?</ClearAllGearConfirmMessage>
+  <ClearCategoryGearConfirm>카테고리 지우기</ClearCategoryGearConfirm>
+  <ClearCategoryGearConfirmMessage>이 카테고리의 모든 아이템을 지우시겠습니까?</ClearCategoryGearConfirmMessage>
+  <ApplyToAllKindsConfirm>이 진영의 모든 폰종을 현재 장비 설정으로 덮어쓰시겠습니까?</ApplyToAllKindsConfirm>
+  <NoItemsInThisCategory>이 카테고리에 아이템이 없습니다.</NoItemsInThisCategory>
+  <SelectAKindDefFirst>먼저 폰종을 선택하세요.</SelectAKindDefFirst>
+  <PresetManager>프리셋 관리자</PresetManager>
+  <PresetMetadataSaved>프리셋 메타데이터 저장됨.</PresetMetadataSaved>
+  <PresetUpdatedFromGameSettings>게임 설정에서 프리셋 업데이트됨.</PresetUpdatedFromGameSettings>
+  <PresetOverwritten>프리셋 "{0}"이 현재 설정으로 덮어써졌습니다!</PresetOverwritten>
+  <NewPresetCreated>새 프리셋이 생성되고 현재 설정으로 저장되었습니다!</NewPresetCreated>
+  <PresetApplied>프리셋이 현재 게임에 성공적으로 적용되었습니다!</PresetApplied>
+  <ApplyPresetFailed>프리셋 적용 실패. 로그를 확인하세요.</ApplyPresetFailed>
+  <PresetDeleted>프리셋 삭제됨.</PresetDeleted>
+  <PresetCleared>프리셋 데이터 지워짐.</PresetCleared>
+  <PresetExportedToClipboard>프리셋 "{0}"이 클립보드로 내보내졌습니다!</PresetExportedToClipboard>
+  <ImportFailedInvalidData>가져오기 실패: 잘못된 데이터!</ImportFailedInvalidData>
+  <ImportFailed>가져오기 실패: {0}</ImportFailed>
+  <ClipboardIsEmpty>클립보드가 비어 있습니다!</ClipboardIsEmpty>
+  <ExportFailed>내보내기 실패!</ExportFailed>
+  <PresetImportedFromClipboard>프리셋 "{0}"을 클립보드에서 가져왔습니다!</PresetImportedFromClipboard>
+  <FactionDetailsUpdated>진영 정보 업데이트됨 (메모리만)</FactionDetailsUpdated>
+  <TechLevel>기술 수준</TechLevel>
+  <QualityAwful>끔찍함</QualityAwful>
+  <QualityPoor>나쁨</QualityPoor>
+  <QualityNormal>보통</QualityNormal>
+  <QualityGood>좋음</QualityGood>
+  <QualityExcellent>우수함</QualityExcellent>
+  <QualityMasterwork>걸작</QualityMasterwork>
+  <QualityLegendary>전설</QualityLegendary>
+  <SelectionModeIfPossible>가능하면</SelectionModeIfPossible>
+  <SelectionModeBest>최고</SelectionModeBest>
+  <SelectionModeRandom>무작위</SelectionModeRandom>
+  <ResetFilters>필터 초기화</ResetFilters>
+  <ResetCurrentKind>현재 폰종 초기화</ResetCurrentKind>
+  <LoadDefaultFaction>기본 진영 불러오기</LoadDefaultFaction>
+  <ResetCurrentFaction>현재 진영 초기화</ResetCurrentFaction>
+  <ResetEVERYTHING>전체 초기화</ResetEVERYTHING>
+  <UndoTooltip>실행 취소 (Ctrl+Z)</UndoTooltip>
+  <RedoTooltip>다시 실행 (Ctrl+Y)</RedoTooltip>
+  <PreviewAllKindsTooltip>이 진영의 모든 폰종 미리보기</PreviewAllKindsTooltip>
+  <PreviewInGameOnlyTooltip>게임 내에서만 사용 가능</PreviewInGameOnlyTooltip>
+  <ApplyToOthersTooltip>현재 장비를 이 진영의 다른 모든 폰종에 적용</ApplyToOthersTooltip>
+  <ClearCategoryTooltip>현재 카테고리의 모든 아이템 지우기.</ClearCategoryTooltip>
+  <ForceNakedTooltip>활성화 시 모든 의류를 제거하고 장비를 적용합니다. (연령 확인 필요)</ForceNakedTooltip>
+  <ForceOnlySelectedTooltip>기존 장비를 제거하고 지정한 장비만 착용합니다. 완전한 제어를 위해 권장합니다.</ForceOnlySelectedTooltip>
+  <ForceOverrideHediffsTooltip>비기계 상태 효과를 제거하고 설정된 효과만 적용합니다. 유전자 효과도 포함됩니다.</ForceOverrideHediffsTooltip>
+  <WeightMechanicsTooltip>장비 가중치는 선택 확률로 작용하며, 높을수록 우선됩니다.</WeightMechanicsTooltip>
+  <ColorPicker>색상 선택기</ColorPicker>
+  <ColorPickerApply>적용</ColorPickerApply>
+  <ColorPresets>프리셋</ColorPresets>
+  <ColorHistory>기록</ColorHistory>
+  <DrawingBoard>그림판</DrawingBoard>
+  <CurrentColor>현재 색상</CurrentColor>
+  <MoreColors>더 많은 색상...</MoreColors>
+  <BrushSize>붓 크기</BrushSize>
+  <Undo>실행 취소</Undo>
+  <HandDraw>손그림</HandDraw>
+  <CanvasSize>캔버스 크기</CanvasSize>
+  <Zoom>확대</Zoom>
+  <ImportTemplate>템플릿 가져오기</ImportTemplate>
+  <ShowTemplate>템플릿 보기</ShowTemplate>
+  <TemplateScale>템플릿 크기</TemplateScale>
+  <ImportTemplateTooltip>현재 진영 아이콘을 템플릿으로 가져옵니다.</ImportTemplateTooltip>
+  <NoTemplateFound>가져올 템플릿 없음</NoTemplateFound>
+  <NoHistory>기록 없음</NoHistory>
+  <Fill>채우기</Fill>
+  <UnsavedChanges>저장되지 않은 변경사항</UnsavedChanges>
+  <UnsavedChangesMessage>저장되지 않은 변경사항이 있습니다. 저장하시겠습니까?</UnsavedChangesMessage>
+  <Discard>취소</Discard>
+  <Version>버전</Version>
+  <VersionLog>변경 로그</VersionLog>
+  <GiveMeALike>좋아요를 눌러주세요!</GiveMeALike>
   <AvgValue>Avg Value</AvgValue>
   <AvgWeight>Avg Weight</AvgWeight>
-  <Weight>Weight</Weight>
+  <Weight>가중치</Weight>
   <Missing>Missing</Missing>
   <MissingParts>Missing Parts</MissingParts>
   <NoPreset>[No Preset]</NoPreset>
   <NoPresetWarning>No Active Preset</NoPresetWarning>
   <NoPresetDescription>You need to create or load a preset to start configuring faction gear. Presets save your configurations.</NoPresetDescription>
-  <CreatePreset>Create Preset</CreatePreset>
-  <PresetEqualsConfigTip>Tip: Preset = Configuration. Create preset to start editing</PresetEqualsConfigTip>
-  <ClearAllConfigs>Clear All Configs</ClearAllConfigs>
-  <ClearAllConfigsTooltip>Clear all saved configuration data, return to initial state</ClearAllConfigsTooltip>
+  <CreatePreset>프리셋 만들기</CreatePreset>
+  <PresetEqualsConfigTip>프리셋 = 설정. 편집을 시작하려면 프리셋을 만드세요.</PresetEqualsConfigTip>
+  <ClearAllConfigs>모든 설정 지우기</ClearAllConfigs>
+  <ClearAllConfigsTooltip>저장된 모든 설정 데이터를 삭제하고 초기 상태로 되돌립니다.</ClearAllConfigsTooltip>
   <ClearAllConfigsConfirm>Clear all configurations?</ClearAllConfigsConfirm>
   <ClearAllConfigsConfirmMessage>This will delete all saved faction gear configurations and cannot be undone.</ClearAllConfigsConfirmMessage>
   <ActivePreset>[Current: {0}]</ActivePreset>
   <AddedItemsToGearList>Added {0} items to gear list</AddedItemsToGearList>
   <SaveChangesToGame>Save Changes to Current Game</SaveChangesToGame>
-  <SaveImmediateEffectTooltip>All changes take effect immediately, no restart needed.</SaveImmediateEffectTooltip>
-  <Presets>Presets</Presets>
-  <Options>Options</Options>
-  <AdvancedOptionsTooltip>Advanced Options</AdvancedOptionsTooltip>
+  <SaveImmediateEffectTooltip>모든 변경사항이 즉시 적용되며 재시작이 필요 없습니다.</SaveImmediateEffectTooltip>
+  <Presets>프리셋</Presets>
+  <Options>옵션</Options>
+  <AdvancedOptionsTooltip>고급 옵션</AdvancedOptionsTooltip>
   <ShowHiddenFactions>Show Hidden/Non-human Factions</ShowHiddenFactions>
-  <ShowInMainTab>Show Main Button</ShowInMainTab>
-  <EnableDebugLog>Enable Debug Log</EnableDebugLog>
-  <EnableDebugLogTooltip>When enabled, detailed debug log messages will be output during gameplay for troubleshooting. Recommended to enable only when needed to avoid large log files.</EnableDebugLogTooltip>
-  <ForceIgnore>Force Ignore</ForceIgnore>
-  <ForceIgnoreTooltip>Force remove conflicting apparel/weapons and ignore budget limits. Pawns will attempt to equip all possible items from config list, allowing you to bypass restrictions and always create god-tier units.</ForceIgnoreTooltip>
-  <AmmoProtection>Ammo Protection</AmmoProtection>
-  <AmmoProtectionTooltip>When enabled, only mod-generated ammo is kept, preventing CE and other sources from causing duplicate or mixed ammo. When disabled, the mod and CE each generate their own set of ammo.</AmmoProtectionTooltip>
+  <ShowInMainTab>메인 버튼 표시</ShowInMainTab>
+  <EnableDebugLog>디버그 로그 활성화</EnableDebugLog>
+  <EnableDebugLogTooltip>문제 해결을 위해 상세 로그를 출력합니다. 필요시에만 켜세요.</EnableDebugLogTooltip>
+  <ForceIgnore>강제 무시</ForceIgnore>
+  <ForceIgnoreTooltip>충돌 장비/무기를 강제 제거하고 예산을 무시합니다.</ForceIgnoreTooltip>
+  <AmmoProtection>탄약 보호</AmmoProtection>
+  <AmmoProtectionTooltip>모드 생성 탄약만 유지하고 중복을 방지합니다.</AmmoProtectionTooltip>
   <ForceIgnoreGlobal>Global Force Ignore</ForceIgnoreGlobal>
-  <ForceIgnoreGlobalTooltip>Global setting: Force remove conflicting apparel/weapons and ignore budget limits. Used as default for all pawn kinds, can be overridden by local settings.</ForceIgnoreGlobalTooltip>
+  <ForceIgnoreGlobalTooltip>전역: 예산 무시, 충돌 장비 제거. 로컬 설정으로 덮어쓸 수 있습니다.</ForceIgnoreGlobalTooltip>
   <ForceIgnoreLocal>Local Force Ignore</ForceIgnoreLocal>
-  <ForceIgnoreLocalTooltip>Local setting: Force remove conflicting apparel/weapons and ignore budget limits for this pawn kind only. Overrides global setting.</ForceIgnoreLocalTooltip>
-  <AdvancedItemTooltip>This item was added via advanced mode (specific requirements).</AdvancedItemTooltip>
-  <Shell>Shell</Shell>
-  <Belt>Belt</Belt>
-  <Over>Over</Over>
-  <Reroll>Reroll</Reroll>
-  <Retry>Retry</Retry>
+  <ForceIgnoreLocalTooltip>로컬: 이 폰종에만 예산 무시, 충돌 장비 제거. 전역보다 우선합니다.</ForceIgnoreLocalTooltip>
+  <AdvancedItemTooltip>고급 모드로 추가된 아이템입니다.</AdvancedItemTooltip>
+  <Shell>외투</Shell>
+  <Belt>허리띠</Belt>
+  <Over>겉옷</Over>
+  <Reroll>재생성</Reroll>
+  <Retry>재시도</Retry>
   <PortraitUnavailable>Portrait Unavailable</PortraitUnavailable>
-  <Rotate>Rotate</Rotate>
-  <RerollPawn>Reroll Pawn</RerollPawn>
+  <Rotate>회전</Rotate>
+  <RerollPawn>폰 재생성</RerollPawn>
   <EquippedGear><b>Equipped:</b></EquippedGear>
   <ApparelWorn><b>Worn:</b></ApparelWorn>
   <FailedToGeneratePreview>Preview failed. (Faction may be inactive)</FailedToGeneratePreview>
-  <SavedPresets>Saved Presets</SavedPresets>
+  <SavedPresets>저장된 프리셋</SavedPresets>
   <SearchPresets>Search Presets</SearchPresets>
   <CreateNew>Create New</CreateNew>
-  <Name>Name</Name>
+  <Name>이름</Name>
   <Add>Add</Add>
   <AddAll>Add All</AddAll>
   <SelectPresetFirst>Please select a preset from the left list first.</SelectPresetFirst>
-  <PresetDetails>Preset Details</PresetDetails>
-  <PresetName>Preset Name</PresetName>
-  <Description>Description</Description>
+  <PresetDetails>프리셋 정보</PresetDetails>
+  <PresetName>프리셋 이름</PresetName>
+  <Description>설명</Description>
   <Management><b>Management:</b></Management>
-  <SaveNameDesc>Save Name/Description</SaveNameDesc>
+  <SaveNameDesc>이름/설명 저장</SaveNameDesc>
   <UpdateFromGame>Update from Game</UpdateFromGame>
   <LoadPresetConfirmTitle>Overwrite preset "{0}" with current game settings?</LoadPresetConfirmTitle>
   <LoadPresetConfirmMessage>Overwrite this preset's gear data with current in-game configuration?</LoadPresetConfirmMessage>
-  <UpdateFromGameTooltip>Overwrite this preset's gear data with current game configuration.</UpdateFromGameTooltip>
-  <RequiredMods>Required Mods</RequiredMods>
-  <FactionPreview>Faction Preview</FactionPreview>
+  <UpdateFromGameTooltip>현재 게임 설정으로 이 프리셋을 덮어씁니다.</UpdateFromGameTooltip>
+  <RequiredMods>필요 모드</RequiredMods>
+  <FactionPreview>진영 미리보기</FactionPreview>
   <NoFactionDataInPreset>No faction data in preset.</NoFactionDataInPreset>
   <NoRequiredMods>No required mods.</NoRequiredMods>
-  <ModNotActiveTooltip>This mod is not enabled in current game.</ModNotActiveTooltip>
-  <Chance>Chance</Chance>
-  <MaxParts>Parts</MaxParts>
-  <Severity>Severity</Severity>
+  <ModNotActiveTooltip>이 모드는 현재 게임에서 활성화되지 않았습니다.</ModNotActiveTooltip>
+  <Chance>확률</Chance>
+  <MaxParts>부위</MaxParts>
+  <Severity>심각도</Severity>
   <SelectHediffToViewDetails>Select a hediff to view details.</SelectHediffToViewDetails>
-  <FromMod>From Mod</FromMod>
-  <KindDefs>KindDefs</KindDefs>
+  <FromMod>출처 모드</FromMod>
+  <KindDefs>KindDef</KindDefs>
   <DontShowAgain>Don't show this again</DontShowAgain>
   <Label>Label</Label>
   <InGame>In Game</InGame>
-  <ShowInGameFactionNamesTooltip>Show in-game faction names. Grayed out if faction not in current game.</ShowInGameFactionNamesTooltip>
-  <LoadPreset>Load Preset</LoadPreset>
-  <LoadPresetTooltip>Apply this preset to your game.</LoadPresetTooltip>
-  <LoadPresetConfirmTitle>Load Preset</LoadPresetConfirmTitle>
+  <ShowInGameFactionNamesTooltip>게임 내 진영 이름 표시.</ShowInGameFactionNamesTooltip>
+  <LoadPreset>프리셋 불러오기</LoadPreset>
+  <LoadPresetTooltip>이 프리셋을 게임에 적용합니다.</LoadPresetTooltip>
+  <LoadPresetConfirmTitle>프리셋 불러오기</LoadPresetConfirmTitle>
   <LoadPresetConfirmMessage>Clear current custom gear before applying preset?
 
 Yes: Overwrite all (Recommended)
@@ -294,184 +289,182 @@ Applying this preset may cause missing items or errors. Continue?</MissingModsWa
   <MissingModsWarningCancel>No (Cancel)</MissingModsWarningCancel>
   <DeletePresetConfirm>Permanently delete preset "{0}"?</DeletePresetConfirm>
   <ClearPresetConfirm>Clear all data from preset "{0}"?</ClearPresetConfirm>
-  <ExportTooltip>Copy preset to clipboard for sharing.</ExportTooltip>
-  <ClearPresetTooltip>Clear all preset data but keep the preset itself.</ClearPresetTooltip>
-  <DeletePresetTooltip>Delete this preset (deletes preset record only, won't auto-rollback saved changes).</DeletePresetTooltip>
-  <SavePresetMetadataTooltip>Save only current preset's name/description (won't update gear content).</SavePresetMetadataTooltip>
-  <CreatePresetTooltip>Create new preset and save current settings as initial content.</CreatePresetTooltip>
-  <ImportFromClipboard>Import from Clipboard</ImportFromClipboard>
-  <ImportFromClipboardTooltip>Import preset from base64 string in clipboard.</ImportFromClipboardTooltip>
+  <ExportTooltip>공유를 위해 프리셋을 클립보드로 복사합니다.</ExportTooltip>
+  <ClearPresetTooltip>프리셋 데이터를 지우고 프리셋 자체는 유지합니다.</ClearPresetTooltip>
+  <DeletePresetTooltip>프리셋을 삭제합니다.</DeletePresetTooltip>
+  <SavePresetMetadataTooltip>이름/설명만 저장합니다.</SavePresetMetadataTooltip>
+  <CreatePresetTooltip>새 프리셋을 만들고 현재 설정을 저장합니다.</CreatePresetTooltip>
+  <ImportFromClipboard>클립보드에서 가져오기</ImportFromClipboard>
+  <ImportFromClipboardTooltip>클립보드에서 프리셋을 가져옵니다.</ImportFromClipboardTooltip>
   <PresetAlreadyExists>Preset "{0}" already exists. Overwrite?</PresetAlreadyExists>
   <Overwrite>Overwrite</Overwrite>
-  <CannotAddItemsInCurrentTabTooltip>Cannot add items in current advanced mode tab.</CannotAddItemsInCurrentTabTooltip>
-  <NewPreset>New Preset</NewPreset>
-  <ClearSearch>Clear Search</ClearSearch>
-  <ModAll>All</ModAll>
+  <CannotAddItemsInCurrentTabTooltip>현재 탭에서는 아이템을 추가할 수 없습니다.</CannotAddItemsInCurrentTabTooltip>
+  <NewPreset>새 프리셋</NewPreset>
+  <ClearSearch>검색 지우기</ClearSearch>
+  <ModAll>전체</ModAll>
   <ModCountSelected>Mod: {0} Selected</ModCountSelected>
-  <FilterByModTooltip>Filter by Mod (Multi-select)</FilterByModTooltip>
+  <FilterByModTooltip>모드별 필터</FilterByModTooltip>
   <AmmoAll>Caliber: All</AmmoAll>
   <AmmoFilter>Caliber Filter</AmmoFilter>
-  <FilterByAmmoTooltip>Filter by ammunition caliber (Multi-select)</FilterByAmmoTooltip>
+  <FilterByAmmoTooltip>탄약 구경별 필터</FilterByAmmoTooltip>
   <AmmoCountSelected>Caliber: {0} Selected</AmmoCountSelected>
   <TechAll>Tech: All</TechAll>
-  <FilterByTechLevelTooltip>Filter by tech level. Tech level from item/weapon TechLevel, used to distinguish primitive/medieval/industrial/spacer etc.</FilterByTechLevelTooltip>
+  <FilterByTechLevelTooltip>기술 수준별 필터.</FilterByTechLevelTooltip>
   <SortBy>Sort: {0}</SortBy>
   <SortAscending>Ascending</SortAscending>
   <SortDescending>Descending</SortDescending>
-  <SortFieldTooltip>Click to select sort field. Different categories have different available fields.</SortFieldTooltip>
-  <SortField_Name>Name</SortField_Name>
-  <SortField_MarketValue>Market Value</SortField_MarketValue>
-  <SortField_TechLevel>Tech Level</SortField_TechLevel>
+  <SortFieldTooltip>정렬 필드 선택.</SortFieldTooltip>
+  <SortField_Name>이름</SortField_Name>
+  <SortField_MarketValue>시장 가치</SortField_MarketValue>
+  <SortField_TechLevel>기술 수준</SortField_TechLevel>
   <SortField_ModSource>Mod Source</SortField_ModSource>
   <SortField_Accuracy>Accuracy</SortField_Accuracy>
   <SortField_DPS>DPS</SortField_DPS>
-  <SortField_Armor_Sharp>Sharp Armor</SortField_Armor_Sharp>
-  <SortField_Armor_Blunt>Blunt Armor</SortField_Armor_Blunt>
-  <SortField_Range>Range</SortField_Range>
-  <SortField_Damage>Damage</SortField_Damage>
-  <SortField_Mass>Mass</SortField_Mass>
-  <BaseMarketValue>Market Value</BaseMarketValue>
-  <Weight>Weight</Weight>
-  <Damage>Damage</Damage>
-  <Range>Range</Range>
+  <SortField_Armor_Sharp>예리 방어</SortField_Armor_Sharp>
+  <SortField_Armor_Blunt>둔기 방어</SortField_Armor_Blunt>
+  <SortField_Range>사거리</SortField_Range>
+  <SortField_Damage>피해</SortField_Damage>
+  <SortField_Mass>무게</SortField_Mass>
+  <BaseMarketValue>시장 가치</BaseMarketValue>
+  <Weight>가중치</Weight>
+  <Damage>피해</Damage>
+  <Range>사거리</Range>
   <DPS>DPS</DPS>
-  <ArmorSharp>Sharp Armor</ArmorSharp>
-  <ArmorBlunt>Blunt Armor</ArmorBlunt>
-  <Value>Value</Value>
-  <RangeFilterTooltip>Drag slider to filter {0} range (min~max). Upper range limit is taken from the current candidate list.</RangeFilterTooltip>
-  <Material>Material</Material>
+  <ArmorSharp>예리 방어</ArmorSharp>
+  <ArmorBlunt>둔기 방어</ArmorBlunt>
+  <Value>가치</Value>
+  <RangeFilterTooltip>슬라이더로 범위 필터.</RangeFilterTooltip>
+  <Material>재료</Material>
   <MaterialSelect>Material: {0}</MaterialSelect>
   <QualitySelect>Quality: {0}</QualitySelect>
   <SelectionMode>Mode: {0}</SelectionMode>
   <SelectionMode_AlwaysTake>Always</SelectionMode_AlwaysTake>
-  <SelectionMode_RandomChance>Chance</SelectionMode_RandomChance>
+  <SelectionMode_RandomChance>확률</SelectionMode_RandomChance>
   <SelectionMode_FromPool1>Pool 1</SelectionMode_FromPool1>
   <SelectionMode_FromPool2>Pool 2</SelectionMode_FromPool2>
   <SelectionMode_FromPool3>Pool 3</SelectionMode_FromPool3>
   <SelectionMode_FromPool4>Pool 4</SelectionMode_FromPool4>
-  <Remove>Remove</Remove>
-  <Search>Search</Search>
+  <Remove>제거</Remove>
+  <Search>검색</Search>
   <Active>(Active)</Active>
-  <ManagePresetsTooltip>Manage equipment presets</ManagePresetsTooltip>
-  <GithubLinkTooltip>Open project homepage (report issues/view updates).</GithubLinkTooltip>
-  <VersionLogTooltip>View changelog and updates.</VersionLogTooltip>
-  <ResetMenuTooltip>Open reset menu: reset filters, current kind, current faction, or all settings.</ResetMenuTooltip>
-  <Changelog>Changelog</Changelog>
-  <FactionEdit>Faction Edit</FactionEdit>
-  <FactionEditTooltip>Edit factions, edit pawn groups [Adding new pawn kind], add settlements, adjust xenotype chances.</FactionEditTooltip>
-  <Settings>Settings</Settings>
-  <PawnKinds>Pawn Kinds</PawnKinds>
-  <FactionName>Faction Name</FactionName>
-  <FactionDescription>Faction Description</FactionDescription>
+  <ManagePresetsTooltip>장비 프리셋 관리</ManagePresetsTooltip>
+  <GithubLinkTooltip>프로젝트 홈페이지</GithubLinkTooltip>
+  <VersionLogTooltip>변경 로그 및 업데이트.</VersionLogTooltip>
+  <ResetMenuTooltip>필터/폰종/진영/전체 초기화.</ResetMenuTooltip>
+  <Changelog>변경 로그</Changelog>
+  <FactionEdit>진영 편집</FactionEdit>
+  <FactionEditTooltip>진영 편집, 그룹 편집, 정착지 추가.</FactionEditTooltip>
+  <Settings>설정</Settings>
+  <PawnKinds>폰 종류</PawnKinds>
+  <FactionName>진영 이름</FactionName>
+  <FactionDescription>진영 설명</FactionDescription>
   <FactionIconPath>Icon Path</FactionIconPath>
-  <FactionColor>Faction Color</FactionColor>
+  <FactionColor>진영 색상</FactionColor>
   <PawnKindLabel>Kind Label</PawnKindLabel>
   <OriginalValue>Original</OriginalValue>
   <CurrentValue>Current</CurrentValue>
-  <ApplyChanges>Apply Changes</ApplyChanges>
-  <ResetChanges>Reset Changes</ResetChanges>
-  <Browse>Browse</Browse>
+  <ApplyChanges>변경 적용</ApplyChanges>
+  <ResetChanges>변경 초기화</ResetChanges>
+  <Browse>찾아보기</Browse>
   <IconPathPlaceholder>Enter texture path (e.g. World/WorldObjects/Expanding/Town)</IconPathPlaceholder>
-  <OnlyAvailableInGame>Only available in-game.</OnlyAvailableInGame>
+  <OnlyAvailableInGame>게임 내에서만 사용 가능합니다.</OnlyAvailableInGame>
   <FactionEditDisabledInLiteMode>Faction editing is not available in world creation. Please access the full editor through Mod Settings after entering the game.</FactionEditDisabledInLiteMode>
   <NewFactionDisabledInLiteMode>Adding factions is not available in world creation. Please access the full editor through Mod Settings after entering the game.</NewFactionDisabledInLiteMode>
   <FiltersDisabledInLiteMode>Item filters are not available in world creation. Please access the full editor through Mod Settings after entering the game.</FiltersDisabledInLiteMode>
-  <AdvancedModeTooltip>Advanced mode: provides finer editing control (specific items/special requirements). Simple mode only edits basic gear pools.</AdvancedModeTooltip>
-  <ClearAllGearTooltip>Clear all custom gear configuration for current kind. Shows confirmation and can be undone.</ClearAllGearTooltip>
-  <FactionInfoCardTooltip>View this faction's Def info card.</FactionInfoCardTooltip>
+  <AdvancedModeTooltip>고급: 정밀 편집. 간단 모드는 기본 장비 풀만.</AdvancedModeTooltip>
+  <ClearAllGearTooltip>현재 폰종의 모든 장비 설정을 지웁니다.</ClearAllGearTooltip>
+  <FactionInfoCardTooltip>이 진영의 Def 정보 보기.</FactionInfoCardTooltip>
   <DefName>DefName</DefName>
-  <XenotypeChances>Xenotype Chances (Biotech)</XenotypeChances>
+  <XenotypeChances>이종 확률 (Biotech)</XenotypeChances>
   <DisableXenotypeChances>Disable Xenotype Chance Control</DisableXenotypeChances>
-  <AddXenotype>Add Xenotype</AddXenotype>
+  <AddXenotype>이종 추가</AddXenotype>
   <AllXenotypesAdded>All xenotypes added.</AllXenotypesAdded>
   <KindXenotypeSettings>Kind Edit</KindXenotypeSettings>
-  <KindXenotypeTooltip>Edit xenotype generation, age limits, and other settings for this kind.</KindXenotypeTooltip>
-  <XenoButtonLabel>Edit</XenoButtonLabel>
-  <CopyKindTooltip>Copy this kind's gear configuration</CopyKindTooltip>
-  <PasteKindTooltip>Paste gear configuration to this kind</PasteKindTooltip>
+  <KindXenotypeTooltip>이종 생성, 나이 제한 등 편집.</KindXenotypeTooltip>
+  <XenoButtonLabel>편집</XenoButtonLabel>
+  <CopyKindTooltip>이 폰종의 장비 설정 복사</CopyKindTooltip>
+  <PasteKindTooltip>이 폰종에 장비 설정 붙여넣기</PasteKindTooltip>
   <ForcedXenotype>Forced Xenotype</ForcedXenotype>
-  <ForcedXenotypeTooltip>Force this pawn kind to only spawn with this xenotype, ignoring chance settings.</ForcedXenotypeTooltip>
+  <ForcedXenotypeTooltip>이 폰종을 지정된 이종으로만 생성.</ForcedXenotypeTooltip>
   <SelectXenotype>Select Xenotype</SelectXenotype>
-  <ClearForcedXenotype>Clear</ClearForcedXenotype>
-  <Total>Total</Total>
+  <ClearForcedXenotype>지우기</ClearForcedXenotype>
+  <Total>합계</Total>
   <XenotypeChancesExceed100>Xenotype chances cannot exceed 100%</XenotypeChancesExceed100>
-  <BatchApply>Batch Apply</BatchApply>
-  <BatchApplyTooltip>Open batch apply window to apply current config to selected kinds.</BatchApplyTooltip>
+  <BatchApply>일괄 적용</BatchApply>
+  <BatchApplyTooltip>현재 설정을 선택한 폰종에 일괄 적용.</BatchApplyTooltip>
   <BatchApplyTitle>Batch Apply Config</BatchApplyTitle>
-  <SelectAll>Select All</SelectAll>
-  <SelectNone>Select None</SelectNone>
-  <Selected>Selected</Selected>
+  <SelectAll>전체 선택</SelectAll>
+  <SelectNone>선택 해제</SelectNone>
+  <Selected>선택됨</Selected>
   <BatchApplyConfirm>Apply config to {0} selected kinds?</BatchApplyConfirm>
   <BatchApplied>Applied config to {0} kinds.</BatchApplied>
   <BatchApplySource>Source</BatchApplySource>
   <BatchCopyCategories>Copy Categories</BatchCopyCategories>
   <BatchSkipAmmo>Skip Ammo (don't override)</BatchSkipAmmo>
-  <BatchTargetFaction>Target Faction</BatchTargetFaction>
+  <BatchTargetFaction>대상 진영</BatchTargetFaction>
   <BatchApplyNoCategorySelected>Please select at least one category to copy.</BatchApplyNoCategorySelected>
-  <NewFaction>New</NewFaction>
-  <NewFactionTooltip>Create new faction. Only available in-game.</NewFactionTooltip>
-  <CreateFaction>Create Faction</CreateFaction>
-  <CreateFactionTooltip>Create new faction by cloning existing one.</CreateFactionTooltip>
+  <NewFaction>새로 만들기</NewFaction>
+  <NewFactionTooltip>새 진영 생성. 게임 내에서만 가능.</NewFactionTooltip>
+  <CreateFaction>진영 생성</CreateFaction>
+  <CreateFactionTooltip>기존 진영을 복제하여 새 진영 생성.</CreateFactionTooltip>
   <SelectTemplateFaction>Select Template Faction</SelectTemplateFaction>
-  <SelectTemplateFactionTooltip>Select faction to use as template. New faction will inherit its kind definitions and settlement generation settings.</SelectTemplateFactionTooltip>
+  <SelectTemplateFactionTooltip>템플릿으로 사용할 진영 선택.</SelectTemplateFactionTooltip>
   <NewFactionDefName>New Faction DefName</NewFactionDefName>
   <NewFactionLabel>New Faction Label</NewFactionLabel>
   <CloneFactionSuccess>Successfully created new faction: {0}</CloneFactionSuccess>
   <FactionDefNameRequired>DefName is required and must be unique.</FactionDefNameRequired>
   <FactionDefNameExists>Faction with this DefName already exists.</FactionDefNameExists>
-  <PawnGroups>Pawn Groups</PawnGroups>
-  <GeneralSettings>General Settings</GeneralSettings>
-  <SortByPower>Sort by Power</SortByPower>
-  <PawnKind>Pawn Kind</PawnKind>
-  <Race>Race</Race>
-  <RaceAll>All Races</RaceAll>
-  <Power>Power</Power>
-  <FactionLeader>Faction Leader</FactionLeader>
-  <Points>Points</Points>
-  <RaidPoints>Raid Points</RaidPoints>
-  <RaidPointsLabel>Raid Points</RaidPointsLabel>
-  <CarryWeightLabel>Carry Weight</CarryWeightLabel>
-  <PointsOverrideTooltip>Override this pawn's raid points. Leave empty to use default combat power.</PointsOverrideTooltip>
-  <PointsOverrideFieldTooltip>Enter custom points, or leave empty to use default. Set to 0 to clear override.</PointsOverrideFieldTooltip>
-  <AutoCalculateRaidPoints>Auto-Calculate Raid Points</AutoCalculateRaidPoints>
-  <AutoCalculateRaidPointsDone>Raid points auto-calculated based on gear value.</AutoCalculateRaidPointsDone>
-  <AutoRaidPointsEnabled>Auto-Modify Raid Points</AutoRaidPointsEnabled>
-  <AutoRaidPointsEnabledTooltip>Calculate raid points based on pawn gear value for elite-compressed raids to reduce performance load.</AutoRaidPointsEnabledTooltip>
-  <Unknown>Unknown</Unknown>
-  <Category>Category</Category>
-  <Category_All>All</Category_All>
+  <PawnGroups>폰 그룹</PawnGroups>
+  <GeneralSettings>일반 설정</GeneralSettings>
+  <SortByPower>전투력순 정렬</SortByPower>
+  <PawnKind>폰 종류</PawnKind>
+  <Race>종족</Race>
+  <RaceAll>모든 종족</RaceAll>
+  <Power>전투력</Power>
+  <FactionLeader>진영 지도자</FactionLeader>
+  <Points>포인트</Points>
+  <RaidPoints>레이드 포인트</RaidPoints>
+  <PointsOverrideTooltip>이 폰의 레이드 포인트를 재정의합니다. 빈 칸은 기본값.</PointsOverrideTooltip>
+  <PointsOverrideFieldTooltip>사용자 정의 포인트 입력. 0은 초기화.</PointsOverrideFieldTooltip>
+  <AutoCalculateRaidPoints>레이드 포인트 자동 계산</AutoCalculateRaidPoints>
+  <AutoCalculateRaidPointsDone>장비 가치로 레이드 포인트 자동 계산됨.</AutoCalculateRaidPointsDone>
+  <AutoRaidPointsEnabled>레이드 포인트 자동 수정</AutoRaidPointsEnabled>
+  <AutoRaidPointsEnabledTooltip>장비 가치로 레이드 포인트 계산, 엘리트 압축 레이드.</AutoRaidPointsEnabledTooltip>
+  <Unknown>알 수 없음</Unknown>
+  <Category>카테고리</Category>
+  <Category_All>전체</Category_All>
   <Category_Humanlike>Humanlike</Category_Humanlike>
   <Category_Animal>Animal</Category_Animal>
   <Category_Mechanoid>Mechanoid</Category_Mechanoid>
   <Category_Other>Other</Category_Other>
-  <AddGroup>Add Group</AddGroup>
+  <AddGroup>그룹 추가</AddGroup>
   <FactionGroupEditorTitle>Faction Group Editor - {0}</FactionGroupEditorTitle>
-  <Group>Group</Group>
-  <GroupName>Group Name</GroupName>
+  <Group>그룹</Group>
+  <GroupName>그룹 이름</GroupName>
   <GroupDefaultName>{0} #{1}</GroupDefaultName>
-  <Commonality>Commonality</Commonality>
-  <EditGroup>Edit Group</EditGroup>
-  <MaxTotalPoints>Max Total Points</MaxTotalPoints>
-  <AddPawn>Add Pawn</AddPawn>
+  <Commonality>생성 가중치</Commonality>
+  <EditGroup>그룹 편집</EditGroup>
+  <MaxTotalPoints>최대 총 포인트</MaxTotalPoints>
+  <AddPawn>폰 추가</AddPawn>
   <AddKindDef>Add</AddKindDef>
   <AddPawnKind>Add</AddPawnKind>
-  <Traders>Traders</Traders>
-  <Carriers>Carriers</Carriers>
-  <Guards>Guards</Guards>
+  <Traders>교역자</Traders>
+  <Carriers>운반자</Carriers>
+  <Guards>경호원</Guards>
   <GroupOptions>General Members</GroupOptions>
-  <Weight>Weight</Weight>
-  <Edit>Edit</Edit>
-  <Delete>Delete</Delete>
+  <Weight>가중치</Weight>
+  <Edit>편집</Edit>
+  <Delete>삭제</Delete>
   <ConfirmDeleteGroup>Delete this group?</ConfirmDeleteGroup>
-  <DeleteGroup>Delete Group</DeleteGroup>
-  <WorldOperations>World Operations</WorldOperations>
-  <InstanceCount>Instance Count</InstanceCount>
-  <Create>Create</Create>
+  <DeleteGroup>그룹 삭제</DeleteGroup>
+  <WorldOperations>세계 조작</WorldOperations>
+  <InstanceCount>인스턴스 수</InstanceCount>
+  <Create>생성</Create>
   <SelectFactionToCreate>Select faction template to create new instance.</SelectFactionToCreate>
   <CreateNewInstance>Create New Instance</CreateNewInstance>
   <ConfirmCreateNewInstance>Create new faction instance? Note: Too many instances may affect performance. Recommended max 10 per type.</ConfirmCreateNewInstance>
   <NewInstancePreview>New instance name: {0}</NewInstancePreview>
-  <TooManyInstances>Too many instances of this type (>20). Cannot create more.</TooManyInstances>
+  <TooManyInstances>Too many instances of this type (&gt;20). Cannot create more.</TooManyInstances>
   <SpawnRandomSettlement>Spawn Settlement</SpawnRandomSettlement>
   <SelectSettlementLocation>Select Location</SelectSettlementLocation>
   <FactionInstanceCreated>Faction instance '{0}' created!</FactionInstanceCreated>
@@ -480,13 +473,13 @@ Applying this preset may cause missing items or errors. Continue?</MissingModsWa
   <InvalidTile>Invalid location selected.</InvalidTile>
   <FilterByFaction>Show faction kinds only</FilterByFaction>
   <SpawnSettlements>Spawn Settlements</SpawnSettlements>
-  <TargetFaction>Target Faction</TargetFaction>
+  <TargetFaction>대상 진영</TargetFaction>
   <RandomGeneration>Random Generation</RandomGeneration>
-  <SettlementCount>Count</SettlementCount>
+  <SettlementCount>수량</SettlementCount>
   <MinDistanceToPlayer>Min Distance to Player</MinDistanceToPlayer>
   <GenerateRandomly>Generate Randomly</GenerateRandomly>
   <ManualSelection>Manual Selection</ManualSelection>
-  <ManualSelectionDesc>Click on world map to select location.</ManualSelectionDesc>
+  <ManualSelectionDesc>세계 지도에서 위치 선택.</ManualSelectionDesc>
   <SettlementPermanentWarning>Warning: New settlements cannot be deleted! Only available while this window is open.</SettlementPermanentWarning>
   <SelectOnWorldMap>Select on Map</SelectOnWorldMap>
   <SettlementsCreated>Created {0} settlements!</SettlementsCreated>
@@ -581,54 +574,54 @@ Warnings:
   <TypePrefix>Type</TypePrefix>
   <ClickToSpawn>Click map to spawn settlement ({0})</ClickToSpawn>
   <AddedItemsMessage>Added {0} items to gear list</AddedItemsMessage>
-  <VisualPreview>Visual Preview</VisualPreview>
+  <VisualPreview>시각적 미리보기</VisualPreview>
   <PreviewError_NoData>No Data</PreviewError_NoData>
   <PreviewError_DefMissing>Def Missing</PreviewError_DefMissing>
   <PreviewError_FactionMissing>Faction Missing</PreviewError_FactionMissing>
   <PreviewError_Error>Error</PreviewError_Error>
   <ImportedCopySuffix>(Imported {0})</ImportedCopySuffix>
   <NoPawn>No Pawn</NoPawn>
-  <CopiedKindGearMessage>Copied kind gear!</CopiedKindGearMessage>
+  <CopiedKindGearMessage>폰종 장비 복사됨!</CopiedKindGearMessage>
   <UnknownFaction>Unknown Faction</UnknownFaction>
   <NameColor>Apparel Color</NameColor>
-  <NameColorTooltip>Display color for Apparel.</NameColorTooltip>
+  <NameColorTooltip>의류 색상 표시.</NameColorTooltip>
   <RimTalkLinkage>RimTalk Integration</RimTalkLinkage>
-  <SeverityRange>Severity Range</SeverityRange>
+  <SeverityRange>심각도 범위</SeverityRange>
   <NameCannotBeEmpty>Name cannot be empty</NameCannotBeEmpty>
   <NameTooShort>Name too short</NameTooShort>
   <NameTooLong>Name too long (max 100 chars)</NameTooLong>
   <NameCannotBeOnlySpecialChars>Name cannot contain only special characters</NameCannotBeOnlySpecialChars>
-  <Refresh>Refresh</Refresh>
+  <Refresh>새로고침</Refresh>
   <CachesRefreshed>Caches refreshed</CachesRefreshed>
-  <RefreshTooltip>Refresh all UI caches including faction lists, kind lists and icon caches.</RefreshTooltip>
+  <RefreshTooltip>UI 캐시 새로고침.</RefreshTooltip>
   <AlreadyExists>Already Exists</AlreadyExists>
-  <FactionAlreadyExistsTooltip>This faction already exists in game. Only one instance per faction template. To modify existing faction, use "Faction Edit" feature.</FactionAlreadyExistsTooltip>
+  <FactionAlreadyExistsTooltip>이 진영은 이미 존재합니다.</FactionAlreadyExistsTooltip>
   <Changelog_FixWikiLang>Fixed Wiki language setting not applying</Changelog_FixWikiLang>
   <Changelog_AddWikiUI>Wiki UI improvements: added title bar, section coloring, layout optimization</Changelog_AddWikiUI>
-  <DeleteFactionTitle>Delete Faction</DeleteFactionTitle>
+  <DeleteFactionTitle>진영 삭제</DeleteFactionTitle>
   <DeleteFactionWarning>Warning: This action is irreversible!</DeleteFactionWarning>
-  <TargetFaction>Target Faction</TargetFaction>
+  <TargetFaction>대상 진영</TargetFaction>
   <SettlementsToRemove>Settlements to Remove</SettlementsToRemove>
   <PawnsToRemove>Pawns to Remove</PawnsToRemove>
   <OtherEffects>Other Effects</OtherEffects>
   <FactionRelationsRemoved>Faction relations will be cleared</FactionRelationsRemoved>
   <ActiveQuestsAffected>Active quests may be affected</ActiveQuestsAffected>
-  <DeleteFaction>Delete Faction</DeleteFaction>
-  <DangerZone>Danger Zone</DangerZone>
+  <DeleteFaction>진영 삭제</DeleteFaction>
+  <DangerZone>위험 구역</DangerZone>
   <NoFactionInstanceToDelete>No faction instance to delete</NoFactionInstanceToDelete>
   <FactionDeleted>Faction '{0}' deleted.</FactionDeleted>
   <FactionDeleteFailed>Failed to delete faction. Check logs.</FactionDeleteFailed>
   <SelectFactionInstanceToDelete>Select {0} instance to delete</SelectFactionInstanceToDelete>
   <SelectInstance>Please select instance</SelectInstance>
-  <Next>Next</Next>
-  <Settlements>Settlements</Settlements>
+  <Next>다음</Next>
+  <Settlements>정착지</Settlements>
   <UnknownLocation>Unknown Location</UnknownLocation>
   <PlayerRelationSettings>Player Relations</PlayerRelationSettings>
-  <RelationAlly>Ally</RelationAlly>
-  <RelationNeutral>Neutral</RelationNeutral>
-  <RelationHostile>Hostile</RelationHostile>
+  <RelationAlly>동맹</RelationAlly>
+  <RelationNeutral>중립</RelationNeutral>
+  <RelationHostile>적대</RelationHostile>
   <RelationCurrent>Current: {0}</RelationCurrent>
-  <RelationDefault>Use game default relations</RelationDefault>
+  <RelationDefault>게임 기본 관계 사용</RelationDefault>
   <FGC_FirstTimePrompt_Title>Select Faction Gear Preset</FGC_FirstTimePrompt_Title>
   <FGC_FirstTimePrompt_Description>Detected saved faction gear presets. Which preset would you like to use for this save?
 
@@ -644,16 +637,16 @@ You can change this later in Mod Settings.</FGC_FirstTimePrompt_Description>
   <FGC_Message_SelectedFactionsApplied>Applied {1} factions from preset "{0}" to current save.</FGC_Message_SelectedFactionsApplied>
   <FGC_SelectFactions>Select Factions</FGC_SelectFactions>
   <FGC_Message_UsingVanilla>Current save uses vanilla faction settings.</FGC_Message_UsingVanilla>
-  <NoPresetEditingDisabledTooltip>Create or load preset to enable editing</NoPresetEditingDisabledTooltip>
+  <NoPresetEditingDisabledTooltip>편집하려면 프리셋을 만들거나 불러오세요.</NoPresetEditingDisabledTooltip>
   <NoPresetCannotSave>Create or load preset to save</NoPresetCannotSave>
-  <WikiTooltip>Open Wiki help documentation</WikiTooltip>
-  <WikiMascotTip>Sly raccoon - Click to view on Steam Workshop</WikiMascotTip>
+  <WikiTooltip>Wiki 도움말</WikiTooltip>
+  <WikiMascotTip>Steam에서 보기</WikiMascotTip>
   <WikiTab_Principles>Core Principles</WikiTab_Principles>
   <WikiTab_Terminology>Terminology</WikiTab_Terminology>
   <WikiTab_Workflow>Workflow</WikiTab_Workflow>
   <WikiTab_Notes>Notes</WikiTab_Notes>
 
-  <!-- Wiki Content -->
+  
   <Wiki_Principles_Content>[How does this mod work?]
 
 Simply put: After you configure the mod, when the game generates new characters (enemies, caravans, defenders, etc.), the mod quietly replaces their original gear with your custom gear.
@@ -899,17 +892,17 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
 • QQ Group
 984338429</Wiki_Notes_Content>
 
-  <!-- Missing Keys Added -->
-  <ItemQualityTooltip>Override the quality of all items equipped by this pawn kind.</ItemQualityTooltip>
-  <OutfitFirstBudgetStrategy>Output first priority</OutfitFirstBudgetStrategy>
-  <OutfitFirstBudgetStrategyTooltip>Build a complete core outfit using the max apparel budget first (torso inner, legs inner, armored middle, shell). If over budget, it automatically downgrades/replaces pieces until within budget; armor value is kept at least 60% of budget by default. If core layers cannot be satisfied, fail fast before stripping and keep current worn apparel.</OutfitFirstBudgetStrategyTooltip>
-  <ApparelBudgetTooltip>Set the minimum and maximum market value budget for apparel generation.</ApparelBudgetTooltip>
-  <WeaponBudgetTooltip>Set the minimum and maximum market value budget for weapon generation.</WeaponBudgetTooltip>
-  <TechLevelLimitTooltip>Limit equipment to specific tech level or below.</TechLevelLimitTooltip>
+  
+  <ItemQualityTooltip>이 폰종의 모든 아이템 품질 재정의.</ItemQualityTooltip>
+  <OutfitFirstBudgetStrategy>출력 우선</OutfitFirstBudgetStrategy>
+  <OutfitFirstBudgetStrategyTooltip>예산 내에서 완전한 코어 의상을 우선 생성합니다.</OutfitFirstBudgetStrategyTooltip>
+  <ApparelBudgetTooltip>의류 생성 예산 범위 설정.</ApparelBudgetTooltip>
+  <WeaponBudgetTooltip>무기 생성 예산 범위 설정.</WeaponBudgetTooltip>
+  <TechLevelLimitTooltip>특정 기술 수준 이하로 제한.</TechLevelLimitTooltip>
   <SkippedNonHumanKinds>Skipped {0} non-human pawn kinds.</SkippedNonHumanKinds>
   <AddedPawnKinds>Added {0} pawn kinds.</AddedPawnKinds>
   
-  <!-- Gear Info Dialog -->
+  
   <MassCarried>Mass carried</MassCarried>
   <ComfortableTemperature>Comfortable temperature range</ComfortableTemperature>
   <OverallArmor>Overall armor</OverallArmor>
@@ -917,21 +910,21 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <ArmorBlunt>Blunt</ArmorBlunt>
   <ArmorHeat>Heat</ArmorHeat>
   <Equipment>Equipment</Equipment>
-  <Apparel>Apparel</Apparel>
-  <Inventory>Inventory</Inventory>
+  <Apparel>의류</Apparel>
+  <Inventory>인벤토리</Inventory>
   <TotalMass>Total mass</TotalMass>
   <ClickToViewGearInfo>Click to view gear details</ClickToViewGearInfo>
 
-  <!-- Category Filter -->
+  
   <CategoryAll>All Categories</CategoryAll>
   <Category_Food>Food</Category_Food>
   <Category_Medicine>Medicine</Category_Medicine>
   <Category_SocialDrug>Social Drug</Category_SocialDrug>
   <Category_HardDrug>Hard Drug</Category_HardDrug>
   <Category_Ammo>Ammo</Category_Ammo>
-  <CategoryFilterTooltip>Filter by item category</CategoryFilterTooltip>
+  <CategoryFilterTooltip>카테고리별 필터</CategoryFilterTooltip>
 
-  <!-- Hediff Categories -->
+  
   <HediffCat_Implants>Implants</HediffCat_Implants>
   <HediffCat_MissingParts>Missing Parts</HediffCat_MissingParts>
   <HediffCat_Debuffs>Debuffs</HediffCat_Debuffs>
@@ -940,27 +933,27 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <HediffCat_Buffs>Buffs</HediffCat_Buffs>
   <HediffCat_Other>Other</HediffCat_Other>
 
-  <!-- Food Sub-categories -->
+  
   <FoodCat_Cooked>Cooked</FoodCat_Cooked>
   <FoodCat_Raw>Raw</FoodCat_Raw>
   <FoodCat_Meat>Meat</FoodCat_Meat>
   <FoodCat_Vegetable>Vegetable</FoodCat_Vegetable>
 
-  <!-- Preview Save Confirmation -->
+  
   <ConfirmSaveBeforePreview>You have unsaved changes. Save before preview?</ConfirmSaveBeforePreview>
   <AutoSaveBeforePreview>Auto-save before preview</AutoSaveBeforePreview>
-  <AutoSaveBeforePreviewTooltip>When enabled, auto-save before preview without prompt</AutoSaveBeforePreviewTooltip>
+  <AutoSaveBeforePreviewTooltip>미리보기 전 자동 저장.</AutoSaveBeforePreviewTooltip>
 
-  <!-- Clear Buttons -->
+  
   <ClearStatuses>Clear Statuses</ClearStatuses>
   <ClearInventory>Clear Inventory</ClearInventory>
-  <ClearStatusesTooltip>Clear all status effects for this pawn kind</ClearStatusesTooltip>
-  <ClearInventoryTooltip>Clear all items for this pawn kind</ClearInventoryTooltip>
+  <ClearStatusesTooltip>이 폰종의 모든 상태 효과 제거</ClearStatusesTooltip>
+  <ClearInventoryTooltip>이 폰종의 모든 아이템 제거</ClearInventoryTooltip>
   <ConfirmClearStatuses>Are you sure you want to clear all status effects?</ConfirmClearStatuses>
   <ConfirmClearInventory>Are you sure you want to clear all items?</ConfirmClearInventory>
 
-  <!-- Item Pool -->
-  <QuickAddPool>Quick Add</QuickAddPool>
+  
+  <QuickAddPool>빠른 추가</QuickAddPool>
   <Pool_AnyFood>Any Food</Pool_AnyFood>
   <Pool_AnyMeal>Any Meal</Pool_AnyMeal>
   <Pool_AnyRawFood>Any Raw Food</Pool_AnyRawFood>
@@ -969,12 +962,12 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <Pool_AnyMedicine>Any Medicine</Pool_AnyMedicine>
   <Pool_AnySocialDrug>Any Social Drug</Pool_AnySocialDrug>
   <Pool_AnyHardDrug>Any Hard Drug</Pool_AnyHardDrug>
-  <QuickAddPoolTooltip>Quickly add an item pool</QuickAddPoolTooltip>
+  <QuickAddPoolTooltip>아이템 풀 빠른 추가</QuickAddPoolTooltip>
   <EditPoolContents>Edit Pool Contents</EditPoolContents>
 
-  <!-- Hediff Pool -->
+  
   <QuickAddHediffPool>Quick Status Pool</QuickAddHediffPool>
-  <QuickAddHediffPoolTooltip>Quickly add a status pool (randomly select from specified type)</QuickAddHediffPoolTooltip>
+  <QuickAddHediffPoolTooltip>상태 풀 빠른 추가</QuickAddHediffPoolTooltip>
   <HediffPool_Tag>Pool</HediffPool_Tag>
   <HediffPool_AnyDebuff>Any Debuff</HediffPool_AnyDebuff>
   <HediffPool_AnyDrugHigh>Any Drug High</HediffPool_AnyDrugHigh>
@@ -983,9 +976,9 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <HediffPool_AnyIllness>Any Illness</HediffPool_AnyIllness>
   <HediffPool_AnyBuff>Any Buff</HediffPool_AnyBuff>
 
-  <!-- Apply to Others Dialogs -->
-  <ApplyHediffsToOthersTooltip>Apply current hediffs to other kinds in this faction</ApplyHediffsToOthersTooltip>
-  <ApplyItemsToOthersTooltip>Apply current inventory items to other kinds in this faction</ApplyItemsToOthersTooltip>
+  
+  <ApplyHediffsToOthersTooltip>현재 상태 효과를 다른 폰종에 적용</ApplyHediffsToOthersTooltip>
+  <ApplyItemsToOthersTooltip>현재 아이템을 다른 폰종에 적용</ApplyItemsToOthersTooltip>
   <ApplyHediffsToOthersTitle>Apply Hediffs to Other Kinds</ApplyHediffsToOthersTitle>
   <ApplyItemsToOthersTitle>Apply Items to Other Kinds</ApplyItemsToOthersTitle>
   <ApplyHediffsConfirm>Apply hediffs to {0} selected kinds?</ApplyHediffsConfirm>
@@ -994,7 +987,7 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <ItemsApplied>Applied items to {0} kinds.</ItemsApplied>
   <NoOtherKindsInFaction>No other kinds in this faction.</NoOtherKindsInFaction>
 
-  <!-- Inventory Limit Warnings -->
+  
   <InventoryItemCountLimit>Item count exceeds limit (max {0})</InventoryItemCountLimit>
   <InvalidItem>Invalid item</InvalidItem>
   <MassWarning>Mass warning: {0}/{1} kg</MassWarning>
@@ -1003,7 +996,7 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <BulkCriticalWarning>Critical overbulk: {0}/{1} - May cause inability to move!</BulkCriticalWarning>
   <InventoryOverweightWarning>Warning: Inventory critically overweight, pawn may be unable to move!</InventoryOverweightWarning>
 
-  <!-- Hediff Critical Warnings -->
+  
   <HediffWarningType_Consciousness>Consciousness</HediffWarningType_Consciousness>
   <HediffWarningType_Moving>Moving</HediffWarningType_Moving>
   <HediffWarningType_Manipulation>Manipulation</HediffWarningType_Manipulation>
@@ -1014,7 +1007,7 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <HediffWarning_ManipulationZero>Will cause pawn to be unable to manipulate items</HediffWarning_ManipulationZero>
   <HediffWarning_ManipulationLow>Will severely reduce pawn manipulation capability</HediffWarning_ManipulationLow>
 
-  <!-- Faction Export Feature -->
+  
   <yFE_ExportFactions>Export Factions</yFE_ExportFactions>
   <yFE_ExportFactions_Title>Export Factions to Preset</yFE_ExportFactions_Title>
   <yFE_TargetPreset>Target Preset</yFE_TargetPreset>
@@ -1029,12 +1022,12 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <yFE_ExportFailed>Export failed</yFE_ExportFailed>
   <yFE_Kinds_Label>kinds</yFE_Kinds_Label>
   <yFE_Factions_Label>factions</yFE_Factions_Label>
-  <yFE_SelectAll>Select All</yFE_SelectAll>
+  <yFE_SelectAll>전체 선택</yFE_SelectAll>
   <yFE_DeselectAll>Deselect All</yFE_DeselectAll>
-  <yFE_PresetName>Preset Name</yFE_PresetName>
+  <yFE_PresetName>프리셋 이름</yFE_PresetName>
   <yFE_PresetDescription>Preset Description</yFE_PresetDescription>
 
-  <!-- Phase 2: Scenario Creation UI -->
+  
   <P2_FactionEditorButton>Faction Editor</P2_FactionEditorButton>
   <P2_FactionEditorLite_Title>Select Faction Preset</P2_FactionEditorLite_Title>
   <P2_SelectPreset>Select Preset:</P2_SelectPreset>
@@ -1055,78 +1048,78 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <P2_AppliedToWorld>Successfully applied {0} factions to world ({1} mode)</P2_AppliedToWorld>
   <P2_NoNewFactionsToAdd>No new factions to add (all selected factions already exist)</P2_NoNewFactionsToAdd>
   <P2_ResetDefault>Reset Default</P2_ResetDefault>
-  <P2_OpenSettings>Settings</P2_OpenSettings>
+  <P2_OpenSettings>설정</P2_OpenSettings>
   <P2_ResetSuccess>Faction data reset to default</P2_ResetSuccess>
   <P2_NotInGameWarning>[Note] Not currently in game, some features (e.g., apply to save) are unavailable</P2_NotInGameWarning>
   
-  <!-- Skills -->
-  <Skills>Skills</Skills>
-  <ForcedSkills>Forced Skills</ForcedSkills>
+  
+  <Skills>스킬</Skills>
+  <ForcedSkills>강제 스킬</ForcedSkills>
   <SkillLevel>Level</SkillLevel>
-  <ForceOverrideSkills>Override Skills</ForceOverrideSkills>
-  <SkillRandomRange>Random Range</SkillRandomRange>
+  <ForceOverrideSkills>덮어쓰기</ForceOverrideSkills>
+  <SkillRandomRange>무작위 범위</SkillRandomRange>
   <SkillsAddedMessage>Added {0} skills, skipped {1} duplicates.</SkillsAddedMessage>
-  <BaseLevel>Base Level</BaseLevel>
-  <RandomRange>Random Range</RandomRange>
+  <BaseLevel>기본 레벨</BaseLevel>
+  <RandomRange>무작위 범위</RandomRange>
   <SkillMin>Min</SkillMin>
   <SkillMax>Max</SkillMax>
-  <Passion>Passion</Passion>
+  <Passion>열정</Passion>
   <SkillEditTitle>Edit Skill</SkillEditTitle>
-  <ClearSkillsTooltip>Clear all skills for this pawn kind</ClearSkillsTooltip>
+  <ClearSkillsTooltip>모든 스킬 제거</ClearSkillsTooltip>
 
-  <!-- Traits -->
-  <Traits>Traits</Traits>
-  <ForcedTraits>Forced Traits</ForcedTraits>
-  <AddTrait>Add Trait</AddTrait>
+  
+  <Traits>특성</Traits>
+  <ForcedTraits>강제 특성</ForcedTraits>
+  <AddTrait>특성 추가</AddTrait>
   <TraitPickerTitle>Add Traits</TraitPickerTitle>
-  <Degree>Degree</Degree>
-  <ForceOverrideTraits>Override Traits</ForceOverrideTraits>
+  <Degree>등급</Degree>
+  <ForceOverrideTraits>덮어쓰기</ForceOverrideTraits>
   <TraitsAddedMessage>Added {0} traits, skipped {1} duplicates.</TraitsAddedMessage>
-  <ClearTraitsTooltip>Clear all traits for this pawn kind</ClearTraitsTooltip>
+  <ClearTraitsTooltip>모든 특성 제거</ClearTraitsTooltip>
 
-  <!-- Genes -->
-  <Genes>Genes</Genes>
-  <ForcedGenes>Forced Genes</ForcedGenes>
-  <AddGene>Add Gene</AddGene>
+  
+  <Genes>유전자</Genes>
+  <ForcedGenes>강제 유전자</ForcedGenes>
+  <AddGene>유전자 추가</AddGene>
   <GenePickerTitle>Add Genes</GenePickerTitle>
   <GeneEndogene>Endogene</GeneEndogene>
-  <ForceOverrideGenes>Override</ForceOverrideGenes>
+  <ForceOverrideGenes>덮어쓰기</ForceOverrideGenes>
   <GenesAddedMessage>Added {0} genes, skipped {1} duplicates.</GenesAddedMessage>
-  <ClearGenesTooltip>Clear all genes for this pawn kind</ClearGenesTooltip>
+  <ClearGenesTooltip>모든 유전자 제거</ClearGenesTooltip>
 
-  <!-- Appearance -->
-  <Appearance>Appearance</Appearance>
-  <EditAppearance>Edit Appearance</EditAppearance>
-  <AppearanceEditorTitle>Edit Appearance</AppearanceEditorTitle>
-  <SkinColor>Skin Color</SkinColor>
-  <HairColor>Hair Color</HairColor>
-  <ForceOverrideAppearance>Override Appearance</ForceOverrideAppearance>
-  <ClearAppearanceTooltip>Clear appearance settings for this pawn kind</ClearAppearanceTooltip>
+  
+  <Appearance>외형</Appearance>
+  <EditAppearance>외형 편집</EditAppearance>
+  <AppearanceEditorTitle>외형 편집</AppearanceEditorTitle>
+  <SkinColor>피부색</SkinColor>
+  <HairColor>머리색</HairColor>
+  <ForceOverrideAppearance>덮어쓰기</ForceOverrideAppearance>
+  <ClearAppearanceTooltip>외형 설정 제거</ClearAppearanceTooltip>
   <AppearanceTab_Shape>Shape</AppearanceTab_Shape>
   <AppearanceTab_Hair>Hair</AppearanceTab_Hair>
-  <AppearanceTab_Skin>Skin</AppearanceTab_Skin>
-  <AppearanceTab_Genes>Genes</AppearanceTab_Genes>
+  <AppearanceTab_Skin>피부</AppearanceTab_Skin>
+  <AppearanceTab_Genes>유전자</AppearanceTab_Genes>
   <AppearanceTab_Body>Body</AppearanceTab_Body>
-  <AppearanceTab_Head>Head</AppearanceTab_Head>
+  <AppearanceTab_Head>머리</AppearanceTab_Head>
   <AppearanceTab_Beard>Beard</AppearanceTab_Beard>
-  <Random>Random</Random>
+  <Random>무작위</Random>
 
-  <!-- Ideology -->
-  <IdeologySettings>Ideology Settings</IdeologySettings>
-  <SelectIdeology>Select Ideology</SelectIdeology>
+  
+  <IdeologySettings>이데올로기 설정</IdeologySettings>
+  <SelectIdeology>이데올로기 선택</SelectIdeology>
 
-  <!-- Turret/Mechanoid Weapon Filter -->
-  <HideTurretMechanoidWeaponsTooltip>Hide turret and mechanoid weapons from the item library</HideTurretMechanoidWeaponsTooltip>
+  
+  <HideTurretMechanoidWeaponsTooltip>터렛/기계 무기 숨기기</HideTurretMechanoidWeaponsTooltip>
 
-  <!-- Hediff Target Parts -->
-  <TargetParts>Target Parts</TargetParts>
-  <HediffPartModeAuto>Auto</HediffPartModeAuto>
-  <HediffPartModeManual>Manual</HediffPartModeManual>
+  
+  <TargetParts>대상 부위</TargetParts>
+  <HediffPartModeAuto>자동</HediffPartModeAuto>
+  <HediffPartModeManual>수동</HediffPartModeManual>
   <HediffPartModeAutoDescription>Auto (recipe/mapping)</HediffPartModeAutoDescription>
   <HediffPartSummaryFormat>{0}, {1} (+{2})</HediffPartSummaryFormat>
   <BodyPartSelectionTitle>Select Target Body Parts</BodyPartSelectionTitle>
 
-  <!-- Hediff Validation Messages -->
+  
   <Validation_HediffNull>Hediff is null</Validation_HediffNull>
   <Validation_InvalidPoolType>Invalid pool type</Validation_InvalidPoolType>
   <Validation_HediffDefNull>HediffDef is null</Validation_HediffDefNull>
@@ -1150,80 +1143,80 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <Validation_InsufficientParts>Insufficient available parts for hediff '{0}': requested {1}, available {2}</Validation_InsufficientParts>
   <Validation_TooManyImplantsForPart>Too many implants for part '{0}': {1} requested, max allowed {2}</Validation_TooManyImplantsForPart>
 
-  <!-- Batch History -->
-  <History>History</History>
-  <BatchHistoryTooltip>View and revert past batch apply operations.</BatchHistoryTooltip>
+  
+  <History>기록</History>
+  <BatchHistoryTooltip>과거 일괄 적용 작업 보기/복원.</BatchHistoryTooltip>
   <BatchHistoryTitle>Batch Apply History</BatchHistoryTitle>
-  <ClearAll>Clear All</ClearAll>
+  <ClearAll>모두 지우기</ClearAll>
   <BatchHistoryClearConfirm>Clear all batch apply history? This cannot be undone.</BatchHistoryClearConfirm>
-  <Yes>Yes</Yes>
+  <Yes>예</Yes>
   <No>No</No>
   <BatchHistoryCount>Total {0} records</BatchHistoryCount>
   <BatchHistoryEmpty>No history found.</BatchHistoryEmpty>
   <BatchHistoryInvalidBtn>Invalid</BatchHistoryInvalidBtn>
-  <BatchHistoryInvalidTooltip>Snapshot or target data is corrupted or lost due to mod changes.</BatchHistoryInvalidTooltip>
+  <BatchHistoryInvalidTooltip>데이터 손상으로 복원 불가.</BatchHistoryInvalidTooltip>
   <BatchHistoryInvalid>Cannot revert: target data is corrupted.</BatchHistoryInvalid>
   <BatchHistoryRevertBtn>Revert</BatchHistoryRevertBtn>
   <BatchHistoryRevertConfirm>Revert this batch apply operation? Target kinds will be restored to their previous state.</BatchHistoryRevertConfirm>
   <BatchReverted>Batch operation reverted successfully.</BatchReverted>
-  <General>General</General>
+  <General>일반</General>
   <BatchHistory_SrcTgt>Src: [{0}] {1} → Tgts: {2}</BatchHistory_SrcTgt>
   <BatchHistory_Flags>Flags: {0}</BatchHistory_Flags>
 
-  <!-- Age Settings -->
-  <AgeSettings>Age Settings</AgeSettings>
-  <AgeSettingsTooltip>Set the biological age range for this pawn kind.</AgeSettingsTooltip>
+  
+  <AgeSettings>나이 설정</AgeSettings>
+  <AgeSettingsTooltip>이 폰종의 생물학적 나이 범위 설정.</AgeSettingsTooltip>
   <MinAge>Minimum Age</MinAge>
   <MaxAge>Maximum Age</MaxAge>
   <AgeSettingsHint>Leave empty to disable. If in conflict with faction group settings, this will take precedence. Age will be clamped to the minimum adult age of the race.</AgeSettingsHint>
   <AgeClampedToAdult>Age value adjusted to minimum adult age: {0}</AgeClampedToAdult>
 
-  <!-- Non-Combatant Warning -->
+  
   <NonCombatantWarningText>Warning: The selected pawn kind contains "non-combatant" genes or cannot be generated as a combatant.
 
     If you force apply this pawn kind, we will automatically relax generation rules to allow generating non-combatant Pawns. This may result in the pawn kind being useless in combat (e.g., only running away).
 
     Continue?</NonCombatantWarningText>
-  <Yes>Yes</Yes>
+  <Yes>예</Yes>
   <No>No</No>
   <DoNotShowAgain>Don't Show Again</DoNotShowAgain>
-  <RaidPoints>Raid Points</RaidPoints>
-  <AddPawnKindTooltip>Click to add a new pawn kind</AddPawnKindTooltip>
+  <RaidPoints>레이드 포인트</RaidPoints>
+  <AddPawnKindTooltip>새 폰종 추가</AddPawnKindTooltip>
   <SelectFactionFirst>Please select a faction first</SelectFactionFirst>
   <OK>OK</OK>
   <OverwritePresetConfirm>Overwrite preset?</OverwritePresetConfirm>
   <PoolType>Pool Type</PoolType>
-  <RelationPermanentEnemyTooltip>Permanent enemy relations cannot be modified</RelationPermanentEnemyTooltip>
+  <RelationPermanentEnemyTooltip>영구 적대 관계는 변경 불가.</RelationPermanentEnemyTooltip>
 
-  <!-- Trade Stock -->
-  <TradeStockSettings>Trade Stock Settings</TradeStockSettings>
-  <EditTradeStock>Edit Trade Stock</EditTradeStock>
-  <TradeStockSettingsDesc>Customize what items this faction sells at settlements.</TradeStockSettingsDesc>
+  
+  <TradeStockSettings>교역 물품 설정</TradeStockSettings>
+  <EditTradeStock>교역 물품 편집</EditTradeStock>
+  <TradeStockSettingsDesc>정착지에서 판매할 아이템 설정.</TradeStockSettingsDesc>
   <TradeStockEditorTitle>Trade Stock — {0}</TradeStockEditorTitle>
   <TradeStockTrader>Trader: {0}</TradeStockTrader>
   <TradeStockReplaceVanilla>Replace Vanilla</TradeStockReplaceVanilla>
-  <TradeStockReplaceVanillaTip>When unchecked: custom items are appended on top of vanilla stock. When checked: vanilla stock is cleared first, only your items appear.</TradeStockReplaceVanillaTip>
+  <TradeStockReplaceVanillaTip>미체크: 사용자 정의 추가. 체크: 바닐라 제거 후 사용자 정의만.</TradeStockReplaceVanillaTip>
   <TradeStockReplaceConfirm>When enabled, all vanilla stock will be cleared and only your configured items will appear in trade. Continue?</TradeStockReplaceConfirm>
   <TradeStockUndo>Undo ({0})</TradeStockUndo>
   <TradeStockRedo>Redo ({0})</TradeStockRedo>
-  <TradeStockApplyToOthers>Apply to Others</TradeStockApplyToOthers>
+  <TradeStockApplyToOthers>다른 항목에 적용</TradeStockApplyToOthers>
   <ApplyToAllFactions>Apply to ALL humanlike factions</ApplyToAllFactions>
   <TradeStockSearch>Search...</TradeStockSearch>
   <TradeStockCount>{0} items</TradeStockCount>
   <TradeStockRemoveItem>Remove this item</TradeStockRemoveItem>
   <TradeStockNoItems>No items. Add from library →</TradeStockNoItems>
   <TradeStockAddFirst>Add items first.</TradeStockAddFirst>
-  <TradeStockClearAll>Clear All</TradeStockClearAll>
-  <TradeStockClear>Clear</TradeStockClear>
+  <TradeStockClearAll>모두 지우기</TradeStockClearAll>
+  <TradeStockClear>지우기</TradeStockClear>
   <TradeStockClearAllConfirm>Remove all {0} items?</TradeStockClearAllConfirm>
   <TradeStockResetDefaults>Reset Defaults</TradeStockResetDefaults>
   <TradeStockResetConfirm>Reset to vanilla defaults? This will discard all custom changes.</TradeStockResetConfirm>
   <TradeStockSaved>Trade stock saved.</TradeStockSaved>
   <TradeStockNoFactions>No other humanlike factions found.</TradeStockNoFactions>
-  <TradeCat_All>All</TradeCat_All>
-  <TradeCat_Weapons>Weapons</TradeCat_Weapons>
+  <TradeCat_All>전체</TradeCat_All>
+  <TradeCat_Weapons>무기</TradeCat_Weapons>
   <TradeCat_Armor>Armor</TradeCat_Armor>
-  <TradeCat_Apparel>Apparel</TradeCat_Apparel>
-  <TradeCat_Items>Items</TradeCat_Items>
+  <TradeCat_Apparel>의류</TradeCat_Apparel>
+  <TradeCat_Items>아이템</TradeCat_Items>
   <TradeCat_Animals>Animals</TradeCat_Animals>
-</LanguageData>
+<RaidPointsLabel>레이드 포인트</RaidPointsLabel><CarryWeightLabel>중량</CarryWeightLabel></LanguageData>
