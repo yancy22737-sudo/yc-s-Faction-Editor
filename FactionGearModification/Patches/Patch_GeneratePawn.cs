@@ -163,6 +163,8 @@ namespace FactionGearCustomizer
                 LogUtils.DebugLog($"[CombatPowerOverride] global settings: found={data != null}");
             }
 
+            if (data == null) return;
+
             // 收集所有需要覆盖的 combatPower
             var overrides = new Dictionary<PawnKindDef, float>();   // kind -> new value
             var originals = new Dictionary<PawnKindDef, float>();    // kind -> original value
