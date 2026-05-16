@@ -1,3 +1,8 @@
+v1.6.8
+	- New: SimpleSidearms compatibility — dual-wield support (primary + sidearm), 50/50 random primary/sidearm, sidearm ammo protection.
+	- Fix: Sidearm ammo incorrectly removed by CleanupCEAmmo; preview crash in MovePrimaryToSidearm; primary weapon type no longer deterministic.
+	- Update: Ammo Protection tooltip adds SimpleSidearms note; 7 language files synced.
+
 v1.6.7
 	- New: Inter-Faction Relations — edit diplomatic relations between any non-player factions (Ally/Neutral/Hostile), with multi-select, select-all, and search filter.
 	- UI: New Dialog_InterFactionRelation window with in-game name toggle and hover tooltips, replacing the previous two-level FloatMenu.

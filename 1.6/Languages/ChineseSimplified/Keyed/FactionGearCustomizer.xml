@@ -226,7 +226,7 @@
   <ForceIgnore>强制忽略</ForceIgnore>
   <ForceIgnoreTooltip>强制移除冲突的服装/武器并忽略预算限制。单位将尝试装备配置列表中的所有可能物品, 允许您忽略限制并始终创建神级单位。</ForceIgnoreTooltip>
   <AmmoProtection>弹药保护</AmmoProtection>
-  <AmmoProtectionTooltip>开启后只保留模组生成的弹药，防止CE等多重弹药来源导致翻倍或混搭。关闭后模组与CE各自生成一组弹药。</AmmoProtectionTooltip>
+  <AmmoProtectionTooltip>开启后只保留模组生成的弹药，防止CE等多重弹药来源导致翻倍或混搭。关闭后模组与CE各自生成一组弹药。在有 SimpleSidearms 时，背包里的副武器弹药也纳入保护。</AmmoProtectionTooltip>
   <ForceIgnoreGlobal>全局强制忽略</ForceIgnoreGlobal>
   <ForceIgnoreGlobalTooltip>全局设置：强制移除冲突的服装/武器并忽略预算限制。作为所有兵种的默认设置，可被局部设置覆盖。</ForceIgnoreGlobalTooltip>
   <ForceIgnoreLocal>局部强制忽略</ForceIgnoreLocal>

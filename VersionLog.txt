@@ -1,3 +1,8 @@
+v1.6.8
+	- 新功能: SimpleSidearms 兼容 — 支持双武器配置（主武器+副武器），50/50随机主副，副武器弹药保护。
+	- 修复: 副武器弹药被 CleanupCEAmmo 误清理；预览窗口 MovePrimaryToSidearm 报错；主武器类型不再固定。
+	- 更新: 弹药保护 tooltip 补充 SimpleSidearms 说明；7 语言文件同步。
+
 v1.6.7
 	- 新功能: 派系间关系调整 — 编辑任意非玩家派系间的外交关系（盟友/中立/敌对），支持多选、全选、搜索过滤。
 	- UI: 新增 Dialog_InterFactionRelation 弹窗，显示游戏中名称切换、悬浮详细信息提示，替代原有双层 FloatMenu。

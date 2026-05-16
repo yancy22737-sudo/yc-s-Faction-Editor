@@ -222,7 +222,7 @@
   <ForceIgnore>강제 무시</ForceIgnore>
   <ForceIgnoreTooltip>충돌 장비/무기를 강제 제거하고 예산을 무시합니다.</ForceIgnoreTooltip>
   <AmmoProtection>탄약 보호</AmmoProtection>
-  <AmmoProtectionTooltip>모드 생성 탄약만 유지하고 중복을 방지합니다.</AmmoProtectionTooltip>
+  <AmmoProtectionTooltip>모드 생성 탄약만 유지하고 중복을 방지합니다. SimpleSidearms 활성 시 인벤토리 내 보조무기 탄약도 보호됩니다.</AmmoProtectionTooltip>
   <ForceIgnoreGlobal>Global Force Ignore</ForceIgnoreGlobal>
   <ForceIgnoreGlobalTooltip>전역: 예산 무시, 충돌 장비 제거. 로컬 설정으로 덮어쓸 수 있습니다.</ForceIgnoreGlobalTooltip>
   <ForceIgnoreLocal>Local Force Ignore</ForceIgnoreLocal>

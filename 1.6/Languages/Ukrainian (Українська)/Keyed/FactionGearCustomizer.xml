@@ -1087,7 +1087,7 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <AddGene>Доб. ген</AddGene>
   <AddTrait>Доб. черту</AddTrait>
   <AmmoProtection>Защита патронов</AmmoProtection>
-  <AmmoProtectionTooltip>Оставляет только патроны мода, предотвращая дубликаты.</AmmoProtectionTooltip>
+  <AmmoProtectionTooltip>Залишає лише патрони мода, запобігаючи дублікатам. При активному SimpleSidearms патрони додаткової зброї в інвентарі також захищені.</AmmoProtectionTooltip>
   <Appearance>Внешность</Appearance>
   <AppearanceEditorTitle>Ред. внешности</AppearanceEditorTitle>
   <AppearanceTab_Beard>Борода</AppearanceTab_Beard>

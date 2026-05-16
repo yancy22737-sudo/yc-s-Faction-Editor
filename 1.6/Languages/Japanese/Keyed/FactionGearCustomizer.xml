@@ -222,7 +222,7 @@
   <ForceIgnore>強制無視</ForceIgnore>
   <ForceIgnoreTooltip>予算無視、競合装備を強制除去。</ForceIgnoreTooltip>
   <AmmoProtection>弾薬保護</AmmoProtection>
-  <AmmoProtectionTooltip>Mod弾薬のみ保持、重複防止。</AmmoProtectionTooltip>
+  <AmmoProtectionTooltip>Mod弾薬のみ保持、重複防止。SimpleSidearms有効時はインベントリ内の副武器弾薬も保護対象。</AmmoProtectionTooltip>
   <ForceIgnoreGlobal>Global Force Ignore</ForceIgnoreGlobal>
   <ForceIgnoreGlobalTooltip>全体: 予算無視・競合除去。個別設定で上書可。</ForceIgnoreGlobalTooltip>
   <ForceIgnoreLocal>Local Force Ignore</ForceIgnoreLocal>

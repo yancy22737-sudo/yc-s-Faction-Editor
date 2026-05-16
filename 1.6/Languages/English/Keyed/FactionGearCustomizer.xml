@@ -227,7 +227,7 @@ Recommended: Enable for full control.</ForceOnlySelectedTooltip>
   <ForceIgnore>Force Ignore</ForceIgnore>
   <ForceIgnoreTooltip>Force remove conflicting apparel/weapons and ignore budget limits. Pawns will attempt to equip all possible items from config list, allowing you to bypass restrictions and always create god-tier units.</ForceIgnoreTooltip>
   <AmmoProtection>Ammo Protection</AmmoProtection>
-  <AmmoProtectionTooltip>When enabled, only mod-generated ammo is kept, preventing CE and other sources from causing duplicate or mixed ammo. When disabled, the mod and CE each generate their own set of ammo.</AmmoProtectionTooltip>
+  <AmmoProtectionTooltip>When enabled, only mod-generated ammo is kept, preventing CE and other sources from causing duplicate or mixed ammo. When disabled, the mod and CE each generate their own set of ammo. When SimpleSidearms is active, sidearm weapons in inventory are also protected.</AmmoProtectionTooltip>
   <ForceIgnoreGlobal>Global Force Ignore</ForceIgnoreGlobal>
   <ForceIgnoreGlobalTooltip>Global setting: Force remove conflicting apparel/weapons and ignore budget limits. Used as default for all pawn kinds, can be overridden by local settings.</ForceIgnoreGlobalTooltip>
   <ForceIgnoreLocal>Local Force Ignore</ForceIgnoreLocal>

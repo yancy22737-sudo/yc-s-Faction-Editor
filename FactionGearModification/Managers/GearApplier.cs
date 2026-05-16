@@ -825,24 +825,44 @@ namespace FactionGearCustomizer
             // Advanced Mode: SpecificWeapons
             if (hasAdvancedWeaponData)
             {
-                foreach (var item in GetWhatToGive(kindData.SpecificWeapons, pawn))
+                var resolved = GetWhatToGive(kindData.SpecificWeapons, pawn)
+                    .Where(i => i.Thing != null && (forceIgnore || IsTechLevelAllowed(i.Thing, techLevelLimit)))
+                    .ToList();
+
+                if (SimpleSidearmsCompat.IsActive && resolved.Count > 2)
                 {
-                    if (item.Thing == null) continue;
+                    // With sidearms, keep at most 2 weapons (primary + sidearm). Shuffle so the primary isn't deterministic.
+                    resolved = resolved.OrderBy(_ => Rand.Value).Take(2).ToList();
+                }
 
-                    // Tech level check
-                    if (!forceIgnore && !IsTechLevelAllowed(item.Thing, techLevelLimit))
-                    {
-                        continue;
-                    }
-
+                for (int wi = 0; wi < resolved.Count; wi++)
+                {
+                    var item = resolved[wi];
                     var created = GenerateItem(pawn, item, kindData);
                     if (created is ThingWithComps weapon && pawn.equipment != null)
                     {
-                        if (weapon.def.equipmentType == EquipmentType.Primary && pawn.equipment.Primary != null)
+                        if (weapon.def.equipmentType == EquipmentType.Primary)
                         {
-                             pawn.equipment.Remove(pawn.equipment.Primary);
+                            if (wi == 0)
+                            {
+                                // First weapon: equip as primary
+                                if (pawn.equipment.Primary != null)
+                                    pawn.equipment.Remove(pawn.equipment.Primary);
+                            }
+                            else if (SimpleSidearmsCompat.IsActive)
+                            {
+                                // Subsequent weapons: move current primary to inventory as sidearm
+                                Log.Message($"[FactionGearCustomizer] SimpleSidearms: moving {pawn.equipment.Primary.LabelCap} to sidearm for {weapon.LabelCap}");
+                                SimpleSidearmsCompat.MovePrimaryToSidearm(pawn);
+                            }
+                            else
+                            {
+                                // No sidearms: subsequent weapons replace previous primary
+                                if (pawn.equipment.Primary != null)
+                                    pawn.equipment.Remove(pawn.equipment.Primary);
+                            }
+                            pawn.equipment.AddEquipment(weapon);
                         }
-                        pawn.equipment.AddEquipment(weapon);
 
                         if (!FactionGearCustomizerMod.Settings.ammoProtection && CECompat.WeaponNeedsAmmo(weapon))
                         {
@@ -860,18 +880,48 @@ namespace FactionGearCustomizer
             {
                 bool hasRanged = kindData.weapons.Any();
                 bool hasMelee = kindData.meleeWeapons.Any();
+                bool useSidearms = hasRanged && hasMelee && SimpleSidearmsCompat.IsActive;
 
-                if (hasRanged && hasMelee)
+                // When sidearms active, randomly choose which list provides the primary.
+                // If not sidearms or only one list, keep original coin-flip behavior.
+                bool equipRangedPrimary = false;
+                bool equipMeleePrimary = false;
+                bool equipRangedSidearm = false;
+                bool equipMeleeSidearm = false;
+
+                if (useSidearms)
                 {
+                    // Random: which weapon type goes to primary, which to sidearm
                     if (Rand.Chance(0.5f))
-                        hasMelee = false;
+                    {
+                        equipRangedPrimary = true;
+                        equipMeleeSidearm = true;
+                    }
                     else
-                        hasRanged = false;
+                    {
+                        equipMeleePrimary = true;
+                        equipRangedSidearm = true;
+                    }
+                }
+                else if (hasRanged && hasMelee)
+                {
+                    // Original coin flip: pick only one type, discard the other
+                    if (Rand.Chance(0.5f))
+                        equipRangedPrimary = true;
+                    else
+                        equipMeleePrimary = true;
+                }
+                else
+                {
+                    equipRangedPrimary = hasRanged;
+                    equipMeleePrimary = hasMelee;
                 }
 
-                if (hasRanged)
+                // --- Equip primary weapon ---
+                ThingWithComps sidearmWeapon = null;
+
+                if (equipRangedPrimary)
                 {
-                    // Filter by tech level
                     var validWeapons = forceIgnore
                         ? kindData.weapons
                         : kindData.weapons.Where(w => IsTechLevelAllowed(w.ThingDef, techLevelLimit)).ToList();
@@ -881,14 +931,11 @@ namespace FactionGearCustomizer
                         var weaponItem = GetRandomGearItem(validWeapons);
                         if (weaponItem?.ThingDef != null)
                         {
-                            // Handle conflicting apparel
-                            if (forceIgnore && pawn.apparel != null)
+                            // Handle conflicting apparel (shield + ranged)
+                            if (pawn.apparel != null)
                             {
                                 var conflictingApparel = pawn.apparel.WornApparel
-                                    .Where(a => {
-                                        var comp = a.GetComp<CompShield>();
-                                        return comp != null && weaponItem.ThingDef.IsRangedWeapon;
-                                    })
+                                    .Where(a => a.GetComp<CompShield>() != null && weaponItem.ThingDef.IsRangedWeapon)
                                     .ToList();
                                 foreach (var apparel in conflictingApparel)
                                 {
@@ -900,33 +947,18 @@ namespace FactionGearCustomizer
                             var weapon = GenerateSimpleItem(pawn, weaponItem.ThingDef, kindData, true);
                             if (weapon is ThingWithComps wc)
                             {
-                                if (wc.def.equipmentType == EquipmentType.Primary && pawn.equipment.Primary != null)
-                                {
-                                    ThingWithComps primary = pawn.equipment.Primary;
-                                    if (pawn.Spawned && pawn.equipment.TryDropEquipment(primary, out var dropped, pawn.Position, false))
-                                    {
-                                        dropped.Destroy();
-                                    }
-                                    else
-                                    {
-                                        pawn.equipment.Remove(primary);
-                                        primary.Destroy();
-                                    }
-                                }
+                                if (pawn.equipment.Primary != null)
+                                    pawn.equipment.Remove(pawn.equipment.Primary);
                                 pawn.equipment.AddEquipment(wc);
 
                                 if (!FactionGearCustomizerMod.Settings.ammoProtection && CECompat.WeaponNeedsAmmo(wc))
-                                {
                                     CECompat.GenerateAndAddAmmoForWeapon(pawn, wc);
-                                }
                             }
                         }
                     }
                 }
-
-                if (hasMelee)
+                else if (equipMeleePrimary)
                 {
-                    // Filter by tech level
                     var validMelee = forceIgnore
                         ? kindData.meleeWeapons
                         : kindData.meleeWeapons.Where(w => IsTechLevelAllowed(w.ThingDef, techLevelLimit)).ToList();
@@ -936,31 +968,89 @@ namespace FactionGearCustomizer
                         var meleeItem = GetRandomGearItem(validMelee);
                         if (meleeItem?.ThingDef != null)
                         {
-                             var weapon = GenerateSimpleItem(pawn, meleeItem.ThingDef, kindData, true);
+                            var weapon = GenerateSimpleItem(pawn, meleeItem.ThingDef, kindData, true);
                             if (weapon is ThingWithComps wc)
                             {
-                                if (wc.def.equipmentType == EquipmentType.Primary && pawn.equipment.Primary != null)
-                                {
-                                    ThingWithComps primary = pawn.equipment.Primary;
-                                    if (pawn.Spawned && pawn.equipment.TryDropEquipment(primary, out var dropped, pawn.Position, false))
-                                    {
-                                        dropped.Destroy();
-                                    }
-                                    else
-                                    {
-                                        pawn.equipment.Remove(primary);
-                                        primary.Destroy();
-                                    }
-                                }
+                                if (pawn.equipment.Primary != null)
+                                    pawn.equipment.Remove(pawn.equipment.Primary);
                                 pawn.equipment.AddEquipment(wc);
 
                                 if (!FactionGearCustomizerMod.Settings.ammoProtection && CECompat.WeaponNeedsAmmo(wc))
-                                {
                                     CECompat.GenerateAndAddAmmoForWeapon(pawn, wc);
-                                }
                             }
                         }
                     }
+                }
+
+                // --- Equip sidearm weapon (SimpleSidearms only) ---
+                if (equipRangedSidearm)
+                {
+                    var validWeapons = forceIgnore
+                        ? kindData.weapons
+                        : kindData.weapons.Where(w => IsTechLevelAllowed(w.ThingDef, techLevelLimit)).ToList();
+
+                    if (validWeapons.Any())
+                    {
+                        var weaponItem = GetRandomGearItem(validWeapons);
+                        if (weaponItem?.ThingDef != null)
+                        {
+                            var weapon = GenerateSimpleItem(pawn, weaponItem.ThingDef, kindData, true);
+                            if (weapon is ThingWithComps wc)
+                            {
+                                sidearmWeapon = wc;
+                            }
+                        }
+                    }
+                }
+                else if (equipMeleeSidearm)
+                {
+                    var validMelee = forceIgnore
+                        ? kindData.meleeWeapons
+                        : kindData.meleeWeapons.Where(w => IsTechLevelAllowed(w.ThingDef, techLevelLimit)).ToList();
+
+                    if (validMelee.Any())
+                    {
+                        var meleeItem = GetRandomGearItem(validMelee);
+                        if (meleeItem?.ThingDef != null)
+                        {
+                            var weapon = GenerateSimpleItem(pawn, meleeItem.ThingDef, kindData, true);
+                            if (weapon is ThingWithComps wc)
+                            {
+                                sidearmWeapon = wc;
+                            }
+                        }
+                    }
+                }
+
+                if (sidearmWeapon != null)
+                {
+                    // CE only initializes CompAmmoUser (magazine, currentAmmo) when a weapon
+                    // passes through pawn.equipment.AddEquipment. Brief equip→ammo→inventory dance.
+                    ThingWithComps savedPrimary = pawn.equipment.Primary;
+                    if (savedPrimary != null)
+                        pawn.equipment.Remove(savedPrimary);
+
+                    pawn.equipment.AddEquipment(sidearmWeapon);
+
+                    bool needsAmmo = !FactionGearCustomizerMod.Settings.ammoProtection
+                        && CECompat.WeaponNeedsAmmo(sidearmWeapon);
+                    if (needsAmmo)
+                        CECompat.GenerateAndAddAmmoForWeapon(pawn, sidearmWeapon);
+
+                    pawn.equipment.Remove(sidearmWeapon);
+
+                    if (pawn.inventory.innerContainer.TryAdd(sidearmWeapon, false))
+                    {
+                        Log.Message($"[FactionGearCustomizer] SimpleSidearms: added {sidearmWeapon.LabelCap} as sidearm");
+                    }
+                    else
+                    {
+                        sidearmWeapon.Destroy();
+                    }
+
+                    // Restore the real primary
+                    if (savedPrimary != null)
+                        pawn.equipment.AddEquipment(savedPrimary);
                 }
             }
         }
@@ -975,8 +1065,33 @@ namespace FactionGearCustomizer
                 .Where(eq => CECompat.WeaponNeedsAmmo(eq))
                 .ToList();
 
+            // 收集所有武器兼容弹药类型 — 包括装备栏 + 库存里的副武器 (SimpleSidearms)
+            var allowedAmmo = new HashSet<ThingDef>();
+            foreach (var weapon in equippedWeapons)
+            {
+                var ammoList = AmmoProviderManager.GetAllAvailableAmmo(weapon.def);
+                if (ammoList == null) continue;
+                foreach (var ammo in ammoList)
+                    if (ammo != null) allowedAmmo.Add(ammo);
+            }
+
+            // Also scan inventory for sidearm weapons (SimpleSidearms) and include their ammo types
+            if (SimpleSidearmsCompat.IsActive)
+            {
+                foreach (var item in pawn.inventory.innerContainer)
+                {
+                    if (item is ThingWithComps wc && CECompat.WeaponNeedsAmmo(wc))
+                    {
+                        var ammoList = AmmoProviderManager.GetAllAvailableAmmo(wc.def);
+                        if (ammoList == null) continue;
+                        foreach (var ammo in ammoList)
+                            if (ammo != null) allowedAmmo.Add(ammo);
+                    }
+                }
+            }
+
             // 没有需要弹药的武器 → 清空全部 CE 弹药
-            if (equippedWeapons.Count == 0)
+            if (equippedWeapons.Count == 0 && (!SimpleSidearmsCompat.IsActive || !pawn.inventory.innerContainer.Any(i => i is ThingWithComps wc && CECompat.WeaponNeedsAmmo(wc))))
             {
                 var toRemove = new List<Thing>();
                 foreach (var item in pawn.inventory.innerContainer)
@@ -987,19 +1102,9 @@ namespace FactionGearCustomizer
                 return;
             }
 
-            // 收集已装备武所有兼容弹药类型
-            var allowedAmmo = new HashSet<ThingDef>();
-            foreach (var weapon in equippedWeapons)
-            {
-                var ammoList = AmmoProviderManager.GetAllAvailableAmmo(weapon.def);
-                if (ammoList == null) continue;
-                foreach (var ammo in ammoList)
-                    if (ammo != null) allowedAmmo.Add(ammo);
-            }
-
             if (allowedAmmo.Count == 0) return;
 
-            // 只移除与当前武器不兼容的弹药（旧武器遗留），CE 会为当前武器自动生成
+            // 只移除与当前武器不兼容的弹药
             var itemsToRemove = new List<Thing>();
             foreach (var item in pawn.inventory.innerContainer)
                 if (item?.def != null && CECompat.IsCEAmmo(item.def) && !allowedAmmo.Contains(item.def))
