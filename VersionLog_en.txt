@@ -1,17 +1,21 @@
+v1.7.0
+	- New: Auto-Switch Weapon by Distance �?when SimpleSidearms is detected, pawns automatically switch between primary and sidearm based on target distance, with ammo check and switch cooldown (5s).
+	- Localization: 7 language translation keys added (EN/ZH/KO/JA/RU/UK).
+
 v1.6.8
-	- New: SimpleSidearms compatibility — dual-wield support (primary + sidearm), 50/50 random primary/sidearm, sidearm ammo protection.
+	- New: SimpleSidearms compatibility �?dual-wield support (primary + sidearm), 50/50 random primary/sidearm, sidearm ammo protection.
 	- Fix: Sidearm ammo incorrectly removed by CleanupCEAmmo; preview crash in MovePrimaryToSidearm; primary weapon type no longer deterministic.
 	- Update: Ammo Protection tooltip adds SimpleSidearms note; 7 language files synced.
 
 v1.6.7
-	- New: Inter-Faction Relations — edit diplomatic relations between any non-player factions (Ally/Neutral/Hostile), with multi-select, select-all, and search filter.
+	- New: Inter-Faction Relations �?edit diplomatic relations between any non-player factions (Ally/Neutral/Hostile), with multi-select, select-all, and search filter.
 	- UI: New Dialog_InterFactionRelation window with in-game name toggle and hover tooltips, replacing the previous two-level FloatMenu.
 	- Localization: 10 new translation keys across all 7 languages (EN/ZH/KO/JA/RU/UK).
 
 v1.6.6
-	- New: Elite Raids — auto-modify raid points based on pawn gear value, compressing raid size to reduce performance load.
+	- New: Elite Raids �?auto-modify raid points based on pawn gear value, compressing raid size to reduce performance load.
 	- New: Manual raid points override per pawn kind in group editor (combatPower), takes effect immediately.
-	- New: Auto Raid Points toggle (Advanced > General) — auto-calculates on save/apply when ON, restores defaults when OFF.
+	- New: Auto Raid Points toggle (Advanced > General) �?auto-calculates on save/apply when ON, restores defaults when OFF.
 	- New: Preview window shows raid points as "base + gear adjustment" format.
 	- Fix: Faction ideology selection now actually applies to faction instances.
 	- Fix: Iterator timing bug in PawnGroupMakerUtility.GeneratePawns causing raid points override to be ignored.
@@ -20,22 +24,22 @@ v1.6.6
 	- Build: build.ps1 tolerates locked DLL, copying files individually to ensure language XML deployment.
 
 v1.6.5
-	- Add: Faction trade stock editor — entry button in Faction Edit, full buy/sell configuration, Trader type dropdown (Settlement/Caravan/Orbital/Visitor), Undo/Redo (Ctrl+Z/Y).
+	- Add: Faction trade stock editor �?entry button in Faction Edit, full buy/sell configuration, Trader type dropdown (Settlement/Caravan/Orbital/Visitor), Undo/Redo (Ctrl+Z/Y).
 	- Add: Item library with category tabs (All/Weapons/Armor/Apparel/Items), full ThingPickerFilterBar reuse (Search/Mod/Tech/Sort/Value range/Food/Ammo sub-filters).
 	- Add: Quick batch-add pill buttons (+Weapons/+Armor/+Apparel/+Items/+All) for one-click category batch add.
-	- Add: Batch apply to other factions — FloatMenu to select single or all humanlike factions.
-	- Add: Direct TraderKindDef.stockGenerators modification — auto-injects custom buy/sell items at trade time, zero runtime Harmony hooks.
-	- Add: Trade stock preview dialog — simulates generated trade items with total market value.
+	- Add: Batch apply to other factions �?FloatMenu to select single or all humanlike factions.
+	- Add: Direct TraderKindDef.stockGenerators modification �?auto-injects custom buy/sell items at trade time, zero runtime Harmony hooks.
+	- Add: Trade stock preview dialog �?simulates generated trade items with total market value.
 	- Internal: TradeStockEntry data model, FactionGearData persistence with preset import/export, StockGenerator_BuySingleDef buy-side generators.
 
 v1.6.4
-	- Add: Trait editing tab — add/remove traits, chance slider, native translated tooltip, Info button, degree selector.
-	- Add: Gene editing tab — gene picker (category grouping + icons + metabolism display), Info button, endogene/xenogene toggle, chance slider.
-	- Add: Appearance editing tab — Shape/Hair/Skin/Genes sub-tabs, icon grids for hair/beard/body/head, skin/hair color picker.
+	- Add: Trait editing tab �?add/remove traits, chance slider, native translated tooltip, Info button, degree selector.
+	- Add: Gene editing tab �?gene picker (category grouping + icons + metabolism display), Info button, endogene/xenogene toggle, chance slider.
+	- Add: Appearance editing tab �?Shape/Hair/Skin/Genes sub-tabs, icon grids for hair/beard/body/head, skin/hair color picker.
 	- Add: Ideology selector in Faction Edit (Ideology DLC only), icon preview, auto-reads from runtime faction.
-	- Add: TraitPreviewPawnCache — backend virtual pawn for native Trait.TipString display.
+	- Add: TraitPreviewPawnCache �?backend virtual pawn for native Trait.TipString display.
 	- Add: Mod source column in trait/gene/appearance lists (truncated with ellipsis, no wrap).
-	- UI: Two-row advanced tab layout — Row1(General/Apparel/Weapons/Hediffs/Items) · Row2(Traits/Appearance/Genes).
+	- UI: Two-row advanced tab layout �?Row1(General/Apparel/Weapons/Hediffs/Items) · Row2(Traits/Appearance/Genes).
 	- UI: All delete buttons unified to trash can icon.
 	- Batch Apply: Added Traits/Genes/Appearance category copy flags. Fixed checkbox layout overlap.
 	- Fix: ForceOverrideAppearance missing from DeepCopy/CopyFrom caused Apply To Others/Batch Apply to not copy appearance override.
@@ -46,17 +50,17 @@ v1.6.3
 
 v1.6.2
 	- Fix: Item Library mod filter cache not cleared after deselecting all mods.
-	- Fix: Normal weapons (e.g. MilkorMGL) incorrectly filtered as turret/mechanoid — added normal weaponTag bypass after turretGun cache hit.
-	- Fix: Long mod names overflow in picker lists — added single-line ellipsis truncation.
+	- Fix: Normal weapons (e.g. MilkorMGL) incorrectly filtered as turret/mechanoid �?added normal weaponTag bypass after turretGun cache hit.
+	- Fix: Long mod names overflow in picker lists �?added single-line ellipsis truncation.
 	- Add: Market value column in all Item Picker lists.
-	- Fix: Melee weapon picker could add ranged weapons — added RangedOnly/MeleeOnly filter mode.
-	- Fix: Ranged/melee tabs shared the same weapon adder — now passes appropriate filter per tab.
+	- Fix: Melee weapon picker could add ranged weapons �?added RangedOnly/MeleeOnly filter mode.
+	- Fix: Ranged/melee tabs shared the same weapon adder �?now passes appropriate filter per tab.
 	- UI: Range/damage sliders merged into one row. Sort controls moved to selection row.
 
 v1.6.1
 	- Add: Enhanced color picker with visual 2D color field, hue slider, RGB sliders, preset palette, and color history.
-	- Add: Pixel drawing board for custom faction icons — brush/eraser tools, undo stack, flood fill, quick palette, resizable canvas.
-	- Add: Window_FactionGroupEditor — standalone faction group editor, accessible from kind list "+" button.
+	- Add: Pixel drawing board for custom faction icons �?brush/eraser tools, undo stack, flood fill, quick palette, resizable canvas.
+	- Add: Window_FactionGroupEditor �?standalone faction group editor, accessible from kind list "+" button.
 	- Add: Kind editor window redesigned with vanilla-style UI; kind list copy/paste hover-only with language key tooltips.
 	- Fix: Mod source cache now invalidates on category switch, preventing missing mod filter entries.
 	- Fix: Mod name truncation removed from mod filter button, allowing full names to display.
@@ -65,11 +69,11 @@ v1.6.1
 v1.6.0
 	- Fix: Removed ClearOriginalDataCache() + duplicate SaveAllOriginalData() to prevent pristine data from being overwritten by polluted ApplyAllSettings results.
 	- Fix: Combat groups with maxTotalPoints < 10000 auto-expanded to 9999999; corrupted old data cleaned when groupsModified=false.
-	- Fix: Added Patch_CanGenerateFrom_TileBypass — bypasses vanilla tile check for custom group factions (fixes "no usable PawnGroupMakers" error).
+	- Fix: Added Patch_CanGenerateFrom_TileBypass �?bypasses vanilla tile check for custom group factions (fixes "no usable PawnGroupMakers" error).
 
 v1.5.10
-	- Fix: CE ammo not auto-added to editor inventory when equipping weapons — InventoryItems defaulted to null, causing TryAutoAddAmmo to silently return.
-	- Fix: English Keyed XML line 531 had unescaped & (& → &amp;), breaking the entire language file and causing all non-Chinese translation keys to fail.
+	- Fix: CE ammo not auto-added to editor inventory when equipping weapons �?InventoryItems defaulted to null, causing TryAutoAddAmmo to silently return.
+	- Fix: English Keyed XML line 531 had unescaped & (& �?&amp;), breaking the entire language file and causing all non-Chinese translation keys to fail.
 	- Refactor: LanguageManager restored to custom loading + key.Translate() fallback, removing the flawed fallback-chain system introduced in 80fa7b3.
 	- Add: CLAUDE.md with XML escape rules for language files.
 
@@ -187,7 +191,7 @@ v1.4.2
 	- Fix: Fixed xenotype settings not applying in preview (NRE fix and null protection).
 	- Fix: Fixed age settings not applying correctly during generation (parameter passing fix).
 	- Update: Optimized layout of xenotype settings dialog.
-	- feat: Enhance Batch Apply — selective category copy & cross-faction targeting
+	- feat: Enhance Batch Apply �?selective category copy & cross-faction targeting
 
 v1.4.1
 	- Added ability to edit xenotype for individual pawns.
@@ -321,8 +325,7 @@ v1.1.52
 	- Fix: Fix issue where World Tab couldn't switch in FactionSpawnManager.BeginTargetingForSettlement, add fallback mechanism (try using Inspect window as placeholder to prevent null reference).
 	- Fix: Fix potential NullReferenceException in FactionSpawnManager.BeginTargetingForSettlement, add detailed debug logging and null checks.
 	- Fix: Fix potential compile error in Dialog_PawnKindPicker when accessing defaultFactionType property.
-	- Update: FactionEditWindow removes tab design, change to single-page long scroll layout，集中展示设置、兵种列表和群组列表。
-
+	- Update: FactionEditWindow removes tab design, change to single-page long scroll layout，集中展示设置、兵种列表和群组列表�?
 v1.1.51
 	- Update: In preview UI, mouse hover for 1 second before showing hover info card (equipment panel) to avoid frequent popups when moving mouse quickly.
 

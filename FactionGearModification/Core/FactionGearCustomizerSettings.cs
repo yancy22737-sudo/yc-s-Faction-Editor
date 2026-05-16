@@ -61,6 +61,9 @@ namespace FactionGearCustomizer
         // [New] Auto raid points — 保存时自动根据装备价值计算袭击点数（精英袭击）
         public bool autoRaidPointsEnabled = true;
 
+        // [New] Auto-switch weapon by distance — when SimpleSidearms is active
+        public bool autoSwitchWeaponByRange = true;
+
         // [New] Auto raid points value multiplier — 装备市场价值转换为袭击点数的系数
         public float autoRaidPointValueMultiplier = 0.01f;
 
@@ -80,6 +83,7 @@ namespace FactionGearCustomizer
             Scribe_Values.Look(ref ammoProtection, "ammoProtection", true);
             Scribe_Values.Look(ref autoRaidPointValueMultiplier, "autoRaidPointValueMultiplier", 0.01f);
             Scribe_Values.Look(ref autoRaidPointsEnabled, "autoRaidPointsEnabled", true);
+            Scribe_Values.Look(ref autoSwitchWeaponByRange, "autoSwitchWeaponByRange", true);
             Scribe_Collections.Look(ref dismissedDialogs, "dismissedDialogs", LookMode.Value);
             if (dismissedDialogs == null) dismissedDialogs = new HashSet<string>();
             Scribe_Values.Look(ref currentPresetName, "currentPresetName", null);
@@ -236,6 +240,7 @@ namespace FactionGearCustomizer
             copy.ShowInMainTab = this.ShowInMainTab;
             copy.enableDebugLog = this.enableDebugLog;
             copy.ammoProtection = this.ammoProtection;
+            copy.autoSwitchWeaponByRange = this.autoSwitchWeaponByRange;
             foreach (var faction in this.factionGearData)
             {
                 copy.factionGearData.Add(faction.DeepCopy());
@@ -256,6 +261,7 @@ namespace FactionGearCustomizer
             this.ShowInMainTab = source.ShowInMainTab;
             this.enableDebugLog = source.enableDebugLog;
             this.ammoProtection = source.ammoProtection;
+            this.autoSwitchWeaponByRange = source.autoSwitchWeaponByRange;
             this.factionGearData.Clear();
             foreach (var faction in source.factionGearData)
             {

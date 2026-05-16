@@ -831,8 +831,14 @@ namespace FactionGearCustomizer
 
                 if (SimpleSidearmsCompat.IsActive && resolved.Count > 2)
                 {
-                    // With sidearms, keep at most 2 weapons (primary + sidearm). Shuffle so the primary isn't deterministic.
-                    resolved = resolved.OrderBy(_ => Rand.Value).Take(2).ToList();
+                    // Take 2 longest-range weapons, then sort ASC so the longest-range
+                    // is processed LAST (becomes the final primary after MovePrimaryToSidearm).
+                    resolved = resolved.OrderByDescending(i => i.Thing != null ? FactionGearManager.GetWeaponRange(i.Thing) : 0f).Take(2).Reverse().ToList();
+                }
+                else if (SimpleSidearmsCompat.IsActive && resolved.Count == 2)
+                {
+                    // Sort ASC: shorter-range processed first (becomes sidearm), longer-range last (primary)
+                    resolved = resolved.OrderBy(i => i.Thing != null ? FactionGearManager.GetWeaponRange(i.Thing) : 0f).ToList();
                 }
 
                 for (int wi = 0; wi < resolved.Count; wi++)
@@ -889,18 +895,53 @@ namespace FactionGearCustomizer
                 bool equipRangedSidearm = false;
                 bool equipMeleeSidearm = false;
 
+                ThingDef _preSelectedPrimaryDef = null;
+                ThingDef _preSelectedSidearmDef = null;
+
                 if (useSidearms)
                 {
-                    // Random: which weapon type goes to primary, which to sidearm
-                    if (Rand.Chance(0.5f))
+                    // Pre-select items from both lists, compare actual ranges,
+                    // then assign longer-range as primary, shorter as sidearm.
+                    // Save picks so the actual assignment uses the same weapons.
+                    var rangedValid = forceIgnore
+                        ? kindData.weapons
+                        : kindData.weapons.Where(w => IsTechLevelAllowed(w.ThingDef, techLevelLimit)).ToList();
+                    var meleeValid = forceIgnore
+                        ? kindData.meleeWeapons
+                        : kindData.meleeWeapons.Where(w => IsTechLevelAllowed(w.ThingDef, techLevelLimit)).ToList();
+
+                    if (rangedValid.Any() && meleeValid.Any())
+                    {
+                        var rangedPick = GetRandomGearItem(rangedValid);
+                        var meleePick = GetRandomGearItem(meleeValid);
+
+                        float rangedRange = rangedPick?.ThingDef != null
+                            ? FactionGearManager.GetWeaponRange(rangedPick.ThingDef) : 0f;
+                        float meleeRange = meleePick?.ThingDef != null
+                            ? FactionGearManager.GetWeaponRange(meleePick.ThingDef) : 0f;
+
+                        if (rangedRange >= meleeRange)
+                        {
+                            equipRangedPrimary = true;
+                            equipMeleeSidearm = true;
+                            _preSelectedPrimaryDef = rangedPick?.ThingDef;
+                            _preSelectedSidearmDef = meleePick?.ThingDef;
+                        }
+                        else
+                        {
+                            equipMeleePrimary = true;
+                            equipRangedSidearm = true;
+                            _preSelectedPrimaryDef = meleePick?.ThingDef;
+                            _preSelectedSidearmDef = rangedPick?.ThingDef;
+                        }
+                    }
+                    else if (rangedValid.Any())
                     {
                         equipRangedPrimary = true;
-                        equipMeleeSidearm = true;
                     }
-                    else
+                    else if (meleeValid.Any())
                     {
                         equipMeleePrimary = true;
-                        equipRangedSidearm = true;
                     }
                 }
                 else if (hasRanged && hasMelee)
@@ -922,62 +963,64 @@ namespace FactionGearCustomizer
 
                 if (equipRangedPrimary)
                 {
-                    var validWeapons = forceIgnore
-                        ? kindData.weapons
-                        : kindData.weapons.Where(w => IsTechLevelAllowed(w.ThingDef, techLevelLimit)).ToList();
-
-                    if (validWeapons.Any())
+                    ThingDef pickedDef = _preSelectedPrimaryDef;
+                    if (pickedDef == null)
                     {
-                        var weaponItem = GetRandomGearItem(validWeapons);
-                        if (weaponItem?.ThingDef != null)
+                        var validWeapons = forceIgnore
+                            ? kindData.weapons
+                            : kindData.weapons.Where(w => IsTechLevelAllowed(w.ThingDef, techLevelLimit)).ToList();
+                        pickedDef = validWeapons.Any() ? GetRandomGearItem(validWeapons)?.ThingDef : null;
+                    }
+
+                    if (pickedDef != null)
+                    {
+                        // Handle conflicting apparel (shield + ranged)
+                        if (pawn.apparel != null)
                         {
-                            // Handle conflicting apparel (shield + ranged)
-                            if (pawn.apparel != null)
+                            var conflictingApparel = pawn.apparel.WornApparel
+                                .Where(a => a.GetComp<CompShield>() != null && pickedDef.IsRangedWeapon)
+                                .ToList();
+                            foreach (var apparel in conflictingApparel)
                             {
-                                var conflictingApparel = pawn.apparel.WornApparel
-                                    .Where(a => a.GetComp<CompShield>() != null && weaponItem.ThingDef.IsRangedWeapon)
-                                    .ToList();
-                                foreach (var apparel in conflictingApparel)
-                                {
-                                    pawn.apparel.Remove(apparel);
-                                    apparel.Destroy();
-                                }
+                                pawn.apparel.Remove(apparel);
+                                apparel.Destroy();
                             }
+                        }
 
-                            var weapon = GenerateSimpleItem(pawn, weaponItem.ThingDef, kindData, true);
-                            if (weapon is ThingWithComps wc)
-                            {
-                                if (pawn.equipment.Primary != null)
-                                    pawn.equipment.Remove(pawn.equipment.Primary);
-                                pawn.equipment.AddEquipment(wc);
+                        var weapon = GenerateSimpleItem(pawn, pickedDef, kindData, true);
+                        if (weapon is ThingWithComps wc)
+                        {
+                            if (pawn.equipment.Primary != null)
+                                pawn.equipment.Remove(pawn.equipment.Primary);
+                            pawn.equipment.AddEquipment(wc);
 
-                                if (!FactionGearCustomizerMod.Settings.ammoProtection && CECompat.WeaponNeedsAmmo(wc))
-                                    CECompat.GenerateAndAddAmmoForWeapon(pawn, wc);
-                            }
+                            if (!FactionGearCustomizerMod.Settings.ammoProtection && CECompat.WeaponNeedsAmmo(wc))
+                                CECompat.GenerateAndAddAmmoForWeapon(pawn, wc);
                         }
                     }
                 }
                 else if (equipMeleePrimary)
                 {
-                    var validMelee = forceIgnore
-                        ? kindData.meleeWeapons
-                        : kindData.meleeWeapons.Where(w => IsTechLevelAllowed(w.ThingDef, techLevelLimit)).ToList();
-
-                    if (validMelee.Any())
+                    ThingDef pickedDef = _preSelectedPrimaryDef;
+                    if (pickedDef == null)
                     {
-                        var meleeItem = GetRandomGearItem(validMelee);
-                        if (meleeItem?.ThingDef != null)
-                        {
-                            var weapon = GenerateSimpleItem(pawn, meleeItem.ThingDef, kindData, true);
-                            if (weapon is ThingWithComps wc)
-                            {
-                                if (pawn.equipment.Primary != null)
-                                    pawn.equipment.Remove(pawn.equipment.Primary);
-                                pawn.equipment.AddEquipment(wc);
+                        var validMelee = forceIgnore
+                            ? kindData.meleeWeapons
+                            : kindData.meleeWeapons.Where(w => IsTechLevelAllowed(w.ThingDef, techLevelLimit)).ToList();
+                        pickedDef = validMelee.Any() ? GetRandomGearItem(validMelee)?.ThingDef : null;
+                    }
 
-                                if (!FactionGearCustomizerMod.Settings.ammoProtection && CECompat.WeaponNeedsAmmo(wc))
-                                    CECompat.GenerateAndAddAmmoForWeapon(pawn, wc);
-                            }
+                    if (pickedDef != null)
+                    {
+                        var weapon = GenerateSimpleItem(pawn, pickedDef, kindData, true);
+                        if (weapon is ThingWithComps wc)
+                        {
+                            if (pawn.equipment.Primary != null)
+                                pawn.equipment.Remove(pawn.equipment.Primary);
+                            pawn.equipment.AddEquipment(wc);
+
+                            if (!FactionGearCustomizerMod.Settings.ammoProtection && CECompat.WeaponNeedsAmmo(wc))
+                                CECompat.GenerateAndAddAmmoForWeapon(pawn, wc);
                         }
                     }
                 }
@@ -985,40 +1028,36 @@ namespace FactionGearCustomizer
                 // --- Equip sidearm weapon (SimpleSidearms only) ---
                 if (equipRangedSidearm)
                 {
-                    var validWeapons = forceIgnore
-                        ? kindData.weapons
-                        : kindData.weapons.Where(w => IsTechLevelAllowed(w.ThingDef, techLevelLimit)).ToList();
-
-                    if (validWeapons.Any())
+                    ThingDef pickedDef = _preSelectedSidearmDef;
+                    if (pickedDef == null)
                     {
-                        var weaponItem = GetRandomGearItem(validWeapons);
-                        if (weaponItem?.ThingDef != null)
-                        {
-                            var weapon = GenerateSimpleItem(pawn, weaponItem.ThingDef, kindData, true);
-                            if (weapon is ThingWithComps wc)
-                            {
-                                sidearmWeapon = wc;
-                            }
-                        }
+                        var validWeapons = forceIgnore
+                            ? kindData.weapons
+                            : kindData.weapons.Where(w => IsTechLevelAllowed(w.ThingDef, techLevelLimit)).ToList();
+                        pickedDef = validWeapons.Any() ? GetRandomGearItem(validWeapons)?.ThingDef : null;
+                    }
+                    if (pickedDef != null)
+                    {
+                        var weapon = GenerateSimpleItem(pawn, pickedDef, kindData, true);
+                        if (weapon is ThingWithComps wc)
+                            sidearmWeapon = wc;
                     }
                 }
                 else if (equipMeleeSidearm)
                 {
-                    var validMelee = forceIgnore
-                        ? kindData.meleeWeapons
-                        : kindData.meleeWeapons.Where(w => IsTechLevelAllowed(w.ThingDef, techLevelLimit)).ToList();
-
-                    if (validMelee.Any())
+                    ThingDef pickedDef = _preSelectedSidearmDef;
+                    if (pickedDef == null)
                     {
-                        var meleeItem = GetRandomGearItem(validMelee);
-                        if (meleeItem?.ThingDef != null)
-                        {
-                            var weapon = GenerateSimpleItem(pawn, meleeItem.ThingDef, kindData, true);
-                            if (weapon is ThingWithComps wc)
-                            {
-                                sidearmWeapon = wc;
-                            }
-                        }
+                        var validMelee = forceIgnore
+                            ? kindData.meleeWeapons
+                            : kindData.meleeWeapons.Where(w => IsTechLevelAllowed(w.ThingDef, techLevelLimit)).ToList();
+                        pickedDef = validMelee.Any() ? GetRandomGearItem(validMelee)?.ThingDef : null;
+                    }
+                    if (pickedDef != null)
+                    {
+                        var weapon = GenerateSimpleItem(pawn, pickedDef, kindData, true);
+                        if (weapon is ThingWithComps wc)
+                            sidearmWeapon = wc;
                     }
                 }
 
@@ -1052,6 +1091,13 @@ namespace FactionGearCustomizer
                     if (savedPrimary != null)
                         pawn.equipment.AddEquipment(savedPrimary);
                 }
+            }
+
+            // Register sidearm status for auto-switch feature (covers both advanced and simple paths)
+            if (SimpleSidearmsCompat.IsActive && pawn.inventory?.innerContainer != null)
+            {
+                bool hasSidearm = pawn.inventory.innerContainer.Any(t => t is ThingWithComps tc && tc.def.IsWeapon);
+                SimpleSidearmsCompat.RegisterPawnSidearmStatus(pawn, hasSidearm);
             }
         }
 

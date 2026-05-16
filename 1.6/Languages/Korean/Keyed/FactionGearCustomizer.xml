@@ -79,7 +79,7 @@
   <ApparelColor>의류 색상:</ApparelColor>
   <ItemQuality>아이템 품질</ItemQuality>
   <ApparelBudget>의류 예산</ApparelBudget>
-  <DefaultApparelBudgetValue>Default apparel budget source (PawnKindDef): {0}</DefaultApparelBudgetValue>
+  <DefaultApparelBudgetValue>의류 예산: {0}</DefaultApparelBudgetValue>
   <WeaponBudget>무기 예산</WeaponBudget>
   <TechLevelLimit>기술 수준 제한</TechLevelLimit>
   <ForcedWeaponQuality>무기 품질</ForcedWeaponQuality>
@@ -1231,4 +1231,7 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <CurrentRelation>현재</CurrentRelation>
   <RelationPermanentEnemy>영구 적대</RelationPermanentEnemy>
 
+<AutoSwitchWeaponByRange>거리 기반 무기 자동 전환</AutoSwitchWeaponByRange>
+<AutoSwitchWeaponByRangeTooltip>SimpleSidearms가 활성화된 경우, 유닛이 목표 거리에 따라 주무기와 보조무기를 자동으로 전환합니다. 현재 거리에 더 적합한 무기가 선택됩니다. 전환 쿨다운: 5초. SimpleSidearms 모드 필요.</AutoSwitchWeaponByRangeTooltip>
+<AutoSwitchWeaponByRangeDisabledTooltip>이 기능은 SimpleSidearms 모드가 필요합니다. (SimpleSidearms 미설치)</AutoSwitchWeaponByRangeDisabledTooltip>
 <RaidPointsLabel>레이드 포인트</RaidPointsLabel><CarryWeightLabel>중량</CarryWeightLabel></LanguageData>

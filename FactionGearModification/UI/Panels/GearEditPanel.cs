@@ -855,6 +855,21 @@ namespace FactionGearCustomizer.UI.Panels
                         FactionGearEditor.TriggerClearAllOverrides();
                     }
                 }
+
+            }
+
+            // Auto-switch weapon by distance (SimpleSidearms only)
+            {
+                bool ssActiveForSwitch = SimpleSidearmsCompat.IsActive;
+                if (!ssActiveForSwitch) GUI.color = Color.gray;
+                bool autoSwitch = FactionGearCustomizerMod.Settings.autoSwitchWeaponByRange;
+                ui.CheckboxLabeled(LanguageManager.Get("AutoSwitchWeaponByRange"), ref autoSwitch, ssActiveForSwitch ? LanguageManager.Get("AutoSwitchWeaponByRangeTooltip") : LanguageManager.Get("AutoSwitchWeaponByRangeDisabledTooltip"));
+                GUI.color = Color.white;
+                if (ssActiveForSwitch && autoSwitch != FactionGearCustomizerMod.Settings.autoSwitchWeaponByRange)
+                {
+                    FactionGearCustomizerMod.Settings.autoSwitchWeaponByRange = autoSwitch;
+                    FactionGearCustomizerMod.Settings.Write();
+                }
             }
 
             ui.Gap();

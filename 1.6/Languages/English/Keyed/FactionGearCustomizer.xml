@@ -79,7 +79,7 @@
   <ApparelColor>Apparel Color:</ApparelColor>
   <ItemQuality>Item Quality</ItemQuality>
   <ApparelBudget>Apparel Budget</ApparelBudget>
-  <DefaultApparelBudgetValue>Default apparel budget source (PawnKindDef): {0}</DefaultApparelBudgetValue>
+  <DefaultApparelBudgetValue>Default Apparel Budget: {0}</DefaultApparelBudgetValue>
   <WeaponBudget>Weapon Budget</WeaponBudget>
   <TechLevelLimit>Tech Level Limit</TechLevelLimit>
   <ForcedWeaponQuality>Weapon Quality</ForcedWeaponQuality>
@@ -1237,4 +1237,7 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <ShowInGameName>Game Names</ShowInGameName>
   <CurrentRelation>Current</CurrentRelation>
   <RelationPermanentEnemy>Permanent enemy</RelationPermanentEnemy>
+<AutoSwitchWeaponByRange>Auto-Switch Weapon by Distance</AutoSwitchWeaponByRange>
+<AutoSwitchWeaponByRangeTooltip>When SimpleSidearms is active, pawns automatically switch between primary and sidearm weapons based on target distance. The better-suited weapon for the current range is selected. Switch cooldown: 5 seconds. Requires SimpleSidearms mod.</AutoSwitchWeaponByRangeTooltip>
+<AutoSwitchWeaponByRangeDisabledTooltip>This feature requires the SimpleSidearms mod. (SimpleSidearms not installed)</AutoSwitchWeaponByRangeDisabledTooltip>
 </LanguageData>

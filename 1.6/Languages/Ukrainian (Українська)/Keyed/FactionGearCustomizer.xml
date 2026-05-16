@@ -79,7 +79,7 @@
   <ApparelColor>Цвет:</ApparelColor>
   <ItemQuality>Качество</ItemQuality>
   <ApparelBudget>Бюджет одежды</ApparelBudget>
-  <DefaultApparelBudgetValue>Бюджет (источник): {0}</DefaultApparelBudgetValue>
+  <DefaultApparelBudgetValue>Бюджет одягу: {0}</DefaultApparelBudgetValue>
   <WeaponBudget>Бюджет оружия</WeaponBudget>
   <TechLevelLimit>Тех. уровень</TechLevelLimit>
   <ForcedWeaponQuality>Качество</ForcedWeaponQuality>
@@ -1172,4 +1172,7 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <ShowInGameName>Ігрові імена</ShowInGameName>
   <CurrentRelation>Поточне</CurrentRelation>
   <RelationPermanentEnemy>Вічний ворог</RelationPermanentEnemy>
+<AutoSwitchWeaponByRange>Авто-зміна зброї за дистанцією</AutoSwitchWeaponByRange>
+<AutoSwitchWeaponByRangeTooltip>При активному SimpleSidearms, персонажі автоматично перемикаються між основною та додатковою зброєю залежно від дистанції до цілі. Вибирається зброя, що краще підходить для поточної дистанції. Затримка перемикання: 5 секунд. Потрібен мод SimpleSidearms.</AutoSwitchWeaponByRangeTooltip>
+<AutoSwitchWeaponByRangeDisabledTooltip>Для цієї функції потрібен мод SimpleSidearms. (SimpleSidearms не встановлено)</AutoSwitchWeaponByRangeDisabledTooltip>
 </LanguageData>

@@ -79,7 +79,7 @@
   <ApparelColor>服装颜色：</ApparelColor>
   <ItemQuality>物品品质</ItemQuality>
   <ApparelBudget>服装预算</ApparelBudget>
-  <DefaultApparelBudgetValue>默认服装预算来源（PawnKindDef）：{0}</DefaultApparelBudgetValue>
+  <DefaultApparelBudgetValue>默认服装预算：{0}</DefaultApparelBudgetValue>
   <WeaponBudget>武器预算</WeaponBudget>
   <TechLevelLimit>科技限制</TechLevelLimit>
   <ForcedWeaponQuality>强制武器品质</ForcedWeaponQuality>
@@ -1236,4 +1236,7 @@
   <CurrentRelation>当前</CurrentRelation>
   <RelationPermanentEnemy>永久敌对</RelationPermanentEnemy>
 
+<AutoSwitchWeaponByRange>自动判定距离切换武器</AutoSwitchWeaponByRange>
+<AutoSwitchWeaponByRangeTooltip>检测到 SimpleSidearms 时，单位根据目标距离自动切换主/副武器。选择当前距离下表现更优的武器。切换冷却 5 秒。需要 SimpleSidearms 模组。</AutoSwitchWeaponByRangeTooltip>
+<AutoSwitchWeaponByRangeDisabledTooltip>此功能需要启用 SimpleSidearms 模组。（SimpleSidearms 未安装）</AutoSwitchWeaponByRangeDisabledTooltip>
 <RaidPointsLabel>袭击点数</RaidPointsLabel><CarryWeightLabel>负重</CarryWeightLabel></LanguageData>

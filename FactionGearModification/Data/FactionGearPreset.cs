@@ -106,6 +106,8 @@ namespace FactionGearCustomizer
                     newFactionData.XenotypeChances = faction.XenotypeChances != null ? new Dictionary<string, float>(faction.XenotypeChances) : null;
                     newFactionData.DisableXenotypeChances = faction.DisableXenotypeChances;
                     newFactionData.PlayerRelationOverride = faction.PlayerRelationOverride;
+                    if (faction.FactionRelationOverrides != null)
+                        newFactionData.FactionRelationOverrides = faction.FactionRelationOverrides.Select(r => r.DeepCopy()).ToList();
                     newFactionData.ReplaceVanillaTradeStock = faction.ReplaceVanillaTradeStock;
                     newFactionData.CustomTradeStock = faction.CustomTradeStock?.Select(e => e.DeepCopy()).ToList();
                     if (faction.CustomTradeStockByType != null) { newFactionData.CustomTradeStockByType = new Dictionary<string, List<TradeStockEntry>>(); foreach (var kv in faction.CustomTradeStockByType) newFactionData.CustomTradeStockByType[kv.Key] = kv.Value.Select(e => e.DeepCopy()).ToList(); }

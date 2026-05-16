@@ -79,7 +79,7 @@
   <ApparelColor>Apparel Color:</ApparelColor>
   <ItemQuality>品質</ItemQuality>
   <ApparelBudget>衣服予算</ApparelBudget>
-  <DefaultApparelBudgetValue>Default apparel budget source (PawnKindDef): {0}</DefaultApparelBudgetValue>
+  <DefaultApparelBudgetValue>デフォルト服装予算: {0}</DefaultApparelBudgetValue>
   <WeaponBudget>武器予算</WeaponBudget>
   <TechLevelLimit>技術制限</TechLevelLimit>
   <ForcedWeaponQuality>武器品質</ForcedWeaponQuality>
@@ -1232,4 +1232,7 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
   <ShowInGameName>ゲーム名表示</ShowInGameName>
   <CurrentRelation>現在</CurrentRelation>
   <RelationPermanentEnemy>永続的敵対</RelationPermanentEnemy>
+<AutoSwitchWeaponByRange>距離による武器自動切替</AutoSwitchWeaponByRange>
+<AutoSwitchWeaponByRangeTooltip>SimpleSidearmsが有効な場合、ポーンは目標距離に応じて主武器と副武器を自動的に切り替えます。現在の距離により適した武器が選択されます。切替クールダウン：5秒。SimpleSidearms MODが必要です。</AutoSwitchWeaponByRangeTooltip>
+<AutoSwitchWeaponByRangeDisabledTooltip>この機能にはSimpleSidearms MODが必要です。（SimpleSidearms未導入）</AutoSwitchWeaponByRangeDisabledTooltip>
 </LanguageData>
