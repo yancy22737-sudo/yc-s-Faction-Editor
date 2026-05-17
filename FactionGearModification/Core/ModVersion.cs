@@ -1,4 +1,7 @@
-using System.Reflection;
+using System.IO;
+using System.Linq;
+using System.Xml;
+using Verse;
 
 namespace FactionGearCustomizer
 {
@@ -12,12 +15,31 @@ namespace FactionGearCustomizer
             {
                 if (_cachedVersion == null)
                 {
-                    var attr = Assembly.GetExecutingAssembly()
-                        .GetCustomAttribute<AssemblyInformationalVersionAttribute>();
-                    string ver = attr?.InformationalVersion ?? "unknown";
-                    _cachedVersion = ver.StartsWith("v") ? ver : "v" + ver;
+                    _cachedVersion = "v" + ReadModVersionFromAbout();
                 }
                 return _cachedVersion;
+            }
+        }
+
+        private static string ReadModVersionFromAbout()
+        {
+            try
+            {
+                var mod = LoadedModManager.RunningMods.FirstOrDefault(
+                    m => m.PackageId == "yancy.factiongearcustomizer");
+                if (mod == null) return "unknown";
+
+                string aboutPath = Path.Combine(mod.RootDir, "About", "About.xml");
+                if (!File.Exists(aboutPath)) return "unknown";
+
+                XmlDocument doc = new XmlDocument();
+                doc.Load(aboutPath);
+                var node = doc.SelectSingleNode("ModMetaData/modVersion");
+                return node?.InnerText ?? "unknown";
+            }
+            catch
+            {
+                return "unknown";
             }
         }
 
