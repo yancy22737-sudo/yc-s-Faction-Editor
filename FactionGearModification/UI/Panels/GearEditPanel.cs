@@ -910,6 +910,20 @@ namespace FactionGearCustomizer.UI.Panels
                 }
             }
 
+            // Auto-switch weapon by distance for player-controlled colonists
+            {
+                bool ssActiveForSwitch = SimpleSidearmsCompat.IsActive;
+                if (!ssActiveForSwitch) GUI.color = Color.gray;
+                bool autoSwitchColonist = FactionGearCustomizerMod.Settings.autoSwitchWeaponByRangeColonist;
+                ui.CheckboxLabeled(LanguageManager.Get("AutoSwitchWeaponByRangeColonist"), ref autoSwitchColonist, ssActiveForSwitch ? LanguageManager.Get("AutoSwitchWeaponByRangeColonistTooltip") : LanguageManager.Get("AutoSwitchWeaponByRangeDisabledTooltip"));
+                GUI.color = Color.white;
+                if (ssActiveForSwitch && autoSwitchColonist != FactionGearCustomizerMod.Settings.autoSwitchWeaponByRangeColonist)
+                {
+                    FactionGearCustomizerMod.Settings.autoSwitchWeaponByRangeColonist = autoSwitchColonist;
+                    FactionGearCustomizerMod.Settings.Write();
+                }
+            }
+
             ui.Gap();
 
             DrawOverrideEnumWithTooltip(ui, LanguageManager.Get("ItemQuality"), kindData.ItemQuality, val => { UndoManager.RecordState(kindData); kindData.ItemQuality = val; FactionGearEditor.MarkDirty(); }, q => LanguageManager.Get("Quality" + q), LanguageManager.Get("ItemQualityTooltip"));

@@ -1240,6 +1240,9 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
 <AutoSwitchWeaponByRange>Auto-Switch Weapon by Distance</AutoSwitchWeaponByRange>
 <AutoSwitchWeaponByRangeTooltip>When SimpleSidearms is active, pawns automatically switch between primary and sidearm weapons based on target distance. The better-suited weapon for the current range is selected. Switch cooldown: 5 seconds. Requires SimpleSidearms mod.</AutoSwitchWeaponByRangeTooltip>
 <AutoSwitchWeaponByRangeDisabledTooltip>This feature requires the SimpleSidearms mod. (SimpleSidearms not installed)</AutoSwitchWeaponByRangeDisabledTooltip>
+  <AutoSwitchWeaponByRangeColonist>Auto-Switch Weapon by Distance (Colonists)</AutoSwitchWeaponByRangeColonist>
+  <AutoSwitchWeaponByRangeColonistTooltip>Extend auto-switch weapon by distance to player-controlled colonists. The better-suited weapon for the current range is selected. Switch cooldown: 5 seconds. Requires SimpleSidearms mod.</AutoSwitchWeaponByRangeColonistTooltip>
+  <TryAttackWithSuitableWeapon>Try attack with suitable weapon</TryAttackWithSuitableWeapon>
   <Raid>Raid</Raid>
   <RaidTooltip>Trigger a drop pod raid on the current map with configurable raid points.</RaidTooltip>
   <RaidConfigTitle>Drop pod raid at location...</RaidConfigTitle>

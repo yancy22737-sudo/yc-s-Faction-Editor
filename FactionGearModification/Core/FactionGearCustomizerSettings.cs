@@ -64,6 +64,9 @@ namespace FactionGearCustomizer
         // [New] Auto-switch weapon by distance — when SimpleSidearms is active
         public bool autoSwitchWeaponByRange = true;
 
+        // [New] Auto-switch weapon by distance for player-controlled colonists
+        public bool autoSwitchWeaponByRangeColonist = true;
+
         // [New] Auto raid points value multiplier — 装备市场价值转换为袭击点数的系数
         public float autoRaidPointValueMultiplier = 0.01f;
 
@@ -87,6 +90,7 @@ namespace FactionGearCustomizer
             Scribe_Values.Look(ref autoRaidPointValueMultiplier, "autoRaidPointValueMultiplier", 0.01f);
             Scribe_Values.Look(ref autoRaidPointsEnabled, "autoRaidPointsEnabled", true);
             Scribe_Values.Look(ref autoSwitchWeaponByRange, "autoSwitchWeaponByRange", true);
+            Scribe_Values.Look(ref autoSwitchWeaponByRangeColonist, "autoSwitchWeaponByRangeColonist", true);
             Scribe_Values.Look(ref cachedRaidPoints, "cachedRaidPoints", 1000f);
             Scribe_Collections.Look(ref dismissedDialogs, "dismissedDialogs", LookMode.Value);
             if (dismissedDialogs == null) dismissedDialogs = new HashSet<string>();
@@ -245,6 +249,7 @@ namespace FactionGearCustomizer
             copy.enableDebugLog = this.enableDebugLog;
             copy.ammoProtection = this.ammoProtection;
             copy.autoSwitchWeaponByRange = this.autoSwitchWeaponByRange;
+            copy.autoSwitchWeaponByRangeColonist = this.autoSwitchWeaponByRangeColonist;
             foreach (var faction in this.factionGearData)
             {
                 copy.factionGearData.Add(faction.DeepCopy());
@@ -266,6 +271,7 @@ namespace FactionGearCustomizer
             this.enableDebugLog = source.enableDebugLog;
             this.ammoProtection = source.ammoProtection;
             this.autoSwitchWeaponByRange = source.autoSwitchWeaponByRange;
+            this.autoSwitchWeaponByRangeColonist = source.autoSwitchWeaponByRangeColonist;
             this.factionGearData.Clear();
             foreach (var faction in source.factionGearData)
             {

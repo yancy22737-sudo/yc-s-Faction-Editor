@@ -1175,6 +1175,9 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
 <AutoSwitchWeaponByRange>Авто-зміна зброї за дистанцією</AutoSwitchWeaponByRange>
 <AutoSwitchWeaponByRangeTooltip>При активному SimpleSidearms, персонажі автоматично перемикаються між основною та додатковою зброєю залежно від дистанції до цілі. Вибирається зброя, що краще підходить для поточної дистанції. Затримка перемикання: 5 секунд. Потрібен мод SimpleSidearms.</AutoSwitchWeaponByRangeTooltip>
 <AutoSwitchWeaponByRangeDisabledTooltip>Для цієї функції потрібен мод SimpleSidearms. (SimpleSidearms не встановлено)</AutoSwitchWeaponByRangeDisabledTooltip>
+<AutoSwitchWeaponByRangeColonist>Авто-зміна зброї за дистанцією (Колоністи)</AutoSwitchWeaponByRangeColonist>
+<AutoSwitchWeaponByRangeColonistTooltip>Розширити авто-зміну зброї на керованих гравцем колоністів. Вибирається зброя, що краще підходить для поточної дистанції. Затримка: 5 сек. Потрібен SimpleSidearms.</AutoSwitchWeaponByRangeColonistTooltip>
+<TryAttackWithSuitableWeapon>Атакувати підхожою зброєю</TryAttackWithSuitableWeapon>
 <Raid>Рейд</Raid>
 <RaidTooltip>Викликати рейд з десантними капсулами на поточну карту з настроюваними очками рейду.</RaidTooltip>
 <RaidConfigTitle>Десантний рейд у вказаному місці...</RaidConfigTitle>

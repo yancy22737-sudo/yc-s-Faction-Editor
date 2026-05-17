@@ -1234,6 +1234,9 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
 <AutoSwitchWeaponByRange>거리 기반 무기 자동 전환</AutoSwitchWeaponByRange>
 <AutoSwitchWeaponByRangeTooltip>SimpleSidearms가 활성화된 경우, 유닛이 목표 거리에 따라 주무기와 보조무기를 자동으로 전환합니다. 현재 거리에 더 적합한 무기가 선택됩니다. 전환 쿨다운: 5초. SimpleSidearms 모드 필요.</AutoSwitchWeaponByRangeTooltip>
 <AutoSwitchWeaponByRangeDisabledTooltip>이 기능은 SimpleSidearms 모드가 필요합니다. (SimpleSidearms 미설치)</AutoSwitchWeaponByRangeDisabledTooltip>
+<AutoSwitchWeaponByRangeColonist>거리 기반 무기 자동 전환 (콜로니스트)</AutoSwitchWeaponByRangeColonist>
+<AutoSwitchWeaponByRangeColonistTooltip>거리 기반 무기 자동 전환을 플레이어 콜로니스트에게도 적용합니다. 목표 거리에 따라 더 적합한 무기가 선택됩니다. 전환 쿨다운: 5초. SimpleSidearms 모드 필요.</AutoSwitchWeaponByRangeColonistTooltip>
+<TryAttackWithSuitableWeapon>적합한 무기로 공격 시도</TryAttackWithSuitableWeapon>
 <RaidPointsLabel>레이드 포인트</RaidPointsLabel><CarryWeightLabel>중량</CarryWeightLabel>
 <Raid>레이드</Raid>
 <RaidTooltip>현재 맵에 드롭 포드 레이드를 발생시킵니다. 레이드 포인트를 설정할 수 있습니다.</RaidTooltip>

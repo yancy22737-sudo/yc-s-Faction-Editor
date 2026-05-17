@@ -1,3 +1,8 @@
+v1.7.3
+		- New: Auto-switch weapon by distance (colonists) — independent toggle in advanced settings extends the feature to player-controlled colonists; right-click "Try attack with suitable weapon" option (vanilla-style icon + name).
+		- Fix: Player right-click attack orders no longer auto-swap — only AI/NPC and "Try attack with suitable weapon" trigger swaps.
+		- Localization: 5 new translation keys covering all 7 languages.
+
 v1.7.2
 		- New: One-click drop pod raid/aid from editor — new button in GearEditPanel header auto-switches between Raid (red) and Aid (green) based on faction relation; opens raid point config dialog (0-10000 slider with 100-step snap, manual input not snapped); map click-to-target after confirm; global raid point cache.
 		- Fix: IncidentWorker_RaidEnemy.TryResolveRaidFaction overwriting specified faction — added Harmony Postfix patches for both RaidEnemy and RaidFriendly to force selected faction.

@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
+using RimWorld;
+using UnityEngine;
 using Verse;
 using Verse.AI;
 using FactionGearCustomizer.Compat;
@@ -64,10 +67,10 @@ namespace FactionGearCustomizer
                 _totalChecks++;
 
                 if (!SimpleSidearmsCompat.IsActive) return true;
-                if (!FactionGearCustomizerMod.Settings.autoSwitchWeaponByRange) return true;
 
                 Pawn pawn = __instance.CasterPawn;
                 if (pawn == null) return true;
+                if (!IsAutoSwitchEnabled(pawn)) return true;
                 if (pawn.equipment?.Primary == null || pawn.inventory == null) return true;
 
                 ThingWithComps sidearm = SimpleSidearmsCompat.FindSidearmInInventory(pawn);
@@ -163,11 +166,13 @@ namespace FactionGearCustomizer
                 try
                 {
                     if (!SimpleSidearmsCompat.IsActive) return;
-                    if (!FactionGearCustomizerMod.Settings.autoSwitchWeaponByRange) return;
 
                     Pawn pawn = Traverse.Create(__instance).Field("pawn").GetValue<Pawn>()
                              ?? Traverse.Create(__instance).Property("pawn").GetValue<Pawn>();
-                    if (pawn?.equipment?.Primary == null || pawn.inventory == null) return;
+                    if (pawn == null) return;
+                    if (!IsAutoSwitchEnabled(pawn)) return;
+                    if (_isPlayerOrderedJob && pawn.Faction == Faction.OfPlayer) return;
+                    if (pawn.equipment?.Primary == null || pawn.inventory == null) return;
 
                     // Accept any valid target with a cell (Thing or Cell)
                     if (!newJob.targetA.IsValid) return;
@@ -185,20 +190,61 @@ namespace FactionGearCustomizer
                     if (_preJobChecks % 20 == 1)
                         Log.Message($"[FactionGearCustomizer] AutoSwitch pre-job check #{_preJobChecks}: {pawn.LabelShort} job={newJob.def.defName} tgt={newJob.targetA.Cell} dist={distance:F0} curMax={currentMaxRange:F0} sideMax={sidearmMaxRange:F0}");
 
-                    // Swap if current weapon is badly out-ranged AND sidearm can reach
+                    float currentOpt = SimpleSidearmsCompat.CalculateOptimalRange(currentWeapon);
+                    float sidearmOpt = SimpleSidearmsCompat.CalculateOptimalRange(sidearm);
+                    float currentEffectiveRange = currentMaxRange <= 2.5f ? 2.5f : currentMaxRange;
+                    float sidearmEffectiveRange = sidearmMaxRange <= 2.5f ? 2.5f : sidearmMaxRange;
+                    bool currentCanHit = distance <= currentEffectiveRange;
+                    bool sidearmCanHit = distance <= sidearmEffectiveRange;
+
+                    bool shouldSwap = false;
+
+                    // Condition 1: current weapon badly out-ranged, sidearm can reach
                     if ((distance - currentMaxRange) > 2f && sidearmMaxRange >= distance)
+                        shouldSwap = true;
+
+                    // Condition 2: current can't hit but sidearm can — force swap
+                    if (!currentCanHit && sidearmCanHit)
+                        shouldSwap = true;
+
+                    // Condition 3: both can hit but sidearm is significantly better at this distance
+                    if (currentCanHit && sidearmCanHit)
+                    {
+                        float currentDeviation = Math.Abs(distance - currentOpt);
+                        float sidearmDeviation = Math.Abs(distance - sidearmOpt);
+                        if (currentDeviation - sidearmDeviation >= 1.5f)
+                            shouldSwap = true;
+                    }
+
+                    if (shouldSwap)
                     {
                         if (!SimpleSidearmsCompat.HasAmmoForWeapon(pawn, sidearm)) return;
                         int tick = Find.TickManager.TicksGame;
                         if (!SimpleSidearmsCompat.IsCooldownElapsed(pawn, tick)) return;
 
-                        float currentOpt = SimpleSidearmsCompat.CalculateOptimalRange(currentWeapon);
-                        float sidearmOpt = SimpleSidearmsCompat.CalculateOptimalRange(sidearm);
                         if (SimpleSidearmsCompat.SwapWeapons(pawn))
                         {
                             _preJobSwaps++;
                             SimpleSidearmsCompat.RecordSwitch(pawn, tick);
                             Log.Message($"[FactionGearCustomizer] AutoSwitch (pre-job) #{_preJobSwaps}: {pawn.LabelShort} swapped {currentWeapon.LabelCap}(max={currentMaxRange:F0}) -> {sidearm.LabelCap}(max={sidearmMaxRange:F0}) (dist={distance:F0}, over={distance - currentMaxRange:F0})");
+
+                            // For player-controlled pawns: retype the job to match the new weapon
+                            // (AttackMelee with ranged = walk up and bash; AttackStatic with melee = won't fire)
+                            if (pawn.Faction == Faction.OfPlayer)
+                            {
+                                bool sidearmIsRanged = sidearmMaxRange > 2.5f;
+                                bool currentIsRanged = currentMaxRange > 2.5f;
+                                if (sidearmIsRanged && !currentIsRanged && newJob.def == JobDefOf.AttackMelee)
+                                {
+                                    newJob.def = JobDefOf.AttackStatic;
+                                    Log.Message($"[FactionGearCustomizer] AutoSwitch (pre-job) retyped job AttackMelee -> AttackStatic for {pawn.LabelShort}");
+                                }
+                                else if (!sidearmIsRanged && currentIsRanged && newJob.def == JobDefOf.AttackStatic)
+                                {
+                                    newJob.def = JobDefOf.AttackMelee;
+                                    Log.Message($"[FactionGearCustomizer] AutoSwitch (pre-job) retyped job AttackStatic -> AttackMelee for {pawn.LabelShort}");
+                                }
+                            }
                         }
                     }
                 }
@@ -207,6 +253,107 @@ namespace FactionGearCustomizer
                     Log.Warning($"[FactionGearCustomizer] AutoSwitch pre-job error: {ex.Message}");
                 }
             }
+        }
+
+        // Flag: set by TryTakeOrderedJob prefix so StartJob knows this was a player order.
+        private static bool _isPlayerOrderedJob;
+
+        // Minimal intercept on TryTakeOrderedJob — only sets a flag so StartJob
+        // can skip auto-swap for player-given orders while still swapping on AI jobs.
+        [HarmonyPatch(typeof(Pawn_JobTracker), "TryTakeOrderedJob")]
+        public static class Patch_AutoWeaponSwitch_TryTakeOrderedJob
+        {
+            public static void Prefix(Pawn_JobTracker __instance)
+            {
+                Pawn pawn = Traverse.Create(__instance).Field("pawn").GetValue<Pawn>()
+                         ?? Traverse.Create(__instance).Property("pawn").GetValue<Pawn>();
+                if (pawn?.Faction == Faction.OfPlayer)
+                    _isPlayerOrderedJob = true;
+            }
+
+            public static void Postfix()
+            {
+                _isPlayerOrderedJob = false;
+            }
+        }
+
+        // Add "Try attack with suitable weapon" right-click option for drafted colonists.
+        // Shows when a smarter swap is beneficial (optimal-range check).
+        [HarmonyPatch(typeof(FloatMenuMakerMap), "GetProviderOptions")]
+        public static class Patch_FloatMenuSuitableWeapon
+        {
+            private static void Postfix(FloatMenuContext context, List<FloatMenuOption> options)
+            {
+                try
+                {
+                    if (!SimpleSidearmsCompat.IsActive) return;
+                    if (!FactionGearCustomizerMod.Settings.autoSwitchWeaponByRangeColonist) return;
+                    if (options == null) return;
+
+                    Pawn pawn = context.FirstSelectedPawn;
+                    if (pawn?.Faction != Faction.OfPlayer) return;
+                    if (pawn.equipment?.Primary == null) return;
+
+                    ThingWithComps sidearm = SimpleSidearmsCompat.FindSidearmInInventory(pawn);
+                    if (sidearm == null) return;
+
+                    Pawn clickedPawn = context.ClickedPawns?.FirstOrDefault();
+                    if (clickedPawn == null || clickedPawn == pawn) return;
+                    if (!clickedPawn.HostileTo(Faction.OfPlayer)) return;
+
+                    float distance = clickedPawn.Position.DistanceTo(pawn.Position);
+                    if (distance <= 0f) return;
+
+                    ThingWithComps currentWeapon = pawn.equipment.Primary;
+                    float curMaxRange = FactionGearManager.GetWeaponRange(currentWeapon.def);
+                    float sideMaxRange = FactionGearManager.GetWeaponRange(sidearm.def);
+                    float curEffective = curMaxRange <= 2.5f ? 2.5f : curMaxRange;
+                    float sideEffective = sideMaxRange <= 2.5f ? 2.5f : sideMaxRange;
+                    bool currentCanHit = distance <= curEffective;
+                    bool sidearmCanHit = distance <= sideEffective;
+
+                    // Only show option if a swap would actually help
+                    if (currentCanHit && !sidearmCanHit) return; // current is already better
+                    if (!currentCanHit && !sidearmCanHit) return; // neither can hit
+                    if (currentCanHit && sidearmCanHit)
+                    {
+                        float curDev = Math.Abs(distance - SimpleSidearmsCompat.CalculateOptimalRange(currentWeapon));
+                        float sideDev = Math.Abs(distance - SimpleSidearmsCompat.CalculateOptimalRange(sidearm));
+                        if (curDev - sideDev < 1.5f) return; // not different enough
+                    }
+
+                    Pawn capturedPawn = pawn;
+                    Pawn capturedTarget = clickedPawn;
+                    ThingWithComps capturedSidearm = sidearm;
+                    bool capturedSidearmIsRanged = sideEffective > 2.5f;
+
+                    string label = $"{LanguageManager.Get("TryAttackWithSuitableWeapon")} {clickedPawn.LabelShort}";
+                    options.Add(new FloatMenuOption(
+                        label,
+                        delegate
+                        {
+                            if (capturedPawn.equipment?.Primary == null || capturedSidearm == null) return;
+                            if (SimpleSidearmsCompat.SwapWeapons(capturedPawn))
+                                SimpleSidearmsCompat.RecordSwitch(capturedPawn, Find.TickManager.TicksGame);
+                            Job attackJob = JobMaker.MakeJob(
+                                capturedSidearmIsRanged ? JobDefOf.AttackStatic : JobDefOf.AttackMelee,
+                                capturedTarget);
+                            capturedPawn.jobs.StartJob(attackJob, JobCondition.InterruptForced);
+                        },
+                        clickedPawn, Color.white));
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning($"[FactionGearCustomizer] FloatMenu suitable-weapon error: {ex.Message}");
+                }
+            }
+        }
+
+        private static bool IsAutoSwitchEnabled(Pawn pawn)
+        {
+            if (pawn.Faction == Faction.OfPlayer)
+                return FactionGearCustomizerMod.Settings.autoSwitchWeaponByRangeColonist;
+            return FactionGearCustomizerMod.Settings.autoSwitchWeaponByRange;
         }
 
         private static void PeriodicReport()
