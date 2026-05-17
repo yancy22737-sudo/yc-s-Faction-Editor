@@ -33,7 +33,10 @@ namespace FactionGearCustomizer.UI.Panels
             Rect headerRect = new Rect(innerRect.x, innerRect.y, innerRect.width, 30f);
 
             bool isAdvanced = EditorSession.CurrentMode == EditorMode.Advanced;
-            Rect advancedModeRect = new Rect(headerRect.x, headerRect.y, 130f, 24f);
+            string advancedLabel = LanguageManager.Get("Advanced");
+            float advancedTextWidth = Text.CalcSize(advancedLabel).x;
+            float advancedRectWidth = 24f + 5f + advancedTextWidth;
+            Rect advancedModeRect = new Rect(headerRect.x, headerRect.y, advancedRectWidth, 24f);
 
             // Disable checkbox if no active preset
             if (!hasActivePreset)
@@ -54,7 +57,7 @@ namespace FactionGearCustomizer.UI.Panels
             }
 
             // Undo/Redo Buttons
-            float undoX = headerRect.x + 140f;
+            float undoX = headerRect.x + advancedRectWidth + 6f;
             Rect undoRect = new Rect(undoX, headerRect.y, 24f, 24f);
 
             // Disable undo/redo if no active preset
@@ -178,9 +181,44 @@ namespace FactionGearCustomizer.UI.Panels
 
             bool hasSelection = !string.IsNullOrEmpty(EditorSession.SelectedFactionDefName) && !string.IsNullOrEmpty(EditorSession.SelectedKindDefName);
             float rightEdge = headerRect.xMax;
+            bool inGame = Current.Game != null;
+
+            // Raid button — resolve faction relation for color
+            bool isRaidHostile = false;
+            if (inGame && !string.IsNullOrEmpty(EditorSession.SelectedFactionDefName))
+            {
+                var fDef = DefDatabase<FactionDef>.GetNamedSilentFail(EditorSession.SelectedFactionDefName);
+                if (fDef != null)
+                {
+                    var fac = Find.FactionManager.FirstFactionOfDef(fDef)
+                        ?? Find.FactionManager.AllFactions.FirstOrDefault(f => f.def == fDef && !f.IsPlayer);
+                    isRaidHostile = fac != null && fac.HostileTo(Faction.OfPlayer);
+                }
+            }
+            Rect raidButtonRect = new Rect(rightEdge - 150f, headerRect.y, 64f, 24f);
+            Color prevRaidColor = GUI.color;
+            if (!inGame)
+            {
+                GUI.color = Color.gray;
+            }
+            else if (isRaidHostile)
+            {
+                GUI.color = Color.red;
+            }
+            else
+            {
+                GUI.color = new Color(0.3f, 0.7f, 0.4f);
+            }
+            string raidBtnLabel = inGame ? (isRaidHostile ? LanguageManager.Get("Raid") : LanguageManager.Get("Aid")) : LanguageManager.Get("Raid");
+            string raidBtnTooltip = inGame ? (isRaidHostile ? LanguageManager.Get("RaidTooltip") : LanguageManager.Get("AidTooltip")) : LanguageManager.Get("PreviewInGameOnlyTooltip");
+            if (Widgets.ButtonText(raidButtonRect, raidBtnLabel, true, false, inGame))
+            {
+                HandleRaidButtonClick();
+            }
+            TooltipHandler.TipRegion(raidButtonRect, raidBtnTooltip);
+            GUI.color = prevRaidColor;
 
             Rect previewButtonRect = new Rect(rightEdge - 80f, headerRect.y, 80f, 24f);
-            bool inGame = Current.Game != null;
             Color prevColor = GUI.color;
             if (!inGame)
             {
@@ -2156,6 +2194,49 @@ namespace FactionGearCustomizer.UI.Panels
                 }
                 Find.WindowStack.Add(new FactionGearPreviewWindow(kinds, fDef));
             }
+        }
+
+        private static void HandleRaidButtonClick()
+        {
+            if (Current.Game == null) return;
+
+            // Resolve selected faction — spawn if needed
+            Faction faction = null;
+            if (!string.IsNullOrEmpty(EditorSession.SelectedFactionDefName))
+            {
+                var fDef = DefDatabase<FactionDef>.GetNamedSilentFail(EditorSession.SelectedFactionDefName);
+                if (fDef != null)
+                {
+                    faction = Find.FactionManager.FirstFactionOfDef(fDef);
+                    if (faction == null)
+                    {
+                        faction = Find.FactionManager.AllFactions.FirstOrDefault(f => f.def == fDef && !f.IsPlayer);
+                    }
+                    if (faction == null)
+                    {
+                        faction = FactionGenerator.NewGeneratedFaction(new FactionGeneratorParms(fDef));
+                        faction.Name = NameGenerator.GenerateName(fDef.factionNameMaker,
+                            from f in Find.FactionManager.AllFactionsVisible select f.Name, false, null);
+                        Find.FactionManager.Add(faction);
+                        foreach (Faction other in Find.FactionManager.AllFactionsListForReading)
+                        {
+                            if (other != faction)
+                                faction.TryMakeInitialRelationsWith(other);
+                        }
+                    }
+                }
+            }
+
+            // Close faction editor windows
+            foreach (var window in Find.WindowStack.Windows.ToList())
+            {
+                if (window is FactionGearSettingsWindow || window is FactionGearMainTabWindow)
+                {
+                    window.Close();
+                }
+            }
+
+            Find.WindowStack.Add(new Dialog_RaidConfig(faction));
         }
     }
 }

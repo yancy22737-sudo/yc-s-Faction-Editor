@@ -1,3 +1,8 @@
+v1.7.2
+		- 新功能: 编辑器内一键空投袭击/支援 — GearEditPanel 标题栏新增按钮，根据选定派系与玩家关系自动切换袭击(红色)/支援(绿色)，点击后关闭编辑器弹窗配置袭击点数（0-10000 滑条，100 整数倍磁吸，手动输入不吸附），确认后在地图点选空投位置触发；全局袭击点数缓存
+		- 修复: IncidentWorker_RaidEnemy.TryResolveRaidFaction 覆写 faction 导致无法使用指定派系 — 新增 Harmony Postfix 双补丁（RaidEnemy + RaidFriendly）强制还原选定派系
+		- 本地化: 新增 13 个翻译键覆盖全部 7 语言（中/英/韩/日/俄/俄(Русский)/乌）
+
 v1.7.1
 	- 修复: 隐藏派系袭击时 Patch_GeneratePawns_CombatPowerOverride.Postfix 抛出 NullReferenceException — data 为 null 时未提前返回导致空引用崩溃
 

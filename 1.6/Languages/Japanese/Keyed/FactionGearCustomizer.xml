@@ -1235,4 +1235,17 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
 <AutoSwitchWeaponByRange>距離による武器自動切替</AutoSwitchWeaponByRange>
 <AutoSwitchWeaponByRangeTooltip>SimpleSidearmsが有効な場合、ポーンは目標距離に応じて主武器と副武器を自動的に切り替えます。現在の距離により適した武器が選択されます。切替クールダウン：5秒。SimpleSidearms MODが必要です。</AutoSwitchWeaponByRangeTooltip>
 <AutoSwitchWeaponByRangeDisabledTooltip>この機能にはSimpleSidearms MODが必要です。（SimpleSidearms未導入）</AutoSwitchWeaponByRangeDisabledTooltip>
+<Raid>襲撃</Raid>
+<RaidTooltip>現在のマップにドロップポッド襲撃を発生させます。襲撃ポイントを設定できます。</RaidTooltip>
+<RaidConfigTitle>指定地点にドロップポッド襲撃...</RaidConfigTitle>
+<RaidConfirm>襲撃開始</RaidConfirm>
+<RaidTriggered>ドロップポッド襲撃が発生しました！（{0}ポイント）</RaidTriggered>
+<RaidFailed>襲撃の発生に失敗しました。</RaidFailed>
+<RaidNoMap>アクティブなマップがありません。コロニーマップで使用してください。</RaidNoMap>
+<RaidTargetingHint>マップをクリックして襲撃位置を選択...（右クリックでキャンセル）</RaidTargetingHint>
+<RaidHintHostile>敵対 → ドロップポッド襲撃を発生</RaidHintHostile>
+<RaidHintFriendly>同盟/中立 → ドロップポッド支援を発生</RaidHintFriendly>
+<Aid>支援</Aid>
+<AidTooltip>現在のマップにドロップポッド支援を発生させます。ポイントを設定できます。</AidTooltip>
+<AidConfirm>支援開始</AidConfirm>
 </LanguageData>

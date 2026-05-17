@@ -1239,4 +1239,18 @@
 <AutoSwitchWeaponByRange>自动判定距离切换武器</AutoSwitchWeaponByRange>
 <AutoSwitchWeaponByRangeTooltip>检测到 SimpleSidearms 时，单位根据目标距离自动切换主/副武器。选择当前距离下表现更优的武器。切换冷却 5 秒。需要 SimpleSidearms 模组。</AutoSwitchWeaponByRangeTooltip>
 <AutoSwitchWeaponByRangeDisabledTooltip>此功能需要启用 SimpleSidearms 模组。（SimpleSidearms 未安装）</AutoSwitchWeaponByRangeDisabledTooltip>
-<RaidPointsLabel>袭击点数</RaidPointsLabel><CarryWeightLabel>负重</CarryWeightLabel></LanguageData>
+<RaidPointsLabel>袭击点数</RaidPointsLabel><CarryWeightLabel>负重</CarryWeightLabel>
+<Raid>袭击</Raid>
+<RaidTooltip>在当前地图触发一次空投舱袭击，可自定袭击点数。</RaidTooltip>
+<RaidConfigTitle>在指定地点空投舱袭击...</RaidConfigTitle>
+<RaidConfirm>发动袭击</RaidConfirm>
+<RaidTriggered>已在当前地图触发 {0} 点空投舱袭击！</RaidTriggered>
+<RaidFailed>袭击触发失败。</RaidFailed>
+<RaidNoMap>未找到活动地图，必须在殖民地图上才能使用。</RaidNoMap>
+<RaidTargetingHint>点击地图选择空投舱袭击位置...（右键取消）</RaidTargetingHint>
+<RaidHintHostile>敌对 → 触发空投袭击</RaidHintHostile>
+<RaidHintFriendly>盟友/中立 → 触发空投支援</RaidHintFriendly>
+<Aid>支援</Aid>
+<AidTooltip>在当前地图触发一次空投支援，可自定袭击点数。</AidTooltip>
+<AidConfirm>发动支援</AidConfirm>
+</LanguageData>

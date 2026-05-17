@@ -1175,4 +1175,17 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
 <AutoSwitchWeaponByRange>Авто-смена оружия по дистанции</AutoSwitchWeaponByRange>
 <AutoSwitchWeaponByRangeTooltip>При активном SimpleSidearms, персонажи автоматически переключаются между основным и дополнительным оружием в зависимости от дистанции до цели. Выбирается оружие, лучше подходящее для текущей дистанции. Задержка переключения: 5 секунд. Требуется мод SimpleSidearms.</AutoSwitchWeaponByRangeTooltip>
 <AutoSwitchWeaponByRangeDisabledTooltip>Для этой функции требуется мод SimpleSidearms. (SimpleSidearms не установлен)</AutoSwitchWeaponByRangeDisabledTooltip>
+<Raid>Рейд</Raid>
+<RaidTooltip>Вызвать рейд с десантными капсулами на текущую карту с настраиваемыми очками рейда.</RaidTooltip>
+<RaidConfigTitle>Десантный рейд в указанном месте...</RaidConfigTitle>
+<RaidConfirm>Начать рейд</RaidConfirm>
+<RaidTriggered>Десантный рейд начат с {0} очками!</RaidTriggered>
+<RaidFailed>Не удалось начать рейд.</RaidFailed>
+<RaidNoMap>Нет активной карты. Необходимо находиться на карте колонии.</RaidNoMap>
+<RaidTargetingHint>Нажмите на карту, чтобы выбрать место десантного рейда... (ПКМ для отмены)</RaidTargetingHint>
+<RaidHintHostile>Враждебный → десантный рейд</RaidHintHostile>
+<RaidHintFriendly>Союзник/Нейтрал → десантная поддержка</RaidHintFriendly>
+<Aid>Поддержка</Aid>
+<AidTooltip>Вызвать поддержку с десантными капсулами на текущую карту с настраиваемыми очками.</AidTooltip>
+<AidConfirm>Начать поддержку</AidConfirm>
 </LanguageData>

@@ -67,6 +67,9 @@ namespace FactionGearCustomizer
         // [New] Auto raid points value multiplier — 装备市场价值转换为袭击点数的系数
         public float autoRaidPointValueMultiplier = 0.01f;
 
+        // [New] Cached raid points for the raid config dialog — persists across sessions
+        public float cachedRaidPoints = 1000f;
+
         // [Phase 2] 剧本配置 - 用于游戏开始前配置派系
         public ScenarioFactionConfig scenarioFactionConfig;
 
@@ -84,6 +87,7 @@ namespace FactionGearCustomizer
             Scribe_Values.Look(ref autoRaidPointValueMultiplier, "autoRaidPointValueMultiplier", 0.01f);
             Scribe_Values.Look(ref autoRaidPointsEnabled, "autoRaidPointsEnabled", true);
             Scribe_Values.Look(ref autoSwitchWeaponByRange, "autoSwitchWeaponByRange", true);
+            Scribe_Values.Look(ref cachedRaidPoints, "cachedRaidPoints", 1000f);
             Scribe_Collections.Look(ref dismissedDialogs, "dismissedDialogs", LookMode.Value);
             if (dismissedDialogs == null) dismissedDialogs = new HashSet<string>();
             Scribe_Values.Look(ref currentPresetName, "currentPresetName", null);

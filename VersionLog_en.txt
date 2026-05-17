@@ -1,3 +1,8 @@
+v1.7.2
+		- New: One-click drop pod raid/aid from editor — new button in GearEditPanel header auto-switches between Raid (red) and Aid (green) based on faction relation; opens raid point config dialog (0-10000 slider with 100-step snap, manual input not snapped); map click-to-target after confirm; global raid point cache.
+		- Fix: IncidentWorker_RaidEnemy.TryResolveRaidFaction overwriting specified faction — added Harmony Postfix patches for both RaidEnemy and RaidFriendly to force selected faction.
+		- Localization: 13 new translation keys covering all 7 languages (EN/ZH/KO/JA/RU/RU(Русский)/UK).
+
 v1.7.1
 	- Fix: NullReferenceException in Patch_GeneratePawns_CombatPowerOverride.Postfix when hidden factions raid — added null check for data before accessing groupMakers/kindGearData.
 

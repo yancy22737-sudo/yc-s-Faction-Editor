@@ -1240,4 +1240,17 @@ https://github.com/yancy22737-sudo/FactionGearCustomizer
 <AutoSwitchWeaponByRange>Auto-Switch Weapon by Distance</AutoSwitchWeaponByRange>
 <AutoSwitchWeaponByRangeTooltip>When SimpleSidearms is active, pawns automatically switch between primary and sidearm weapons based on target distance. The better-suited weapon for the current range is selected. Switch cooldown: 5 seconds. Requires SimpleSidearms mod.</AutoSwitchWeaponByRangeTooltip>
 <AutoSwitchWeaponByRangeDisabledTooltip>This feature requires the SimpleSidearms mod. (SimpleSidearms not installed)</AutoSwitchWeaponByRangeDisabledTooltip>
+  <Raid>Raid</Raid>
+  <RaidTooltip>Trigger a drop pod raid on the current map with configurable raid points.</RaidTooltip>
+  <RaidConfigTitle>Drop pod raid at location...</RaidConfigTitle>
+  <RaidConfirm>Launch Raid</RaidConfirm>
+  <RaidTriggered>Drop pod raid triggered with {0} points!</RaidTriggered>
+  <RaidFailed>Failed to trigger raid.</RaidFailed>
+  <RaidNoMap>No active map. Must be in-game on a colony map.</RaidNoMap>
+  <RaidTargetingHint>Click on the map to select drop pod raid location... (Right-click to cancel)</RaidTargetingHint>
+  <RaidHintHostile>Hostile → triggers drop pod raid</RaidHintHostile>
+  <RaidHintFriendly>Ally/Neutral → triggers drop pod support</RaidHintFriendly>
+  <Aid>Aid</Aid>
+  <AidTooltip>Trigger a drop pod support on the current map with configurable raid points.</AidTooltip>
+  <AidConfirm>Launch Aid</AidConfirm>
 </LanguageData>
